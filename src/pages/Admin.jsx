@@ -3,6 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { TableIcon, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
@@ -46,31 +48,43 @@ export default function Admin() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Header */}
       <header className="bg-white border-b shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png" 
-              alt="Liga" 
-              className="h-12 w-auto"
-            />
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">Painel Administrativo</h1>
-              <p className="text-xs text-slate-500">Sistema de Indicações</p>
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png"
+                alt="Liga"
+                className="h-12 w-auto"
+              />
+              <div className="hidden md:block">
+                <h1 className="text-lg font-bold text-slate-900">Painel Administrativo</h1>
+                <p className="text-xs text-slate-500">Sistema de Indicações</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-600 hidden md:block">
-              Olá, {user.full_name || user.email}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => base44.auth.logout()}
-              className="gap-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden md:inline">Sair</span>
-            </Button>
+
+            <nav className="hidden md:flex items-center gap-2">
+              <Link to={createPageUrl("Dashboard")}>
+                <Button variant="ghost" className="gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  Dashboard
+                </Button>
+              </Link>
+            </nav>
+
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-slate-600 hidden md:block">
+                {user.full_name || user.email}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => base44.auth.logout()}
+                className="gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden md:inline">Sair</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
