@@ -12,25 +12,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
 
 export default function FormularioIndicacao() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-    const checkAdmin = async () => {
+    const loadUser = async () => {
       try {
         const isAuth = await base44.auth.isAuthenticated();
         if (isAuth) {
           const user = await base44.auth.me();
-          setIsAdmin(user?.role === "admin");
+          setUserEmail(user?.email || "");
         }
       } catch (error) {
         console.error("Erro ao verificar usuário:", error);
       }
     };
-    checkAdmin();
+    loadUser();
   }, []);
 
   const [formData, setFormData] = useState({
-    consultor_responsavel: "",
     nome_indicado: "",
     placa_indicado: "",
     nome_indicador: "",
@@ -60,7 +59,6 @@ export default function FormularioIndicacao() {
     onSuccess: () => {
       setSubmitted(true);
       setFormData({
-        consultor_responsavel: "",
         nome_indicado: "",
         placa_indicado: "",
         nome_indicador: "",
@@ -78,7 +76,7 @@ export default function FormularioIndicacao() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createMutation.mutate({ ...formData, status: "pendente" });
+    createMutation.mutate({ ...formData, consultor_responsavel: userEmail, status: "pendente" });
   };
 
   const handleChange = (field, value) => {
@@ -150,19 +148,6 @@ export default function FormularioIndicacao() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl mx-auto"
       >
-        {isAdmin && (
-          <div className="mb-6">
-            <Button
-              onClick={() => window.location.href = createPageUrl("Admin")}
-              variant="outline"
-              className="gap-2"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Ir para o Painel
-            </Button>
-          </div>
-        )}
-
         <div className="text-center mb-8">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png" 
@@ -178,34 +163,6 @@ export default function FormularioIndicacao() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Consultor */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                <Users className="w-5 h-5 text-[#EFC200]" />
-                Consultor Responsável
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Select
-                value={formData.consultor_responsavel}
-                onValueChange={(v) => handleChange("consultor_responsavel", v)}
-                required
-              >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Selecione o consultor" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getOpcoes("consultores").map((op) => (
-                    <SelectItem key={op} value={op}>
-                      {op}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </CardContent>
-          </Card>
-
           {/* Dados do Indicado */}
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">

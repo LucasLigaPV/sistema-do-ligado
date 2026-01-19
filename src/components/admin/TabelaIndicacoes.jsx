@@ -49,7 +49,7 @@ const statusConfig = {
   rejeitada: { label: "Rejeitada", color: "bg-red-100 text-red-800", icon: XCircle },
 };
 
-export default function TabelaIndicacoes() {
+export default function TabelaIndicacoes({ userEmail, userRole }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
@@ -62,10 +62,14 @@ export default function TabelaIndicacoes() {
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
   const queryClient = useQueryClient();
 
-  const { data: indicacoes = [], isLoading } = useQuery({
+  const { data: allIndicacoes = [], isLoading } = useQuery({
     queryKey: ["indicacoes"],
     queryFn: () => base44.entities.Indicacao.list("-created_date"),
   });
+
+  const indicacoes = userRole === "admin" 
+    ? allIndicacoes 
+    : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
 
   const { data: configs = [] } = useQuery({
     queryKey: ["configs"],

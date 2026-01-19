@@ -6,11 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { TableIcon, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { TableIcon, Settings, LogOut, ShieldCheck, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
 import DashboardContent from "../components/admin/DashboardContent";
+import FormularioIndicacao from "../components/indicacao/FormularioIndicacao";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -21,11 +22,7 @@ export default function Admin() {
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) {
         const currentUser = await base44.auth.me();
-        if (currentUser.role === "admin") {
-          setUser(currentUser);
-        } else {
-          window.location.href = "/Formulario";
-        }
+        setUser(currentUser);
       } else {
         base44.auth.redirectToLogin("/Admin");
       }
@@ -90,15 +87,8 @@ export default function Admin() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Tabs defaultValue="dashboard" className="space-y-6">
+          <Tabs defaultValue="indicacoes" className="space-y-6">
             <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
-              <TabsTrigger
-                value="dashboard"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Dashboard
-              </TabsTrigger>
               <TabsTrigger
                 value="indicacoes"
                 className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
@@ -107,23 +97,44 @@ export default function Admin() {
                 Indicações
               </TabsTrigger>
               <TabsTrigger
-                value="configuracoes"
+                value="formulario"
                 className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
               >
-                <Settings className="w-4 h-4" />
-                Configurações
+                <FileText className="w-4 h-4" />
+                Formulário
               </TabsTrigger>
+              <TabsTrigger
+                value="dashboard"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Dashboard
+              </TabsTrigger>
+              {user?.role === "admin" && (
+                <TabsTrigger
+                  value="configuracoes"
+                  className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                >
+                  <Settings className="w-4 h-4" />
+                  Configurações
+                </TabsTrigger>
+              )}
             </TabsList>
 
-            <TabsContent value="dashboard">
-              <DashboardContent />
-            </TabsContent>
-
             <TabsContent value="indicacoes">
-              <TabelaIndicacoes />
+              <TabelaIndicacoes userEmail={user?.email} userRole={user?.role} />
             </TabsContent>
 
-            <TabsContent value="configuracoes">
+            <TabsContent value="formulario">
+              <FormularioIndicacao />
+            </TabsContent>
+
+            <TabsContent value="dashboard">
+              <DashboardContent userEmail={user?.email} userRole={user?.role} />
+            </TabsContent>
+
+            {user?.role === "admin" && (
+              <TabsContent value="configuracoes">
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-slate-900 mb-2">
                   Configurações do Formulário
@@ -133,7 +144,8 @@ export default function Admin() {
                 </p>
               </div>
               <ConfiguracaoFormularioAdmin />
-            </TabsContent>
+              </TabsContent>
+            )}
           </Tabs>
         </motion.div>
       </main>
