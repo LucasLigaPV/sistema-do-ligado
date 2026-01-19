@@ -36,6 +36,9 @@ import {
   Clock,
   XCircle,
   DollarSign,
+  Upload,
+  FileText,
+  X,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -60,6 +63,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
+  const [uploadingId, setUploadingId] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: allIndicacoes = [], isLoading } = useQuery({
@@ -87,6 +91,22 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
     mutationFn: (id) => base44.entities.Indicacao.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["indicacoes"] }),
   });
+
+  const handleFileUpload = async (indicacaoId, file) => {
+    setUploadingId(indicacaoId);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      await updateMutation.mutateAsync({ id: indicacaoId, data: { comprovante_url: file_url } });
+    } catch (error) {
+      console.error("Erro ao fazer upload:", error);
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
+  const handleRemoveComprovante = async (indicacaoId) => {
+    await updateMutation.mutateAsync({ id: indicacaoId, data: { comprovante_url: null } });
+  };
 
   const filteredIndicacoes = indicacoes.filter((ind) => {
     const matchSearch =
@@ -283,6 +303,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                 <TableHead>Indicador</TableHead>
                 <TableHead>Valor</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Comprovante</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -296,7 +317,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                   </TableRow>
                 ) : filteredIndicacoes.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={8} className="text-center py-10 text-slate-500">
                       Nenhuma indicação encontrada
                     </TableCell>
                   </TableRow>
@@ -349,6 +370,72 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                             </SelectContent>
                           </Select>
                         </TableCell>
+                        <TableCell>
+                          {userRole === "admin" ? (
+                            <div className="flex items-center gap-2">
+                              {uploadingId === ind.id ? (
+                                <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
+                              ) : ind.comprovante_url ? (
+                                <>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    asChild
+                                    className="h-8 w-8"
+                                  >
+                                    <a href={ind.comprovante_url} target="_blank" rel="noopener noreferrer">
+                                      <Download className="w-4 h-4 text-emerald-600" />
+                                    </a>
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveComprovante(ind.id)}
+                                    className="h-8 w-8"
+                                  >
+                                    <X className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <label className="cursor-pointer">
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*,application/pdf"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) handleFileUpload(ind.id, file);
+                                    }}
+                                  />
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="gap-1 h-8"
+                                    asChild
+                                  >
+                                    <span>
+                                      <Upload className="w-3 h-3" />
+                                      Anexar
+                                    </span>
+                                  </Button>
+                                </label>
+                              )}
+                            </div>
+                          ) : ind.comprovante_url ? (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              asChild
+                              className="h-8 w-8"
+                            >
+                              <a href={ind.comprovante_url} target="_blank" rel="noopener noreferrer">
+                                <Download className="w-4 h-4 text-emerald-600" />
+                              </a>
+                            </Button>
+                          ) : (
+                            <span className="text-xs text-slate-400">-</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -358,13 +445,15 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                             >
                               <Eye className="w-4 h-4 text-slate-500" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => deleteMutation.mutate(ind.id)}
-                            >
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
+                            {userRole === "admin" && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => deleteMutation.mutate(ind.id)}
+                              >
+                                <Trash2 className="w-4 h-4 text-red-500" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </motion.tr>
@@ -457,8 +546,24 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                     <p className="text-sm text-slate-500">Tipo de Chave</p>
                     <p className="font-medium">{selectedIndicacao.tipo_chave_pix}</p>
                   </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Comprovante</p>
+                    {selectedIndicacao.comprovante_url ? (
+                      <a
+                        href={selectedIndicacao.comprovante_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-600 hover:underline flex items-center gap-1"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Visualizar
+                      </a>
+                    ) : (
+                      <p className="text-slate-400">Não anexado</p>
+                    )}
+                  </div>
                 </div>
-              </div>
+                </div>
             </div>
           )}
         </DialogContent>
