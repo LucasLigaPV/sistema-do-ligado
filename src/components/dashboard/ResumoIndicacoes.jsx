@@ -21,7 +21,7 @@ export default function ResumoIndicacoes({ indicacoes }) {
 
     // Indicações este mês
     const hoje = new Date();
-    const inicioMes = new Date(hoje.getFullYear(), hoje.getMes(), 1);
+    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     const esteMes = indicacoes.filter(
       (i) => new Date(i.created_date) >= inicioMes
     ).length;
