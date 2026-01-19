@@ -42,7 +42,7 @@ import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 
 const statusConfig = {
-  pendente: { label: "Pendente", color: "bg-amber-100 text-amber-800", icon: Clock },
+  pendente: { label: "Pendente", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
   aprovada: { label: "Aprovada", color: "bg-blue-100 text-blue-800", icon: CheckCircle },
   paga: { label: "Paga", color: "bg-emerald-100 text-emerald-800", icon: DollarSign },
   rejeitada: { label: "Rejeitada", color: "bg-red-100 text-red-800", icon: XCircle },
@@ -151,14 +151,14 @@ export default function TabelaIndicacoes() {
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-amber-600">Pendentes</p>
-            <p className="text-2xl font-bold text-amber-600">{stats.pendentes}</p>
+            <p className="text-sm text-[#EFC200]">Pendentes</p>
+            <p className="text-2xl font-bold text-[#EFC200]">{stats.pendentes}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-blue-600">Aprovadas</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.aprovadas}</p>
+            <p className="text-sm text-[#D4A900]">Aprovadas</p>
+            <p className="text-2xl font-bold text-[#D4A900]">{stats.aprovadas}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">

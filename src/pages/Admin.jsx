@@ -48,9 +48,11 @@ export default function Admin() {
       <header className="bg-white border-b shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5 text-white" />
-            </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png" 
+              alt="Liga" 
+              className="h-12 w-auto"
+            />
             <div>
               <h1 className="text-lg font-bold text-slate-900">Painel Administrativo</h1>
               <p className="text-xs text-slate-500">Sistema de Indicações</p>
@@ -83,14 +85,14 @@ export default function Admin() {
             <TabsList className="bg-white shadow-md p-1 rounded-xl">
               <TabsTrigger
                 value="indicacoes"
-                className="gap-2 data-[state=active]:bg-slate-900 data-[state=active]:text-white rounded-lg px-6"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
               >
                 <TableIcon className="w-4 h-4" />
                 Indicações
               </TabsTrigger>
               <TabsTrigger
                 value="configuracoes"
-                className="gap-2 data-[state=active]:bg-slate-900 data-[state=active]:text-white rounded-lg px-6"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
               >
                 <Settings className="w-4 h-4" />
                 Configurações

@@ -9,11 +9,11 @@ import { Plus, X, Save, Users, Link2, Heart, DollarSign, Key } from "lucide-reac
 import { motion, AnimatePresence } from "framer-motion";
 
 const configLabels = {
-  consultores: { label: "Consultores", icon: Users, color: "bg-blue-500" },
-  relacoes: { label: "Tipos de Relação", icon: Link2, color: "bg-violet-500" },
-  vinculos: { label: "Tipos de Vínculo", icon: Heart, color: "bg-pink-500" },
-  valores: { label: "Valores de Indicação", icon: DollarSign, color: "bg-emerald-500" },
-  tipos_chave: { label: "Tipos de Chave Pix", icon: Key, color: "bg-amber-500" },
+  consultores: { label: "Consultores", icon: Users, color: "bg-[#EFC200]" },
+  relacoes: { label: "Tipos de Relação", icon: Link2, color: "bg-[#D4A900]" },
+  vinculos: { label: "Tipos de Vínculo", icon: Heart, color: "bg-[#EFC200]" },
+  valores: { label: "Valores de Indicação", icon: DollarSign, color: "bg-[#D4A900]" },
+  tipos_chave: { label: "Tipos de Chave Pix", icon: Key, color: "bg-[#EFC200]" },
 };
 
 export default function ConfiguracaoFormularioAdmin() {
@@ -69,8 +69,8 @@ export default function ConfiguracaoFormularioAdmin() {
               animate={{ opacity: 1, y: 0 }}
             >
               <Card className="border-0 shadow-lg overflow-hidden">
-                <CardHeader className={`${configInfo.color} text-white py-4`}>
-                  <CardTitle className="flex items-center gap-2 text-lg">
+                <CardHeader className={`${configInfo.color} text-black py-4`}>
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                     <Icon className="w-5 h-5" />
                     {configInfo.label}
                   </CardTitle>

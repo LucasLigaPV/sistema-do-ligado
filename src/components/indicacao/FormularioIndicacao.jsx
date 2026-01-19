@@ -105,7 +105,7 @@ export default function FormularioIndicacao() {
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             >
-              <CheckCircle2 className="w-20 h-20 text-emerald-500 mx-auto mb-6" />
+              <CheckCircle2 className="w-20 h-20 text-[#EFC200] mx-auto mb-6" />
             </motion.div>
             <h2 className="text-2xl font-semibold text-slate-800 mb-3">
               Indicação Enviada!
@@ -115,7 +115,7 @@ export default function FormularioIndicacao() {
             </p>
             <Button
               onClick={() => setSubmitted(false)}
-              className="bg-slate-900 hover:bg-slate-800"
+              className="bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold"
             >
               Nova Indicação
             </Button>
@@ -133,6 +133,11 @@ export default function FormularioIndicacao() {
         className="max-w-2xl mx-auto"
       >
         <div className="text-center mb-8">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png" 
+            alt="Liga" 
+            className="h-16 w-auto mx-auto mb-6"
+          />
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Formulário de Indicação
           </h1>
@@ -146,7 +151,7 @@ export default function FormularioIndicacao() {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                <Users className="w-5 h-5 text-blue-600" />
+                <Users className="w-5 h-5 text-[#EFC200]" />
                 Consultor Responsável
               </CardTitle>
             </CardHeader>
@@ -174,7 +179,7 @@ export default function FormularioIndicacao() {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                <Car className="w-5 h-5 text-emerald-600" />
+                <Car className="w-5 h-5 text-[#EFC200]" />
                 Dados do Associado Indicado
               </CardTitle>
             </CardHeader>
@@ -206,7 +211,7 @@ export default function FormularioIndicacao() {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                <User className="w-5 h-5 text-violet-600" />
+                <User className="w-5 h-5 text-[#EFC200]" />
                 Dados do Indicador
               </CardTitle>
             </CardHeader>
@@ -301,7 +306,7 @@ export default function FormularioIndicacao() {
           <Card className="border-0 shadow-lg">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                <DollarSign className="w-5 h-5 text-amber-600" />
+                <DollarSign className="w-5 h-5 text-[#EFC200]" />
                 Informações Financeiras
               </CardTitle>
             </CardHeader>
@@ -359,7 +364,7 @@ export default function FormularioIndicacao() {
 
           <Button
             type="submit"
-            className="w-full h-14 text-lg bg-slate-900 hover:bg-slate-800 shadow-lg"
+            className="w-full h-14 text-lg bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold shadow-lg"
             disabled={createMutation.isPending}
           >
             {createMutation.isPending ? (
