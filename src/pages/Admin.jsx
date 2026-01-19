@@ -94,21 +94,21 @@ export default function Admin() {
             <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
               <TabsTrigger
                 value="dashboard"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
               >
                 <ShieldCheck className="w-4 h-4" />
                 Dashboard
               </TabsTrigger>
               <TabsTrigger
                 value="indicacoes"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
               >
                 <TableIcon className="w-4 h-4" />
                 Indicações
               </TabsTrigger>
               <TabsTrigger
                 value="configuracoes"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
               >
                 <Settings className="w-4 h-4" />
                 Configurações
