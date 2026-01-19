@@ -37,6 +37,7 @@ import {
   XCircle,
   DollarSign,
 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
@@ -49,9 +50,15 @@ const statusConfig = {
 };
 
 export default function TabelaIndicacoes() {
+  const hoje = new Date();
+  const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+  
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [consultorFilter, setConsultorFilter] = useState("all");
+  const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
+  const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
   const queryClient = useQueryClient();
 
@@ -85,6 +92,20 @@ export default function TabelaIndicacoes() {
     const matchStatus = statusFilter === "all" || ind.status === statusFilter;
     const matchConsultor =
       consultorFilter === "all" || ind.consultor_responsavel === consultorFilter;
+    
+    // Filtro de data
+    if (dataInicio) {
+      const dataInd = new Date(ind.created_date);
+      const inicio = new Date(dataInicio);
+      if (dataInd < inicio) return false;
+    }
+    if (dataFim) {
+      const dataInd = new Date(ind.created_date);
+      const fim = new Date(dataFim);
+      fim.setHours(23, 59, 59, 999);
+      if (dataInd > fim) return false;
+    }
+    
     return matchSearch && matchStatus && matchConsultor;
   });
 
@@ -172,44 +193,75 @@ export default function TabelaIndicacoes() {
       {/* Filters */}
       <Card className="border-0 shadow-md">
         <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="w-5 h-5 text-slate-600" />
+            <h3 className="font-semibold text-slate-900">Filtros</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div className="lg:col-span-2">
+              <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  placeholder="Buscar por nome..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
               <Input
-                placeholder="Buscar por nome..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="pendente">Pendente</SelectItem>
-                <SelectItem value="aprovada">Aprovada</SelectItem>
-                <SelectItem value="paga">Paga</SelectItem>
-                <SelectItem value="rejeitada">Rejeitada</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={consultorFilter} onValueChange={setConsultorFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Consultor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                {consultores.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="outline" onClick={exportToCSV} className="gap-2">
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
+              <Input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="pendente">Pendente</SelectItem>
+                  <SelectItem value="aprovada">Aprovada</SelectItem>
+                  <SelectItem value="paga">Paga</SelectItem>
+                  <SelectItem value="rejeitada">Rejeitada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
+              <Select value={consultorFilter} onValueChange={setConsultorFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Consultor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  {consultores.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Button variant="outline" onClick={exportToCSV} className="gap-2 w-full md:w-auto">
               <Download className="w-4 h-4" />
-              Exportar
+              Exportar CSV
             </Button>
           </div>
         </CardContent>
