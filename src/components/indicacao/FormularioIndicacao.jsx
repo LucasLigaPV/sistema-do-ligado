@@ -7,10 +7,28 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle2, Send, User, Car, Phone, Mail, Key, DollarSign, Users } from "lucide-react";
+import { CheckCircle2, Send, User, Car, Phone, Mail, Key, DollarSign, Users, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 
 export default function FormularioIndicacao() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) {
+          const user = await base44.auth.me();
+          setIsAdmin(user?.role === "admin");
+        }
+      } catch (error) {
+        console.error("Erro ao verificar usuário:", error);
+      }
+    };
+    checkAdmin();
+  }, []);
+
   const [formData, setFormData] = useState({
     consultor_responsavel: "",
     nome_indicado: "",
@@ -132,6 +150,19 @@ export default function FormularioIndicacao() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl mx-auto"
       >
+        {isAdmin && (
+          <div className="mb-6">
+            <Button
+              onClick={() => window.location.href = createPageUrl("Admin")}
+              variant="outline"
+              className="gap-2"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Ir para o Painel
+            </Button>
+          </div>
+        )}
+
         <div className="text-center mb-8">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png" 
