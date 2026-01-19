@@ -380,12 +380,15 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    asChild
                                     className="h-8 w-8"
+                                    onClick={() => {
+                                      const link = document.createElement('a');
+                                      link.href = ind.comprovante_url;
+                                      link.download = `comprovante_${ind.id}`;
+                                      link.click();
+                                    }}
                                   >
-                                    <a href={ind.comprovante_url} target="_blank" rel="noopener noreferrer">
-                                      <Download className="w-4 h-4 text-emerald-600" />
-                                    </a>
+                                    <Download className="w-4 h-4 text-emerald-600" />
                                   </Button>
                                   <Button
                                     variant="ghost"
@@ -425,12 +428,15 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                             <Button
                               variant="ghost"
                               size="icon"
-                              asChild
                               className="h-8 w-8"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = ind.comprovante_url;
+                                link.download = `comprovante_${ind.id}`;
+                                link.click();
+                              }}
                             >
-                              <a href={ind.comprovante_url} target="_blank" rel="noopener noreferrer">
-                                <Download className="w-4 h-4 text-emerald-600" />
-                              </a>
+                              <Download className="w-4 h-4 text-emerald-600" />
                             </Button>
                           ) : (
                             <span className="text-xs text-slate-400">-</span>
