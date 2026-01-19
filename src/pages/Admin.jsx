@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { TableIcon, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
+import DashboardContent from "../components/admin/DashboardContent";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -62,14 +64,7 @@ export default function Admin() {
               </div>
             </div>
 
-            <nav className="hidden md:flex items-center gap-2">
-              <Link to={createPageUrl("Dashboard")}>
-                <Button variant="ghost" className="gap-2">
-                  <ShieldCheck className="w-4 h-4" />
-                  Dashboard
-                </Button>
-              </Link>
-            </nav>
+
 
             <div className="flex items-center gap-4">
               <span className="text-sm text-slate-600 hidden md:block">
@@ -95,8 +90,15 @@ export default function Admin() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Tabs defaultValue="indicacoes" className="space-y-6">
+          <Tabs defaultValue="dashboard" className="space-y-6">
             <TabsList className="bg-white shadow-md p-1 rounded-xl">
+              <TabsTrigger
+                value="dashboard"
+                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Dashboard
+              </TabsTrigger>
               <TabsTrigger
                 value="indicacoes"
                 className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6"
@@ -112,6 +114,10 @@ export default function Admin() {
                 Configurações
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="dashboard">
+              <DashboardContent />
+            </TabsContent>
 
             <TabsContent value="indicacoes">
               <TabelaIndicacoes />
