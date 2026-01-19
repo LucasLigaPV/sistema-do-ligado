@@ -11,16 +11,20 @@ import ResumoIndicacoes from "../dashboard/ResumoIndicacoes";
 import TopIndicadores from "../dashboard/TopIndicadores";
 import TopConsultores from "../dashboard/TopConsultores";
 
-export default function DashboardContent() {
+export default function DashboardContent({ userEmail, userRole }) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [consultorFilter, setConsultorFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const { data: indicacoes = [], isLoading } = useQuery({
+  const { data: allIndicacoes = [], isLoading } = useQuery({
     queryKey: ["indicacoes"],
     queryFn: () => base44.entities.Indicacao.list("-created_date"),
   });
+
+  const indicacoes = userRole === "admin" 
+    ? allIndicacoes 
+    : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
 
   const { data: configs = [] } = useQuery({
     queryKey: ["configs"],
