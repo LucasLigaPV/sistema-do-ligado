@@ -1,13 +1,13 @@
 import Admin from './pages/Admin';
-import Formulario from './pages/Formulario';
 import Dashboard from './pages/Dashboard';
+import Formulario from './pages/Formulario';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
-    "Formulario": Formulario,
     "Dashboard": Dashboard,
+    "Formulario": Formulario,
 }
 
 export const pagesConfig = {
