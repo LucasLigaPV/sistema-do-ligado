@@ -108,6 +108,24 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
     await updateMutation.mutateAsync({ id: indicacaoId, data: { comprovante_url: null } });
   };
 
+  const handleDownload = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Erro ao baixar arquivo:', error);
+      window.open(url, '_blank');
+    }
+  };
+
   const filteredIndicacoes = indicacoes.filter((ind) => {
     const matchSearch =
       ind.nome_indicado?.toLowerCase().includes(search.toLowerCase()) ||
@@ -381,12 +399,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    onClick={() => {
-                                      const link = document.createElement('a');
-                                      link.href = ind.comprovante_url;
-                                      link.download = `comprovante_${ind.id}`;
-                                      link.click();
-                                    }}
+                                    onClick={() => handleDownload(ind.comprovante_url, `comprovante_${ind.id}`)}
                                   >
                                     <Download className="w-4 h-4 text-emerald-600" />
                                   </Button>
@@ -429,12 +442,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8"
-                              onClick={() => {
-                                const link = document.createElement('a');
-                                link.href = ind.comprovante_url;
-                                link.download = `comprovante_${ind.id}`;
-                                link.click();
-                              }}
+                              onClick={() => handleDownload(ind.comprovante_url, `comprovante_${ind.id}`)}
                             >
                               <Download className="w-4 h-4 text-emerald-600" />
                             </Button>
