@@ -99,12 +99,12 @@ export default function TabelaVendas({ userEmail, userRole }) {
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || venda.status === statusFilter;
     
-    if (dataInicio) {
+    if (dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
       const inicio = new Date(dataInicio);
       if (dataVenda < inicio) return false;
     }
-    if (dataFim) {
+    if (dataFim && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
       const fim = new Date(dataFim);
       fim.setHours(23, 59, 59, 999);
@@ -129,7 +129,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
       "Valor Indicação",
     ];
     const rows = filteredVendas.map((v) => [
-      format(new Date(v.data_venda), "dd/MM/yyyy"),
+      v.data_venda ? format(new Date(v.data_venda), "dd/MM/yyyy") : "-",
       v.status,
       v.cliente,
       v.telefone,
@@ -307,7 +307,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         className="border-b hover:bg-slate-50/50 transition-colors"
                       >
                         <TableCell className="text-slate-600">
-                          {format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR })}
+                          {venda.data_venda ? format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR }) : "-"}
                         </TableCell>
                         <TableCell>
                           <Select
@@ -397,7 +397,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                 <div>
                   <p className="text-sm text-slate-500">Data da Venda</p>
                   <p className="font-medium">
-                    {format(new Date(selectedVenda.data_venda), "dd/MM/yyyy")}
+                    {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
                   </p>
                 </div>
                 <div>
