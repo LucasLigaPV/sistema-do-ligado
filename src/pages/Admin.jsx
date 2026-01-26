@@ -15,6 +15,7 @@ import DashboardContent from "../components/admin/DashboardContent";
 import FormularioIndicacao from "../components/indicacao/FormularioIndicacao";
 import TabelaVendas from "../components/vendas/TabelaVendas";
 import ResumoVendedor from "../components/vendas/ResumoVendedor";
+import TabelaFechamentos from "../components/vendas/TabelaFechamentos";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
@@ -202,17 +203,7 @@ export default function Admin() {
                   </TabsContent>
 
                   <TabsContent value="fechamentos">
-                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
-                      <div className="text-center">
-                        <ShieldCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                          Fechamentos
-                        </h2>
-                        <p className="text-slate-500">
-                          Em breve disponível
-                        </p>
-                      </div>
-                    </div>
+                    <TabelaFechamentos />
                   </TabsContent>
 
                   <TabsContent value="dashboard">
