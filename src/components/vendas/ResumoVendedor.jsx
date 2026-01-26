@@ -121,39 +121,40 @@ export default function ResumoVendedor({ userEmail }) {
   return (
     <div className="space-y-6">
       {/* Plano de Carreira */}
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-[#EFC200] to-[#D4A900]">
+      <Card className="border-0 shadow-lg bg-white">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <Award className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
+                <Award className="w-7 h-7 text-slate-700" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-white">{nivelAtual.nivel}</h3>
-                <p className="text-white/80 text-sm">{comissao.descricao}</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Plano de Carreira</p>
+                <h3 className="text-2xl font-bold text-slate-900">{nivelAtual.nivel}</h3>
+                <p className="text-slate-600 text-sm mt-1">{comissao.descricao}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-white/80 text-sm">Vendas Realizadas</p>
-              <p className="text-3xl font-bold text-white">{totalVendas}</p>
+              <p className="text-slate-500 text-sm mb-1">Vendas Realizadas</p>
+              <p className="text-4xl font-bold text-slate-900">{totalVendas}</p>
             </div>
           </div>
           
           {proximoNivel && (
-            <div>
-              <div className="flex justify-between text-white/90 text-sm mb-2">
-                <span>Próximo nível: {proximoNivel.nivel}</span>
-                <span>{totalVendas}/{proximoNivel.vendas} vendas</span>
+            <div className="bg-slate-50 rounded-lg p-4">
+              <div className="flex justify-between text-slate-700 text-sm mb-3">
+                <span className="font-medium">Próximo nível: {proximoNivel.nivel}</span>
+                <span className="text-slate-500">{totalVendas}/{proximoNivel.vendas} vendas</span>
               </div>
-              <Progress value={progresso} className="h-3 bg-white/20" />
-              <p className="text-white/70 text-xs mt-2">
-                Faltam {proximoNivel.vendas - totalVendas} vendas para o próximo nível
+              <Progress value={progresso} className="h-2.5 bg-slate-200" />
+              <p className="text-slate-500 text-xs mt-2">
+                Faltam {proximoNivel.vendas - totalVendas} vendas para alcançar o próximo nível
               </p>
             </div>
           )}
           {!proximoNivel && (
-            <div className="text-center">
-              <p className="text-white text-sm">🎉 Você alcançou o nível máximo!</p>
+            <div className="bg-emerald-50 rounded-lg p-4 text-center">
+              <p className="text-emerald-700 text-sm font-medium">🎉 Parabéns! Você alcançou o nível máximo!</p>
             </div>
           )}
         </CardContent>
