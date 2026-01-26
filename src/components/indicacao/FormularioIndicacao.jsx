@@ -71,6 +71,9 @@ export default function FormularioIndicacao({ onSuccess }) {
         chave_pix: "",
         tipo_chave_pix: "",
       });
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+      }, 2000);
     },
   });
 
