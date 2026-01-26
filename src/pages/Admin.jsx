@@ -145,105 +145,101 @@ export default function Admin() {
 
             {activeMenu === "vendas" && (
               <div className="space-y-6">
-                {user?.funcao === "vendedor" ? (
-                  <ResumoVendedor userEmail={user?.email} />
-                ) : (
-                  <Tabs defaultValue="registrar" className="space-y-6">
-                    <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
-                      {(user?.role === "admin" || user?.funcao === "lider") && (
-                        <>
-                          <TabsTrigger
-                            value="registrar"
-                            className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                          >
-                            <TableIcon className="w-4 h-4" />
-                            Registrar e Acompanhar
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="resumo"
-                            className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                          >
-                            <FileText className="w-4 h-4" />
-                            Resumo
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="fechamentos"
-                            className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                          >
-                            <ShieldCheck className="w-4 h-4" />
-                            Fechamentos
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="dashboard"
-                            className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                          >
-                            <BarChart3 className="w-4 h-4" />
-                            Dashboard
-                          </TabsTrigger>
-                        </>
-                      )}
-                      {user?.role === "admin" && (
+                <Tabs defaultValue="registrar" className="space-y-6">
+                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                    <TabsTrigger
+                      value="registrar"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <TableIcon className="w-4 h-4" />
+                      Registrar e Acompanhar
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="resumo"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Resumo
+                    </TabsTrigger>
+                    {(user?.role === "admin" || user?.funcao === "lider") && (
+                      <>
                         <TabsTrigger
-                          value="configuracoes"
+                          value="fechamentos"
                           className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
                         >
-                          <Settings className="w-4 h-4" />
-                          Configurações
+                          <ShieldCheck className="w-4 h-4" />
+                          Fechamentos
                         </TabsTrigger>
-                      )}
-                    </TabsList>
+                        <TabsTrigger
+                          value="dashboard"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <BarChart3 className="w-4 h-4" />
+                          Dashboard
+                        </TabsTrigger>
+                      </>
+                    )}
+                    {user?.role === "admin" && (
+                      <TabsTrigger
+                        value="configuracoes"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Configurações
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
 
-                    <TabsContent value="registrar">
-                      <TabelaVendas userEmail={user?.email} userRole={user?.role} />
-                    </TabsContent>
+                  <TabsContent value="registrar">
+                    <TabelaVendas userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
 
-                    <TabsContent value="resumo">
-                      <ResumoVendedor userEmail={user?.email} />
-                    </TabsContent>
+                  <TabsContent value="resumo">
+                    <ResumoVendedor userEmail={user?.email} />
+                  </TabsContent>
 
-                    <TabsContent value="fechamentos">
-                      <div className="flex items-center justify-center h-[calc(100vh-300px)]">
-                        <div className="text-center">
-                          <ShieldCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                          <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                            Fechamentos
-                          </h2>
-                          <p className="text-slate-500">
-                            Em breve disponível
-                          </p>
-                        </div>
+                  <TabsContent value="fechamentos">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <ShieldCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Fechamentos
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
                       </div>
-                    </TabsContent>
+                    </div>
+                  </TabsContent>
 
-                    <TabsContent value="dashboard">
-                      <div className="flex items-center justify-center h-[calc(100vh-300px)]">
-                        <div className="text-center">
-                          <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                          <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                            Dashboard de Vendas
-                          </h2>
-                          <p className="text-slate-500">
-                            Em breve disponível
-                          </p>
-                        </div>
+                  <TabsContent value="dashboard">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Dashboard de Vendas
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
                       </div>
-                    </TabsContent>
+                    </div>
+                  </TabsContent>
 
-                    <TabsContent value="configuracoes">
-                      <div className="flex items-center justify-center h-[calc(100vh-300px)]">
-                        <div className="text-center">
-                          <Settings className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                          <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                            Configurações de Vendas
-                          </h2>
-                          <p className="text-slate-500">
-                            Em breve disponível
-                          </p>
-                        </div>
+                  <TabsContent value="configuracoes">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <Settings className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Configurações de Vendas
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
                       </div>
-                    </TabsContent>
-                  </Tabs>
-                )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             )}
           </motion.div>
