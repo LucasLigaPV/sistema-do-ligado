@@ -248,86 +248,11 @@ export default function DashboardVendas({ userEmail, userRole }) {
         </Card>
       </motion.div>
 
-      {/* Gráficos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Canais de Venda */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle>Vendas por Canal</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dadosCanais.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={dadosCanais}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {dadosCanais.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={CORES_CANAIS[entry.canal] || "#94a3b8"} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  Nenhum dado disponível
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Planos Vendidos */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle>Vendas por Plano</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dadosPlanos.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={dadosPlanos}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" name="Quantidade" fill="#8b5cf6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  Nenhum dado disponível
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
       {/* Ranking de Vendedores */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.2 }}
       >
         <Card className="border-0 shadow-md">
           <CardHeader>
@@ -376,6 +301,81 @@ export default function DashboardVendas({ userEmail, userRole }) {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Canais de Venda */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle>Vendas por Canal</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dadosCanais.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={dadosCanais}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {dadosCanais.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={CORES_CANAIS[entry.canal] || "#94a3b8"} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-slate-400">
+                  Nenhum dado disponível
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Planos Vendidos */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle>Vendas por Plano</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dadosPlanos.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dadosPlanos}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" name="Quantidade" fill="#8b5cf6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[300px] flex items-center justify-center text-slate-400">
+                  Nenhum dado disponível
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }
