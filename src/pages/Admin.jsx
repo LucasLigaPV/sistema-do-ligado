@@ -154,7 +154,14 @@ export default function Admin() {
                       <BarChart3 className="w-4 h-4" />
                       Dashboard
                     </TabsTrigger>
-                  </TabsList>
+                    <TabsTrigger
+                      value="configuracoes"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Configurações
+                    </TabsTrigger>
+                    </TabsList>
 
                   <TabsContent value="registrar">
                     <TabelaVendas userEmail={user?.email} userRole={user?.role} />
@@ -201,9 +208,23 @@ export default function Admin() {
                       </div>
                     </div>
                   </TabsContent>
-                </Tabs>
-              </div>
-            )}
+
+                  <TabsContent value="configuracoes">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <Settings className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Configurações de Vendas
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  </Tabs>
+                  </div>
+                  )}
           </motion.div>
         </div>
       </main>
