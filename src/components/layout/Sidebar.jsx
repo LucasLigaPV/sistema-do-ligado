@@ -55,6 +55,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
             className="lg:hidden fixed inset-0 bg-black/50 z-40"
             onClick={toggleMobileSidebar}
           />
@@ -65,6 +66,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       <motion.aside
         initial={false}
         animate={{ width: isOpen ? 256 : 80 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
         className="hidden lg:flex flex-col bg-white border-r shadow-sm fixed left-0 top-0 h-screen z-30"
       >
         {/* Logo Section */}
@@ -151,6 +153,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             initial={{ x: -280 }}
             animate={{ x: 0 }}
             exit={{ x: -280 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-white shadow-xl z-50 flex flex-col"
           >
             {/* Logo */}
