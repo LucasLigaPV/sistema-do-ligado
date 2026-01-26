@@ -93,22 +93,14 @@ export default function ResumoVendedor({ userEmail }) {
   // Calcular comissão
   const calcularComissao = () => {
     if (nivelAtual.comissaoPorPlaca > 0) {
-      return {
-        tipo: "Por Placa",
-        valor: totalVendas * nivelAtual.comissaoPorPlaca,
-        descricao: `R$ ${nivelAtual.comissaoPorPlaca} por placa`
-      };
+      return totalVendas * nivelAtual.comissaoPorPlaca;
     } else {
-      const comissaoAdesao = (totalAdesao * nivelAtual.percentualAdesao) / 100;
-      return {
-        tipo: "Adesão + Recorrência",
-        valor: comissaoAdesao,
-        descricao: `${nivelAtual.percentualAdesao}% da adesão + ${nivelAtual.recorrencia}% de recorrência`
-      };
+      return (totalAdesao * nivelAtual.percentualAdesao) / 100;
     }
   };
 
-  const comissao = calcularComissao();
+  const comissaoValor = calcularComissao();
+  const percentualRecorrencia = nivelAtual.recorrencia;
 
   if (isLoading) {
     return (
@@ -131,7 +123,12 @@ export default function ResumoVendedor({ userEmail }) {
               <div>
                 <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Plano de Carreira</p>
                 <h3 className="text-2xl font-bold text-slate-900">{nivelAtual.nivel}</h3>
-                <p className="text-slate-600 text-sm mt-1">{comissao.descricao}</p>
+                <p className="text-slate-600 text-sm mt-1">
+                  {nivelAtual.comissaoPorPlaca > 0 
+                    ? `R$ ${nivelAtual.comissaoPorPlaca} por placa`
+                    : `${nivelAtual.percentualAdesao}% sobre adesão + ${nivelAtual.recorrencia}% recorrência`
+                  }
+                </p>
               </div>
             </div>
             <div className="text-right">
@@ -160,69 +157,103 @@ export default function ResumoVendedor({ userEmail }) {
         </CardContent>
       </Card>
 
-      {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Total de Vendas</p>
-                <p className="text-3xl font-bold text-slate-900">{totalVendas}</p>
+      {/* Cards de Comissão */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-slate-900">Comissão</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Comissão sobre Adesão</p>
+                  <p className="text-3xl font-bold text-[#EFC200]">
+                    R$ {comissaoValor.toFixed(2).replace(".", ",")}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {nivelAtual.comissaoPorPlaca > 0 
+                      ? `R$ ${nivelAtual.comissaoPorPlaca} por placa`
+                      : `${nivelAtual.percentualAdesao}% sobre adesão`
+                    }
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-[#FFF9E6] rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-[#EFC200]" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Total de Adesão</p>
-                <p className="text-3xl font-bold text-emerald-600">
-                  R$ {totalAdesao.toFixed(2).replace(".", ",")}
-                </p>
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Recorrência</p>
+                  <p className="text-3xl font-bold text-emerald-600">
+                    {percentualRecorrencia}%
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Percentual de recorrência mensal
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <Target className="w-6 h-6 text-emerald-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-emerald-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Plano Mais Vendido</p>
-                <p className="text-3xl font-bold text-slate-900 capitalize">
-                  {planoMaisVendido}
-                </p>
+      {/* Cards de Relatório Geral */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-slate-900">Relatório Geral</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Total de Vendas</p>
+                  <p className="text-3xl font-bold text-slate-900">{totalVendas}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <Package className="w-6 h-6 text-purple-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Comissão {comissao.tipo}</p>
-                <p className="text-3xl font-bold text-[#EFC200]">
-                  R$ {comissao.valor.toFixed(2).replace(".", ",")}
-                </p>
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Total de Adesão</p>
+                  <p className="text-3xl font-bold text-slate-900">
+                    R$ {totalAdesao.toFixed(2).replace(".", ",")}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-slate-600" />
+                </div>
               </div>
-              <div className="w-12 h-12 bg-[#FFF9E6] rounded-full flex items-center justify-center">
-                <Target className="w-6 h-6 text-[#EFC200]" />
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Plano Mais Vendido</p>
+                  <p className="text-3xl font-bold text-slate-900 capitalize">
+                    {planoMaisVendido}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Package className="w-6 h-6 text-purple-600" />
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Gráfico de Canais de Venda */}
