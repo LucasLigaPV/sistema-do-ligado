@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
-  ShoppingCart,
+  DollarSign,
   LogOut,
   Menu,
   X,
@@ -19,7 +19,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
 
   const menuItems = [
     { id: "indicacoes", label: "Indicações", icon: FileText },
-    { id: "vendas", label: "Vendas", icon: ShoppingCart },
+    { id: "vendas", label: "Vendas", icon: DollarSign },
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);

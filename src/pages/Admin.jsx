@@ -6,12 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { TableIcon, Settings, LogOut, ShieldCheck, FileText } from "lucide-react";
+import { TableIcon, Settings, LogOut, ShieldCheck, FileText, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
 import DashboardContent from "../components/admin/DashboardContent";
 import FormularioIndicacao from "../components/indicacao/FormularioIndicacao";
+import TabelaVendas from "../components/vendas/TabelaVendas";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
@@ -122,16 +123,43 @@ export default function Admin() {
             )}
 
             {activeMenu === "vendas" && (
-              <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-                <div className="text-center">
-                  <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                    Módulo de Vendas
-                  </h2>
-                  <p className="text-slate-500">
-                    Em breve disponível
-                  </p>
-                </div>
+              <div className="space-y-6">
+                <Tabs defaultValue="registrar" className="space-y-6">
+                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                    <TabsTrigger
+                      value="registrar"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <TableIcon className="w-4 h-4" />
+                      Registrar e Acompanhar
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="dashboard"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      Dashboard
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="registrar">
+                    <TabelaVendas userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
+
+                  <TabsContent value="dashboard">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Dashboard de Vendas
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             )}
           </motion.div>
