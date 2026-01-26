@@ -13,7 +13,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Formulario",
+    mainPage: "Inicio",
     Pages: PAGES,
     Layout: __Layout,
 };

@@ -20,7 +20,10 @@ import Sidebar from "../components/layout/Sidebar";
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeMenu, setActiveMenu] = useState("indicacoes");
+  const [activeMenu, setActiveMenu] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("menu") || "indicacoes";
+  });
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
