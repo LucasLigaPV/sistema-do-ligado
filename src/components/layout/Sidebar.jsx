@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   X,
+  Home,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,6 +19,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const menuItems = [
+    { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
     { id: "indicacoes", label: "Indicações", icon: FileText },
     { id: "vendas", label: "Vendas", icon: DollarSign },
   ];
@@ -103,6 +105,21 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeMenu === item.id;
+            
+            if (item.link) {
+              return (
+                <Link key={item.id} to={item.link}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 hover:bg-slate-100"
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {isOpen && <span>{item.label}</span>}
+                  </Button>
+                </Link>
+              );
+            }
+            
             return (
               <Button
                 key={item.id}
@@ -177,6 +194,22 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeMenu === item.id;
+                
+                if (item.link) {
+                  return (
+                    <Link key={item.id} to={item.link}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 hover:bg-slate-100"
+                        onClick={toggleMobileSidebar}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </Button>
+                    </Link>
+                  );
+                }
+                
                 return (
                   <Button
                     key={item.id}
