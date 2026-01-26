@@ -12,10 +12,12 @@ import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
 import DashboardContent from "../components/admin/DashboardContent";
 import FormularioIndicacao from "../components/indicacao/FormularioIndicacao";
+import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeMenu, setActiveMenu] = useState("indicacoes");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -44,110 +46,96 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Header */}
-      <header className="bg-white border-b shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/696e47847403553d35324f72/c31703845_SimplePretoeAmarelo.png"
-                alt="Liga"
-                className="h-12 w-auto"
-              />
-              <div className="hidden md:block">
-                <h1 className="text-lg font-bold text-slate-900">Painel Administrativo</h1>
-                <p className="text-xs text-slate-500">Sistema de Indicações</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
+      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+
+      {/* Main Content */}
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {activeMenu === "indicacoes" && (
+              <div className="space-y-6">
+                <Tabs defaultValue="indicacoes" className="space-y-6">
+                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                    <TabsTrigger
+                      value="indicacoes"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <TableIcon className="w-4 h-4" />
+                      Indicações
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="formulario"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Formulário
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="dashboard"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      Dashboard
+                    </TabsTrigger>
+                    {user?.role === "admin" && (
+                      <TabsTrigger
+                        value="configuracoes"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Configurações
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+
+                  <TabsContent value="indicacoes">
+                    <TabelaIndicacoes userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
+
+                  <TabsContent value="formulario">
+                    <FormularioIndicacao />
+                  </TabsContent>
+
+                  <TabsContent value="dashboard">
+                    <DashboardContent userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
+
+                  {user?.role === "admin" && (
+                    <TabsContent value="configuracoes">
+                      <div className="mb-6">
+                        <h2 className="text-xl font-bold text-slate-900 mb-2">
+                          Configurações do Formulário
+                        </h2>
+                        <p className="text-slate-500">
+                          Gerencie as opções disponíveis no formulário de indicação
+                        </p>
+                      </div>
+                      <ConfiguracaoFormularioAdmin />
+                    </TabsContent>
+                  )}
+                </Tabs>
               </div>
-            </div>
-
-
-
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-600 hidden md:block">
-                {user.full_name || user.email}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => base44.auth.logout()}
-                className="gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden md:inline">Sair</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Tabs defaultValue="indicacoes" className="space-y-6">
-            <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
-              <TabsTrigger
-                value="indicacoes"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-              >
-                <TableIcon className="w-4 h-4" />
-                Indicações
-              </TabsTrigger>
-              <TabsTrigger
-                value="formulario"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-              >
-                <FileText className="w-4 h-4" />
-                Formulário
-              </TabsTrigger>
-              <TabsTrigger
-                value="dashboard"
-                className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Dashboard
-              </TabsTrigger>
-              {user?.role === "admin" && (
-                <TabsTrigger
-                  value="configuracoes"
-                  className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                >
-                  <Settings className="w-4 h-4" />
-                  Configurações
-                </TabsTrigger>
-              )}
-            </TabsList>
-
-            <TabsContent value="indicacoes">
-              <TabelaIndicacoes userEmail={user?.email} userRole={user?.role} />
-            </TabsContent>
-
-            <TabsContent value="formulario">
-              <FormularioIndicacao />
-            </TabsContent>
-
-            <TabsContent value="dashboard">
-              <DashboardContent userEmail={user?.email} userRole={user?.role} />
-            </TabsContent>
-
-            {user?.role === "admin" && (
-              <TabsContent value="configuracoes">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-slate-900 mb-2">
-                  Configurações do Formulário
-                </h2>
-                <p className="text-slate-500">
-                  Gerencie as opções disponíveis no formulário de indicação
-                </p>
-              </div>
-              <ConfiguracaoFormularioAdmin />
-              </TabsContent>
             )}
-          </Tabs>
-        </motion.div>
+
+            {activeMenu === "vendas" && (
+              <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+                <div className="text-center">
+                  <ShoppingCart className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                    Módulo de Vendas
+                  </h2>
+                  <p className="text-slate-500">
+                    Em breve disponível
+                  </p>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
       </main>
     </div>
   );
