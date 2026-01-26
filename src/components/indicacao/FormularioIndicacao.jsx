@@ -11,7 +11,7 @@ import { CheckCircle2, Send, User, Car, Phone, Mail, Key, DollarSign, Users, Lay
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
 
-export default function FormularioIndicacao() {
+export default function FormularioIndicacao({ onSuccess }) {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
