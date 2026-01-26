@@ -61,27 +61,31 @@ export default function Admin() {
               <div className="space-y-6">
                 <Tabs defaultValue="indicacoes" className="space-y-6">
                   <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
-                    <TabsTrigger
-                      value="indicacoes"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <TableIcon className="w-4 h-4" />
-                      Indicações
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="formulario"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Formulário
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="dashboard"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                      Dashboard
-                    </TabsTrigger>
+                    {(user?.role === "admin" || user?.funcao === "lider") && (
+                      <>
+                        <TabsTrigger
+                          value="indicacoes"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <TableIcon className="w-4 h-4" />
+                          Indicações
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="formulario"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <FileText className="w-4 h-4" />
+                          Formulário
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="dashboard"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <ShieldCheck className="w-4 h-4" />
+                          Dashboard
+                        </TabsTrigger>
+                      </>
+                    )}
                     {user?.role === "admin" && (
                       <TabsTrigger
                         value="configuracoes"
@@ -126,42 +130,48 @@ export default function Admin() {
               <div className="space-y-6">
                 <Tabs defaultValue="registrar" className="space-y-6">
                   <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
-                    <TabsTrigger
-                      value="registrar"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <TableIcon className="w-4 h-4" />
-                      Registrar e Acompanhar
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="resumo"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Resumo
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="fechamentos"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                      Fechamentos
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="dashboard"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <BarChart3 className="w-4 h-4" />
-                      Dashboard
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="configuracoes"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                    >
-                      <Settings className="w-4 h-4" />
-                      Configurações
-                    </TabsTrigger>
-                    </TabsList>
+                    {(user?.role === "admin" || user?.funcao === "lider") && (
+                      <>
+                        <TabsTrigger
+                          value="registrar"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <TableIcon className="w-4 h-4" />
+                          Registrar e Acompanhar
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="resumo"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <FileText className="w-4 h-4" />
+                          Resumo
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="fechamentos"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <ShieldCheck className="w-4 h-4" />
+                          Fechamentos
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="dashboard"
+                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        >
+                          <BarChart3 className="w-4 h-4" />
+                          Dashboard
+                        </TabsTrigger>
+                      </>
+                    )}
+                    {user?.role === "admin" && (
+                      <TabsTrigger
+                        value="configuracoes"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Configurações
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
 
                   <TabsContent value="registrar">
                     <TabelaVendas userEmail={user?.email} userRole={user?.role} />
