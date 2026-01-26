@@ -2,6 +2,7 @@ import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import Formulario from './pages/Formulario';
 import Inicio from './pages/Inicio';
+import Ferramentas from './pages/Ferramentas';
 import __Layout from './Layout.jsx';
 
 
@@ -10,6 +11,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Formulario": Formulario,
     "Inicio": Inicio,
+    "Ferramentas": Ferramentas,
 }
 
 export const pagesConfig = {
