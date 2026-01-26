@@ -134,6 +134,20 @@ export default function Admin() {
                       Registrar e Acompanhar
                     </TabsTrigger>
                     <TabsTrigger
+                      value="resumo"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Resumo
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="fechamentos"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      Fechamentos
+                    </TabsTrigger>
+                    <TabsTrigger
                       value="dashboard"
                       className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
                     >
@@ -144,6 +158,34 @@ export default function Admin() {
 
                   <TabsContent value="registrar">
                     <TabelaVendas userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
+
+                  <TabsContent value="resumo">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Resumo de Vendas
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="fechamentos">
+                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+                      <div className="text-center">
+                        <ShieldCheck className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+                          Fechamentos
+                        </h2>
+                        <p className="text-slate-500">
+                          Em breve disponível
+                        </p>
+                      </div>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="dashboard">
