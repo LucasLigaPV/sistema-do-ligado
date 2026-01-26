@@ -100,12 +100,12 @@ export default function TabelaVendas({ userEmail, userRole }) {
     const matchStatus = statusFilter === "all" || venda.status === statusFilter;
     
     if (dataInicio) {
-      const dataVenda = new Date(venda.created_date);
+      const dataVenda = new Date(venda.data_venda);
       const inicio = new Date(dataInicio);
       if (dataVenda < inicio) return false;
     }
     if (dataFim) {
-      const dataVenda = new Date(venda.created_date);
+      const dataVenda = new Date(venda.data_venda);
       const fim = new Date(dataFim);
       fim.setHours(23, 59, 59, 999);
       if (dataVenda > fim) return false;
@@ -129,7 +129,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
       "Valor Indicação",
     ];
     const rows = filteredVendas.map((v) => [
-      format(new Date(v.created_date), "dd/MM/yyyy HH:mm"),
+      format(new Date(v.data_venda), "dd/MM/yyyy"),
       v.status,
       v.cliente,
       v.telefone,
@@ -307,7 +307,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         className="border-b hover:bg-slate-50/50 transition-colors"
                       >
                         <TableCell className="text-slate-600">
-                          {format(new Date(venda.created_date), "dd/MM/yyyy", { locale: ptBR })}
+                          {format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR })}
                         </TableCell>
                         <TableCell>
                           <Select
@@ -395,9 +395,9 @@ export default function TabelaVendas({ userEmail, userRole }) {
             <div className="space-y-6 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-slate-500">Data de Registro</p>
+                  <p className="text-sm text-slate-500">Data da Venda</p>
                   <p className="font-medium">
-                    {format(new Date(selectedVenda.created_date), "dd/MM/yyyy HH:mm")}
+                    {format(new Date(selectedVenda.data_venda), "dd/MM/yyyy")}
                   </p>
                 </div>
                 <div>

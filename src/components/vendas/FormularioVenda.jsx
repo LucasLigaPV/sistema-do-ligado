@@ -17,6 +17,7 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     vendedor: userEmail,
+    data_venda: new Date().toISOString().split('T')[0],
     status: "pendente",
     cliente: "",
     telefone: "",
@@ -61,6 +62,16 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label>Data da Venda *</Label>
+          <Input
+            type="date"
+            value={formData.data_venda}
+            onChange={(e) => setFormData({ ...formData, data_venda: e.target.value })}
+            required
+          />
+        </div>
+
         <div>
           <Label>Cliente *</Label>
           <Input
