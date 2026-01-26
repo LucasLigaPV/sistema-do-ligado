@@ -60,7 +60,7 @@ export default function Admin() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {activeMenu === "indicacoes" && (user?.role === "admin" || user?.funcao === "lider") && (
+            {activeMenu === "indicacoes" && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h2 className="text-2xl font-bold text-slate-900">Indicações</h2>
