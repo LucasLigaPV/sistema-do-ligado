@@ -334,12 +334,12 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         </TableCell>
                         <TableCell className="font-mono text-sm">{venda.placa}</TableCell>
                         <TableCell className="font-semibold text-emerald-600">
-                          {venda.valor_adesao}
+                          R$ {venda.valor_adesao}
                         </TableCell>
                         <TableCell>
                           {venda.tem_indicacao === "sim" ? (
                             <Badge className="bg-purple-100 text-purple-800">
-                              {venda.valor_indicacao}
+                              R$ {venda.valor_indicacao}
                             </Badge>
                           ) : (
                             <span className="text-xs text-slate-400">-</span>
@@ -435,7 +435,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Valor Adesão</p>
-                    <p className="font-medium text-emerald-600">{selectedVenda.valor_adesao}</p>
+                    <p className="font-medium text-emerald-600">R$ {selectedVenda.valor_adesao}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Forma de Pagamento</p>
@@ -452,7 +452,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   {selectedVenda.tem_indicacao === "sim" && (
                     <div>
                       <p className="text-sm text-slate-500">Valor Indicação</p>
-                      <p className="font-medium text-purple-600">{selectedVenda.valor_indicacao}</p>
+                      <p className="font-medium text-purple-600">R$ {selectedVenda.valor_indicacao}</p>
                     </div>
                   )}
                 </div>
