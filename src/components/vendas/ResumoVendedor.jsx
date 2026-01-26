@@ -20,6 +20,19 @@ const CORES_CANAIS = {
   troca_veiculo: "#f59e0b",
 };
 
+const formatarValor = (valor) => {
+  const numero = typeof valor === 'string' 
+    ? parseFloat(valor.replace(/[^0-9,]/g, "").replace(",", ".")) 
+    : valor;
+  
+  if (isNaN(numero)) return "0,00";
+  
+  return numero.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 export default function ResumoVendedor({ userEmail }) {
   const { data: vendas = [], isLoading } = useQuery({
     queryKey: ["vendas", userEmail],
@@ -167,7 +180,7 @@ export default function ResumoVendedor({ userEmail }) {
                 <div>
                   <p className="text-sm text-slate-500">Comissão sobre Adesão</p>
                   <p className="text-3xl font-bold text-[#EFC200]">
-                    R$ {comissaoValor.toFixed(2).replace(".", ",")}
+                    R$ {formatarValor(comissaoValor)}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     {nivelAtual.comissaoPorPlaca > 0 
@@ -228,7 +241,7 @@ export default function ResumoVendedor({ userEmail }) {
                 <div>
                   <p className="text-sm text-slate-500">Total de Adesão</p>
                   <p className="text-3xl font-bold text-slate-900">
-                    R$ {totalAdesao.toFixed(2).replace(".", ",")}
+                    R$ {formatarValor(totalAdesao)}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">

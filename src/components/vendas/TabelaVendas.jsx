@@ -60,6 +60,17 @@ const canalLabels = {
   troca_veiculo: "Troca de Veículo",
 };
 
+const formatarValorExibicao = (valor) => {
+  if (!valor) return "-";
+  const numero = parseFloat(valor.replace(/[^0-9,]/g, "").replace(",", "."));
+  if (isNaN(numero)) return valor;
+  
+  return numero.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
+
 export default function TabelaVendas({ userEmail, userRole }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
@@ -334,12 +345,12 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         </TableCell>
                         <TableCell className="font-mono text-sm">{venda.placa}</TableCell>
                         <TableCell className="font-semibold text-emerald-600">
-                          R$ {venda.valor_adesao}
+                          R$ {formatarValorExibicao(venda.valor_adesao)}
                         </TableCell>
                         <TableCell>
                           {venda.tem_indicacao === "sim" ? (
                             <Badge className="bg-purple-100 text-purple-800">
-                              R$ {venda.valor_indicacao}
+                              R$ {formatarValorExibicao(venda.valor_indicacao)}
                             </Badge>
                           ) : (
                             <span className="text-xs text-slate-400">-</span>
@@ -435,7 +446,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Valor Adesão</p>
-                    <p className="font-medium text-emerald-600">R$ {selectedVenda.valor_adesao}</p>
+                    <p className="font-medium text-emerald-600">R$ {formatarValorExibicao(selectedVenda.valor_adesao)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Forma de Pagamento</p>
@@ -452,7 +463,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   {selectedVenda.tem_indicacao === "sim" && (
                     <div>
                       <p className="text-sm text-slate-500">Valor Indicação</p>
-                      <p className="font-medium text-purple-600">R$ {selectedVenda.valor_indicacao}</p>
+                      <p className="font-medium text-purple-600">R$ {formatarValorExibicao(selectedVenda.valor_indicacao)}</p>
                     </div>
                   )}
                 </div>
