@@ -104,6 +104,17 @@ export default function TabelaVendas({ userEmail, userRole }) {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Venda.update(id, data),
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries({ queryKey: ["vendas"] });
+      const previousVendas = queryClient.getQueryData(["vendas"]);
+      queryClient.setQueryData(["vendas"], (old) =>
+        old.map((v) => (v.id === id ? { ...v, ...data } : v))
+      );
+      return { previousVendas };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(["vendas"], context.previousVendas);
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["vendas"] });
       const venda = vendas.find(v => v.id === variables.id);
