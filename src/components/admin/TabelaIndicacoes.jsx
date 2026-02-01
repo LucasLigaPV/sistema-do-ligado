@@ -367,7 +367,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                           </div>
                         </TableCell>
                         <TableCell className="font-semibold text-emerald-600">
-                          {ind.valor_indicacao}
+                          R$ {ind.valor_indicacao}
                         </TableCell>
                         <TableCell>
                           <Select
@@ -550,7 +550,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-slate-500">Valor</p>
-                    <p className="font-medium text-emerald-600">{selectedIndicacao.valor_indicacao}</p>
+                    <p className="font-medium text-emerald-600">R$ {selectedIndicacao.valor_indicacao}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Chave Pix</p>
