@@ -33,11 +33,14 @@ import {
   Trash2,
   Download,
   Clock,
-  CheckCircle,
+  CheckCircle2,
   TrendingUp,
   Plus,
   UserPlus,
   PartyPopper,
+  DollarSign,
+  ClipboardCheck,
+  Loader,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -47,9 +50,10 @@ import FormularioVenda from "./FormularioVenda";
 import FormularioIndicacaoVenda from "./FormularioIndicacaoVenda";
 
 const etapaConfig = {
-  pagamento_ok: { label: "Pagamento OK", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
-  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800", icon: TrendingUp },
-  ativo: { label: "Ativo", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
+  pagamento_ok: { label: "Pagamento OK", color: "bg-amber-100 text-amber-800 border border-amber-300", icon: DollarSign },
+  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800 border border-blue-300", icon: ClipboardCheck },
+  em_ativacao: { label: "Em Ativação", color: "bg-purple-100 text-purple-800 border border-purple-300", icon: Loader },
+  ativo: { label: "Ativo", color: "bg-emerald-100 text-emerald-800 border border-emerald-300", icon: CheckCircle2 },
 };
 
 const planoLabels = {
@@ -175,8 +179,9 @@ export default function TabelaVendas({ userEmail, userRole }) {
     const total = vendas.length;
     const pagamentoOk = vendas.filter((v) => v.etapa === "pagamento_ok").length;
     const vistoriaOk = vendas.filter((v) => v.etapa === "vistoria_ok").length;
+    const emAtivacao = vendas.filter((v) => v.etapa === "em_ativacao").length;
     const ativas = vendas.filter((v) => v.etapa === "ativo").length;
-    return { total, pagamentoOk, vistoriaOk, ativas };
+    return { total, pagamentoOk, vistoriaOk, emAtivacao, ativas };
   };
 
   const stats = getStats();
@@ -199,7 +204,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
             <p className="text-sm text-slate-500">Total</p>
@@ -208,14 +213,20 @@ export default function TabelaVendas({ userEmail, userRole }) {
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-[#EFC200]">Pagamento OK</p>
-            <p className="text-2xl font-bold text-[#EFC200]">{stats.pagamentoOk}</p>
+            <p className="text-sm text-amber-600">Pagamento OK</p>
+            <p className="text-2xl font-bold text-amber-600">{stats.pagamentoOk}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
             <p className="text-sm text-blue-600">Vistoria OK</p>
             <p className="text-2xl font-bold text-blue-600">{stats.vistoriaOk}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-md">
+          <CardContent className="p-4">
+            <p className="text-sm text-purple-600">Em Ativação</p>
+            <p className="text-2xl font-bold text-purple-600">{stats.emAtivacao}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">
@@ -272,6 +283,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   <SelectItem value="all">Todas</SelectItem>
                   <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
                   <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
+                  <SelectItem value="em_ativacao">Em Ativação</SelectItem>
                   <SelectItem value="ativo">Ativo</SelectItem>
                 </SelectContent>
               </Select>
@@ -299,7 +311,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                 <TableHead>Plano</TableHead>
                 <TableHead>Placa</TableHead>
                 <TableHead>Adesão</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -344,6 +356,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                             <SelectContent>
                               <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
                               <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
+                              <SelectItem value="em_ativacao">Em Ativação</SelectItem>
                               <SelectItem value="ativo">Ativo</SelectItem>
                             </SelectContent>
                           </Select>
@@ -357,8 +370,8 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         <TableCell className="font-semibold text-emerald-600">
                           R$ {formatarValorExibicao(venda.valor_adesao)}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
+                        <TableCell>
+                          <div className="flex justify-center gap-2">
                             {venda.tem_indicacao === "sim" && (
                               <Button
                                 variant="ghost"
