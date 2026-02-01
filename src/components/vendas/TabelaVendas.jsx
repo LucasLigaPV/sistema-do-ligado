@@ -140,6 +140,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
     const matchEtapa = etapaFilter === "all" || venda.etapa === etapaFilter;
+    const matchConsultor = consultorFilter === "all" || venda.vendedor === consultorFilter;
     
     if (dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
@@ -153,7 +154,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       if (dataVenda > fim) return false;
     }
     
-    return matchSearch && matchEtapa;
+    return matchSearch && matchEtapa && matchConsultor;
   });
 
   const exportToCSV = () => {
@@ -260,7 +261,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${userFuncao === "lider" ? "lg:grid-cols-6" : "lg:grid-cols-5"} gap-4`}>
             <div className="lg:col-span-2">
               <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
               <div className="relative">
@@ -304,6 +305,27 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 </SelectContent>
               </Select>
             </div>
+            {userFuncao === "lider" && (
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
+                <Select value={consultorFilter} onValueChange={setConsultorFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Vendedor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {membrosEquipe.map((email) => {
+                      const user = users.find(u => u.email === email);
+                      return (
+                        <SelectItem key={email} value={email}>
+                          {user?.full_name || email}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <div className="mt-4">
             <Button variant="outline" onClick={exportToCSV} className="gap-2 w-full md:w-auto">
