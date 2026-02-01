@@ -116,10 +116,16 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   });
 
   const { data: users = [] } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", membrosEquipe],
     queryFn: async () => {
+      if (!membrosEquipe.length) return [];
       try {
-        return await base44.entities.User.list();
+        // Busca cada usuário individualmente por email
+        const usuarioPromises = membrosEquipe.map(email =>
+          base44.entities.User.filter({ email }).then(result => result[0] || null)
+        );
+        const results = await Promise.all(usuarioPromises);
+        return results.filter(Boolean);
       } catch {
         return [];
       }
