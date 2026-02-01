@@ -52,12 +52,21 @@ export default function TabelaFechamentos() {
     return usuarios
       .filter(user => user.funcao === "vendedor" || user.funcao === "lider")
       .map(user => {
-        const vendasDoVendedor = vendas.filter(v => v.vendedor === user.email);
+        const vendasDoVendedor = vendas.filter(v => v.vendedor === user.email && v.status === "concluido");
         const totalVendas = vendasDoVendedor.length;
         
         const totalAdesao = vendasDoVendedor.reduce((sum, v) => {
           const valor = parseFloat(v.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
           return sum + valor;
+        }, 0);
+
+        // Calcular total de indicações
+        const totalIndicacoes = vendasDoVendedor.reduce((sum, v) => {
+          if (v.tem_indicacao === "sim" && v.valor_indicacao) {
+            const valor = parseFloat(v.valor_indicacao.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
+            return sum + valor;
+          }
+          return sum;
         }, 0);
 
         // Calcular nível
@@ -69,13 +78,18 @@ export default function TabelaFechamentos() {
           }
         }
 
-        // Calcular comissão
-        let comissaoValor = 0;
+        // Calcular comissão bruta
+        let comissaoBruta = 0;
         if (nivelAtual.comissaoPorPlaca > 0) {
-          comissaoValor = totalVendas * nivelAtual.comissaoPorPlaca;
+          comissaoBruta = totalVendas * nivelAtual.comissaoPorPlaca;
         } else {
-          comissaoValor = (totalAdesao * nivelAtual.percentualAdesao) / 100;
+          comissaoBruta = (totalAdesao * nivelAtual.percentualAdesao) / 100;
         }
+
+        // Descontar indicações e taxas
+        const comissaoAposIndicacao = comissaoBruta - totalIndicacoes;
+        const taxas = comissaoAposIndicacao * 0.04;
+        const comissaoLiquida = comissaoAposIndicacao - taxas;
 
         return {
           nome: user.full_name || user.email,
@@ -83,7 +97,10 @@ export default function TabelaFechamentos() {
           funcao: user.funcao,
           totalVendas,
           nivelAtual: nivelAtual.nivel,
-          comissaoAdesao: comissaoValor,
+          comissaoBruta,
+          totalIndicacoes,
+          taxas,
+          comissaoLiquida,
           recorrencia: nivelAtual.recorrencia,
           chavePix: user.chave_pix || "-",
         };
@@ -93,7 +110,7 @@ export default function TabelaFechamentos() {
 
   const totais = useMemo(() => {
     return fechamentos.reduce((acc, f) => {
-      acc.totalComissao += f.comissaoAdesao;
+      acc.totalComissao += f.comissaoLiquida;
       acc.totalVendas += f.totalVendas;
       return acc;
     }, { totalComissao: 0, totalVendas: 0 });
@@ -170,9 +187,12 @@ export default function TabelaFechamentos() {
               <TableRow className="bg-slate-50">
                 <TableHead>Nome do Vendedor</TableHead>
                 <TableHead>Função</TableHead>
-                <TableHead className="text-center">Total Vendas</TableHead>
-                <TableHead className="text-center">Nível Alcançado</TableHead>
-                <TableHead className="text-right">Comissão Adesão</TableHead>
+                <TableHead className="text-center">Vendas</TableHead>
+                <TableHead className="text-center">Nível</TableHead>
+                <TableHead className="text-right">Comissão Bruta</TableHead>
+                <TableHead className="text-right">Indicações</TableHead>
+                <TableHead className="text-right">Taxas (4%)</TableHead>
+                <TableHead className="text-right">Comissão Líquida</TableHead>
                 <TableHead className="text-center">Recorrência</TableHead>
                 <TableHead>Chave Pix</TableHead>
               </TableRow>
@@ -180,7 +200,7 @@ export default function TabelaFechamentos() {
             <TableBody>
               {fechamentos.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-10 text-slate-500">
+                  <TableCell colSpan={10} className="text-center py-10 text-slate-500">
                     Nenhum vendedor encontrado
                   </TableCell>
                 </TableRow>
@@ -212,8 +232,17 @@ export default function TabelaFechamentos() {
                         {fechamento.nivelAtual}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right font-semibold text-slate-700">
+                      R$ {formatarValor(fechamento.comissaoBruta)}
+                    </TableCell>
+                    <TableCell className="text-right text-red-600">
+                      - R$ {formatarValor(fechamento.totalIndicacoes)}
+                    </TableCell>
+                    <TableCell className="text-right text-orange-600">
+                      - R$ {formatarValor(fechamento.taxas)}
+                    </TableCell>
                     <TableCell className="text-right font-bold text-[#EFC200]">
-                      R$ {formatarValor(fechamento.comissaoAdesao)}
+                      R$ {formatarValor(fechamento.comissaoLiquida)}
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge className="bg-emerald-100 text-emerald-800">
