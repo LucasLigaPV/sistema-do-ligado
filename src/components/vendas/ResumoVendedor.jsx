@@ -39,6 +39,14 @@ export default function ResumoVendedor({ userEmail }) {
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ["currentUser", userEmail],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return user;
+    },
+  });
+
   const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail && v.etapa === "ativo");
 
   // Calcular estatísticas
@@ -111,6 +119,46 @@ export default function ResumoVendedor({ userEmail }) {
     }, 100);
     return () => clearTimeout(timer);
   }, [progresso]);
+
+  // Comemorar novo nível alcançado
+  React.useEffect(() => {
+    if (!currentUser || totalVendas === 0) return;
+
+    const nivelAtualIndex = PLANO_CARREIRA.findIndex(n => n.nivel === nivelAtual.nivel);
+    const ultimoNivelComemorado = currentUser.ultimo_nivel_comemorado || 0;
+
+    if (nivelAtualIndex > ultimoNivelComemorado && nivelAtualIndex > 0) {
+      // Disparar confetes
+      const duration = 3000;
+      const end = Date.now() + duration;
+
+      const frame = () => {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#EFC200', '#D4A900', '#F5D84A'],
+        });
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#EFC200', '#D4A900', '#F5D84A'],
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+
+      frame();
+
+      // Atualizar último nível comemorado
+      base44.auth.updateMe({ ultimo_nivel_comemorado: nivelAtualIndex });
+    }
+  }, [currentUser, totalVendas, nivelAtual]);
 
   // Calcular total de indicações
   const totalIndicacoes = vendasDoVendedor.reduce((sum, v) => {
