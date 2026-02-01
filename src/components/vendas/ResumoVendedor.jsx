@@ -215,13 +215,16 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-6">
-      {/* Seletor de Vendedor (Líder) */}
-      {userFuncao === "lider" && (
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <Label className="text-sm text-slate-600 mb-2 block">Selecionar Vendedor</Label>
+      {/* Header com Seletor de Vendedor (Líder) */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Resumo</h2>
+          <p className="text-slate-500 text-sm">Acompanhe sua evolução e desempenho</p>
+        </div>
+        {userFuncao === "lider" && (
+          <div className="w-64">
             <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-slate-300">
                 <SelectValue placeholder="Selecione um vendedor" />
               </SelectTrigger>
               <SelectContent>
@@ -235,9 +238,9 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                 })}
               </SelectContent>
             </Select>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* Plano de Carreira */}
       <Card className="border-0 shadow-lg bg-white">
