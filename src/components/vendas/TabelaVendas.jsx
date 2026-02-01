@@ -36,12 +36,15 @@ import {
   CheckCircle,
   TrendingUp,
   Plus,
+  UserPlus,
+  PartyPopper,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import FormularioVenda from "./FormularioVenda";
+import FormularioIndicacaoVenda from "./FormularioIndicacaoVenda";
 
 const etapaConfig = {
   pagamento_ok: { label: "Pagamento OK", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
@@ -82,6 +85,8 @@ export default function TabelaVendas({ userEmail, userRole }) {
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
+  const [showAtivoAlert, setShowAtivoAlert] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: allVendas = [], isLoading } = useQuery({
@@ -95,7 +100,13 @@ export default function TabelaVendas({ userEmail, userRole }) {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Venda.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vendas"] }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["vendas"] });
+      const venda = vendas.find(v => v.id === variables.id);
+      if (variables.data.etapa === "ativo" && venda?.tem_indicacao === "sim") {
+        setShowAtivoAlert(true);
+      }
+    },
   });
 
   const deleteMutation = useMutation({
@@ -288,7 +299,6 @@ export default function TabelaVendas({ userEmail, userRole }) {
                 <TableHead>Plano</TableHead>
                 <TableHead>Placa</TableHead>
                 <TableHead>Adesão</TableHead>
-                <TableHead>Indicação</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -296,13 +306,13 @@ export default function TabelaVendas({ userEmail, userRole }) {
               <AnimatePresence>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={8} className="text-center py-10 text-slate-500">
                       Carregando...
                     </TableCell>
                   </TableRow>
                 ) : filteredVendas.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={8} className="text-center py-10 text-slate-500">
                       Nenhuma venda encontrada
                     </TableCell>
                   </TableRow>
@@ -347,17 +357,19 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         <TableCell className="font-semibold text-emerald-600">
                           R$ {formatarValorExibicao(venda.valor_adesao)}
                         </TableCell>
-                        <TableCell>
-                          {venda.tem_indicacao === "sim" ? (
-                            <Badge className="bg-purple-100 text-purple-800">
-                              R$ {formatarValorExibicao(venda.valor_indicacao)}
-                            </Badge>
-                          ) : (
-                            <span className="text-xs text-slate-400">-</span>
-                          )}
-                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
+                            {venda.tem_indicacao === "sim" && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setShowIndicacaoForm(venda)}
+                                className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                title="Preencher indicação"
+                              >
+                                <UserPlus className="w-4 h-4" />
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon"
@@ -393,6 +405,48 @@ export default function TabelaVendas({ userEmail, userRole }) {
             <DialogTitle>Registrar Nova Venda</DialogTitle>
           </DialogHeader>
           <FormularioVenda onSuccess={() => setShowForm(false)} userEmail={userEmail} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Ativo Alert Dialog */}
+      <Dialog open={showAtivoAlert} onOpenChange={setShowAtivoAlert}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <PartyPopper className="w-6 h-6 text-emerald-600" />
+              </div>
+              <DialogTitle className="text-xl">Parabéns pela venda ativa!</DialogTitle>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <p className="text-slate-600">
+              Esta venda é uma <span className="font-semibold text-purple-600">indicação</span>. 
+              Clique no ícone de pessoa <UserPlus className="w-4 h-4 inline text-purple-600" /> na venda 
+              para preencher os dados da indicação.
+            </p>
+            <Button
+              onClick={() => setShowAtivoAlert(false)}
+              className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
+            >
+              Ok, estou ciente
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Indicacao Form Dialog */}
+      <Dialog open={!!showIndicacaoForm} onOpenChange={() => setShowIndicacaoForm(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Preencher Indicação</DialogTitle>
+          </DialogHeader>
+          {showIndicacaoForm && (
+            <FormularioIndicacaoVenda 
+              venda={showIndicacaoForm} 
+              onSuccess={() => setShowIndicacaoForm(null)} 
+            />
+          )}
         </DialogContent>
       </Dialog>
 

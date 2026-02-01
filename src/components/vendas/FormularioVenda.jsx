@@ -27,7 +27,6 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
     forma_pagamento: "",
     canal_venda: "",
     tem_indicacao: "nao",
-    valor_indicacao: "",
   });
 
   const createMutation = useMutation({
@@ -40,11 +39,7 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const dataToSubmit = { ...formData };
-    if (formData.tem_indicacao === "nao") {
-      dataToSubmit.valor_indicacao = "";
-    }
-    createMutation.mutate(dataToSubmit);
+    createMutation.mutate(formData);
   };
 
   const formatPhone = (value) => {
@@ -185,17 +180,6 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
             </SelectContent>
           </Select>
         </div>
-
-        {formData.tem_indicacao === "sim" && (
-          <div className="md:col-span-2">
-            <Label>Valor da Indicação</Label>
-            <Input
-              value={formData.valor_indicacao}
-              onChange={(e) => setFormData({ ...formData, valor_indicacao: e.target.value })}
-              placeholder="Ex: R$ 50,00"
-            />
-          </div>
-        )}
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t">
