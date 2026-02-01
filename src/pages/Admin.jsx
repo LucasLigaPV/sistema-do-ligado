@@ -127,7 +127,7 @@ export default function Admin() {
                       <FileText className="w-4 h-4" />
                       Resumo
                     </TabsTrigger>
-                    {(user?.role === "admin" || user?.funcao === "lider" || user?.funcao === "master") && (
+                    {(user?.funcao === "master") && (
                       <>
                         <TabsTrigger
                           value="fechamentos"
