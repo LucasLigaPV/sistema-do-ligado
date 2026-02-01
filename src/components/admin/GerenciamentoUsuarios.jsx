@@ -20,12 +20,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, UserCog, Users, Shield } from "lucide-react";
+import { Search, UserCog, Users, Shield, Edit } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function GerenciamentoUsuarios() {
   const [search, setSearch] = useState("");
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({});
   const queryClient = useQueryClient();
 
   const { data: users = [], isLoading } = useQuery({
@@ -35,7 +38,20 @@ export default function GerenciamentoUsuarios() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.User.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setEditingUser(null);
+    },
+  });
+
+  const createEquipeMutation = useMutation({
+    mutationFn: (data) => base44.entities.Equipe.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["equipes"] }),
+  });
+
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
   });
 
   const filteredUsers = users.filter((user) => {
@@ -46,6 +62,46 @@ export default function GerenciamentoUsuarios() {
   });
 
   const lideres = users.filter((u) => u.funcao === "lider");
+
+  const handleFuncaoChange = async (userId, novaFuncao, userEmail, userName) => {
+    const oldUser = users.find((u) => u.id === userId);
+    
+    // Se mudou para líder, criar equipe automaticamente
+    if (novaFuncao === "lider" && oldUser.funcao !== "lider") {
+      await createEquipeMutation.mutateAsync({
+        nome: `Equipe ${userName || userEmail}`,
+        lider_email: userEmail,
+        membros: [],
+        ativa: true,
+      });
+    }
+
+    // Atualizar função do usuário
+    updateMutation.mutate({
+      id: userId,
+      data: {
+        funcao: novaFuncao,
+        lider_email: novaFuncao === "lider" || novaFuncao === "master" ? null : oldUser.lider_email,
+      },
+    });
+  };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setEditForm({
+      full_name: user.full_name || "",
+      email: user.email || "",
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (editingUser) {
+      updateMutation.mutate({
+        id: editingUser.id,
+        data: editForm,
+      });
+    }
+  };
 
   const getStats = () => {
     const total = users.length;
@@ -139,19 +195,20 @@ export default function GerenciamentoUsuarios() {
                 <TableHead>E-mail</TableHead>
                 <TableHead>Função</TableHead>
                 <TableHead>Líder Responsável</TableHead>
+                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <AnimatePresence>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
                       Carregando...
                     </TableCell>
                   </TableRow>
                 ) : filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
                       Nenhum usuário encontrado
                     </TableCell>
                   </TableRow>
@@ -170,13 +227,7 @@ export default function GerenciamentoUsuarios() {
                         <Select
                           value={user.funcao || "vendedor"}
                           onValueChange={(v) =>
-                            updateMutation.mutate({
-                              id: user.id,
-                              data: {
-                                funcao: v,
-                                lider_email: v === "lider" || v === "master" ? null : user.lider_email,
-                              },
-                            })
+                            handleFuncaoChange(user.id, v, user.email, user.full_name)
                           }
                         >
                           <SelectTrigger className="w-32">
@@ -216,6 +267,16 @@ export default function GerenciamentoUsuarios() {
                           <span className="text-slate-400 text-sm">-</span>
                         )}
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEditUser(user)}
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
                     </motion.tr>
                   ))
                 )}
@@ -224,6 +285,42 @@ export default function GerenciamentoUsuarios() {
           </Table>
         </div>
       </Card>
+
+      {/* Dialog de Edição */}
+      <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Cadastro do Consultor</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Nome Completo</Label>
+              <Input
+                value={editForm.full_name || ""}
+                onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                placeholder="Nome completo"
+              />
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">E-mail</Label>
+              <Input
+                value={editForm.email || ""}
+                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                placeholder="E-mail"
+                type="email"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setEditingUser(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveEdit} className="bg-[#EFC200] hover:bg-[#D4A900] text-black">
+              Salvar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

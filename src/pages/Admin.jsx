@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { TableIcon, Settings, LogOut, ShieldCheck, FileText, BarChart3, Plus, Users } from "lucide-react";
+import { TableIcon, Settings, LogOut, ShieldCheck, FileText, BarChart3, Plus, Users, UsersRound } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
@@ -18,6 +18,7 @@ import ResumoVendedor from "../components/vendas/ResumoVendedor";
 import TabelaFechamentos from "../components/vendas/TabelaFechamentos";
 import DashboardVendas from "../components/vendas/DashboardVendas";
 import GerenciamentoUsuarios from "../components/admin/GerenciamentoUsuarios";
+import GerenciamentoEquipes from "../components/admin/GerenciamentoEquipes";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
@@ -180,10 +181,23 @@ export default function Admin() {
                       <Users className="w-4 h-4" />
                       Usuários
                     </TabsTrigger>
+                    {user?.funcao === "master" && (
+                      <TabsTrigger
+                        value="equipes"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      >
+                        <UsersRound className="w-4 h-4" />
+                        Equipes
+                      </TabsTrigger>
+                    )}
                   </TabsList>
 
                   <TabsContent value="usuarios">
                     <GerenciamentoUsuarios />
+                  </TabsContent>
+
+                  <TabsContent value="equipes">
+                    <GerenciamentoEquipes />
                   </TabsContent>
                 </Tabs>
               </div>
