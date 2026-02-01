@@ -68,7 +68,7 @@ export default function Admin() {
             {activeMenu === "indicacoes" && (
               <div className="space-y-6">
                 <Tabs defaultValue="indicacoes" className="space-y-6">
-                  <div className="mb-6">
+                  <div className="mb-3">
                     <h2 className="text-2xl font-bold text-slate-900">Indicações</h2>
                     <p className="text-slate-500">Visualize e acompanhe todas as indicações</p>
                   </div>
@@ -138,7 +138,7 @@ export default function Admin() {
             {activeMenu === "vendas" && (
               <div className="space-y-6">
                 <Tabs defaultValue="registrar" className="space-y-6">
-                  <div className="mb-6">
+                  <div className="mb-3">
                     <h2 className="text-2xl font-bold text-slate-900">Vendas</h2>
                     <p className="text-slate-500">Registre, acompanhe e gerencie suas vendas</p>
                   </div>
