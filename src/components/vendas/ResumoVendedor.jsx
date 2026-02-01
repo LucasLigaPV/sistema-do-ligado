@@ -59,9 +59,20 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   });
 
   const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
-    enabled: userFuncao === "lider",
+    queryKey: ["users", membrosEquipe],
+    queryFn: async () => {
+      if (!membrosEquipe.length) return [];
+      try {
+        const usuarioPromises = membrosEquipe.map(email =>
+          base44.entities.User.filter({ email }).then(result => result[0] || null)
+        );
+        const results = await Promise.all(usuarioPromises);
+        return results.filter(Boolean);
+      } catch {
+        return [];
+      }
+    },
+    enabled: userFuncao === "lider" && membrosEquipe.length > 0,
   });
 
   // Obter equipe do líder
