@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, TrendingUp, LogOut, Wrench } from "lucide-react";
+import { FileText, TrendingUp, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { createPageUrl } from "@/utils";
@@ -59,15 +59,6 @@ export default function Inicio() {
       bgColor: "bg-emerald-50",
       iconColor: "text-emerald-600",
       link: "/Admin?menu=vendas"
-    },
-    {
-      title: "Ferramentas",
-      description: "Biblioteca de recursos de venda",
-      icon: Wrench,
-      color: "from-amber-500 to-amber-600",
-      bgColor: "bg-amber-50",
-      iconColor: "text-amber-600",
-      link: "/Ferramentas"
     }
   ];
 
