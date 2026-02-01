@@ -127,23 +127,21 @@ export default function Admin() {
                       <FileText className="w-4 h-4" />
                       Resumo
                     </TabsTrigger>
+                    <TabsTrigger
+                      value="dashboard"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      Dashboard
+                    </TabsTrigger>
                     {(user?.funcao === "master") && (
-                      <>
-                        <TabsTrigger
-                          value="fechamentos"
-                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                        >
-                          <ShieldCheck className="w-4 h-4" />
-                          Fechamentos
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value="dashboard"
-                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                        >
-                          <BarChart3 className="w-4 h-4" />
-                          Dashboard
-                        </TabsTrigger>
-                      </>
+                      <TabsTrigger
+                        value="fechamentos"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                        Fechamentos
+                      </TabsTrigger>
                     )}
                   </TabsList>
 
