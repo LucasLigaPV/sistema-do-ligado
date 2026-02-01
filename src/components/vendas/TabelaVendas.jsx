@@ -377,47 +377,49 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-3" align="start">
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Checkbox 
-                          id="all-team"
-                          checked={consultorFilter.length === membrosEquipe.length}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setConsultorFilter(membrosEquipe);
-                            } else {
-                              setConsultorFilter([]);
-                            }
-                          }}
-                        />
-                        <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
-                          Todos da Equipe
-                        </Label>
-                      </div>
-                      <div className="border-t pt-2 space-y-2 max-h-48 overflow-y-auto">
-                        {membrosEquipe.map((email) => {
-                           const isChecked = consultorFilter.includes(email);
-                           const isCurrentUser = email === userEmail;
-                           const nomeVendedor = getNomeVendedor(email, users, membrosEquipe);
-                           return (
-                             <div key={email} className="flex items-center gap-2 truncate">
-                               <Checkbox 
-                                 id={`seller-${email}`}
-                                 checked={isChecked}
-                                 onCheckedChange={(checked) => {
-                                   if (checked) {
-                                     setConsultorFilter([...consultorFilter, email]);
-                                   } else {
-                                     setConsultorFilter(consultorFilter.filter(e => e !== email));
-                                   }
-                                 }}
-                               />
-                               <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer truncate">
-                                 {nomeVendedor} {isCurrentUser && "(Você)"}
-                               </Label>
-                             </div>
-                           );
-                         })}
-                      </div>
+                    <div className="flex items-center gap-2 p-2 rounded-md hover:bg-amber-50">
+                      <Checkbox 
+                        id="all-team"
+                        checked={consultorFilter.length === membrosEquipe.length}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setConsultorFilter(membrosEquipe);
+                          } else {
+                            setConsultorFilter([]);
+                          }
+                        }}
+                        className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#D4A900]"
+                      />
+                      <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
+                        Todos da Equipe
+                      </Label>
+                    </div>
+                    <div className="border-t pt-2 space-y-2 max-h-48 overflow-y-auto">
+                      {membrosEquipe.map((email) => {
+                         const isChecked = consultorFilter.includes(email);
+                         const isCurrentUser = email === userEmail;
+                         const nomeVendedor = getNomeVendedor(email, users, membrosEquipe);
+                         return (
+                           <div key={email} className={`flex items-center gap-2 truncate p-2 rounded-md transition-colors ${isChecked ? 'bg-amber-100' : 'hover:bg-slate-100'}`}>
+                             <Checkbox 
+                               id={`seller-${email}`}
+                               checked={isChecked}
+                               onCheckedChange={(checked) => {
+                                 if (checked) {
+                                   setConsultorFilter([...consultorFilter, email]);
+                                 } else {
+                                   setConsultorFilter(consultorFilter.filter(e => e !== email));
+                                 }
+                               }}
+                               className={isChecked ? "data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#D4A900]" : ""}
+                             />
+                             <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer truncate font-medium">
+                               {nomeVendedor} {isCurrentUser && "(Você)"}
+                             </Label>
+                           </div>
+                         );
+                       })}
+                    </div>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -441,6 +443,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
               <TableRow className="bg-slate-50">
                 <TableHead>Data</TableHead>
                 <TableHead>Etapa</TableHead>
+                {userFuncao === "lider" && <TableHead>Vendedor</TableHead>}
                 <TableHead>Cliente</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead>Plano</TableHead>
@@ -513,6 +516,11 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                             </SelectContent>
                           </Select>
                         </TableCell>
+                        {userFuncao === "lider" && (
+                          <TableCell className="font-medium">
+                            {getNomeVendedor(venda.vendedor, users, membrosEquipe)}
+                          </TableCell>
+                        )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
                         <TableCell>{venda.telefone}</TableCell>
                         <TableCell>
