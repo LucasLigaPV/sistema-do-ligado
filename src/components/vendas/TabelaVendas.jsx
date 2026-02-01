@@ -339,14 +339,17 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                       variant="outline" 
                       className="w-full justify-between h-9 px-3"
                     >
-                      <span className="text-sm text-slate-700">
+                      <span className="text-sm text-slate-700 truncate">
                         {consultorFilter.length === 0 
                           ? "Selecione vendedor" 
                           : consultorFilter.length === membrosEquipe.length 
                           ? "Todos da Equipe" 
-                          : `${consultorFilter.length} selecionado${consultorFilter.length > 1 ? 's' : ''}`}
+                          : consultorFilter.map(email => {
+                              const user = users.find(u => u.email === email);
+                              return user?.full_name || email;
+                            }).join(", ")}
                       </span>
-                      <ChevronDown className="w-4 h-4 opacity-50" />
+                      <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-3" align="start">
