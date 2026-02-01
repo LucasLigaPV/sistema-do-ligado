@@ -51,9 +51,19 @@ export default function GerenciamentoUsuarios() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["equipes"] }),
   });
 
+  const deleteEquipeMutation = useMutation({
+    mutationFn: (id) => base44.entities.Equipe.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["equipes"] }),
+  });
+
+  const updateEquipeMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Equipe.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["equipes"] }),
+  });
+
   const { data: equipes = [] } = useQuery({
     queryKey: ["equipes"],
-    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+    queryFn: () => base44.entities.Equipe.list(),
   });
 
   const filteredUsers = users.filter((user) => {
@@ -68,14 +78,45 @@ export default function GerenciamentoUsuarios() {
   const handleFuncaoChange = async (userId, novaFuncao, userEmail, userName) => {
     const oldUser = users.find((u) => u.id === userId);
     
-    // Se mudou para líder, criar equipe automaticamente
+    // Se estava como líder e mudou para outra função, remover equipe e desvincular membros
+    if (oldUser.funcao === "lider" && novaFuncao !== "lider") {
+      const equipeDoLider = equipes.find(e => e.lider_email === userEmail);
+      
+      if (equipeDoLider) {
+        // Desvincular todos os membros da equipe
+        const membros = equipeDoLider.membros || [];
+        for (const membroEmail of membros) {
+          const membro = users.find(u => u.email === membroEmail);
+          if (membro) {
+            await base44.entities.User.update(membro.id, { lider_email: null });
+          }
+        }
+        
+        // Remover a equipe
+        await deleteEquipeMutation.mutateAsync(equipeDoLider.id);
+      }
+    }
+    
+    // Se mudou para líder, criar ou reativar equipe
     if (novaFuncao === "lider" && oldUser.funcao !== "lider") {
-      await createEquipeMutation.mutateAsync({
-        nome: `Equipe ${userName || userEmail}`,
-        lider_email: userEmail,
-        membros: [],
-        ativa: true,
-      });
+      // Verificar se já existe uma equipe inativa deste líder
+      const equipeExistente = equipes.find(e => e.lider_email === userEmail);
+      
+      if (equipeExistente) {
+        // Reativar equipe existente
+        await updateEquipeMutation.mutateAsync({
+          id: equipeExistente.id,
+          data: { ativa: true }
+        });
+      } else {
+        // Criar nova equipe
+        await createEquipeMutation.mutateAsync({
+          nome: `Equipe ${userName || userEmail}`,
+          lider_email: userEmail,
+          membros: [],
+          ativa: true,
+        });
+      }
     }
 
     // Atualizar função do usuário
