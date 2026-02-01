@@ -239,7 +239,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${userRole === "admin" ? "lg:grid-cols-6" : "lg:grid-cols-5"} gap-4`}>
             <div className="lg:col-span-2">
               <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
               <div className="relative">
@@ -283,22 +283,24 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
-              <Select value={consultorFilter} onValueChange={setConsultorFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Consultor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {consultores.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {userRole === "admin" && (
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
+                <Select value={consultorFilter} onValueChange={setConsultorFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Consultor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {consultores.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <div className="mt-4">
             <Button variant="outline" onClick={exportToCSV} className="gap-2 w-full md:w-auto">
