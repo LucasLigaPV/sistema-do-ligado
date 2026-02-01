@@ -43,10 +43,10 @@ import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import FormularioVenda from "./FormularioVenda";
 
-const statusConfig = {
-  pendente: { label: "Pendente", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
-  em_andamento: { label: "Em Andamento", color: "bg-blue-100 text-blue-800", icon: TrendingUp },
-  concluido: { label: "Concluído", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
+const etapaConfig = {
+  pagamento_ok: { label: "Pagamento OK", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
+  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800", icon: TrendingUp },
+  ativo: { label: "Ativo", color: "bg-emerald-100 text-emerald-800", icon: CheckCircle },
 };
 
 const planoLabels = {
@@ -77,7 +77,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
   
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [etapaFilter, setEtapaFilter] = useState("all");
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
@@ -108,7 +108,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
       venda.cliente?.toLowerCase().includes(search.toLowerCase()) ||
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === "all" || venda.status === statusFilter;
+    const matchEtapa = etapaFilter === "all" || venda.etapa === etapaFilter;
     
     if (dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
@@ -122,13 +122,13 @@ export default function TabelaVendas({ userEmail, userRole }) {
       if (dataVenda > fim) return false;
     }
     
-    return matchSearch && matchStatus;
+    return matchSearch && matchEtapa;
   });
 
   const exportToCSV = () => {
     const headers = [
       "Data",
-      "Status",
+      "Etapa",
       "Cliente",
       "Telefone",
       "Plano",
@@ -141,7 +141,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
     ];
     const rows = filteredVendas.map((v) => [
       v.data_venda ? format(new Date(v.data_venda), "dd/MM/yyyy") : "-",
-      v.status,
+      v.etapa,
       v.cliente,
       v.telefone,
       v.plano_vendido,
@@ -162,10 +162,10 @@ export default function TabelaVendas({ userEmail, userRole }) {
 
   const getStats = () => {
     const total = vendas.length;
-    const pendentes = vendas.filter((v) => v.status === "pendente").length;
-    const emAndamento = vendas.filter((v) => v.status === "em_andamento").length;
-    const concluidas = vendas.filter((v) => v.status === "concluido").length;
-    return { total, pendentes, emAndamento, concluidas };
+    const pagamentoOk = vendas.filter((v) => v.etapa === "pagamento_ok").length;
+    const vistoriaOk = vendas.filter((v) => v.etapa === "vistoria_ok").length;
+    const ativas = vendas.filter((v) => v.etapa === "ativo").length;
+    return { total, pagamentoOk, vistoriaOk, ativas };
   };
 
   const stats = getStats();
@@ -197,20 +197,20 @@ export default function TabelaVendas({ userEmail, userRole }) {
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-[#EFC200]">Pendentes</p>
-            <p className="text-2xl font-bold text-[#EFC200]">{stats.pendentes}</p>
+            <p className="text-sm text-[#EFC200]">Pagamento OK</p>
+            <p className="text-2xl font-bold text-[#EFC200]">{stats.pagamentoOk}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-blue-600">Em Andamento</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.emAndamento}</p>
+            <p className="text-sm text-blue-600">Vistoria OK</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.vistoriaOk}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
-            <p className="text-sm text-emerald-600">Concluídas</p>
-            <p className="text-2xl font-bold text-emerald-600">{stats.concluidas}</p>
+            <p className="text-sm text-emerald-600">Ativas</p>
+            <p className="text-2xl font-bold text-emerald-600">{stats.ativas}</p>
           </CardContent>
         </Card>
       </div>
@@ -252,16 +252,16 @@ export default function TabelaVendas({ userEmail, userRole }) {
               />
             </div>
             <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Status</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Label className="text-sm text-slate-600 mb-2 block">Etapa</Label>
+              <Select value={etapaFilter} onValueChange={setEtapaFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder="Etapa" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                  <SelectItem value="concluido">Concluído</SelectItem>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
+                  <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
+                  <SelectItem value="ativo">Ativo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -282,7 +282,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead>Data</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Etapa</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead>Plano</TableHead>
@@ -308,7 +308,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   </TableRow>
                 ) : (
                   filteredVendas.map((venda) => {
-                    const StatusIcon = statusConfig[venda.status]?.icon || Clock;
+                    const EtapaIcon = etapaConfig[venda.etapa]?.icon || Clock;
                     return (
                       <motion.tr
                         key={venda.id}
@@ -322,19 +322,19 @@ export default function TabelaVendas({ userEmail, userRole }) {
                         </TableCell>
                         <TableCell>
                           <Select
-                            value={venda.status}
-                            onValueChange={(v) => updateMutation.mutate({ id: venda.id, data: { status: v } })}
+                            value={venda.etapa}
+                            onValueChange={(v) => updateMutation.mutate({ id: venda.id, data: { etapa: v } })}
                           >
-                            <SelectTrigger className="w-36 h-8">
-                              <Badge className={`${statusConfig[venda.status]?.color} flex items-center gap-1`}>
-                                <StatusIcon className="w-3 h-3" />
-                                {statusConfig[venda.status]?.label}
+                            <SelectTrigger className="w-40 h-8">
+                              <Badge className={`${etapaConfig[venda.etapa]?.color} flex items-center gap-1`}>
+                                <EtapaIcon className="w-3 h-3" />
+                                {etapaConfig[venda.etapa]?.label}
                               </Badge>
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="pendente">Pendente</SelectItem>
-                              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                              <SelectItem value="concluido">Concluído</SelectItem>
+                              <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
+                              <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
+                              <SelectItem value="ativo">Ativo</SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
@@ -412,9 +412,9 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-500">Status</p>
-                  <Badge className={statusConfig[selectedVenda.status]?.color}>
-                    {statusConfig[selectedVenda.status]?.label}
+                  <p className="text-sm text-slate-500">Etapa</p>
+                  <Badge className={etapaConfig[selectedVenda.etapa]?.color}>
+                    {etapaConfig[selectedVenda.etapa]?.label}
                   </Badge>
                 </div>
               </div>

@@ -18,7 +18,7 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
   const [formData, setFormData] = useState({
     vendedor: userEmail,
     data_venda: new Date().toISOString().split('T')[0],
-    status: "pendente",
+    etapa: "pagamento_ok",
     cliente: "",
     telefone: "",
     plano_vendido: "",

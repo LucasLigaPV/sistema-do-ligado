@@ -79,10 +79,10 @@ export default function DashboardVendas({ userEmail, userRole }) {
       return sum + valor;
     }, 0);
 
-    const vendasConcluidas = vendasFiltradas.filter(v => v.status === "concluido").length;
-    const vendasPendentes = vendasFiltradas.filter(v => v.status === "pendente").length;
+    const vendasAtivas = vendasFiltradas.filter(v => v.etapa === "ativo").length;
+    const vendasPagamentoOk = vendasFiltradas.filter(v => v.etapa === "pagamento_ok").length;
 
-    return { totalVendas, totalFaturamento, vendasConcluidas, vendasPendentes };
+    return { totalVendas, totalFaturamento, vendasAtivas, vendasPagamentoOk };
   }, [vendasFiltradas]);
 
   const rankingVendedores = useMemo(() => {
@@ -223,8 +223,8 @@ export default function DashboardVendas({ userEmail, userRole }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Vendas Concluídas</p>
-                <p className="text-3xl font-bold text-emerald-600">{estatisticas.vendasConcluidas}</p>
+                <p className="text-sm text-slate-500">Vendas Ativas</p>
+                <p className="text-3xl font-bold text-emerald-600">{estatisticas.vendasAtivas}</p>
               </div>
               <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
                 <Package className="w-6 h-6 text-emerald-600" />
@@ -237,8 +237,8 @@ export default function DashboardVendas({ userEmail, userRole }) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Vendas Pendentes</p>
-                <p className="text-3xl font-bold text-amber-600">{estatisticas.vendasPendentes}</p>
+                <p className="text-sm text-slate-500">Pagamento OK</p>
+                <p className="text-3xl font-bold text-amber-600">{estatisticas.vendasPagamentoOk}</p>
               </div>
               <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
                 <Target className="w-6 h-6 text-amber-600" />

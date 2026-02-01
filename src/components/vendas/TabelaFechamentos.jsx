@@ -52,7 +52,7 @@ export default function TabelaFechamentos() {
     return usuarios
       .filter(user => user.funcao === "vendedor" || user.funcao === "lider")
       .map(user => {
-        const vendasDoVendedor = vendas.filter(v => v.vendedor === user.email && v.status === "concluido");
+        const vendasDoVendedor = vendas.filter(v => v.vendedor === user.email && v.etapa === "ativo");
         const totalVendas = vendasDoVendedor.length;
         
         const totalAdesao = vendasDoVendedor.reduce((sum, v) => {

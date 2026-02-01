@@ -39,7 +39,7 @@ export default function ResumoVendedor({ userEmail }) {
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
-  const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail && v.status === "concluido");
+  const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail && v.etapa === "ativo");
 
   // Calcular estatísticas
   const totalVendas = vendasDoVendedor.length;
