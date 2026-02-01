@@ -40,7 +40,6 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
-  const [vendedoresSelecionados, setVendedoresSelecionados] = useState([]);
 
   const { data: allVendas = [], isLoading } = useQuery({
     queryKey: ["vendas"],
@@ -80,12 +79,9 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         fim.setHours(23, 59, 59, 999);
         if (dataVenda > fim) return false;
       }
-      if (userFuncao === "lider" && vendedoresSelecionados.length > 0) {
-        if (!vendedoresSelecionados.includes(venda.vendedor)) return false;
-      }
       return true;
     });
-  }, [vendas, dataInicio, dataFim, vendedoresSelecionados, userFuncao]);
+  }, [vendas, dataInicio, dataFim]);
 
   const estatisticas = useMemo(() => {
     const totalVendas = vendasFiltradas.length;
@@ -177,67 +173,23 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       {/* Filtros */}
       <Card className="border-0 shadow-md">
         <CardContent className="p-4">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
-                <Input
-                  type="date"
-                  value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
-                <Input
-                  type="date"
-                  value={dataFim}
-                  onChange={(e) => setDataFim(e.target.value)}
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
+              <Input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+              />
             </div>
-            
-            {userFuncao === "lider" && membrosEquipe.length > 0 && (
-              <div>
-                <Label className="text-sm text-slate-600 mb-3 block">Filtrar por Vendedor</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {membrosEquipe.map((email) => {
-                    const usuario = usuarios.find(u => u.email === email);
-                    const isSelected = vendedoresSelecionados.includes(email);
-                    return (
-                      <motion.button
-                        key={email}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          setVendedoresSelecionados(prev =>
-                            prev.includes(email)
-                              ? prev.filter(e => e !== email)
-                              : [...prev, email]
-                          );
-                        }}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          isSelected
-                            ? "border-[#EFC200] bg-[#FFF9E6] text-slate-900"
-                            : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                            isSelected ? "border-[#EFC200] bg-[#EFC200]" : "border-slate-300"
-                          }`}>
-                            {isSelected && <span className="text-black text-xs">✓</span>}
-                          </div>
-                          <span className="font-medium text-sm">
-                            {usuario?.full_name || email}
-                          </span>
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
+              <Input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
