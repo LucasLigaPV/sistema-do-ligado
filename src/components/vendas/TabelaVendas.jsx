@@ -372,11 +372,12 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                       </div>
                       <div className="border-t pt-2 space-y-2 max-h-48 overflow-y-auto">
                         {membrosEquipe.map((email) => {
-                          const user = users.find(u => u.email === email);
+                          const user = users.find(u => u.email?.toLowerCase() === email?.toLowerCase());
                           const isChecked = consultorFilter.includes(email);
                           const isCurrentUser = email === userEmail;
+                          const displayName = user?.full_name ? user.full_name : email;
                           return (
-                            <div key={email} className="flex items-center gap-2 truncate">
+                            <div key={email} className="flex items-center gap-2">
                               <Checkbox 
                                 id={`seller-${email}`}
                                 checked={isChecked}
@@ -388,8 +389,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                                   }
                                 }}
                               />
-                              <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer truncate">
-                                {user?.full_name || email} {isCurrentUser && "(Você)"}
+                              <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer">
+                                {displayName} {isCurrentUser && "(Você)"}
                               </Label>
                             </div>
                           );
