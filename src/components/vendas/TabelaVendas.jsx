@@ -89,7 +89,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const [search, setSearch] = useState("");
   const [etapaFilter, setEtapaFilter] = useState("all");
   const [consultorFilter, setConsultorFilter] = useState(
-    userFuncao === "lider" ? [userEmail] : userRole === "admin" ? [] : [userEmail]
+    userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
   );
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
@@ -348,47 +348,31 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                       <ChevronDown className="w-4 h-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-56 p-3" align="start">
+                  <PopoverContent className="w-full p-3" align="start">
                     <div className="space-y-3">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Checkbox 
-                            id="only-me"
-                            checked={consultorFilter.length === 1 && consultorFilter[0] === userEmail}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setConsultorFilter([userEmail]);
-                              }
-                            }}
-                          />
-                          <Label htmlFor="only-me" className="text-sm font-medium cursor-pointer">
-                            Apenas Eu
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Checkbox 
-                            id="all-team"
-                            checked={consultorFilter.length === membrosEquipe.length}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setConsultorFilter(membrosEquipe);
-                              } else {
-                                setConsultorFilter([]);
-                              }
-                            }}
-                          />
-                          <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
-                            Todos da Equipe
-                          </Label>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox 
+                          id="all-team"
+                          checked={consultorFilter.length === membrosEquipe.length}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setConsultorFilter(membrosEquipe);
+                            } else {
+                              setConsultorFilter([]);
+                            }
+                          }}
+                        />
+                        <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
+                          Todos da Equipe
+                        </Label>
                       </div>
-                      <div className="border-t pt-2 space-y-2">
+                      <div className="border-t pt-2 space-y-2 max-h-48 overflow-y-auto">
                         {membrosEquipe.map((email) => {
                           const user = users.find(u => u.email === email);
                           const isChecked = consultorFilter.includes(email);
                           const isCurrentUser = email === userEmail;
                           return (
-                            <div key={email} className="flex items-center gap-2">
+                            <div key={email} className="flex items-center gap-2 truncate">
                               <Checkbox 
                                 id={`seller-${email}`}
                                 checked={isChecked}
@@ -400,7 +384,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                                   }
                                 }}
                               />
-                              <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer">
+                              <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer truncate">
                                 {user?.full_name || email} {isCurrentUser && "(Você)"}
                               </Label>
                             </div>
