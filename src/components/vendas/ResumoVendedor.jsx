@@ -234,7 +234,9 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
             <Label className="text-sm text-slate-600 mb-3 block">Selecione o Vendedor</Label>
             <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
               <SelectTrigger className="bg-white">
-                <SelectValue placeholder="Selecione um vendedor" />
+                <SelectValue placeholder="Selecione um vendedor">
+                  {users.find(u => u.email === vendedorSelecionado)?.full_name || vendedorSelecionado}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {membrosEquipe.map((email) => {
