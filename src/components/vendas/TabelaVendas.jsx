@@ -330,8 +330,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                     <SelectValue placeholder="Vendedor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    {membrosEquipe.map((email) => {
+                    <SelectItem value={userEmail}>Apenas Eu</SelectItem>
+                    <SelectItem value="all">Todos da Equipe</SelectItem>
+                    {membrosEquipe.filter(email => email !== userEmail).map((email) => {
                       const user = users.find(u => u.email === email);
                       return (
                         <SelectItem key={email} value={email}>
