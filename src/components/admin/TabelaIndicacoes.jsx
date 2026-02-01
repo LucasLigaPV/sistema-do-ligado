@@ -52,14 +52,14 @@ const statusConfig = {
   rejeitada: { label: "Rejeitada", color: "bg-red-100 text-red-800", icon: XCircle },
 };
 
-export default function TabelaIndicacoes({ userEmail, userRole }) {
+export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
   
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [consultorFilter, setConsultorFilter] = useState("all");
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : "all");
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
@@ -71,8 +71,24 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
     queryFn: () => base44.entities.Indicacao.list("-created_date"),
   });
 
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+  });
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => base44.entities.User.list(),
+  });
+
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
   const indicacoes = userRole === "admin" 
     ? allIndicacoes 
+    : userFuncao === "lider"
+    ? allIndicacoes.filter(ind => membrosEquipe.includes(ind.consultor_responsavel))
     : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
 
   const { data: configs = [] } = useQuery({
@@ -80,7 +96,10 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
     queryFn: () => base44.entities.ConfiguracaoFormulario.list(),
   });
 
-  const consultores = configs.find((c) => c.tipo === "consultores")?.opcoes || [];
+  // Consultores disponíveis para filtro
+  const consultoresDisponiveis = userFuncao === "lider"
+    ? membrosEquipe.map(email => users.find(u => u.email === email)?.full_name || email).filter(Boolean)
+    : configs.find((c) => c.tipo === "consultores")?.opcoes || [];
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Indicacao.update(id, data),
@@ -283,7 +302,7 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                 </SelectContent>
               </Select>
             </div>
-            {userRole === "admin" && (
+            {(userRole === "admin" || userFuncao === "lider") && (
               <div>
                 <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
                 <Select value={consultorFilter} onValueChange={setConsultorFilter}>
@@ -292,11 +311,22 @@ export default function TabelaIndicacoes({ userEmail, userRole }) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {consultores.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
+                    {userFuncao === "lider" ? (
+                      membrosEquipe.map((email) => {
+                        const user = users.find(u => u.email === email);
+                        return (
+                          <SelectItem key={email} value={email}>
+                            {user?.full_name || email}
+                          </SelectItem>
+                        );
+                      })
+                    ) : (
+                      consultoresDisponiveis.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>

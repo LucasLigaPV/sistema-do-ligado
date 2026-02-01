@@ -78,7 +78,7 @@ const formatarValorExibicao = (valor) => {
   });
 };
 
-export default function TabelaVendas({ userEmail, userRole }) {
+export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);

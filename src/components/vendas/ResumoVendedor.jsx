@@ -34,9 +34,11 @@ const formatarValor = (valor) => {
   });
 };
 
-export default function ResumoVendedor({ userEmail }) {
+export default function ResumoVendedor({ userEmail, userFuncao }) {
+  const [vendedorSelecionado, setVendedorSelecionado] = React.useState(userEmail);
+
   const { data: vendas = [], isLoading } = useQuery({
-    queryKey: ["vendas", userEmail],
+    queryKey: ["vendas"],
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
@@ -48,7 +50,23 @@ export default function ResumoVendedor({ userEmail }) {
     },
   });
 
-  const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail && v.etapa === "ativo");
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+    enabled: userFuncao === "lider",
+  });
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => base44.entities.User.list(),
+    enabled: userFuncao === "lider",
+  });
+
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
+  const vendasDoVendedor = vendas.filter(v => v.vendedor === vendedorSelecionado && v.etapa === "ativo");
 
   // Calcular estatísticas
   const totalVendas = vendasDoVendedor.length;
@@ -195,6 +213,30 @@ export default function ResumoVendedor({ userEmail }) {
 
   return (
     <div className="space-y-6">
+      {/* Seletor de Vendedor (Líder) */}
+      {userFuncao === "lider" && (
+        <Card className="border-0 shadow-md">
+          <CardContent className="p-4">
+            <Label className="text-sm text-slate-600 mb-2 block">Selecionar Vendedor</Label>
+            <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione um vendedor" />
+              </SelectTrigger>
+              <SelectContent>
+                {membrosEquipe.map((email) => {
+                  const user = users.find(u => u.email === email);
+                  return (
+                    <SelectItem key={email} value={email}>
+                      {user?.full_name || email} {email === userEmail ? "(Você)" : ""}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Plano de Carreira */}
       <Card className="border-0 shadow-lg bg-white">
         <CardContent className="p-6">

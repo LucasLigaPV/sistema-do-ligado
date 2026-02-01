@@ -19,6 +19,7 @@ import TabelaFechamentos from "../components/vendas/TabelaFechamentos";
 import DashboardVendas from "../components/vendas/DashboardVendas";
 import GerenciamentoUsuarios from "../components/admin/GerenciamentoUsuarios";
 import GerenciamentoEquipes from "../components/admin/GerenciamentoEquipes";
+import DashboardLider from "../components/dashboard/DashboardLider";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
