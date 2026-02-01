@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, DollarSign, Package, Target, Award } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import confetti from "canvas-confetti";
 
 const PLANO_CARREIRA = [
   { vendas: 0, nivel: "Nível 1", comissaoPorPlaca: 0, percentualAdesao: 0, recorrencia: 0 },
