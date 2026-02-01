@@ -363,9 +363,10 @@ export default function TabelaVendas({ userEmail, userRole }) {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => setShowIndicacaoForm(venda)}
-                                className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                                title="Preencher indicação"
+                                onClick={() => venda.etapa === "ativo" && setShowIndicacaoForm(venda)}
+                                disabled={venda.etapa !== "ativo"}
+                                className={venda.etapa === "ativo" ? "text-purple-600 hover:text-purple-700 hover:bg-purple-50" : "text-slate-300 cursor-not-allowed"}
+                                title={venda.etapa === "ativo" ? "Preencher indicação" : "Aguardando venda ativa"}
                               >
                                 <UserPlus className="w-4 h-4" />
                               </Button>
