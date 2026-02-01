@@ -70,7 +70,7 @@ export default function DashboardContent({ userEmail, userRole }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userRole === "admin" || userRole === "lider") ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
             <div>
               <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
               <Input
@@ -89,22 +89,24 @@ export default function DashboardContent({ userEmail, userRole }) {
                 className="w-full"
               />
             </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
-              <Select value={consultorFilter} onValueChange={setConsultorFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {consultores.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {(userRole === "admin" || userRole === "lider") && (
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
+                <Select value={consultorFilter} onValueChange={setConsultorFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {consultores.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label className="text-sm text-slate-600 mb-2 block">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
