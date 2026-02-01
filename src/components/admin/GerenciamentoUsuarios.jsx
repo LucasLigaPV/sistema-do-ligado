@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, UserCog, Users, Shield, Edit } from "lucide-react";
+import { Search, UserCog, Users, Shield, Edit, UserPlus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,8 @@ export default function GerenciamentoUsuarios() {
   const [search, setSearch] = useState("");
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [inviteForm, setInviteForm] = useState({ email: "", funcao: "vendedor" });
   const queryClient = useQueryClient();
 
   const { data: users = [], isLoading } = useQuery({
@@ -100,6 +102,47 @@ export default function GerenciamentoUsuarios() {
         id: editingUser.id,
         data: editForm,
       });
+    }
+  };
+
+  const handleInviteUser = async () => {
+    try {
+      // Mapear função para role do sistema
+      const role = inviteForm.funcao === "master" ? "admin" : "user";
+      
+      // Convidar usuário
+      await base44.users.inviteUser(inviteForm.email, role);
+      
+      // Aguardar um pouco para o usuário ser criado
+      setTimeout(async () => {
+        // Buscar o usuário recém-criado
+        const allUsers = await base44.entities.User.list();
+        const newUser = allUsers.find(u => u.email === inviteForm.email);
+        
+        if (newUser) {
+          // Atualizar com a função correta
+          await updateMutation.mutateAsync({
+            id: newUser.id,
+            data: { funcao: inviteForm.funcao, status_convite: "pendente" },
+          });
+
+          // Se for líder, criar equipe
+          if (inviteForm.funcao === "lider") {
+            await createEquipeMutation.mutateAsync({
+              nome: `Equipe ${inviteForm.email}`,
+              lider_email: inviteForm.email,
+              membros: [],
+              ativa: true,
+            });
+          }
+        }
+        
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        setShowInviteDialog(false);
+        setInviteForm({ email: "", funcao: "vendedor" });
+      }, 1500);
+    } catch (error) {
+      console.error("Erro ao convidar usuário:", error);
     }
   };
 
@@ -289,6 +332,54 @@ export default function GerenciamentoUsuarios() {
             </Button>
             <Button onClick={handleSaveEdit} className="bg-[#EFC200] hover:bg-[#D4A900] text-black">
               Salvar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Convidar Usuário */}
+      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Convidar Novo Usuário</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">E-mail</Label>
+              <Input
+                value={inviteForm.email}
+                onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                placeholder="usuario@exemplo.com"
+                type="email"
+              />
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Função</Label>
+              <Select
+                value={inviteForm.funcao}
+                onValueChange={(v) => setInviteForm({ ...inviteForm, funcao: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="vendedor">Vendedor</SelectItem>
+                  <SelectItem value="lider">Líder</SelectItem>
+                  <SelectItem value="master">Master</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-slate-500">
+              Um e-mail será enviado para o usuário com instruções para definir sua senha.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setShowInviteDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleInviteUser} className="bg-[#EFC200] hover:bg-[#D4A900] text-black">
+              <UserPlus className="w-4 h-4 mr-2" />
+              Convidar
             </Button>
           </div>
         </DialogContent>
