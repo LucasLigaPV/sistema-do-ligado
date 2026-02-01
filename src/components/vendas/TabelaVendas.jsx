@@ -39,7 +39,7 @@ import {
   UserPlus,
   PartyPopper,
   DollarSign,
-  ClipboardCheck,
+  Camera,
   Loader,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -51,7 +51,7 @@ import FormularioIndicacaoVenda from "./FormularioIndicacaoVenda";
 
 const etapaConfig = {
   pagamento_ok: { label: "Pagamento OK", color: "bg-amber-100 text-amber-800 border border-amber-300", icon: DollarSign },
-  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800 border border-blue-300", icon: ClipboardCheck },
+  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800 border border-blue-300", icon: Camera },
   em_ativacao: { label: "Em Ativação", color: "bg-purple-100 text-purple-800 border border-purple-300", icon: Loader },
   ativo: { label: "Ativo", color: "bg-emerald-100 text-emerald-800 border border-emerald-300", icon: CheckCircle2 },
 };
@@ -348,10 +348,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                             onValueChange={(v) => updateMutation.mutate({ id: venda.id, data: { etapa: v } })}
                           >
                             <SelectTrigger className={`w-40 h-9 border-0 ${etapaConfig[venda.etapa]?.color} font-medium`}>
-                              <div className="flex items-center gap-2">
-                                <EtapaIcon className="w-4 h-4" />
-                                <SelectValue />
-                              </div>
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="pagamento_ok">
@@ -362,7 +359,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                               </SelectItem>
                               <SelectItem value="vistoria_ok">
                                 <div className="flex items-center gap-2">
-                                  <ClipboardCheck className="w-4 h-4" />
+                                  <Camera className="w-4 h-4" />
                                   Vistoria OK
                                 </div>
                               </SelectItem>
