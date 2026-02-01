@@ -148,33 +148,55 @@ export default function FormularioIndicacaoVenda({ venda, onSuccess }) {
         </div>
 
         <div>
-          <Label>Relação com Indicado *</Label>
-          <Input
+          <Label>Relação entre indicador e indicado *</Label>
+          <Select
             value={formData.relacao_indicador_indicado}
-            onChange={(e) => setFormData({ ...formData, relacao_indicador_indicado: e.target.value })}
-            placeholder="Ex: Amigo, Familiar..."
+            onValueChange={(v) => setFormData({ ...formData, relacao_indicador_indicado: v })}
             required
-          />
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="familiar">Familiar</SelectItem>
+              <SelectItem value="amigo">Amigo</SelectItem>
+              <SelectItem value="conhecido">Conhecido</SelectItem>
+              <SelectItem value="trabalham_estudam_juntos">Trabalham/estudam juntos</SelectItem>
+              <SelectItem value="outros">Outros</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <Label>Vínculo com Consultor *</Label>
-          <Input
+          <Label>Possui Vínculo *</Label>
+          <Select
             value={formData.vinculo_consultor}
-            onChange={(e) => setFormData({ ...formData, vinculo_consultor: e.target.value })}
-            placeholder="Ex: Cliente, Conhecido..."
+            onValueChange={(v) => setFormData({ ...formData, vinculo_consultor: v })}
             required
-          />
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="sim_amigo">Sim, é meu amigo</SelectItem>
+              <SelectItem value="sim_parente">Sim, é meu parente</SelectItem>
+              <SelectItem value="nao">Não</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <Label>Valor da Indicação (R$) *</Label>
-          <Input
-            value={formData.valor_indicacao}
-            onChange={(e) => setFormData({ ...formData, valor_indicacao: e.target.value })}
-            placeholder="Ex: 50,00"
-            required
-          />
+          <Label>Valor da Indicação *</Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
+            <Input
+              value={formData.valor_indicacao}
+              onChange={(e) => setFormData({ ...formData, valor_indicacao: e.target.value })}
+              placeholder="0,00"
+              className="pl-10"
+              required
+            />
+          </div>
         </div>
 
         <div>
