@@ -163,7 +163,7 @@ export default function Admin() {
                     {user?.funcao === "lider" ? (
                       <DashboardLider userEmail={user?.email} />
                     ) : (
-                      <DashboardVendas userEmail={user?.email} userRole={user?.role} />
+                      <DashboardVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
                     )}
                   </TabsContent>
                 </Tabs>

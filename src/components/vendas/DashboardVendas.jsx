@@ -33,7 +33,7 @@ const formatarValor = (valor) => {
   });
 };
 
-export default function DashboardVendas({ userEmail, userRole }) {
+export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
@@ -51,8 +51,19 @@ export default function DashboardVendas({ userEmail, userRole }) {
     queryFn: () => base44.entities.User.list(),
   });
 
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+  });
+
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
   const vendas = userRole === "admin" 
     ? allVendas 
+    : userFuncao === "lider"
+    ? allVendas.filter((v) => membrosEquipe.includes(v.vendedor))
     : allVendas.filter(v => v.vendedor === userEmail);
 
   const vendasFiltradas = useMemo(() => {
