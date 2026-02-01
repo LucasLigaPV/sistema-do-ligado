@@ -453,15 +453,15 @@ export default function TabelaVendas({ userEmail, userRole }) {
       {/* Ativo Alert Dialog */}
       <Dialog open={showAtivoAlert} onOpenChange={setShowAtivoAlert}>
         <DialogContent className="max-w-md">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
+          <DialogHeader className="space-y-0">
+            <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
                 <PartyPopper className="w-6 h-6 text-emerald-600" />
               </div>
               <DialogTitle className="text-xl">Parabéns pela venda ativa!</DialogTitle>
             </div>
           </DialogHeader>
-          <div className="space-y-4 mt-4">
+          <div className="space-y-4 mt-2">
             <p className="text-slate-600">
               Esta venda é uma <span className="font-semibold text-purple-600">indicação</span>. 
               Clique no ícone de pessoa <UserPlus className="w-4 h-4 inline text-purple-600" /> na venda 
