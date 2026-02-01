@@ -235,16 +235,12 @@ export default function ResumoVendedor({ userEmail }) {
                     <p className="text-xs text-slate-500">{totalVendas}/{proximoNivel.vendas}</p>
                   </div>
                 </div>
-                <motion.div
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="overflow-hidden">
                   <Progress 
                     value={progressoAnimado} 
                     className="h-2.5 bg-slate-200 mt-3 transition-all duration-1000 ease-out" 
                   />
-                </motion.div>
+                </div>
               </div>
             )}
             {!proximoNivel && (
