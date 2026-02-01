@@ -391,7 +391,7 @@ export default function TabelaVendas({ userEmail, userRole }) {
                           R$ {formatarValorExibicao(venda.valor_adesao)}
                         </TableCell>
                         <TableCell>
-                          <div className="flex justify-center gap-2">
+                          <div className="flex justify-end gap-2">
                             {venda.tem_indicacao === "sim" && (
                               <Button
                                 variant="ghost"
