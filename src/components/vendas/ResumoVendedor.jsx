@@ -161,24 +161,73 @@ export default function ResumoVendedor({ userEmail }) {
               <p className="text-4xl font-bold text-slate-900">{totalVendas}</p>
             </div>
           </div>
-          
-          {proximoNivel && (
-            <div className="bg-slate-50 rounded-lg p-4">
-              <div className="flex justify-between text-slate-700 text-sm mb-3">
-                <span className="font-medium">Próximo nível: {proximoNivel.nivel}</span>
-                <span className="text-slate-500">{totalVendas}/{proximoNivel.vendas} vendas</span>
+
+          {/* Barra de Progressão Visual com Todos os Níveis */}
+          <div className="space-y-4">
+            <div className="relative">
+              {/* Linha de fundo */}
+              <div className="absolute top-6 left-0 right-0 h-2 bg-slate-200 rounded-full" />
+
+              {/* Barra de progresso preenchida */}
+              <div 
+                className="absolute top-6 left-0 h-2 bg-gradient-to-r from-[#EFC200] to-[#D4A900] rounded-full transition-all duration-1000"
+                style={{ 
+                  width: `${Math.min((totalVendas / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100, 100)}%` 
+                }}
+              />
+
+              {/* Marcadores dos níveis */}
+              <div className="relative flex justify-between">
+                {PLANO_CARREIRA.map((nivel, index) => {
+                  const isAtingido = totalVendas >= nivel.vendas;
+                  const isAtual = nivelAtual.nivel === nivel.nivel;
+
+                  return (
+                    <div key={index} className="flex flex-col items-center">
+                      <div 
+                        className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500 ${
+                          isAtingido 
+                            ? 'bg-gradient-to-br from-[#EFC200] to-[#D4A900] text-black shadow-lg scale-110' 
+                            : 'bg-white border-2 border-slate-300 text-slate-400'
+                        } ${isAtual ? 'ring-4 ring-[#EFC200]/30' : ''}`}
+                      >
+                        {index + 1}
+                      </div>
+                      <p className={`text-xs font-medium mt-2 ${isAtingido ? 'text-slate-900' : 'text-slate-400'}`}>
+                        {nivel.nivel}
+                      </p>
+                      <p className={`text-xs mt-1 ${isAtingido ? 'text-slate-600' : 'text-slate-400'}`}>
+                        {nivel.vendas} vendas
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-              <Progress value={progresso} className="h-2.5 bg-slate-200" />
-              <p className="text-slate-500 text-xs mt-2">
-                Faltam {proximoNivel.vendas - totalVendas} vendas para alcançar o próximo nível
-              </p>
             </div>
-          )}
-          {!proximoNivel && (
-            <div className="bg-emerald-50 rounded-lg p-4 text-center">
-              <p className="text-emerald-700 text-sm font-medium">🎉 Parabéns! Você alcançou o nível máximo!</p>
-            </div>
-          )}
+
+            {proximoNivel && (
+              <div className="bg-slate-50 rounded-lg p-4 mt-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">Próximo nível: {proximoNivel.nivel}</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Faltam {proximoNivel.vendas - totalVendas} vendas
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-slate-900">{Math.round(progresso)}%</p>
+                    <p className="text-xs text-slate-500">{totalVendas}/{proximoNivel.vendas}</p>
+                  </div>
+                </div>
+                <Progress value={progresso} className="h-2.5 bg-slate-200 mt-3" />
+              </div>
+            )}
+            {!proximoNivel && (
+              <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg p-4 text-center mt-6 border border-emerald-200">
+                <p className="text-emerald-700 text-sm font-medium">🎉 Parabéns! Você alcançou o nível máximo!</p>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
