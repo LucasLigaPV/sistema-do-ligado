@@ -67,25 +67,12 @@ export default function Admin() {
           >
             {activeMenu === "indicacoes" && (
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold text-slate-900">Indicações</h2>
-                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-[#EFC200] hover:bg-[#D4A900] text-black">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Registrar Nova Indicação
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Registrar Nova Indicação</DialogTitle>
-                      </DialogHeader>
-                      <FormularioIndicacao onSuccess={() => setDialogOpen(false)} />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
                 <Tabs defaultValue="indicacoes" className="space-y-6">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900">Indicações</h2>
+                    <p className="text-slate-500">Visualize e acompanhe todas as indicações</p>
+                  </div>
+
                   <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
                     <TabsTrigger
                       value="indicacoes"
@@ -151,6 +138,11 @@ export default function Admin() {
             {activeMenu === "vendas" && (
               <div className="space-y-6">
                 <Tabs defaultValue="registrar" className="space-y-6">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900">Vendas</h2>
+                    <p className="text-slate-500">Registre, acompanhe e gerencie suas vendas</p>
+                  </div>
+
                   <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
                     <TabsTrigger
                       value="registrar"
