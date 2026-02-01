@@ -133,7 +133,7 @@ export default function GerenciamentoUsuarios() {
     setEditingUser(user);
     setEditForm({
       full_name: user.full_name || "",
-      email: user.email || "",
+      chave_pix: user.chave_pix || "",
     });
   };
 
@@ -375,15 +375,16 @@ export default function GerenciamentoUsuarios() {
                 value={editForm.full_name || ""}
                 onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
                 placeholder="Nome completo"
+                disabled
               />
+              <p className="text-xs text-slate-400 mt-1">Campo gerenciado pelo sistema</p>
             </div>
             <div>
-              <Label className="text-sm text-slate-600 mb-2 block">E-mail</Label>
+              <Label className="text-sm text-slate-600 mb-2 block">Chave PIX</Label>
               <Input
-                value={editForm.email || ""}
-                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                placeholder="E-mail"
-                type="email"
+                value={editForm.chave_pix || ""}
+                onChange={(e) => setEditForm({ ...editForm, chave_pix: e.target.value })}
+                placeholder="CPF, E-mail ou Telefone"
               />
             </div>
           </div>
