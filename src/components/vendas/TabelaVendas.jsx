@@ -188,7 +188,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     const matchEtapa = etapaFilter === "all" || venda.etapa === etapaFilter;
     const matchConsultor = userFuncao === "lider" 
       ? consultorFilter.length === 0 || consultorFilter.includes(venda.vendedor)
-      : consultorFilter === "all" || venda.vendedor === consultorFilter;
+      : true;
     
     if (dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
