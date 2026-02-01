@@ -43,6 +43,7 @@ import {
   Loader,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,7 +86,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   
   const [search, setSearch] = useState("");
   const [etapaFilter, setEtapaFilter] = useState("all");
-  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : userRole === "admin" ? "all" : userEmail);
+  const [consultorFilter, setConsultorFilter] = useState(
+    userFuncao === "lider" ? [userEmail] : userRole === "admin" ? [] : [userEmail]
+  );
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
@@ -157,7 +160,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
     const matchEtapa = etapaFilter === "all" || venda.etapa === etapaFilter;
-    const matchConsultor = consultorFilter === "all" || venda.vendedor === consultorFilter;
+    const matchConsultor = userFuncao === "lider" 
+      ? consultorFilter.length === 0 || consultorFilter.includes(venda.vendedor)
+      : consultorFilter === "all" || venda.vendedor === consultorFilter;
     
     if (dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
@@ -325,23 +330,49 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             {userFuncao === "lider" && (
               <div>
                 <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
-                <Select value={consultorFilter} onValueChange={setConsultorFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Vendedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={userEmail}>Apenas Eu</SelectItem>
-                    <SelectItem value="all">Todos da Equipe</SelectItem>
-                    {membrosEquipe.filter(email => email !== userEmail).map((email) => {
+                <div className="space-y-2 p-3 border rounded-md bg-slate-50">
+                  <div className="flex items-center gap-2">
+                    <Checkbox 
+                      id="all-sellers"
+                      checked={consultorFilter.length === membrosEquipe.length}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setConsultorFilter(membrosEquipe);
+                        } else {
+                          setConsultorFilter([]);
+                        }
+                      }}
+                    />
+                    <Label htmlFor="all-sellers" className="text-sm font-medium cursor-pointer">
+                      Todos da Equipe
+                    </Label>
+                  </div>
+                  <div className="border-t pt-2 space-y-2">
+                    {membrosEquipe.map((email) => {
                       const user = users.find(u => u.email === email);
+                      const isChecked = consultorFilter.includes(email);
+                      const isCurrentUser = email === userEmail;
                       return (
-                        <SelectItem key={email} value={email}>
-                          {user?.full_name || email}
-                        </SelectItem>
+                        <div key={email} className="flex items-center gap-2">
+                          <Checkbox 
+                            id={email}
+                            checked={isChecked}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setConsultorFilter([...consultorFilter, email]);
+                              } else {
+                                setConsultorFilter(consultorFilter.filter(e => e !== email));
+                              }
+                            }}
+                          />
+                          <Label htmlFor={email} className="text-sm cursor-pointer">
+                            {user?.full_name || email} {isCurrentUser && "(Você)"}
+                          </Label>
+                        </div>
                       );
                     })}
-                  </SelectContent>
-                </Select>
+                  </div>
+                </div>
               </div>
             )}
           </div>
