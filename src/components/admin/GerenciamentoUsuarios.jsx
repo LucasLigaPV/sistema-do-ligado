@@ -113,36 +113,40 @@ export default function GerenciamentoUsuarios() {
       // Convidar usuário
       await base44.users.inviteUser(inviteForm.email, role);
       
-      // Aguardar um pouco para o usuário ser criado
-      setTimeout(async () => {
-        // Buscar o usuário recém-criado
-        const allUsers = await base44.entities.User.list();
-        const newUser = allUsers.find(u => u.email === inviteForm.email);
-        
-        if (newUser) {
-          // Atualizar com a função correta
-          await updateMutation.mutateAsync({
-            id: newUser.id,
-            data: { funcao: inviteForm.funcao, status_convite: "pendente" },
-          });
+      // Aguardar um pouco para o usuário ser criado no banco
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Buscar o usuário recém-criado
+      const allUsers = await base44.entities.User.list();
+      const newUser = allUsers.find(u => u.email === inviteForm.email);
+      
+      if (newUser) {
+        // Atualizar com a função correta
+        await base44.entities.User.update(newUser.id, { 
+          funcao: inviteForm.funcao, 
+          status_convite: "pendente" 
+        });
 
-          // Se for líder, criar equipe
-          if (inviteForm.funcao === "lider") {
-            await createEquipeMutation.mutateAsync({
-              nome: `Equipe ${inviteForm.email}`,
-              lider_email: inviteForm.email,
-              membros: [],
-              ativa: true,
-            });
-          }
+        // Se for líder, criar equipe
+        if (inviteForm.funcao === "lider") {
+          await base44.entities.Equipe.create({
+            nome: `Equipe ${inviteForm.email}`,
+            lider_email: inviteForm.email,
+            membros: [],
+            ativa: true,
+          });
         }
-        
-        queryClient.invalidateQueries({ queryKey: ["users"] });
-        setShowInviteDialog(false);
-        setInviteForm({ email: "", funcao: "vendedor" });
-      }, 1500);
+      }
+      
+      // Atualizar a lista de usuários
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
+      await queryClient.invalidateQueries({ queryKey: ["equipes"] });
+      
+      setShowInviteDialog(false);
+      setInviteForm({ email: "", funcao: "vendedor" });
     } catch (error) {
       console.error("Erro ao convidar usuário:", error);
+      alert("Erro ao convidar usuário. Tente novamente.");
     }
   };
 
