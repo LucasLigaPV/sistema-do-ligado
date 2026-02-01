@@ -44,6 +44,8 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
@@ -330,49 +332,84 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             {userFuncao === "lider" && (
               <div>
                 <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
-                <div className="space-y-2 p-3 border rounded-md bg-slate-50">
-                  <div className="flex items-center gap-2">
-                    <Checkbox 
-                      id="all-sellers"
-                      checked={consultorFilter.length === membrosEquipe.length}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setConsultorFilter(membrosEquipe);
-                        } else {
-                          setConsultorFilter([]);
-                        }
-                      }}
-                    />
-                    <Label htmlFor="all-sellers" className="text-sm font-medium cursor-pointer">
-                      Todos da Equipe
-                    </Label>
-                  </div>
-                  <div className="border-t pt-2 space-y-2">
-                    {membrosEquipe.map((email) => {
-                      const user = users.find(u => u.email === email);
-                      const isChecked = consultorFilter.includes(email);
-                      const isCurrentUser = email === userEmail;
-                      return (
-                        <div key={email} className="flex items-center gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between h-9 px-3"
+                    >
+                      <span className="text-sm text-slate-700">
+                        {consultorFilter.length === 0 
+                          ? "Selecione vendedor" 
+                          : consultorFilter.length === membrosEquipe.length 
+                          ? "Todos da Equipe" 
+                          : `${consultorFilter.length} selecionado${consultorFilter.length > 1 ? 's' : ''}`}
+                      </span>
+                      <ChevronDown className="w-4 h-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-3" align="start">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
                           <Checkbox 
-                            id={email}
-                            checked={isChecked}
+                            id="only-me"
+                            checked={consultorFilter.length === 1 && consultorFilter[0] === userEmail}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                setConsultorFilter([...consultorFilter, email]);
-                              } else {
-                                setConsultorFilter(consultorFilter.filter(e => e !== email));
+                                setConsultorFilter([userEmail]);
                               }
                             }}
                           />
-                          <Label htmlFor={email} className="text-sm cursor-pointer">
-                            {user?.full_name || email} {isCurrentUser && "(Você)"}
+                          <Label htmlFor="only-me" className="text-sm font-medium cursor-pointer">
+                            Apenas Eu
                           </Label>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox 
+                            id="all-team"
+                            checked={consultorFilter.length === membrosEquipe.length}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setConsultorFilter(membrosEquipe);
+                              } else {
+                                setConsultorFilter([]);
+                              }
+                            }}
+                          />
+                          <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
+                            Todos da Equipe
+                          </Label>
+                        </div>
+                      </div>
+                      <div className="border-t pt-2 space-y-2">
+                        {membrosEquipe.map((email) => {
+                          const user = users.find(u => u.email === email);
+                          const isChecked = consultorFilter.includes(email);
+                          const isCurrentUser = email === userEmail;
+                          return (
+                            <div key={email} className="flex items-center gap-2">
+                              <Checkbox 
+                                id={`seller-${email}`}
+                                checked={isChecked}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setConsultorFilter([...consultorFilter, email]);
+                                  } else {
+                                    setConsultorFilter(consultorFilter.filter(e => e !== email));
+                                  }
+                                }}
+                              />
+                              <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer">
+                                {user?.full_name || email} {isCurrentUser && "(Você)"}
+                              </Label>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             )}
           </div>
