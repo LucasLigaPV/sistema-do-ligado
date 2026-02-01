@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   Home,
+  Settings,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,6 +23,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
     { id: "indicacoes", label: "Indicações", icon: FileText },
     { id: "vendas", label: "Vendas", icon: DollarSign },
+    ...(user?.role === "admin" ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);

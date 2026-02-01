@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { TableIcon, Settings, LogOut, ShieldCheck, FileText, BarChart3, Plus } from "lucide-react";
+import { TableIcon, Settings, LogOut, ShieldCheck, FileText, BarChart3, Plus, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import TabelaIndicacoes from "../components/admin/TabelaIndicacoes";
 import ConfiguracaoFormularioAdmin from "../components/admin/ConfiguracaoFormularioAdmin";
@@ -17,6 +17,7 @@ import TabelaVendas from "../components/vendas/TabelaVendas";
 import ResumoVendedor from "../components/vendas/ResumoVendedor";
 import TabelaFechamentos from "../components/vendas/TabelaFechamentos";
 import DashboardVendas from "../components/vendas/DashboardVendas";
+import GerenciamentoUsuarios from "../components/admin/GerenciamentoUsuarios";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Admin() {
@@ -158,6 +159,31 @@ export default function Admin() {
 
                   <TabsContent value="dashboard">
                     <DashboardVendas userEmail={user?.email} userRole={user?.role} />
+                  </TabsContent>
+                </Tabs>
+              </div>
+            )}
+
+            {activeMenu === "configuracoes" && user?.role === "admin" && (
+              <div className="space-y-6">
+                <Tabs defaultValue="usuarios" className="space-y-6">
+                  <div className="mb-3">
+                    <h2 className="text-2xl font-bold text-slate-900">Configurações</h2>
+                    <p className="text-slate-500">Gerencie configurações do sistema</p>
+                  </div>
+
+                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                    <TabsTrigger
+                      value="usuarios"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <Users className="w-4 h-4" />
+                      Usuários
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="usuarios">
+                    <GerenciamentoUsuarios />
                   </TabsContent>
                 </Tabs>
               </div>
