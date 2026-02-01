@@ -159,9 +159,18 @@ export default function GerenciamentoUsuarios() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Gerenciamento de Usuários</h2>
-        <p className="text-slate-500">Configure funções e hierarquia da equipe</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Gerenciamento de Usuários</h2>
+          <p className="text-slate-500">Configure funções e hierarquia da equipe</p>
+        </div>
+        <Button
+          onClick={() => setShowInviteDialog(true)}
+          className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
+        >
+          <UserPlus className="w-4 h-4 mr-2" />
+          Novo Usuário
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -263,7 +272,14 @@ export default function GerenciamentoUsuarios() {
                       exit={{ opacity: 0 }}
                       className="border-b hover:bg-slate-50/50 transition-colors"
                     >
-                      <TableCell className="font-medium">{user.full_name}</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          {user.full_name || "-"}
+                          {user.status_convite === "pendente" && (
+                            <Badge className="bg-amber-100 text-amber-800 text-xs">Pendente</Badge>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell className="text-slate-600">{user.email}</TableCell>
                       <TableCell>
                         <Select
