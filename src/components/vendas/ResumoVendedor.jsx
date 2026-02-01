@@ -240,13 +240,13 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               </SelectTrigger>
               <SelectContent>
                 {membrosEquipe.map((email) => {
-                  const user = users.find(u => u.email === email);
-                  return (
-                    <SelectItem key={email} value={email}>
-                      {user?.full_name || email} {email === userEmail ? "(Você)" : ""}
-                    </SelectItem>
-                  );
-                })}
+                   const user = users.find(u => u.email === email);
+                   return (
+                     <SelectItem key={email} value={email}>
+                       {user?.full_name || "-"} {email === userEmail ? "(Você)" : ""}
+                     </SelectItem>
+                   );
+                 })}
               </SelectContent>
             </Select>
           </CardContent>

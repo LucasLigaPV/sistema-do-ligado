@@ -212,7 +212,7 @@ export default function GerenciamentoEquipes() {
                                       <p className="text-sm font-medium">
                                         {membro?.full_name || membroEmail}
                                       </p>
-                                      <p className="text-xs text-slate-500">{membroEmail}</p>
+ 
                                     </div>
                                   </div>
                                   <Button
