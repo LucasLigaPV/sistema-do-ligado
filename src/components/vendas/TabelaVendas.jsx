@@ -85,6 +85,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   
   const [search, setSearch] = useState("");
   const [etapaFilter, setEtapaFilter] = useState("all");
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : "all");
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
@@ -103,8 +104,24 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     queryFn: () => base44.entities.Indicacao.list(),
   });
 
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+  });
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => base44.entities.User.list(),
+  });
+
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
   const vendas = userRole === "admin" 
     ? allVendas 
+    : userFuncao === "lider"
+    ? allVendas.filter((v) => membrosEquipe.includes(v.vendedor))
     : allVendas.filter(v => v.vendedor === userEmail);
 
   const updateMutation = useMutation({
