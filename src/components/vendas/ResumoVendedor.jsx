@@ -39,7 +39,7 @@ export default function ResumoVendedor({ userEmail }) {
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
-  const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail);
+  const vendasDoVendedor = vendas.filter(v => v.vendedor === userEmail && v.status === "concluido");
 
   // Calcular estatísticas
   const totalVendas = vendasDoVendedor.length;
@@ -103,8 +103,17 @@ export default function ResumoVendedor({ userEmail }) {
 
   const progresso = calcularProgresso();
 
-  // Calcular comissão
-  const calcularComissao = () => {
+  // Calcular total de indicações
+  const totalIndicacoes = vendasDoVendedor.reduce((sum, v) => {
+    if (v.tem_indicacao === "sim" && v.valor_indicacao) {
+      const valor = parseFloat(v.valor_indicacao.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
+      return sum + valor;
+    }
+    return sum;
+  }, 0);
+
+  // Calcular comissão bruta
+  const calcularComissaoBruta = () => {
     if (nivelAtual.comissaoPorPlaca > 0) {
       return totalVendas * nivelAtual.comissaoPorPlaca;
     } else {
@@ -112,7 +121,10 @@ export default function ResumoVendedor({ userEmail }) {
     }
   };
 
-  const comissaoValor = calcularComissao();
+  const comissaoBruta = calcularComissaoBruta();
+  const comissaoAposIndicacao = comissaoBruta - totalIndicacoes;
+  const taxas = comissaoAposIndicacao * 0.04;
+  const comissaoLiquida = comissaoAposIndicacao - taxas;
   const percentualRecorrencia = nivelAtual.recorrencia;
 
   if (isLoading) {
@@ -173,14 +185,14 @@ export default function ResumoVendedor({ userEmail }) {
       {/* Cards de Comissão */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-slate-900">Comissão</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="border-0 shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Comissão sobre Adesão</p>
-                  <p className="text-3xl font-bold text-[#EFC200]">
-                    R$ {formatarValor(comissaoValor)}
+                  <p className="text-sm text-slate-500">Comissão Bruta</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    R$ {formatarValor(comissaoBruta)}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     {nivelAtual.comissaoPorPlaca > 0 
@@ -189,8 +201,8 @@ export default function ResumoVendedor({ userEmail }) {
                     }
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-[#FFF9E6] rounded-full flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-[#EFC200]" />
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-slate-600" />
                 </div>
               </div>
             </CardContent>
@@ -200,21 +212,78 @@ export default function ResumoVendedor({ userEmail }) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-500">Recorrência</p>
-                  <p className="text-3xl font-bold text-emerald-600">
-                    {percentualRecorrencia}%
+                  <p className="text-sm text-slate-500">Indicações</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    - R$ {formatarValor(totalIndicacoes)}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Percentual de recorrência mensal
+                    Comissão de indicadores
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <Target className="w-6 h-6 text-emerald-600" />
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Taxas (4%)</p>
+                  <p className="text-2xl font-bold text-orange-600">
+                    - R$ {formatarValor(taxas)}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Desconto sobre subtotal
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-md bg-gradient-to-br from-[#EFC200] to-[#D4A900]">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-black/70">Comissão Líquida</p>
+                  <p className="text-2xl font-bold text-black">
+                    R$ {formatarValor(comissaoLiquida)}
+                  </p>
+                  <p className="text-xs text-black/60 mt-1">
+                    Valor final a receber
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-white/30 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-black" />
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        <Card className="border-0 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Recorrência Mensal</p>
+                <p className="text-3xl font-bold text-emerald-600">
+                  {percentualRecorrencia}%
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Percentual de recorrência mensal
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <Target className="w-6 h-6 text-emerald-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Cards de Relatório Geral */}
