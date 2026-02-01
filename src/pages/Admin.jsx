@@ -81,15 +81,13 @@ export default function Admin() {
                       <TableIcon className="w-4 h-4" />
                       Indicações
                     </TabsTrigger>
-                    {(user?.funcao === "lider" || user?.role === "admin") && (
-                      <TabsTrigger
-                        value="dashboard"
-                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        Dashboard
-                      </TabsTrigger>
-                    )}
+                    <TabsTrigger
+                      value="dashboard"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      Dashboard
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="indicacoes">

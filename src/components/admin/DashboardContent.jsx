@@ -22,7 +22,7 @@ export default function DashboardContent({ userEmail, userRole }) {
     queryFn: () => base44.entities.Indicacao.list("-created_date"),
   });
 
-  const indicacoes = userRole === "admin" 
+  const indicacoes = (userRole === "admin" || userRole === "lider")
     ? allIndicacoes 
     : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
 
@@ -145,13 +145,15 @@ export default function DashboardContent({ userEmail, userRole }) {
               <TopIndicadores indicacoes={filteredIndicacoes} />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <TopConsultores indicacoes={filteredIndicacoes} />
-            </motion.div>
+            {(userRole === "admin" || userRole === "lider") && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <TopConsultores indicacoes={filteredIndicacoes} />
+              </motion.div>
+            )}
           </div>
         </>
       )}
