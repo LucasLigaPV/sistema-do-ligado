@@ -58,6 +58,10 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     enabled: userFuncao === "lider",
   });
 
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
   const { data: users = [] } = useQuery({
     queryKey: ["users", membrosEquipe],
     queryFn: async () => {
@@ -74,10 +78,6 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     },
     enabled: userFuncao === "lider" && membrosEquipe.length > 0,
   });
-
-  // Obter equipe do líder
-  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
-  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
   const vendasDoVendedor = vendas.filter(v => v.vendedor === vendedorSelecionado && v.etapa === "ativo");
 
