@@ -234,6 +234,7 @@ export default function GerenciamentoUsuarios() {
                   <Checkbox
                     checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
                     onCheckedChange={handleSelectAll}
+                    className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
                   />
                 </TableHead>
                 <TableHead>Nome</TableHead>
@@ -270,6 +271,7 @@ export default function GerenciamentoUsuarios() {
                         <Checkbox
                           checked={selectedUsers.includes(user.id)}
                           onCheckedChange={() => handleSelectUser(user.id)}
+                          className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
                         />
                       </TableCell>
                       <TableCell className="font-medium">{user.full_name}</TableCell>
