@@ -51,7 +51,6 @@ import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import Formulario from './pages/Formulario';
 import Inicio from './pages/Inicio';
-import MinhasConfiguracoes from './pages/MinhasConfiguracoes';
 import __Layout from './Layout.jsx';
 
 
@@ -60,7 +59,6 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Formulario": Formulario,
     "Inicio": Inicio,
-    "MinhasConfiguracoes": MinhasConfiguracoes,
 }
 
 export const pagesConfig = {
