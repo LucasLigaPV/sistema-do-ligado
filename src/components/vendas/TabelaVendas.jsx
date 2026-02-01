@@ -559,7 +559,9 @@ export default function TabelaVendas({ userEmail, userRole }) {
                   {selectedVenda.tem_indicacao === "sim" && (
                     <div>
                       <p className="text-sm text-slate-500">Valor Indicação</p>
-                      <p className="font-medium text-purple-600">R$ {formatarValorExibicao(selectedVenda.valor_indicacao)}</p>
+                      <p className="font-medium text-purple-600">
+                        {selectedVenda.valor_indicacao ? `R$ ${formatarValorExibicao(selectedVenda.valor_indicacao)}` : "-"}
+                      </p>
                     </div>
                   )}
                 </div>
