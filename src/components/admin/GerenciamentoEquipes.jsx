@@ -150,10 +150,10 @@ export default function GerenciamentoEquipes() {
       </Card>
 
       {/* Equipes */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <AnimatePresence>
           {filteredEquipes.length === 0 ? (
-            <Card className="border-0 shadow-md">
+            <Card className="border-0 shadow-md col-span-full">
               <CardContent className="p-10 text-center text-slate-500">
                 Nenhuma equipe encontrada
               </CardContent>

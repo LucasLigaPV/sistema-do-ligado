@@ -194,7 +194,6 @@ export default function GerenciamentoUsuarios() {
                 <TableHead>Nome</TableHead>
                 <TableHead>E-mail</TableHead>
                 <TableHead>Função</TableHead>
-                <TableHead>Líder Responsável</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -202,13 +201,13 @@ export default function GerenciamentoUsuarios() {
               <AnimatePresence>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
                       Carregando...
                     </TableCell>
                   </TableRow>
                 ) : filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
                       Nenhum usuário encontrado
                     </TableCell>
                   </TableRow>
@@ -239,33 +238,6 @@ export default function GerenciamentoUsuarios() {
                             <SelectItem value="master">Master</SelectItem>
                           </SelectContent>
                         </Select>
-                      </TableCell>
-                      <TableCell>
-                        {user.funcao !== "lider" && user.funcao !== "master" ? (
-                          <Select
-                            value={user.lider_email || "none"}
-                            onValueChange={(v) =>
-                              updateMutation.mutate({
-                                id: user.id,
-                                data: { lider_email: v === "none" ? null : v },
-                              })
-                            }
-                          >
-                            <SelectTrigger className="w-48">
-                              <SelectValue placeholder="Selecionar líder" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="none">Sem líder</SelectItem>
-                              {lideres.map((lider) => (
-                                <SelectItem key={lider.id} value={lider.email}>
-                                  {lider.full_name || lider.email}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <span className="text-slate-400 text-sm">-</span>
-                        )}
                       </TableCell>
                       <TableCell>
                         <Button
