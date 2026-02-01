@@ -15,7 +15,7 @@ import { Award, TrendingUp, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 
 const PLANO_CARREIRA = [
-  { vendas: 0, nivel: "Nível 1", comissaoPorPlaca: 30, percentualAdesao: 0, recorrencia: 0 },
+  { vendas: 0, nivel: "Nível 1", comissaoPorPlaca: 0, percentualAdesao: 0, recorrencia: 0 },
   { vendas: 20, nivel: "Nível 2", comissaoPorPlaca: 30, percentualAdesao: 0, recorrencia: 0 },
   { vendas: 25, nivel: "Nível 3", comissaoPorPlaca: 0, percentualAdesao: 50, recorrencia: 4 },
   { vendas: 40, nivel: "Nível 4", comissaoPorPlaca: 0, percentualAdesao: 100, recorrencia: 6 },

@@ -7,7 +7,7 @@ import { TrendingUp, DollarSign, Package, Target, Award } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 
 const PLANO_CARREIRA = [
-  { vendas: 0, nivel: "Nível 1", comissaoPorPlaca: 30, percentualAdesao: 0, recorrencia: 0 },
+  { vendas: 0, nivel: "Nível 1", comissaoPorPlaca: 0, percentualAdesao: 0, recorrencia: 0 },
   { vendas: 20, nivel: "Nível 2", comissaoPorPlaca: 30, percentualAdesao: 0, recorrencia: 0 },
   { vendas: 25, nivel: "Nível 3", comissaoPorPlaca: 0, percentualAdesao: 50, recorrencia: 4 },
   { vendas: 40, nivel: "Nível 4", comissaoPorPlaca: 0, percentualAdesao: 100, recorrencia: 6 },
@@ -149,9 +149,11 @@ export default function ResumoVendedor({ userEmail }) {
                 <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Plano de Carreira</p>
                 <h3 className="text-2xl font-bold text-slate-900">{nivelAtual.nivel}</h3>
                 <p className="text-slate-600 text-sm mt-1">
-                  {nivelAtual.comissaoPorPlaca > 0 
-                    ? `R$ ${nivelAtual.comissaoPorPlaca} por placa`
-                    : `${nivelAtual.percentualAdesao}% sobre adesão + ${nivelAtual.recorrencia}% recorrência`
+                  {nivelAtual.nivel === "Nível 1" 
+                    ? "Sem comissão neste nível"
+                    : nivelAtual.comissaoPorPlaca > 0 
+                      ? `R$ ${nivelAtual.comissaoPorPlaca} por placa`
+                      : `${nivelAtual.percentualAdesao}% sobre adesão + ${nivelAtual.recorrencia}% recorrência`
                   }
                 </p>
               </div>
@@ -206,13 +208,18 @@ export default function ResumoVendedor({ userEmail }) {
             </div>
 
             {proximoNivel && (
-              <div className="bg-slate-50 rounded-lg p-4 mt-6">
+              <div className={`rounded-lg p-4 mt-6 ${nivelAtual.nivel === "Nível 1" ? "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200" : "bg-slate-50"}`}>
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-medium text-slate-900">Próximo nível: {proximoNivel.nivel}</p>
                     <p className="text-xs text-slate-500 mt-1">
                       Faltam {proximoNivel.vendas - totalVendas} vendas
                     </p>
+                    {nivelAtual.nivel === "Nível 1" && (
+                      <p className="text-xs text-blue-600 font-medium mt-2">
+                        💪 Continue assim! Chegue a 20 vendas e comece a ganhar comissões!
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-slate-900">{Math.round(progresso)}%</p>
@@ -233,7 +240,14 @@ export default function ResumoVendedor({ userEmail }) {
 
       {/* Cards de Comissão */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-slate-900">Comissão</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-slate-900">Comissão</h3>
+          {nivelAtual.nivel === "Nível 1" && (
+            <span className="text-sm text-amber-600 font-medium">
+              🎯 Alcance 20 vendas para começar a ganhar!
+            </span>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="border-0 shadow-md">
             <CardContent className="p-6">
