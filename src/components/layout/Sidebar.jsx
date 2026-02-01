@@ -21,8 +21,8 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
 
   const menuItems = [
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
-    { id: "indicacoes", label: "Indicações", icon: FileText, link: "/Admin?menu=indicacoes" },
-    { id: "vendas", label: "Vendas", icon: DollarSign, link: "/Admin?menu=vendas" },
+    { id: "indicacoes", label: "Indicações", icon: FileText },
+    { id: "vendas", label: "Vendas", icon: DollarSign },
     { id: "ferramentas", label: "Ferramentas", icon: Wrench, link: "/Ferramentas" },
   ];
 
@@ -108,18 +108,32 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             const Icon = item.icon;
             const isActive = activeMenu === item.id;
             
+            if (item.link) {
+              return (
+                <Link key={item.id} to={item.link}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 hover:bg-slate-100"
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {isOpen && <span>{item.label}</span>}
+                  </Button>
+                </Link>
+              );
+            }
+            
             return (
-              <Link key={item.id} to={item.link}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
-                    isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "hover:bg-slate-100"
-                  } ${!isOpen ? "justify-center" : ""}`}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  {isOpen && <span>{item.label}</span>}
-                </Button>
-              </Link>
+              <Button
+                key={item.id}
+                variant={isActive ? "default" : "ghost"}
+                className={`w-full justify-start gap-3 ${
+                  isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""
+                } ${!isOpen ? "justify-center" : ""}`}
+                onClick={() => onMenuChange(item.id)}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                {isOpen && <span>{item.label}</span>}
+              </Button>
             );
           })}
         </nav>
@@ -183,19 +197,36 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 const Icon = item.icon;
                 const isActive = activeMenu === item.id;
                 
+                if (item.link) {
+                  return (
+                    <Link key={item.id} to={item.link}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 hover:bg-slate-100"
+                        onClick={toggleMobileSidebar}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.label}</span>
+                      </Button>
+                    </Link>
+                  );
+                }
+                
                 return (
-                  <Link key={item.id} to={item.link}>
-                    <Button
-                      variant={isActive ? "default" : "ghost"}
-                      className={`w-full justify-start gap-3 ${
-                        isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "hover:bg-slate-100"
-                      }`}
-                      onClick={toggleMobileSidebar}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </Button>
-                  </Link>
+                  <Button
+                    key={item.id}
+                    variant={isActive ? "default" : "ghost"}
+                    className={`w-full justify-start gap-3 ${
+                      isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""
+                    }`}
+                    onClick={() => {
+                      onMenuChange(item.id);
+                      toggleMobileSidebar();
+                    }}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </Button>
                 );
               })}
             </nav>

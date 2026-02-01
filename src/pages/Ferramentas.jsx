@@ -23,7 +23,6 @@ const CATEGORIAS = {
 export default function Ferramentas() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
     titulo: "",
@@ -125,7 +124,7 @@ export default function Ferramentas() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
-      <Sidebar user={user} activeMenu="ferramentas" />
+      <Sidebar user={user} activeMenu="ferramentas" onMenuChange={() => {}} />
 
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
         <div className="max-w-7xl mx-auto px-4 py-8">

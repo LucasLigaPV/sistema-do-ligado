@@ -56,7 +56,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
-      <Sidebar user={user} activeMenu={activeMenu} />
+      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
@@ -68,7 +68,7 @@ export default function Admin() {
             {activeMenu === "indicacoes" && (
               <div className="space-y-6">
                 <Tabs defaultValue="indicacoes" className="space-y-6">
-                  <div className="mb-3">
+                  <div className="mb-6">
                     <h2 className="text-2xl font-bold text-slate-900">Indicações</h2>
                     <p className="text-slate-500">Visualize e acompanhe todas as indicações</p>
                   </div>
@@ -138,7 +138,7 @@ export default function Admin() {
             {activeMenu === "vendas" && (
               <div className="space-y-6">
                 <Tabs defaultValue="registrar" className="space-y-6">
-                  <div className="mb-3">
+                  <div className="mb-6">
                     <h2 className="text-2xl font-bold text-slate-900">Vendas</h2>
                     <p className="text-slate-500">Registre, acompanhe e gerencie suas vendas</p>
                   </div>
