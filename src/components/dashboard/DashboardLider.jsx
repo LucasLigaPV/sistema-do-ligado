@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Users, TrendingUp, DollarSign, Target, Award, Package } from "lucide-react";
+import { Users, TrendingUp, DollarSign } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 export default function DashboardLider({ userEmail }) {
@@ -12,10 +12,7 @@ export default function DashboardLider({ userEmail }) {
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
-  const { data: indicacoes = [] } = useQuery({
-    queryKey: ["indicacoes"],
-    queryFn: () => base44.entities.Indicacao.list("-created_date"),
-  });
+
 
   const { data: equipes = [] } = useQuery({
     queryKey: ["equipes"],
@@ -31,10 +28,9 @@ export default function DashboardLider({ userEmail }) {
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  // Filtrar vendas e indicações da equipe
+  // Filtrar vendas da equipe
   const vendasEquipe = vendas.filter(v => membrosEquipe.includes(v.vendedor));
   const vendasAtivas = vendasEquipe.filter(v => v.etapa === "ativo");
-  const indicacoesEquipe = indicacoes.filter(i => membrosEquipe.includes(i.consultor_responsavel));
 
   // Estatísticas gerais
   const totalVendas = vendasAtivas.length;
@@ -43,13 +39,7 @@ export default function DashboardLider({ userEmail }) {
     return sum + valor;
   }, 0);
 
-  const totalIndicacoesPagas = indicacoesEquipe.filter(i => i.status === "paga").length;
-  const valorIndicacoes = indicacoesEquipe
-    .filter(i => i.status === "paga")
-    .reduce((sum, i) => {
-      const valor = parseFloat(i.valor_indicacao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
-      return sum + valor;
-    }, 0);
+
 
   // Vendas por vendedor
   const vendasPorVendedor = membrosEquipe.map(email => {
@@ -90,11 +80,7 @@ export default function DashboardLider({ userEmail }) {
     value: count,
   }));
 
-  // Indicações por status
-  const statusIndicacoes = indicacoesEquipe.reduce((acc, i) => {
-    acc[i.status] = (acc[i.status] || 0) + 1;
-    return acc;
-  }, {});
+
 
   return (
     <div className="space-y-6">
@@ -107,7 +93,7 @@ export default function DashboardLider({ userEmail }) {
       </div>
 
       {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="border-0 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -133,20 +119,6 @@ export default function DashboardLider({ userEmail }) {
               </div>
               <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-emerald-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Indicações Pagas</p>
-                <p className="text-3xl font-bold text-slate-900">{totalIndicacoesPagas}</p>
-              </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                <Award className="w-6 h-6 text-purple-600" />
               </div>
             </div>
           </CardContent>
@@ -293,40 +265,7 @@ export default function DashboardLider({ userEmail }) {
         </Card>
       </div>
 
-      {/* Status de Indicações */}
-      <Card className="border-0 shadow-md">
-        <CardHeader>
-          <CardTitle>Status das Indicações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-[#EFC200]">
-                {statusIndicacoes.pendente || 0}
-              </p>
-              <p className="text-sm text-slate-500 mt-1">Pendentes</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">
-                {statusIndicacoes.aprovada || 0}
-              </p>
-              <p className="text-sm text-slate-500 mt-1">Aprovadas</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-emerald-600">
-                {statusIndicacoes.paga || 0}
-              </p>
-              <p className="text-sm text-slate-500 mt-1">Pagas</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">
-                {statusIndicacoes.rejeitada || 0}
-              </p>
-              <p className="text-sm text-slate-500 mt-1">Rejeitadas</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }
