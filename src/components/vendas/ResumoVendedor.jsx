@@ -102,6 +102,15 @@ export default function ResumoVendedor({ userEmail }) {
   };
 
   const progresso = calcularProgresso();
+  
+  const [progressoAnimado, setProgressoAnimado] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgressoAnimado(progresso);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [progresso]);
 
   // Calcular total de indicações
   const totalIndicacoes = vendasDoVendedor.reduce((sum, v) => {
@@ -226,7 +235,16 @@ export default function ResumoVendedor({ userEmail }) {
                     <p className="text-xs text-slate-500">{totalVendas}/{proximoNivel.vendas}</p>
                   </div>
                 </div>
-                <Progress value={progresso} className="h-2.5 bg-slate-200 mt-3" />
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Progress 
+                    value={progressoAnimado} 
+                    className="h-2.5 bg-slate-200 mt-3 transition-all duration-1000 ease-out" 
+                  />
+                </motion.div>
               </div>
             )}
             {!proximoNivel && (
