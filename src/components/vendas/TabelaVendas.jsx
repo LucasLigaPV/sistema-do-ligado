@@ -81,9 +81,14 @@ const formatarValorExibicao = (valor) => {
   });
 };
 
-const getNomeVendedor = (email, users) => {
+const getNomeVendedor = (email, users, minhaEquipe = []) => {
+  // Tenta buscar em users primeiro
   const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
-  return user?.full_name || email;
+  if (user?.full_name) return user.full_name;
+  
+  // Se não encontrar, tenta extrair do email
+  const parte = email?.split('@')[0] || email;
+  return parte.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 };
 
 export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
@@ -112,7 +117,13 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
 
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: async () => {
+      try {
+        return await base44.entities.User.list();
+      } catch {
+        return [];
+      }
+    },
   });
 
   // Obter equipe do líder
@@ -379,7 +390,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                         {membrosEquipe.map((email) => {
                            const isChecked = consultorFilter.includes(email);
                            const isCurrentUser = email === userEmail;
-                           const nomeVendedor = getNomeVendedor(email, users);
+                           const nomeVendedor = getNomeVendedor(email, users, membrosEquipe);
                            return (
                              <div key={email} className="flex items-center gap-2 truncate">
                                <Checkbox 
