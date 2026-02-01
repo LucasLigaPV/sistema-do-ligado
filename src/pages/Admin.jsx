@@ -81,7 +81,7 @@ export default function Admin() {
                       <TableIcon className="w-4 h-4" />
                       Indicações
                     </TabsTrigger>
-                    {user?.funcao === "lider" && (
+                    {(user?.funcao === "lider" || user?.role === "admin") && (
                       <TabsTrigger
                         value="dashboard"
                         className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
@@ -89,24 +89,6 @@ export default function Admin() {
                         <ShieldCheck className="w-4 h-4" />
                         Dashboard
                       </TabsTrigger>
-                    )}
-                    {user?.role === "admin" && (
-                      <>
-                        <TabsTrigger
-                          value="dashboard"
-                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                        >
-                          <ShieldCheck className="w-4 h-4" />
-                          Dashboard
-                        </TabsTrigger>
-                        <TabsTrigger
-                          value="configuracoes"
-                          className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                        >
-                          <Settings className="w-4 h-4" />
-                          Configurações
-                        </TabsTrigger>
-                      </>
                     )}
                   </TabsList>
 
@@ -117,20 +99,6 @@ export default function Admin() {
                   <TabsContent value="dashboard">
                     <DashboardContent userEmail={user?.email} userRole={user?.role} />
                   </TabsContent>
-
-                  {user?.role === "admin" && (
-                    <TabsContent value="configuracoes">
-                      <div className="mb-6">
-                        <h2 className="text-xl font-bold text-slate-900 mb-2">
-                          Configurações do Formulário
-                        </h2>
-                        <p className="text-slate-500">
-                          Gerencie as opções disponíveis no formulário de indicação
-                        </p>
-                      </div>
-                      <ConfiguracaoFormularioAdmin />
-                    </TabsContent>
-                  )}
                 </Tabs>
               </div>
             )}
@@ -176,15 +144,6 @@ export default function Admin() {
                         </TabsTrigger>
                       </>
                     )}
-                    {user?.role === "admin" && (
-                      <TabsTrigger
-                        value="configuracoes"
-                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
-                      >
-                        <Settings className="w-4 h-4" />
-                        Configurações
-                      </TabsTrigger>
-                    )}
                   </TabsList>
 
                   <TabsContent value="registrar">
@@ -201,20 +160,6 @@ export default function Admin() {
 
                   <TabsContent value="dashboard">
                     <DashboardVendas userEmail={user?.email} userRole={user?.role} />
-                  </TabsContent>
-
-                  <TabsContent value="configuracoes">
-                    <div className="flex items-center justify-center h-[calc(100vh-300px)]">
-                      <div className="text-center">
-                        <Settings className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-slate-700 mb-2">
-                          Configurações de Vendas
-                        </h2>
-                        <p className="text-slate-500">
-                          Em breve disponível
-                        </p>
-                      </div>
-                    </div>
                   </TabsContent>
                 </Tabs>
               </div>
