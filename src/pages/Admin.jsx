@@ -152,7 +152,7 @@ export default function Admin() {
                   </TabsContent>
 
                   <TabsContent value="resumo">
-                    <ResumoVendedor userEmail={user?.email} />
+                    <ResumoVendedor userEmail={user?.email} userFuncao={user?.funcao} />
                   </TabsContent>
 
                   <TabsContent value="fechamentos">
