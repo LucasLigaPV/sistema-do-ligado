@@ -98,6 +98,11 @@ export default function TabelaVendas({ userEmail, userRole }) {
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
 
+  const { data: indicacoes = [] } = useQuery({
+    queryKey: ["indicacoes"],
+    queryFn: () => base44.entities.Indicacao.list(),
+  });
+
   const vendas = userRole === "admin" 
     ? allVendas 
     : allVendas.filter(v => v.vendedor === userEmail);
@@ -498,7 +503,9 @@ export default function TabelaVendas({ userEmail, userRole }) {
           <DialogHeader>
             <DialogTitle>Detalhes da Venda</DialogTitle>
           </DialogHeader>
-          {selectedVenda && (
+          {selectedVenda && (() => {
+            const indicacaoRelacionada = indicacoes.find(ind => ind.venda_id === selectedVenda.id);
+            return (
             <div className="space-y-6 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -560,14 +567,15 @@ export default function TabelaVendas({ userEmail, userRole }) {
                     <div>
                       <p className="text-sm text-slate-500">Valor Indicação</p>
                       <p className="font-medium text-purple-600">
-                        {selectedVenda.valor_indicacao ? `R$ ${formatarValorExibicao(selectedVenda.valor_indicacao)}` : "-"}
+                        {indicacaoRelacionada?.valor_indicacao ? `R$ ${indicacaoRelacionada.valor_indicacao}` : "-"}
                       </p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
-          )}
+          );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
