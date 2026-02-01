@@ -148,7 +148,7 @@ export default function Admin() {
                   </TabsList>
 
                   <TabsContent value="registrar">
-                    <TabelaVendas userEmail={user?.email} userRole={user?.role} />
+                    <TabelaVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
                   </TabsContent>
 
                   <TabsContent value="resumo">
