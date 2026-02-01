@@ -125,7 +125,7 @@ export default function Admin() {
                       <FileText className="w-4 h-4" />
                       Resumo
                     </TabsTrigger>
-                    {(user?.role === "admin" || user?.funcao === "lider") && (
+                    {(user?.role === "admin" || user?.funcao === "lider" || user?.funcao === "master") && (
                       <>
                         <TabsTrigger
                           value="fechamentos"
@@ -164,7 +164,7 @@ export default function Admin() {
               </div>
             )}
 
-            {activeMenu === "configuracoes" && user?.role === "admin" && (
+            {activeMenu === "configuracoes" && (user?.role === "admin" || user?.funcao === "master") && (
               <div className="space-y-6">
                 <Tabs defaultValue="usuarios" className="space-y-6">
                   <div className="mb-3">

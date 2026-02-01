@@ -49,10 +49,10 @@ export default function GerenciamentoUsuarios() {
 
   const getStats = () => {
     const total = users.length;
-    const admins = users.filter((u) => u.role === "admin").length;
+    const masters = users.filter((u) => u.funcao === "master").length;
     const lideresCount = users.filter((u) => u.funcao === "lider").length;
     const vendedores = users.filter((u) => u.funcao === "vendedor" || !u.funcao).length;
-    return { total, admins, lideresCount, vendedores };
+    return { total, masters, lideresCount, vendedores };
   };
 
   const stats = getStats();
@@ -81,10 +81,10 @@ export default function GerenciamentoUsuarios() {
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-600" />
+              <Shield className="w-5 h-5 text-[#EFC200]" />
               <div>
-                <p className="text-sm text-blue-600">Administradores</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.admins}</p>
+                <p className="text-sm text-[#D4A900]">Masters</p>
+                <p className="text-2xl font-bold text-[#D4A900]">{stats.masters}</p>
               </div>
             </div>
           </CardContent>
@@ -137,7 +137,6 @@ export default function GerenciamentoUsuarios() {
               <TableRow className="bg-slate-50">
                 <TableHead>Nome</TableHead>
                 <TableHead>E-mail</TableHead>
-                <TableHead>Role Sistema</TableHead>
                 <TableHead>Função</TableHead>
                 <TableHead>Líder Responsável</TableHead>
               </TableRow>
@@ -146,13 +145,13 @@ export default function GerenciamentoUsuarios() {
               <AnimatePresence>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
                       Carregando...
                     </TableCell>
                   </TableRow>
                 ) : filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-slate-500">
+                    <TableCell colSpan={4} className="text-center py-10 text-slate-500">
                       Nenhum usuário encontrado
                     </TableCell>
                   </TableRow>
@@ -168,11 +167,6 @@ export default function GerenciamentoUsuarios() {
                       <TableCell className="font-medium">{user.full_name}</TableCell>
                       <TableCell className="text-slate-600">{user.email}</TableCell>
                       <TableCell>
-                        <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                          {user.role === "admin" ? "Admin" : "Usuário"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
                         <Select
                           value={user.funcao || "vendedor"}
                           onValueChange={(v) =>
@@ -180,7 +174,7 @@ export default function GerenciamentoUsuarios() {
                               id: user.id,
                               data: {
                                 funcao: v,
-                                lider_email: v === "lider" ? null : user.lider_email,
+                                lider_email: v === "lider" || v === "master" ? null : user.lider_email,
                               },
                             })
                           }
@@ -191,11 +185,12 @@ export default function GerenciamentoUsuarios() {
                           <SelectContent>
                             <SelectItem value="vendedor">Vendedor</SelectItem>
                             <SelectItem value="lider">Líder</SelectItem>
+                            <SelectItem value="master">Master</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
                       <TableCell>
-                        {user.funcao !== "lider" ? (
+                        {user.funcao !== "lider" && user.funcao !== "master" ? (
                           <Select
                             value={user.lider_email || "none"}
                             onValueChange={(v) =>

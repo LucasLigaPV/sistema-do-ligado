@@ -23,7 +23,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
     { id: "indicacoes", label: "Indicações", icon: FileText },
     { id: "vendas", label: "Vendas", icon: DollarSign },
-    ...(user?.role === "admin" ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
+    ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
