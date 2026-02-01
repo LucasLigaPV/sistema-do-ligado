@@ -81,6 +81,11 @@ const formatarValorExibicao = (valor) => {
   });
 };
 
+const getNomeVendedor = (email, users) => {
+  const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
+  return user?.full_name || email;
+};
+
 export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
