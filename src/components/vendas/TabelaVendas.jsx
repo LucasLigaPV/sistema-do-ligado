@@ -347,17 +347,37 @@ export default function TabelaVendas({ userEmail, userRole }) {
                             value={venda.etapa}
                             onValueChange={(v) => updateMutation.mutate({ id: venda.id, data: { etapa: v } })}
                           >
-                            <SelectTrigger className="w-40 h-8">
-                              <Badge className={`${etapaConfig[venda.etapa]?.color} flex items-center gap-1`}>
-                                <EtapaIcon className="w-3 h-3" />
-                                {etapaConfig[venda.etapa]?.label}
-                              </Badge>
+                            <SelectTrigger className={`w-40 h-9 border-0 ${etapaConfig[venda.etapa]?.color} font-medium`}>
+                              <div className="flex items-center gap-2">
+                                <EtapaIcon className="w-4 h-4" />
+                                <SelectValue />
+                              </div>
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
-                              <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
-                              <SelectItem value="em_ativacao">Em Ativação</SelectItem>
-                              <SelectItem value="ativo">Ativo</SelectItem>
+                              <SelectItem value="pagamento_ok">
+                                <div className="flex items-center gap-2">
+                                  <DollarSign className="w-4 h-4" />
+                                  Pagamento OK
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="vistoria_ok">
+                                <div className="flex items-center gap-2">
+                                  <ClipboardCheck className="w-4 h-4" />
+                                  Vistoria OK
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="em_ativacao">
+                                <div className="flex items-center gap-2">
+                                  <Loader className="w-4 h-4" />
+                                  Em Ativação
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="ativo">
+                                <div className="flex items-center gap-2">
+                                  <CheckCircle2 className="w-4 h-4" />
+                                  Ativo
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </TableCell>
