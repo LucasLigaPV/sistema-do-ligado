@@ -115,6 +115,10 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
   });
 
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
   const { data: users = [] } = useQuery({
     queryKey: ["users", membrosEquipe],
     queryFn: async () => {
@@ -130,11 +134,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
         return [];
       }
     },
+    enabled: membrosEquipe.length > 0,
   });
-
-  // Obter equipe do líder
-  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
-  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
   const [consultorFilter, setConsultorFilter] = useState(
     userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
