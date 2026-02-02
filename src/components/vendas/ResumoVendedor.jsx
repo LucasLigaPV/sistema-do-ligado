@@ -243,7 +243,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                    const user = users.find(u => u.email === email);
                    return (
                      <SelectItem key={email} value={email}>
-                       {user?.full_name || "-"} {email === userEmail ? "(Você)" : ""}
+                       {user?.full_name || email} {email === userEmail ? "(Você)" : ""}
                      </SelectItem>
                    );
                  })}
