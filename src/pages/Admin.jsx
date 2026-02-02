@@ -22,6 +22,7 @@ import GerenciamentoEquipes from "../components/admin/GerenciamentoEquipes";
 import DashboardLider from "../components/dashboard/DashboardLider";
 import Sidebar from "../components/layout/Sidebar";
 import FilaLeads from "../components/crm/FilaLeads";
+import PipelineNegociacoes from "../components/crm/PipelineNegociacoes";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -214,6 +215,16 @@ export default function Admin() {
                   <p className="text-slate-500">Gerencie leads provenientes de tráfego pago</p>
                 </div>
                 <FilaLeads />
+              </div>
+            )}
+
+            {activeMenu === "crm-negociacoes" && (
+              <div className="space-y-6">
+                <div className="mb-3">
+                  <h2 className="text-2xl font-bold text-slate-900">Negociações</h2>
+                  <p className="text-slate-500">Acompanhe o pipeline de vendas</p>
+                </div>
+                <PipelineNegociacoes userEmail={user?.email} userFuncao={user?.funcao} />
               </div>
             )}
           </motion.div>
