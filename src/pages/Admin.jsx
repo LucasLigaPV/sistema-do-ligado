@@ -219,8 +219,8 @@ export default function Admin() {
             )}
 
             {activeMenu === "crm-negociacoes" && (
-              <div className="space-y-6">
-                <div className="mb-3">
+              <div className="space-y-4 -mt-4">
+                <div className="mb-2">
                   <h2 className="text-2xl font-bold text-slate-900">Negociações</h2>
                   <p className="text-slate-500">Acompanhe o pipeline de vendas</p>
                 </div>

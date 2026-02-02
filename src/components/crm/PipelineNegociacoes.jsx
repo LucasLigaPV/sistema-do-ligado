@@ -164,12 +164,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-4">
-      {/* Header fixo com botões */}
-      <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-3 bg-white p-4 rounded-lg shadow-sm border">
-        <div className="flex gap-2 w-full sm:w-auto">
+      {/* Header fixo com botões - sempre visível */}
+      <div className="sticky top-0 z-10 bg-slate-50 -mx-4 px-4 py-3 border-b">
+        <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2">
           <Popover open={showFilters} onOpenChange={setShowFilters}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2 flex-1 sm:flex-none">
+              <Button variant="outline" className="gap-2 bg-white">
                 <Filter className="w-4 h-4" />
                 Filtros
                 {(selectedVendedores.length > 0 || startDate || endDate) && (
@@ -252,7 +252,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             </PopoverContent>
           </Popover>
           
-          <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black flex-1 sm:flex-none">
+          <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black">
             <Plus className="w-4 h-4" />
             Nova Negociação
           </Button>
