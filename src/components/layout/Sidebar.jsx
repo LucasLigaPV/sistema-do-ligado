@@ -18,6 +18,7 @@ import {
   BarChart3,
   Megaphone,
   ChevronDown,
+  Briefcase,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -25,11 +26,21 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [crmExpanded, setCrmExpanded] = useState(false);
+  const [controleExpanded, setControleExpanded] = useState(false);
 
   const menuItems = [
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
-    { id: "vendas", label: "Vendas", icon: DollarSign },
-    { id: "indicacoes", label: "Indicações", icon: UserPlus },
+    { 
+      id: "controle", 
+      label: "Controle", 
+      icon: Briefcase, 
+      hasSubmenu: true,
+      submenus: [
+        { id: "vendas", label: "Vendas", icon: DollarSign },
+        { id: "indicacoes", label: "Indicações", icon: UserPlus },
+        ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
+      ]
+    },
     { 
       id: "crm", 
       label: "CRM", 
@@ -42,7 +53,6 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         { id: "crm-marketing", label: "Marketing", icon: Megaphone },
       ]
     },
-    ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -142,23 +152,28 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             }
             
             if (item.hasSubmenu) {
+              const isExpanded = item.id === "crm" ? crmExpanded : controleExpanded;
+              const toggleExpanded = item.id === "crm" 
+                ? () => setCrmExpanded(!crmExpanded) 
+                : () => setControleExpanded(!controleExpanded);
+              
               return (
                 <div key={item.id}>
                   <Button
                     variant="ghost"
                     className={`w-full justify-start gap-3 hover:bg-slate-100 ${!isOpen ? "justify-center" : ""}`}
-                    onClick={() => setCrmExpanded(!crmExpanded)}
+                    onClick={toggleExpanded}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />
                     {isOpen && (
                       <>
                         <span className="flex-1 text-left">{item.label}</span>
-                        <ChevronDown className={`w-4 h-4 transition-transform ${crmExpanded ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                       </>
                     )}
                   </Button>
                   <AnimatePresence>
-                    {crmExpanded && isOpen && (
+                    {isExpanded && isOpen && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -283,19 +298,24 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 }
                 
                 if (item.hasSubmenu) {
+                  const isExpanded = item.id === "crm" ? crmExpanded : controleExpanded;
+                  const toggleExpanded = item.id === "crm" 
+                    ? () => setCrmExpanded(!crmExpanded) 
+                    : () => setControleExpanded(!controleExpanded);
+                  
                   return (
                     <div key={item.id}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start gap-3 hover:bg-slate-100"
-                        onClick={() => setCrmExpanded(!crmExpanded)}
+                        onClick={toggleExpanded}
                       >
                         <Icon className="w-5 h-5" />
                         <span className="flex-1 text-left">{item.label}</span>
-                        <ChevronDown className={`w-4 h-4 transition-transform ${crmExpanded ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                       </Button>
                       <AnimatePresence>
-                        {crmExpanded && (
+                        {isExpanded && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
