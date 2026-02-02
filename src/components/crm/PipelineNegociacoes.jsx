@@ -163,22 +163,22 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   }
 
   return (
-    <div>
-      {/* Header fixo com botões - sempre visível */}
-      <div className="flex flex-wrap items-center justify-end gap-2 mb-4 bg-white p-3 rounded-lg border shadow-sm">
+    <div className="flex gap-4">
+      {/* Barra lateral fixa com botões */}
+      <div className="flex-shrink-0 w-16 flex flex-col gap-3 sticky top-4 self-start">
         <Popover open={showFilters} onOpenChange={setShowFilters}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="gap-2" size="sm">
-              <Filter className="w-4 h-4" />
-              <span className="hidden sm:inline">Filtros</span>
+            <Button variant="outline" className="h-16 w-16 flex-col gap-1 p-2 relative" size="sm">
+              <Filter className="w-5 h-5" />
+              <span className="text-[10px]">Filtros</span>
               {(selectedVendedores.length > 0 || startDate || endDate) && (
-                <Badge className="ml-1 bg-[#EFC200] text-black text-xs">
-                  {selectedVendedores.length > 0 ? selectedVendedores.length : ""}
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-[#EFC200] text-black text-xs">
+                  {selectedVendedores.length > 0 ? selectedVendedores.length : "•"}
                 </Badge>
               )}
             </Button>
           </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
+            <PopoverContent className="w-80" align="start" side="right">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold text-sm">Filtros</h4>
@@ -250,14 +250,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               </div>
             </PopoverContent>
           </Popover>
-          
-        <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black" size="sm">
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Nova Negociação</span>
-          <span className="sm:hidden">Nova</span>
+        
+        <Button 
+          onClick={() => setShowNewDeal(true)} 
+          className="h-16 w-16 flex-col gap-1 p-2 bg-[#EFC200] hover:bg-[#D4A900] text-black" 
+          size="sm"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="text-[10px] leading-tight text-center">Nova</span>
         </Button>
       </div>
 
+      {/* Kanban Board */}
+      <div className="flex-1 min-w-0">
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="overflow-x-auto pb-4">
             <div className="flex gap-3 min-w-max pb-2">
