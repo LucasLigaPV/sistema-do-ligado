@@ -97,6 +97,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   }, [vendasFiltradas]);
 
   const rankingVendedores = useMemo(() => {
+    if (userFuncao !== "lider" && userRole !== "admin") return [];
+    
     const vendedoresMap = {};
     
     vendasFiltradas.forEach(venda => {
@@ -118,7 +120,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     return Object.values(vendedoresMap)
       .sort((a, b) => b.totalVendas - a.totalVendas)
       .slice(0, 10);
-  }, [vendasFiltradas, usuarios]);
+  }, [vendasFiltradas, usuarios, userFuncao, userRole]);
 
   const dadosCanais = useMemo(() => {
     const canais = vendasFiltradas.reduce((acc, v) => {
