@@ -85,15 +85,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   });
 
   const etapas = [
-    { id: "novo_lead", label: "Novo Lead", color: "bg-slate-100 border-slate-300" },
-    { id: "abordagem", label: "Abordagem", color: "bg-blue-50 border-blue-200" },
-    { id: "sondagem", label: "Sondagem", color: "bg-cyan-50 border-cyan-200" },
-    { id: "apresentacao", label: "Apresentação", color: "bg-indigo-50 border-indigo-200" },
-    { id: "cotacao", label: "Cotação", color: "bg-purple-50 border-purple-200" },
-    { id: "em_negociacao", label: "Em Negociação", color: "bg-yellow-50 border-yellow-200" },
-    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", color: "bg-orange-50 border-orange-200" },
-    { id: "enviado_cadastro", label: "Enviado para Cadastro", color: "bg-green-50 border-green-200" },
-    { id: "venda_ativa", label: "Venda Ativa", color: "bg-emerald-50 border-emerald-200" },
+    { id: "novo_lead", label: "Novo Lead", color: "bg-slate-50 border-slate-200" },
+    { id: "abordagem", label: "Abordagem", color: "bg-slate-50 border-slate-200" },
+    { id: "sondagem", label: "Sondagem", color: "bg-slate-50 border-slate-200" },
+    { id: "apresentacao", label: "Apresentação", color: "bg-slate-50 border-slate-200" },
+    { id: "cotacao", label: "Cotação", color: "bg-slate-50 border-slate-200" },
+    { id: "em_negociacao", label: "Em Negociação", color: "bg-slate-50 border-slate-200" },
+    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", color: "bg-slate-50 border-slate-200" },
+    { id: "enviado_cadastro", label: "Enviado para Cadastro", color: "bg-slate-50 border-slate-200" },
+    { id: "venda_ativa", label: "Venda Ativa", color: "bg-slate-50 border-slate-200" },
   ];
 
   // Identificar equipe do líder
@@ -165,11 +165,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   return (
     <div className="space-y-6">
       {/* Header com botão de adicionar e filtros */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h3 className="text-xl font-semibold text-slate-900">Pipeline de Negociações</h3>
-          <p className="text-sm text-slate-500">Gerencie suas negociações por etapa</p>
-        </div>
+      <div className="flex flex-col md:flex-row justify-end items-start md:items-center gap-4">
         <div className="flex gap-2">
           <Popover open={showFilters} onOpenChange={setShowFilters}>
             <PopoverTrigger asChild>
@@ -265,8 +261,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-4 min-w-max">
+        <div className="overflow-x-auto -mx-4 px-4 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
+          <div className="flex gap-4 pb-4" style={{ minWidth: 'max-content' }}>
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               
