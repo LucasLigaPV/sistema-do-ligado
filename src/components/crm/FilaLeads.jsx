@@ -28,7 +28,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Search, Eye, Filter, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth, isToday } from "date-fns";
 
 const statusConfig = {
   novo: { label: "Novo", color: "bg-blue-500" },
@@ -44,6 +44,8 @@ export default function FilaLeads() {
   const [filterPlataforma, setFilterPlataforma] = useState("todas");
   const [selectedLead, setSelectedLead] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
 
   const queryClient = useQueryClient();
 
@@ -60,6 +62,9 @@ export default function FilaLeads() {
   });
 
   const filteredLeads = leads.filter((lead) => {
+    const leadDate = lead.data ? new Date(lead.data) : new Date(lead.created_date);
+    const matchDate = (!startDate || leadDate >= new Date(startDate)) && 
+                      (!endDate || leadDate <= new Date(endDate + "T23:59:59"));
     const matchSearch =
       lead.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -67,7 +72,7 @@ export default function FilaLeads() {
     const matchStatus = filterStatus === "todos" || lead.status === filterStatus;
     const matchPlataforma =
       filterPlataforma === "todas" || lead.plataforma === filterPlataforma;
-    return matchSearch && matchStatus && matchPlataforma;
+    return matchDate && matchSearch && matchStatus && matchPlataforma;
   });
 
   const plataformas = [...new Set(leads.map((l) => l.plataforma).filter(Boolean))];
@@ -85,16 +90,18 @@ export default function FilaLeads() {
   };
 
   const stats = {
-    total: leads.length,
-    novos: leads.filter((l) => l.status === "novo").length,
-    contatados: leads.filter((l) => l.status === "contatado").length,
-    convertidos: leads.filter((l) => l.status === "convertido").length,
+    total: filteredLeads.length,
+    novos: leads.filter((l) => {
+      const leadDate = l.data ? new Date(l.data) : new Date(l.created_date);
+      return isToday(leadDate);
+    }).length,
+    naFila: filteredLeads.filter((l) => !l.distribuido).length,
   };
 
   return (
     <div className="space-y-6">
       {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">
@@ -108,7 +115,7 @@ export default function FilaLeads() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">
-              Novos
+              Novos (Hoje)
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -118,24 +125,12 @@ export default function FilaLeads() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-slate-600">
-              Contatados
+              Na Fila
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">
-              {stats.contatados}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-slate-600">
-              Convertidos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {stats.convertidos}
+              {stats.naFila}
             </div>
           </CardContent>
         </Card>
@@ -144,42 +139,67 @@ export default function FilaLeads() {
       {/* Filtros */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-              <Input
-                placeholder="Buscar por nome, email ou telefone..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex gap-2">
+                <div>
+                  <label className="text-xs text-slate-600 mb-1 block">Data Inicial</label>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full md:w-[160px]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-600 mb-1 block">Data Final</label>
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full md:w-[160px]"
+                  />
+                </div>
+              </div>
+              <div className="flex-1 relative">
+                <label className="text-xs text-slate-600 mb-1 block">Buscar</label>
+                <Search className="absolute left-3 top-[34px] transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Input
+                  placeholder="Nome, email ou telefone..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value="novo">Novo</SelectItem>
-                <SelectItem value="contatado">Contatado</SelectItem>
-                <SelectItem value="qualificado">Qualificado</SelectItem>
-                <SelectItem value="convertido">Convertido</SelectItem>
-                <SelectItem value="perdido">Perdido</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filterPlataforma} onValueChange={setFilterPlataforma}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Plataforma" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todas">Todas Plataformas</SelectItem>
-                {plataformas.map((plat) => (
-                  <SelectItem key={plat} value={plat}>
-                    {plat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col md:flex-row gap-4">
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os Status</SelectItem>
+                  <SelectItem value="novo">Novo</SelectItem>
+                  <SelectItem value="contatado">Contatado</SelectItem>
+                  <SelectItem value="qualificado">Qualificado</SelectItem>
+                  <SelectItem value="convertido">Convertido</SelectItem>
+                  <SelectItem value="perdido">Perdido</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filterPlataforma} onValueChange={setFilterPlataforma}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder="Plataforma" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todas">Todas Plataformas</SelectItem>
+                  {plataformas.map((plat) => (
+                    <SelectItem key={plat} value={plat}>
+                      {plat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
