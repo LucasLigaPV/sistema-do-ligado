@@ -9,6 +9,7 @@ import Sidebar from "../components/layout/Sidebar";
 export default function Inicio() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeMenu, setActiveMenu] = useState("inicio");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,10 +24,6 @@ export default function Inicio() {
     };
     checkAuth();
   }, []);
-
-  const handleLogout = async () => {
-    await base44.auth.logout();
-  };
 
   if (loading) {
     return (
