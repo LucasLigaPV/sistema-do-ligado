@@ -19,6 +19,7 @@ import {
   Megaphone,
   ChevronDown,
   Briefcase,
+  UsersRound,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,7 +39,6 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       submenus: [
         { id: "vendas", label: "Vendas", icon: DollarSign },
         { id: "indicacoes", label: "Indicações", icon: UserPlus },
-        ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
       ]
     },
     { 
@@ -53,6 +53,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         { id: "crm-marketing", label: "Marketing", icon: Megaphone },
       ]
     },
+    ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
 
   const toggleSidebar = () => setIsOpen(!isOpen);
