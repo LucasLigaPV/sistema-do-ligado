@@ -46,7 +46,7 @@ export default function DashboardLider({ userEmail }) {
     const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
     const vendasDoVendedor = vendasAtivas.filter(v => v.vendedor === email);
     return {
-      nome: user?.full_name || "-",
+      nome: user?.full_name || email,
       vendas: vendasDoVendedor.length,
       adesao: vendasDoVendedor.reduce((sum, v) => {
         const valor = parseFloat(v.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
