@@ -82,13 +82,8 @@ const formatarValorExibicao = (valor) => {
 };
 
 const getNomeVendedor = (email, users, minhaEquipe = []) => {
-  // Tenta buscar em users primeiro
   const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
-  if (user?.full_name) return user.full_name;
-  
-  // Se não encontrar, tenta extrair do email
-  const parte = email?.split('@')[0] || email;
-  return parte.split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  return user?.full_name || email;
 };
 
 export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
