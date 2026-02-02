@@ -322,22 +322,22 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                   </PopoverTrigger>
                   <PopoverContent className="w-64 p-3">
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 pb-2 border-b">
+                      <label className="flex items-center gap-3 pb-2 border-b cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
                         <Checkbox
                           checked={consultorFilter.length === 0}
                           onCheckedChange={(checked) => {
                             if (checked) setConsultorFilter([]);
                           }}
                         />
-                        <span className="text-sm font-medium">Todos</span>
-                      </div>
-                      <div className="max-h-64 overflow-y-auto space-y-2">
+                        <span className="text-sm font-medium text-slate-700">Todos</span>
+                      </label>
+                      <div className="max-h-64 overflow-y-auto space-y-1">
                         {userFuncao === "lider" ? (
                           membrosEquipe.map((email) => {
                             const user = users.find(u => u.email === email);
                             const nome = user?.full_name || email;
                             return (
-                              <div key={email} className="flex items-center gap-2">
+                              <label key={email} className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
                                 <Checkbox
                                   checked={consultorFilter.includes(email)}
                                   onCheckedChange={(checked) => {
@@ -348,13 +348,13 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                                     }
                                   }}
                                 />
-                                <span className="text-sm">{nome}</span>
-                              </div>
+                                <span className="text-sm text-slate-700">{nome}</span>
+                              </label>
                             );
                           })
                         ) : (
                           consultoresDisponiveis.map((c) => (
-                            <div key={c} className="flex items-center gap-2">
+                            <label key={c} className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
                               <Checkbox
                                 checked={consultorFilter.includes(c)}
                                 onCheckedChange={(checked) => {
@@ -365,8 +365,8 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                                   }
                                 }}
                               />
-                              <span className="text-sm">{c}</span>
-                            </div>
+                              <span className="text-sm text-slate-700">{c}</span>
+                            </label>
                           ))
                         )}
                       </div>
