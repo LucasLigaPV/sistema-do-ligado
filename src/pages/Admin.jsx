@@ -220,6 +220,10 @@ export default function Admin() {
 
             {activeMenu === "crm-negociacoes" && (
               <div className="space-y-6">
+                <div className="mb-3">
+                  <h2 className="text-2xl font-bold text-slate-900">Negociações</h2>
+                  <p className="text-slate-500">Acompanhe o pipeline de vendas</p>
+                </div>
                 <PipelineNegociacoes userEmail={user?.email} userFuncao={user?.funcao} />
               </div>
             )}
