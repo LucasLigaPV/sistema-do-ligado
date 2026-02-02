@@ -42,6 +42,11 @@ export default function FilaLeads() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("todos");
   const [filterPlataforma, setFilterPlataforma] = useState("todas");
+  const [filterPosicionamento, setFilterPosicionamento] = useState("todos");
+  const [filterAd, setFilterAd] = useState("todos");
+  const [filterAdset, setFilterAdset] = useState("todos");
+  const [filterCampanha, setFilterCampanha] = useState("todas");
+  const [filterPagina, setFilterPagina] = useState("todas");
   const [selectedLead, setSelectedLead] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
@@ -70,12 +75,21 @@ export default function FilaLeads() {
       lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.telefone?.includes(searchTerm);
     const matchStatus = filterStatus === "todos" || lead.status === filterStatus;
-    const matchPlataforma =
-      filterPlataforma === "todas" || lead.plataforma === filterPlataforma;
-    return matchDate && matchSearch && matchStatus && matchPlataforma;
+    const matchPlataforma = filterPlataforma === "todas" || lead.plataforma === filterPlataforma;
+    const matchPosicionamento = filterPosicionamento === "todos" || lead.posicionamento === filterPosicionamento;
+    const matchAd = filterAd === "todos" || lead.ad === filterAd;
+    const matchAdset = filterAdset === "todos" || lead.adset === filterAdset;
+    const matchCampanha = filterCampanha === "todas" || lead.campanha === filterCampanha;
+    const matchPagina = filterPagina === "todas" || lead.pagina === filterPagina;
+    return matchDate && matchSearch && matchStatus && matchPlataforma && matchPosicionamento && matchAd && matchAdset && matchCampanha && matchPagina;
   });
 
   const plataformas = [...new Set(leads.map((l) => l.plataforma).filter(Boolean))];
+  const posicionamentos = [...new Set(leads.map((l) => l.posicionamento).filter(Boolean))];
+  const ads = [...new Set(leads.map((l) => l.ad).filter(Boolean))];
+  const adsets = [...new Set(leads.map((l) => l.adset).filter(Boolean))];
+  const campanhas = [...new Set(leads.map((l) => l.campanha).filter(Boolean))];
+  const paginas = [...new Set(leads.map((l) => l.pagina).filter(Boolean))];
 
   const handleStatusChange = (leadId, newStatus) => {
     updateLeadMutation.mutate({
@@ -172,9 +186,9 @@ export default function FilaLeads() {
                 />
               </div>
             </div>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 flex-wrap">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-full md:w-[200px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -187,7 +201,7 @@ export default function FilaLeads() {
                 </SelectContent>
               </Select>
               <Select value={filterPlataforma} onValueChange={setFilterPlataforma}>
-                <SelectTrigger className="w-full md:w-[200px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Plataforma" />
                 </SelectTrigger>
                 <SelectContent>
@@ -195,6 +209,71 @@ export default function FilaLeads() {
                   {plataformas.map((plat) => (
                     <SelectItem key={plat} value={plat}>
                       {plat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterCampanha} onValueChange={setFilterCampanha}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Campanha" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todas">Todas Campanhas</SelectItem>
+                  {campanhas.map((camp) => (
+                    <SelectItem key={camp} value={camp}>
+                      {camp}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterAdset} onValueChange={setFilterAdset}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Conjunto de Anúncios" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os Conjuntos</SelectItem>
+                  {adsets.map((adset) => (
+                    <SelectItem key={adset} value={adset}>
+                      {adset}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterAd} onValueChange={setFilterAd}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Anúncio" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os Anúncios</SelectItem>
+                  {ads.map((ad) => (
+                    <SelectItem key={ad} value={ad}>
+                      {ad}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterPosicionamento} onValueChange={setFilterPosicionamento}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Posicionamento" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos Posicionamentos</SelectItem>
+                  {posicionamentos.map((pos) => (
+                    <SelectItem key={pos} value={pos}>
+                      {pos}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filterPagina} onValueChange={setFilterPagina}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Página" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todas">Todas as Páginas</SelectItem>
+                  {paginas.map((pag) => (
+                    <SelectItem key={pag} value={pag}>
+                      {pag}
                     </SelectItem>
                   ))}
                 </SelectContent>
