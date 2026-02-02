@@ -11,10 +11,10 @@ import ResumoIndicacoes from "../dashboard/ResumoIndicacoes";
 import TopIndicadores from "../dashboard/TopIndicadores";
 import TopConsultores from "../dashboard/TopConsultores";
 
-export default function DashboardContent({ userEmail, userRole }) {
+export default function DashboardContent({ userEmail, userRole, userFuncao }) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-  const [consultorFilter, setConsultorFilter] = useState("all");
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : (userRole === "admin" ? "all" : userEmail));
   const [statusFilter, setStatusFilter] = useState("all");
 
   const { data: allIndicacoes = [], isLoading } = useQuery({
@@ -22,8 +22,24 @@ export default function DashboardContent({ userEmail, userRole }) {
     queryFn: () => base44.entities.Indicacao.list("-created_date"),
   });
 
-  const indicacoes = (userRole === "admin" || userRole === "lider")
+  const { data: equipes = [] } = useQuery({
+    queryKey: ["equipes"],
+    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
+  });
+
+  const { data: users = [] } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => base44.entities.User.list(),
+  });
+
+  // Obter equipe do líder
+  const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
+  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+
+  const indicacoes = userRole === "admin" 
     ? allIndicacoes 
+    : userFuncao === "lider"
+    ? allIndicacoes.filter(ind => membrosEquipe.includes(ind.consultor_responsavel))
     : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
 
   const { data: configs = [] } = useQuery({
@@ -70,7 +86,7 @@ export default function DashboardContent({ userEmail, userRole }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userRole === "admin" || userRole === "lider") ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userRole === "admin" || userFuncao === "lider") ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
             <div>
               <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
               <Input
@@ -89,20 +105,31 @@ export default function DashboardContent({ userEmail, userRole }) {
                 className="w-full"
               />
             </div>
-            {(userRole === "admin" || userRole === "lider") && (
+            {(userRole === "admin" || userFuncao === "lider") && (
               <div>
-                <Label className="text-sm text-slate-600 mb-2 block">Consultor</Label>
+                <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
                 <Select value={consultorFilter} onValueChange={setConsultorFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos</SelectItem>
-                    {consultores.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
+                    {userFuncao === "lider" ? (
+                      membrosEquipe.map((email) => {
+                        const user = users.find(u => u.email === email);
+                        return (
+                          <SelectItem key={email} value={email}>
+                            {user?.full_name || email}
+                          </SelectItem>
+                        );
+                      })
+                    ) : (
+                      consultores.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -147,7 +174,7 @@ export default function DashboardContent({ userEmail, userRole }) {
               <TopIndicadores indicacoes={filteredIndicacoes} />
             </motion.div>
 
-            {(userRole === "admin" || userRole === "lider") && (
+            {(userRole === "admin" || userFuncao === "lider") && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

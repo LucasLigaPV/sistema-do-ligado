@@ -59,7 +59,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
   
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : "all");
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : (userRole === "admin" ? "all" : userEmail));
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
