@@ -361,7 +361,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           </div>
         </DragDropContext>
       </div>
-    </div>
 
       {/* Dialog: Nova Negociação */}
       <Dialog open={showNewDeal} onOpenChange={setShowNewDeal}>
