@@ -21,6 +21,7 @@ import GerenciamentoUsuarios from "../components/admin/GerenciamentoUsuarios";
 import GerenciamentoEquipes from "../components/admin/GerenciamentoEquipes";
 import DashboardLider from "../components/dashboard/DashboardLider";
 import Sidebar from "../components/layout/Sidebar";
+import FilaLeads from "../components/crm/FilaLeads";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -203,6 +204,16 @@ export default function Admin() {
                     <GerenciamentoEquipes />
                   </TabsContent>
                 </Tabs>
+              </div>
+            )}
+
+            {activeMenu === "crm-leads" && (
+              <div className="space-y-6">
+                <div className="mb-3">
+                  <h2 className="text-2xl font-bold text-slate-900">Fila de Leads</h2>
+                  <p className="text-slate-500">Gerencie leads provenientes de tráfego pago</p>
+                </div>
+                <FilaLeads />
               </div>
             )}
           </motion.div>
