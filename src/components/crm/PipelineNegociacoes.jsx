@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Eye, Filter, X, ChevronDown } from "lucide-react";
+import { Plus, Phone, Mail, Car, Eye, Filter, X, ChevronDown, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -85,15 +85,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   });
 
   const etapas = [
-    { id: "novo_lead", label: "Novo Lead", color: "bg-slate-100 border-slate-300" },
-    { id: "abordagem", label: "Abordagem", color: "bg-blue-50 border-blue-200" },
-    { id: "sondagem", label: "Sondagem", color: "bg-cyan-50 border-cyan-200" },
-    { id: "apresentacao", label: "Apresentação", color: "bg-indigo-50 border-indigo-200" },
-    { id: "cotacao", label: "Cotação", color: "bg-purple-50 border-purple-200" },
-    { id: "em_negociacao", label: "Em Negociação", color: "bg-yellow-50 border-yellow-200" },
-    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", color: "bg-orange-50 border-orange-200" },
-    { id: "enviado_cadastro", label: "Enviado para Cadastro", color: "bg-green-50 border-green-200" },
-    { id: "venda_ativa", label: "Venda Ativa", color: "bg-emerald-50 border-emerald-200" },
+    { id: "novo_lead", label: "Novo Lead", color: "border-l-slate-400", icon: Sparkles },
+    { id: "abordagem", label: "Abordagem", color: "border-l-blue-400", icon: MessageCircle },
+    { id: "sondagem", label: "Sondagem", color: "border-l-cyan-400", icon: Search },
+    { id: "apresentacao", label: "Apresentação", color: "border-l-indigo-400", icon: Presentation },
+    { id: "cotacao", label: "Cotação", color: "border-l-purple-400", icon: Calculator },
+    { id: "em_negociacao", label: "Em Negociação", color: "border-l-yellow-400", icon: Handshake },
+    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", color: "border-l-orange-400", icon: FileCheck },
+    { id: "enviado_cadastro", label: "Enviado para Cadastro", color: "border-l-green-400", icon: Send },
+    { id: "venda_ativa", label: "Venda Ativa", color: "border-l-emerald-400", icon: CheckCircle },
   ];
 
   // Identificar equipe do líder
@@ -163,17 +163,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header com botão de adicionar e filtros */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h3 className="text-xl font-semibold text-slate-900">Pipeline de Negociações</h3>
-          <p className="text-sm text-slate-500">Gerencie suas negociações por etapa</p>
-        </div>
-        <div className="flex gap-2">
+    <div className="space-y-4">
+      {/* Header fixo com botões */}
+      <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-3 bg-white p-4 rounded-lg shadow-sm border">
+        <div className="flex gap-2 w-full sm:w-auto">
           <Popover open={showFilters} onOpenChange={setShowFilters}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 flex-1 sm:flex-none">
                 <Filter className="w-4 h-4" />
                 Filtros
                 {(selectedVendedores.length > 0 || startDate || endDate) && (
@@ -256,7 +252,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             </PopoverContent>
           </Popover>
           
-          <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black">
+          <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black flex-1 sm:flex-none">
             <Plus className="w-4 h-4" />
             Nova Negociação
           </Button>
@@ -265,10 +261,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-4 min-w-max">
+        <div className="overflow-x-auto pb-4 -mx-4 px-4">
+          <div className="flex gap-3 min-w-max">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
+              const IconComponent = etapa.icon;
               
               return (
                 <Droppable key={etapa.id} droppableId={etapa.id}>
@@ -276,20 +273,23 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-72 flex-shrink-0"
+                      className="w-64 sm:w-72 flex-shrink-0"
                     >
-                      <Card className={`${etapa.color} border-2 h-full`}>
-                        <CardHeader className="pb-3">
+                      <Card className={`bg-white border-l-4 ${etapa.color} h-full shadow-sm`}>
+                        <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-sm font-semibold">
-                              {etapa.label}
-                            </CardTitle>
-                            <Badge variant="secondary" className="bg-white/50">
+                            <div className="flex items-center gap-2">
+                              <IconComponent className="w-4 h-4 text-slate-600" />
+                              <CardTitle className="text-sm font-semibold text-slate-700">
+                                {etapa.label}
+                              </CardTitle>
+                            </div>
+                            <Badge variant="secondary" className="bg-white border">
                               {dealsNaEtapa.length}
                             </Badge>
                           </div>
                         </CardHeader>
-                        <CardContent className="space-y-2 min-h-[400px]">
+                        <CardContent className="space-y-2 min-h-[300px] max-h-[calc(100vh-300px)] overflow-y-auto">
                           <AnimatePresence>
                             {dealsNaEtapa.map((deal, index) => (
                               <Draggable
