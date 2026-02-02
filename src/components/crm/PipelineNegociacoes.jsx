@@ -14,7 +14,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Plus, Phone, Mail, Car, Eye, Filter, X, ChevronDown, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -293,7 +292,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-2 flex-1 overflow-y-auto">
-                          <AnimatePresence>
                             {dealsNaEtapa.map((deal, index) => (
                               <Draggable
                                 key={deal.id}
@@ -301,23 +299,20 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 index={index}
                               >
                                 {(provided, snapshot) => (
-                                  <motion.div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                  >
-                                    <Card
-                                      className={`bg-white cursor-move hover:shadow-md transition-shadow ${
-                                        snapshot.isDragging ? "shadow-lg rotate-2" : ""
-                                      }`}
-                                      onClick={() => {
-                                        setSelectedDeal(deal);
-                                        setShowDetails(true);
-                                      }}
-                                    >
+                                 <div
+                                   ref={provided.innerRef}
+                                   {...provided.draggableProps}
+                                   {...provided.dragHandleProps}
+                                 >
+                                   <Card
+                                     className={`bg-white cursor-move hover:shadow-md transition-shadow ${
+                                       snapshot.isDragging ? "shadow-lg rotate-2" : ""
+                                     }`}
+                                     onClick={() => {
+                                       setSelectedDeal(deal);
+                                       setShowDetails(true);
+                                     }}
+                                   >
                                       <CardContent className="p-4 space-y-2">
                                         <div className="font-medium text-sm">
                                           {deal.nome_cliente}
@@ -344,11 +339,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                         )}
                                       </CardContent>
                                     </Card>
-                                  </motion.div>
+                                  </div>
                                 )}
                               </Draggable>
                             ))}
-                          </AnimatePresence>
                           {provided.placeholder}
                         </CardContent>
                       </Card>
