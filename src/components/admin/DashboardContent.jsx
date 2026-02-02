@@ -4,6 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Filter } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,7 +17,7 @@ import TopConsultores from "../dashboard/TopConsultores";
 export default function DashboardContent({ userEmail, userRole, userFuncao }) {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? userEmail : (userRole === "admin" ? "all" : userEmail));
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? [userEmail] : (userRole === "admin" ? [] : [userEmail]));
   const [statusFilter, setStatusFilter] = useState("all");
 
   const { data: allIndicacoes = [], isLoading } = useQuery({
@@ -65,7 +68,7 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
     }
 
     // Filtro de consultor
-    if (consultorFilter !== "all" && ind.consultor_responsavel !== consultorFilter) {
+    if (consultorFilter.length > 0 && !consultorFilter.includes(ind.consultor_responsavel)) {
       return false;
     }
 
@@ -108,30 +111,72 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
             {(userRole === "admin" || userFuncao === "lider") && (
               <div>
                 <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
-                <Select value={consultorFilter} onValueChange={setConsultorFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    {userFuncao === "lider" ? (
-                      membrosEquipe.map((email) => {
-                        const user = users.find(u => u.email === email);
-                        return (
-                          <SelectItem key={email} value={email}>
-                            {user?.full_name || email}
-                          </SelectItem>
-                        );
-                      })
-                    ) : (
-                      consultores.map((c) => (
-                        <SelectItem key={c} value={c}>
-                          {c}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Filter className="w-4 h-4 mr-2" />
+                      {consultorFilter.length === 0 
+                        ? "Todos" 
+                        : consultorFilter.length === 1
+                        ? (userFuncao === "lider" 
+                            ? (users.find(u => u.email === consultorFilter[0])?.full_name || consultorFilter[0])
+                            : consultorFilter[0])
+                        : `${consultorFilter.length} selecionados`}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 pb-2 border-b">
+                        <Checkbox
+                          checked={consultorFilter.length === 0}
+                          onCheckedChange={(checked) => {
+                            if (checked) setConsultorFilter([]);
+                          }}
+                        />
+                        <span className="text-sm font-medium">Todos</span>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto space-y-2">
+                        {userFuncao === "lider" ? (
+                          membrosEquipe.map((email) => {
+                            const user = users.find(u => u.email === email);
+                            const nome = user?.full_name || email;
+                            return (
+                              <div key={email} className="flex items-center gap-2">
+                                <Checkbox
+                                  checked={consultorFilter.includes(email)}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      setConsultorFilter([...consultorFilter, email]);
+                                    } else {
+                                      setConsultorFilter(consultorFilter.filter(c => c !== email));
+                                    }
+                                  }}
+                                />
+                                <span className="text-sm">{nome}</span>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          consultores.map((c) => (
+                            <div key={c} className="flex items-center gap-2">
+                              <Checkbox
+                                checked={consultorFilter.includes(c)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setConsultorFilter([...consultorFilter, c]);
+                                  } else {
+                                    setConsultorFilter(consultorFilter.filter(f => f !== c));
+                                  }
+                                }}
+                              />
+                              <span className="text-sm">{c}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             )}
             <div>

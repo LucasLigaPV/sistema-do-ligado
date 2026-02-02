@@ -147,12 +147,12 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
 
   const filteredIndicacoes = indicacoes.filter((ind) => {
     const matchSearch =
-    ind.nome_indicado?.toLowerCase().includes(search.toLowerCase()) ||
-    ind.nome_indicador?.toLowerCase().includes(search.toLowerCase()) ||
-    ind.consultor_responsavel?.toLowerCase().includes(search.toLowerCase());
+      ind.nome_indicado?.toLowerCase().includes(search.toLowerCase()) ||
+      ind.nome_indicador?.toLowerCase().includes(search.toLowerCase()) ||
+      ind.consultor_responsavel?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || ind.status === statusFilter;
     const matchConsultor =
-    consultorFilter === "all" || ind.consultor_responsavel === consultorFilter;
+      consultorFilter.length === 0 || consultorFilter.includes(ind.consultor_responsavel);
 
     // Filtro de data
     if (dataInicio) {
