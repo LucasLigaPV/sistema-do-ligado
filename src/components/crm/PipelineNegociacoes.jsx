@@ -163,22 +163,21 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Header fixo com botões - sempre visível */}
-      <div className="sticky top-0 z-10 bg-slate-50 -mx-4 px-4 py-3 border-b">
-        <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-2">
-          <Popover open={showFilters} onOpenChange={setShowFilters}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2 bg-white">
-                <Filter className="w-4 h-4" />
-                Filtros
-                {(selectedVendedores.length > 0 || startDate || endDate) && (
-                  <Badge className="ml-1 bg-[#EFC200] text-black">
-                    {selectedVendedores.length > 0 ? selectedVendedores.length : ""}
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
+      <div className="flex flex-wrap items-center justify-end gap-2 mb-4 bg-white p-3 rounded-lg border shadow-sm">
+        <Popover open={showFilters} onOpenChange={setShowFilters}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="gap-2" size="sm">
+              <Filter className="w-4 h-4" />
+              <span className="hidden sm:inline">Filtros</span>
+              {(selectedVendedores.length > 0 || startDate || endDate) && (
+                <Badge className="ml-1 bg-[#EFC200] text-black text-xs">
+                  {selectedVendedores.length > 0 ? selectedVendedores.length : ""}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -252,17 +251,17 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             </PopoverContent>
           </Popover>
           
-          <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black">
-            <Plus className="w-4 h-4" />
-            Nova Negociação
-          </Button>
-        </div>
+        <Button onClick={() => setShowNewDeal(true)} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black" size="sm">
+          <Plus className="w-4 h-4" />
+          <span className="hidden sm:inline">Nova Negociação</span>
+          <span className="sm:hidden">Nova</span>
+        </Button>
       </div>
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="overflow-x-auto pb-4 -mx-4 px-4">
-          <div className="flex gap-3 min-w-max">
+        <div className="overflow-x-auto pb-4">
+          <div className="flex gap-3 min-w-max pb-2">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               const IconComponent = etapa.icon;
@@ -273,7 +272,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-64 sm:w-72 flex-shrink-0"
+                      className="w-60 sm:w-64 lg:w-72 flex-shrink-0"
                     >
                       <Card className={`bg-white border-l-4 ${etapa.color} h-full shadow-sm`}>
                         <CardHeader className="pb-3 bg-slate-50/50">
