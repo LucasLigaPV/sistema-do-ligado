@@ -13,17 +13,35 @@ import {
   Home,
   Settings,
   UserPlus,
+  Users,
+  TrendingUp,
+  BarChart3,
+  Megaphone,
+  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar({ user, activeMenu, onMenuChange }) {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [crmExpanded, setCrmExpanded] = useState(false);
 
   const menuItems = [
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
     { id: "vendas", label: "Vendas", icon: DollarSign },
     { id: "indicacoes", label: "Indicações", icon: UserPlus },
+    { 
+      id: "crm", 
+      label: "CRM", 
+      icon: Users, 
+      hasSubmenu: true,
+      submenus: [
+        { id: "crm-leads", label: "Leads", icon: Users, description: "Kanban" },
+        { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
+        { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
+        { id: "crm-marketing", label: "Marketing", icon: Megaphone },
+      ]
+    },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
   ];
 
@@ -123,6 +141,57 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
               );
             }
             
+            if (item.hasSubmenu) {
+              return (
+                <div key={item.id}>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start gap-3 hover:bg-slate-100 ${!isOpen ? "justify-center" : ""}`}
+                    onClick={() => setCrmExpanded(!crmExpanded)}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {isOpen && (
+                      <>
+                        <span className="flex-1 text-left">{item.label}</span>
+                        <ChevronDown className={`w-4 h-4 transition-transform ${crmExpanded ? "rotate-180" : ""}`} />
+                      </>
+                    )}
+                  </Button>
+                  <AnimatePresence>
+                    {crmExpanded && isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-2">
+                          {item.submenus.map((submenu) => {
+                            const SubmenuIcon = submenu.icon;
+                            const isSubmenuActive = activeMenu === submenu.id;
+                            return (
+                              <Button
+                                key={submenu.id}
+                                variant={isSubmenuActive ? "default" : "ghost"}
+                                className={`w-full justify-start gap-2 text-sm h-9 ${
+                                  isSubmenuActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "text-slate-600"
+                                }`}
+                                onClick={() => onMenuChange(submenu.id)}
+                              >
+                                <SubmenuIcon className="w-4 h-4 flex-shrink-0" />
+                                <span>{submenu.label}</span>
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            }
+            
             return (
               <Button
                 key={item.id}
@@ -210,6 +279,56 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                         <span>{item.label}</span>
                       </Button>
                     </Link>
+                  );
+                }
+                
+                if (item.hasSubmenu) {
+                  return (
+                    <div key={item.id}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-3 hover:bg-slate-100"
+                        onClick={() => setCrmExpanded(!crmExpanded)}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="flex-1 text-left">{item.label}</span>
+                        <ChevronDown className={`w-4 h-4 transition-transform ${crmExpanded ? "rotate-180" : ""}`} />
+                      </Button>
+                      <AnimatePresence>
+                        {crmExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="ml-4 mt-1 space-y-1 border-l-2 border-slate-200 pl-2">
+                              {item.submenus.map((submenu) => {
+                                const SubmenuIcon = submenu.icon;
+                                const isSubmenuActive = activeMenu === submenu.id;
+                                return (
+                                  <Button
+                                    key={submenu.id}
+                                    variant={isSubmenuActive ? "default" : "ghost"}
+                                    className={`w-full justify-start gap-2 text-sm h-9 ${
+                                      isSubmenuActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "text-slate-600"
+                                    }`}
+                                    onClick={() => {
+                                      onMenuChange(submenu.id);
+                                      toggleMobileSidebar();
+                                    }}
+                                  >
+                                    <SubmenuIcon className="w-4 h-4 flex-shrink-0" />
+                                    <span>{submenu.label}</span>
+                                  </Button>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   );
                 }
                 
