@@ -258,10 +258,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         </Button>
       </div>
 
-      {/* Kanban Board */}
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="overflow-x-auto pb-4">
-          <div className="flex gap-3 min-w-max pb-2">
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="overflow-x-auto pb-4">
+            <div className="flex gap-3 min-w-max pb-2">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               const IconComponent = etapa.icon;
@@ -353,9 +352,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </Droppable>
               );
             })}
+            </div>
           </div>
-        </div>
-      </DragDropContext>
+        </DragDropContext>
+      </div>
+    </div>
 
       {/* Dialog: Nova Negociação */}
       <Dialog open={showNewDeal} onOpenChange={setShowNewDeal}>
