@@ -94,11 +94,11 @@ export default function Admin() {
                   </TabsList>
 
                   <TabsContent value="indicacoes">
-                    <TabelaIndicacoes userEmail={user?.email} userRole={user?.role} />
+                    <TabelaIndicacoes userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
                   </TabsContent>
 
                   <TabsContent value="dashboard">
-                    <DashboardContent userEmail={user?.email} userRole={user?.role} />
+                    <DashboardContent userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
                   </TabsContent>
                 </Tabs>
               </div>
