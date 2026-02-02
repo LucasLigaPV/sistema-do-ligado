@@ -276,9 +276,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-60 sm:w-64 lg:w-72 flex-shrink-0"
+                      className="w-72 sm:w-80 lg:w-96 flex-shrink-0"
                     >
-                      <Card className={`bg-white border-l-4 ${etapa.color} h-full shadow-sm`}>
+                      <Card className={`bg-white border-l-4 ${etapa.color} shadow-sm flex flex-col`} style={{ height: 'calc(100vh - 120px)' }}>
                         <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -292,7 +292,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                             </Badge>
                           </div>
                         </CardHeader>
-                        <CardContent className="space-y-2 min-h-[300px] max-h-[calc(100vh-300px)] overflow-y-auto">
+                        <CardContent className="space-y-2 flex-1 overflow-y-auto">
                           <AnimatePresence>
                             {dealsNaEtapa.map((deal, index) => (
                               <Draggable
