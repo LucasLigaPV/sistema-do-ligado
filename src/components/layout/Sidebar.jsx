@@ -21,8 +21,8 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
 
   const menuItems = [
     { id: "inicio", label: "Início", icon: Home, link: "/Inicio" },
-    { id: "indicacoes", label: "Indicações", icon: FileText },
     { id: "vendas", label: "Vendas", icon: DollarSign },
+    { id: "indicacoes", label: "Indicações", icon: FileText },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Configurações", icon: Settings }] : []),
   ];
 
