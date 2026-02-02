@@ -261,59 +261,61 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         </Card>
       </motion.div>
 
-      {/* Ranking de Vendedores */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-[#EFC200]" />
-              Ranking de Vendedores
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {rankingVendedores.length > 0 ? (
-                rankingVendedores.map((vendedor, index) => (
-                  <motion.div
-                    key={vendedor.email}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                        index === 0 ? "bg-[#EFC200] text-black" :
-                        index === 1 ? "bg-slate-300 text-slate-700" :
-                        index === 2 ? "bg-amber-600 text-white" :
-                        "bg-slate-200 text-slate-600"
-                      }`}>
-                        {index + 1}
+      {/* Ranking de Vendedores - Apenas para Líder e Admin */}
+      {(userFuncao === "lider" || userRole === "admin") && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-[#EFC200]" />
+                Ranking de Vendedores
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {rankingVendedores.length > 0 ? (
+                  rankingVendedores.map((vendedor, index) => (
+                    <motion.div
+                      key={vendedor.email}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                          index === 0 ? "bg-[#EFC200] text-black" :
+                          index === 1 ? "bg-slate-300 text-slate-700" :
+                          index === 2 ? "bg-amber-600 text-white" :
+                          "bg-slate-200 text-slate-600"
+                        }`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900">{vendedor.nome}</p>
+                          <p className="text-xs text-slate-500">{vendedor.email}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-semibold text-slate-900">{vendedor.nome}</p>
-                        <p className="text-xs text-slate-500">{vendedor.email}</p>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-slate-900">{vendedor.totalVendas} vendas</p>
+                        <p className="text-sm text-emerald-600">R$ {formatarValor(vendedor.totalFaturamento)}</p>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{vendedor.totalVendas} vendas</p>
-                      <p className="text-sm text-emerald-600">R$ {formatarValor(vendedor.totalFaturamento)}</p>
-                    </div>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="text-center py-10 text-slate-400">
-                  Nenhum vendedor encontrado
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center py-10 text-slate-400">
+                    Nenhum vendedor encontrado
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
