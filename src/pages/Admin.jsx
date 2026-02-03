@@ -23,6 +23,7 @@ import DashboardLider from "../components/dashboard/DashboardLider";
 import Sidebar from "../components/layout/Sidebar";
 import FilaLeads from "../components/crm/FilaLeads";
 import PipelineNegociacoes from "../components/crm/PipelineNegociacoes";
+import Perdas from "../components/crm/Perdas";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -225,6 +226,16 @@ export default function Admin() {
                   <p className="text-slate-500 text-sm">Acompanhe o pipeline de vendas</p>
                 </div>
                 <PipelineNegociacoes userEmail={user?.email} userFuncao={user?.funcao} />
+              </div>
+            )}
+
+            {activeMenu === "crm-perdas" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Perdas</h2>
+                  <p className="text-slate-500 text-sm">Acompanhe leads perdidos e motivos</p>
+                </div>
+                <Perdas userEmail={user?.email} userFuncao={user?.funcao} />
               </div>
             )}
           </motion.div>

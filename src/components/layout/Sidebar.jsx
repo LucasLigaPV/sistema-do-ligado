@@ -15,6 +15,7 @@ import {
   UserPlus,
   Users,
   TrendingUp,
+  TrendingDown,
   BarChart3,
   Megaphone,
   ChevronDown,
@@ -50,6 +51,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       submenus: [
         { id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" },
         { id: "crm-negociacoes", label: "Negociações", icon: Handshake },
+        { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
         { id: "crm-marketing", label: "Marketing", icon: Megaphone },
