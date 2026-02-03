@@ -472,49 +472,53 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   placeholder="R$ 0,00"
                 />
               </div>
-              <div>
-                <Label>Plataforma</Label>
-                <Input
-                  value={newDeal.plataforma}
-                  onChange={(e) => setNewDeal({ ...newDeal, plataforma: e.target.value })}
-                  placeholder="Facebook, Google, etc."
-                />
-              </div>
-              <div>
-                <Label>Posicionamento</Label>
-                <Input
-                  value={newDeal.posicionamento}
-                  onChange={(e) => setNewDeal({ ...newDeal, posicionamento: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Anúncio (Ad)</Label>
-                <Input
-                  value={newDeal.ad}
-                  onChange={(e) => setNewDeal({ ...newDeal, ad: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Conjunto de Anúncios (AdSet)</Label>
-                <Input
-                  value={newDeal.adset}
-                  onChange={(e) => setNewDeal({ ...newDeal, adset: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Campanha</Label>
-                <Input
-                  value={newDeal.campanha}
-                  onChange={(e) => setNewDeal({ ...newDeal, campanha: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Página de Destino</Label>
-                <Input
-                  value={newDeal.pagina}
-                  onChange={(e) => setNewDeal({ ...newDeal, pagina: e.target.value })}
-                />
-              </div>
+              {(userFuncao === "master" || userFuncao === "admin") && (
+                <>
+                  <div>
+                    <Label>Plataforma</Label>
+                    <Input
+                      value={newDeal.plataforma}
+                      onChange={(e) => setNewDeal({ ...newDeal, plataforma: e.target.value })}
+                      placeholder="Facebook, Google, etc."
+                    />
+                  </div>
+                  <div>
+                    <Label>Posicionamento</Label>
+                    <Input
+                      value={newDeal.posicionamento}
+                      onChange={(e) => setNewDeal({ ...newDeal, posicionamento: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Anúncio (Ad)</Label>
+                    <Input
+                      value={newDeal.ad}
+                      onChange={(e) => setNewDeal({ ...newDeal, ad: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Conjunto de Anúncios (AdSet)</Label>
+                    <Input
+                      value={newDeal.adset}
+                      onChange={(e) => setNewDeal({ ...newDeal, adset: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Campanha</Label>
+                    <Input
+                      value={newDeal.campanha}
+                      onChange={(e) => setNewDeal({ ...newDeal, campanha: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Página de Destino</Label>
+                    <Input
+                      value={newDeal.pagina}
+                      onChange={(e) => setNewDeal({ ...newDeal, pagina: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setShowNewDeal(false)}>
