@@ -26,6 +26,7 @@ import PipelineNegociacoes from "../components/crm/PipelineNegociacoes";
 import Perdas from "../components/crm/Perdas";
 import Distribuicao from "../components/crm/Distribuicao";
 import ModalCheckin from "../components/crm/ModalCheckin";
+import DashboardCRM from "../components/crm/DashboardCRM";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -249,6 +250,16 @@ export default function Admin() {
                   <p className="text-slate-500 text-sm">Gerencie check-ins e distribua leads automaticamente</p>
                 </div>
                 <Distribuicao userFuncao={user?.funcao} />
+              </div>
+            )}
+
+            {activeMenu === "crm-dashboard" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Dashboard de Vendas</h2>
+                  <p className="text-slate-500 text-sm">Insights estratégicos e análise de performance</p>
+                </div>
+                <DashboardCRM userEmail={user?.email} userFuncao={user?.funcao} />
               </div>
             )}
           </motion.div>
