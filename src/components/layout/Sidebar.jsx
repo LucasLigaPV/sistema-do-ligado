@@ -54,7 +54,6 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
-        { id: "crm-marketing", label: "Marketing", icon: Megaphone },
       ]
     },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
