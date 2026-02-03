@@ -25,14 +25,20 @@ export default function ModalCheckin({ userEmail }) {
   });
 
   useEffect(() => {
+    if (!userEmail) return;
+    
     // Verificar se já fez check-in hoje
     const hoje = format(new Date(), "yyyy-MM-dd");
     const checkinHoje = checkins.find(
       (c) => c.usuario_email === userEmail && c.data === hoje
     );
 
-    if (!checkinHoje) {
+    // Verificar se já mostrou o modal hoje na sessão atual
+    const modalMostradoHoje = sessionStorage.getItem(`checkin_modal_${hoje}`);
+
+    if (!checkinHoje && !modalMostradoHoje) {
       setShowModal(true);
+      sessionStorage.setItem(`checkin_modal_${hoje}`, "true");
     }
   }, [checkins, userEmail]);
 
