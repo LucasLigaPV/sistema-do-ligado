@@ -14,6 +14,11 @@ export default function Inicio() {
   const [activeMenu, setActiveMenu] = useState("inicio");
   const navigate = useNavigate();
 
+  const { data: banners = [] } = useQuery({
+    queryKey: ["banners"],
+    queryFn: () => base44.entities.Banner.list(),
+  });
+
   useEffect(() => {
     const checkAuth = async () => {
       const isAuth = await base44.auth.isAuthenticated();
@@ -39,11 +44,6 @@ export default function Inicio() {
   if (!user) {
     return null;
   }
-
-  const { data: banners = [] } = useQuery({
-    queryKey: ["banners"],
-    queryFn: () => base44.entities.Banner.list(),
-  });
 
   const bannerAtivo = banners.find(b => b.ativo);
 
