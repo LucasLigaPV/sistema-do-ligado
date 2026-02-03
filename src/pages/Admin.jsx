@@ -24,6 +24,8 @@ import Sidebar from "../components/layout/Sidebar";
 import FilaLeads from "../components/crm/FilaLeads";
 import PipelineNegociacoes from "../components/crm/PipelineNegociacoes";
 import Perdas from "../components/crm/Perdas";
+import Distribuicao from "../components/crm/Distribuicao";
+import ModalCheckin from "../components/crm/ModalCheckin";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -62,6 +64,7 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
+      <ModalCheckin userEmail={user?.email} />
       <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
 
       {/* Main Content */}
@@ -236,6 +239,16 @@ export default function Admin() {
                   <p className="text-slate-500 text-sm">Acompanhe leads perdidos e motivos</p>
                 </div>
                 <Perdas userEmail={user?.email} userFuncao={user?.funcao} />
+              </div>
+            )}
+
+            {activeMenu === "crm-distribuicao" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Distribuição de Leads</h2>
+                  <p className="text-slate-500 text-sm">Gerencie check-ins e distribua leads automaticamente</p>
+                </div>
+                <Distribuicao userFuncao={user?.funcao} />
               </div>
             )}
           </motion.div>
