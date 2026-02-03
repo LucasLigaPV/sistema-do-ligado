@@ -125,14 +125,9 @@ export default function Inicio() {
     }] : [])
   ];
 
-  const handleMenuChange = (menuId) => {
-    setActiveMenu(menuId);
-    navigate(`/Admin?menu=${menuId}`);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
-      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={handleMenuChange} />
+      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={(menuId) => navigate(`/Admin?menu=${menuId}`)} />
       <ModalCheckin userEmail={user?.email} />
 
       {/* Main Content */}
