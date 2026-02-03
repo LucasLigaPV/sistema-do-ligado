@@ -3,13 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
 
 export default function Inicio() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeMenu, setActiveMenu] = useState("inicio");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -56,9 +57,14 @@ export default function Inicio() {
     }
   ];
 
+  const handleMenuChange = (menuId) => {
+    setActiveMenu(menuId);
+    navigate(`/Admin?menu=${menuId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
-      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={handleMenuChange} />
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
