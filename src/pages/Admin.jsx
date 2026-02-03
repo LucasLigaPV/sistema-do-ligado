@@ -27,6 +27,7 @@ import Perdas from "../components/crm/Perdas";
 import Distribuicao from "../components/crm/Distribuicao";
 import ModalCheckin from "../components/crm/ModalCheckin";
 import DashboardCRM from "../components/crm/DashboardCRM";
+import DashboardMarketing from "../components/crm/DashboardMarketing";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -260,6 +261,16 @@ export default function Admin() {
                   <p className="text-slate-500 text-sm">Insights estratégicos e análise de performance</p>
                 </div>
                 <DashboardCRM userEmail={user?.email} userFuncao={user?.funcao} />
+              </div>
+            )}
+
+            {activeMenu === "crm-marketing" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Dashboard de Marketing</h2>
+                  <p className="text-slate-500 text-sm">Análise de performance de campanhas e criativos</p>
+                </div>
+                <DashboardMarketing />
               </div>
             )}
           </motion.div>
