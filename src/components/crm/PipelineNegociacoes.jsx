@@ -30,12 +30,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     nome_cliente: "",
     telefone: "",
     email: "",
+    placa: "",
     modelo_veiculo: "",
     plano_interesse: "",
     origem: "lead",
-    observacoes: "",
     data_entrada: format(new Date(), "yyyy-MM-dd"),
-    valor_proposta: ""
+    valor_mensalidade: "",
+    valor_adesao: "",
+    plataforma: "",
+    posicionamento: "",
+    ad: "",
+    adset: "",
+    campanha: "",
+    pagina: ""
   });
 
   const queryClient = useQueryClient();
@@ -66,12 +73,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         nome_cliente: "",
         telefone: "",
         email: "",
+        placa: "",
         modelo_veiculo: "",
         plano_interesse: "",
         origem: "lead",
-        observacoes: "",
         data_entrada: format(new Date(), "yyyy-MM-dd"),
-        valor_proposta: ""
+        valor_mensalidade: "",
+        valor_adesao: "",
+        plataforma: "",
+        posicionamento: "",
+        ad: "",
+        adset: "",
+        campanha: "",
+        pagina: ""
       });
     },
   });
@@ -317,21 +331,22 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                         <div className="font-medium text-sm">
                                           {deal.nome_cliente}
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-slate-600">
-                                          <Phone className="w-3 h-3" />
-                                          {deal.telefone}
-                                        </div>
-                                        {deal.modelo_veiculo && (
-                                          <div className="flex items-center gap-2 text-xs text-slate-600">
-                                            <Car className="w-3 h-3" />
-                                            {deal.modelo_veiculo}
+                                        {deal.placa && (
+                                          <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
+                                            <Car className="w-4 h-4" />
+                                            {deal.placa}
                                           </div>
                                         )}
-                                        {deal.plano_interesse && (
-                                          <Badge className="text-xs bg-slate-100">
-                                            {deal.plano_interesse === "essencial" ? "Essencial" : "Principal"}
-                                          </Badge>
+                                        {deal.valor_adesao && (
+                                          <div className="text-sm font-medium text-slate-700">
+                                            {deal.valor_adesao}
+                                          </div>
                                         )}
+                                        <div className="text-xs text-slate-500">
+                                          {deal.data_entrada 
+                                            ? format(new Date(deal.data_entrada), "dd/MM/yyyy")
+                                            : format(new Date(deal.created_date), "dd/MM/yyyy")}
+                                        </div>
                                         {userFuncao === "lider" && (
                                           <div className="text-xs text-slate-500 pt-1 border-t">
                                             {getNomeVendedor(deal.vendedor_email)}
@@ -389,6 +404,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 />
               </div>
               <div>
+                <Label>Placa</Label>
+                <Input
+                  value={newDeal.placa}
+                  onChange={(e) => setNewDeal({ ...newDeal, placa: e.target.value })}
+                />
+              </div>
+              <div>
                 <Label>Modelo do Veículo</Label>
                 <Input
                   value={newDeal.modelo_veiculo}
@@ -435,21 +457,64 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 />
               </div>
               <div>
-                <Label>Valor da Proposta</Label>
+                <Label>Valor da Mensalidade</Label>
                 <Input
-                  value={newDeal.valor_proposta}
-                  onChange={(e) => setNewDeal({ ...newDeal, valor_proposta: e.target.value })}
+                  value={newDeal.valor_mensalidade}
+                  onChange={(e) => setNewDeal({ ...newDeal, valor_mensalidade: e.target.value })}
                   placeholder="R$ 0,00"
                 />
               </div>
-            </div>
-            <div>
-              <Label>Observações</Label>
-              <Textarea
-                value={newDeal.observacoes}
-                onChange={(e) => setNewDeal({ ...newDeal, observacoes: e.target.value })}
-                rows={3}
-              />
+              <div>
+                <Label>Valor da Adesão</Label>
+                <Input
+                  value={newDeal.valor_adesao}
+                  onChange={(e) => setNewDeal({ ...newDeal, valor_adesao: e.target.value })}
+                  placeholder="R$ 0,00"
+                />
+              </div>
+              <div>
+                <Label>Plataforma</Label>
+                <Input
+                  value={newDeal.plataforma}
+                  onChange={(e) => setNewDeal({ ...newDeal, plataforma: e.target.value })}
+                  placeholder="Facebook, Google, etc."
+                />
+              </div>
+              <div>
+                <Label>Posicionamento</Label>
+                <Input
+                  value={newDeal.posicionamento}
+                  onChange={(e) => setNewDeal({ ...newDeal, posicionamento: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Anúncio (Ad)</Label>
+                <Input
+                  value={newDeal.ad}
+                  onChange={(e) => setNewDeal({ ...newDeal, ad: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Conjunto de Anúncios (AdSet)</Label>
+                <Input
+                  value={newDeal.adset}
+                  onChange={(e) => setNewDeal({ ...newDeal, adset: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Campanha</Label>
+                <Input
+                  value={newDeal.campanha}
+                  onChange={(e) => setNewDeal({ ...newDeal, campanha: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Página de Destino</Label>
+                <Input
+                  value={newDeal.pagina}
+                  onChange={(e) => setNewDeal({ ...newDeal, pagina: e.target.value })}
+                />
+              </div>
             </div>
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setShowNewDeal(false)}>
