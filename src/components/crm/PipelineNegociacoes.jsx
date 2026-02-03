@@ -98,15 +98,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   });
 
   const etapas = [
-    { id: "novo_lead", label: "Novo Lead", color: "border-l-slate-400", icon: Sparkles },
-    { id: "abordagem", label: "Abordagem", color: "border-l-blue-400", icon: MessageCircle },
-    { id: "sondagem", label: "Sondagem", color: "border-l-cyan-400", icon: Search },
-    { id: "apresentacao", label: "Apresentação", color: "border-l-indigo-400", icon: Presentation },
-    { id: "cotacao", label: "Cotação", color: "border-l-purple-400", icon: Calculator },
-    { id: "em_negociacao", label: "Em Negociação", color: "border-l-yellow-400", icon: Handshake },
-    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", color: "border-l-orange-400", icon: FileCheck },
-    { id: "enviado_cadastro", label: "Enviado para Cadastro", color: "border-l-green-400", icon: Send },
-    { id: "venda_ativa", label: "Venda Ativa", color: "border-l-emerald-400", icon: CheckCircle },
+    { id: "novo_lead", label: "Novo Lead", icon: Sparkles },
+    { id: "abordagem", label: "Abordagem", icon: MessageCircle },
+    { id: "sondagem", label: "Sondagem", icon: Search },
+    { id: "apresentacao", label: "Apresentação", icon: Presentation },
+    { id: "cotacao", label: "Cotação", icon: Calculator },
+    { id: "em_negociacao", label: "Em Negociação", icon: Handshake },
+    { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", icon: FileCheck },
+    { id: "enviado_cadastro", label: "Enviado para Cadastro", icon: Send },
+    { id: "venda_ativa", label: "Venda Ativa", icon: CheckCircle },
   ];
 
   // Identificar equipe do líder
@@ -291,7 +291,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       {...provided.droppableProps}
                       className="w-72 sm:w-80 lg:w-96 flex-shrink-0"
                     >
-                      <Card className={`bg-white border-l-4 ${etapa.color} shadow-sm flex flex-col`} style={{ height: 'calc(100vh - 120px)' }}>
+                      <Card className="bg-white shadow-sm flex flex-col border" style={{ height: 'calc(100vh - 120px)' }}>
                         <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
