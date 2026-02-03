@@ -257,7 +257,7 @@ export default function Distribuicao({ userFuncao }) {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="dashboard">
-        <TabsList className="bg-white shadow-md p-1.5 rounded-xl">
+        <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
           <TabsTrigger value="dashboard" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black">
             <TrendingUp className="w-4 h-4" />
             Dashboard
