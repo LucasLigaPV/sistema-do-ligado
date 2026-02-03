@@ -6,20 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Eye, Filter, X, ChevronDown, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle } from "lucide-react";
+import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState(null);
+  const [editedDeal, setEditedDeal] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showLossModal, setShowLossModal] = useState(false);
+  const [lossReason, setLossReason] = useState({ categoria: "", motivo: "", observacao: "" });
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
@@ -97,6 +101,20 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Negociacao.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+    },
+  });
+
+  const createLossMutation = useMutation({
+    mutationFn: (data) => base44.entities.Perda.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["perdas"] });
+    },
+  });
+
   const etapas = [
     { id: "novo_lead", label: "Novo Lead", icon: Sparkles },
     { id: "abordagem", label: "Abordagem", icon: MessageCircle },
@@ -108,6 +126,48 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     { id: "enviado_cadastro", label: "Enviado para Cadastro", icon: Send },
     { id: "venda_ativa", label: "Venda Ativa", icon: CheckCircle },
   ];
+
+  const motivosPerda = {
+    financeiro: [
+      "Considerou caro",
+      "Sem dinheiro no momento",
+      "Quer sem valor de entrada",
+      "Comprometeu renda na compra do veículo"
+    ],
+    timing: [
+      "Vai analisar",
+      "Ainda não possui o veículo",
+      "Sem tempo agora",
+      "Vai contratar em data futura",
+      "Documentação em ajuste",
+      "Veículo no mecânico"
+    ],
+    confianca: [
+      "Inseguro com a LIGA",
+      "Inseguro com a COBERTURA",
+      "Inseguro com o ATENDIMENTO"
+    ],
+    concorrencia: [
+      "Já possui seguro/proteção",
+      "Cotando com outras empresas",
+      "Perdi para seguradora",
+      "Perdi para proteção veicular",
+      "Perdi para rastreamento"
+    ],
+    necessidade: [
+      "Deseja somente roubo/furto",
+      "Veículo antigo, não vê necessidade",
+      "Veículo roda pouco, não vê necessidade"
+    ],
+    lead_invalido: [
+      "Vendeu o veículo",
+      "Não consegui contato",
+      "Não solicitou cotação",
+      "Bloqueado",
+      "Cliente oculto",
+      "Veículo sem cobertura"
+    ]
+  };
 
   // Identificar equipe do líder
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail && e.ativa);
@@ -152,6 +212,96 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     createMutation.mutate(newDeal);
   };
 
+  const handleUpdateDeal = () => {
+    if (!editedDeal || !selectedDeal) return;
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: editedDeal
+    });
+    setShowDetails(false);
+    setSelectedDeal(null);
+    setEditedDeal(null);
+  };
+
+  const handleAdvanceStage = () => {
+    if (!selectedDeal) return;
+    const currentIndex = etapas.findIndex(e => e.id === selectedDeal.etapa);
+    if (currentIndex < etapas.length - 1) {
+      const nextEtapa = etapas[currentIndex + 1].id;
+      updateMutation.mutate({
+        id: selectedDeal.id,
+        data: { etapa: nextEtapa }
+      });
+      setSelectedDeal({ ...selectedDeal, etapa: nextEtapa });
+      setEditedDeal({ ...editedDeal, etapa: nextEtapa });
+    }
+  };
+
+  const handlePreviousStage = () => {
+    if (!selectedDeal) return;
+    const currentIndex = etapas.findIndex(e => e.id === selectedDeal.etapa);
+    if (currentIndex > 0) {
+      const prevEtapa = etapas[currentIndex - 1].id;
+      updateMutation.mutate({
+        id: selectedDeal.id,
+        data: { etapa: prevEtapa }
+      });
+      setSelectedDeal({ ...selectedDeal, etapa: prevEtapa });
+      setEditedDeal({ ...editedDeal, etapa: prevEtapa });
+    }
+  };
+
+  const handleMarkAsSold = () => {
+    if (!selectedDeal) return;
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: { etapa: "venda_ativa" }
+    });
+    setShowDetails(false);
+    setSelectedDeal(null);
+    setEditedDeal(null);
+  };
+
+  const handleMarkAsLoss = () => {
+    if (!lossReason.categoria || !lossReason.motivo) {
+      alert("Por favor, selecione a categoria e o motivo da perda");
+      return;
+    }
+
+    const lossData = {
+      negociacao_id: selectedDeal.id,
+      vendedor_email: selectedDeal.vendedor_email,
+      nome_cliente: selectedDeal.nome_cliente,
+      telefone: selectedDeal.telefone,
+      email: selectedDeal.email || "",
+      placa: selectedDeal.placa || "",
+      modelo_veiculo: selectedDeal.modelo_veiculo || "",
+      plano_interesse: selectedDeal.plano_interesse || "",
+      categoria_motivo: lossReason.categoria,
+      motivo_perda: lossReason.motivo,
+      observacao_perda: lossReason.observacao || "",
+      data_perda: format(new Date(), "yyyy-MM-dd"),
+      etapa_perda: selectedDeal.etapa,
+      valor_adesao: selectedDeal.valor_adesao || "",
+      valor_mensalidade: selectedDeal.valor_mensalidade || "",
+      origem: selectedDeal.origem || "",
+      plataforma: selectedDeal.plataforma || "",
+      campanha: selectedDeal.campanha || "",
+      data_entrada: selectedDeal.data_entrada || format(new Date(selectedDeal.created_date), "yyyy-MM-dd")
+    };
+
+    createLossMutation.mutate(lossData, {
+      onSuccess: () => {
+        deleteMutation.mutate(selectedDeal.id);
+        setShowLossModal(false);
+        setShowDetails(false);
+        setSelectedDeal(null);
+        setEditedDeal(null);
+        setLossReason({ categoria: "", motivo: "", observacao: "" });
+      }
+    });
+  };
+
   const getNomeVendedor = (email) => {
     const user = users.find(u => u.email === email);
     return user?.full_name || email;
@@ -166,6 +316,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         : [...prev, email]
     );
   };
+
+  const canShowSaleButton = selectedDeal && (
+    selectedDeal.etapa === "vistoria_assinatura_pix" ||
+    selectedDeal.etapa === "enviado_cadastro"
+  );
 
   if (isLoading) {
     return (
@@ -324,6 +479,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                      }`}
                                      onClick={() => {
                                        setSelectedDeal(deal);
+                                       setEditedDeal({ ...deal });
                                        setShowDetails(true);
                                      }}
                                    >
@@ -532,82 +688,262 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog: Detalhes da Negociação */}
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Detalhes da Negociação</DialogTitle>
-          </DialogHeader>
-          {selectedDeal && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs text-slate-500">Cliente</Label>
-                  <p className="font-medium">{selectedDeal.nome_cliente}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-slate-500">Telefone</Label>
-                  <p className="font-medium">{selectedDeal.telefone}</p>
-                </div>
-                {selectedDeal.email && (
-                  <div>
-                    <Label className="text-xs text-slate-500">Email</Label>
-                    <p className="font-medium">{selectedDeal.email}</p>
-                  </div>
-                )}
-                {selectedDeal.modelo_veiculo && (
-                  <div>
-                    <Label className="text-xs text-slate-500">Modelo do Veículo</Label>
-                    <p className="font-medium">{selectedDeal.modelo_veiculo}</p>
-                  </div>
-                )}
-                {selectedDeal.plano_interesse && (
-                  <div>
-                    <Label className="text-xs text-slate-500">Plano</Label>
-                    <p className="font-medium">
-                      {selectedDeal.plano_interesse === "essencial" ? "Essencial" : "Principal"}
-                    </p>
-                  </div>
-                )}
-                <div>
-                  <Label className="text-xs text-slate-500">Origem</Label>
-                  <p className="font-medium capitalize">{selectedDeal.origem}</p>
-                </div>
-                <div>
-                  <Label className="text-xs text-slate-500">Data de Entrada</Label>
-                  <p className="font-medium">
-                    {selectedDeal.data_entrada 
-                      ? format(new Date(selectedDeal.data_entrada), "dd/MM/yyyy")
-                      : format(new Date(selectedDeal.created_date), "dd/MM/yyyy")}
-                  </p>
-                </div>
-                {selectedDeal.valor_proposta && (
-                  <div>
-                    <Label className="text-xs text-slate-500">Valor da Proposta</Label>
-                    <p className="font-medium">{selectedDeal.valor_proposta}</p>
-                  </div>
-                )}
-                <div>
-                  <Label className="text-xs text-slate-500">Etapa Atual</Label>
-                  <p className="font-medium">
+      {/* Sheet: Detalhes da Negociação */}
+      <Sheet open={showDetails} onOpenChange={setShowDetails}>
+        <SheetContent side="right" className="w-full sm:w-[600px] sm:max-w-[600px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Detalhes da Negociação</SheetTitle>
+          </SheetHeader>
+          {selectedDeal && editedDeal && (
+            <div className="space-y-6 mt-6">
+              {/* Navegação de Etapas */}
+              <div className="flex items-center justify-between gap-2 pb-4 border-b">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviousStage}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Anterior
+                </Button>
+                <div className="text-center flex-1">
+                  <Badge className="bg-[#EFC200] text-black">
                     {etapas.find(e => e.id === selectedDeal.etapa)?.label}
-                  </p>
+                  </Badge>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAdvanceStage}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1}
+                >
+                  Avançar
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+
+              {/* Campos Editáveis */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <Label>Nome do Cliente</Label>
+                  <Input
+                    value={editedDeal.nome_cliente}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <Label className="text-xs text-slate-500">Vendedor Responsável</Label>
-                  <p className="font-medium">{getNomeVendedor(selectedDeal.vendedor_email)}</p>
+                  <Label>Telefone</Label>
+                  <Input
+                    value={editedDeal.telefone}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, telefone: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    value={editedDeal.email || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Placa</Label>
+                  <Input
+                    value={editedDeal.placa || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, placa: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Modelo do Veículo</Label>
+                  <Input
+                    value={editedDeal.modelo_veiculo || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, modelo_veiculo: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Plano</Label>
+                  <Select
+                    value={editedDeal.plano_interesse || ""}
+                    onValueChange={(value) => setEditedDeal({ ...editedDeal, plano_interesse: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="essencial">Essencial</SelectItem>
+                      <SelectItem value="principal">Principal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Origem</Label>
+                  <Select
+                    value={editedDeal.origem || ""}
+                    onValueChange={(value) => setEditedDeal({ ...editedDeal, origem: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="lead">Lead</SelectItem>
+                      <SelectItem value="indicacao">Indicação</SelectItem>
+                      <SelectItem value="organico">Orgânico</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Valor da Mensalidade</Label>
+                  <Input
+                    value={editedDeal.valor_mensalidade || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, valor_mensalidade: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Valor da Adesão</Label>
+                  <Input
+                    value={editedDeal.valor_adesao || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, valor_adesao: e.target.value })}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label>Consultor Responsável</Label>
+                  <Input
+                    value={getNomeVendedor(selectedDeal.vendedor_email)}
+                    disabled
+                    className="bg-slate-50"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label>Email do Consultor</Label>
+                  <Input
+                    value={selectedDeal.vendedor_email}
+                    disabled
+                    className="bg-slate-50"
+                  />
+                </div>
+                <div>
+                  <Label>Data de Entrada</Label>
+                  <Input
+                    type="date"
+                    value={editedDeal.data_entrada || format(new Date(selectedDeal.created_date), "yyyy-MM-dd")}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, data_entrada: e.target.value })}
+                  />
                 </div>
               </div>
-              {selectedDeal.observacoes && (
-                <div>
-                  <Label className="text-xs text-slate-500">Observações</Label>
-                  <p className="text-sm mt-1 p-3 bg-slate-50 rounded-md whitespace-pre-wrap">
-                    {selectedDeal.observacoes}
-                  </p>
-                </div>
-              )}
+
+              {/* Botões de Ação */}
+              <div className="flex flex-col gap-3 pt-4 border-t">
+                <Button
+                  onClick={handleUpdateDeal}
+                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                >
+                  Salvar Alterações
+                </Button>
+                
+                {canShowSaleButton && (
+                  <Button
+                    onClick={handleMarkAsSold}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    Marcar como Venda
+                  </Button>
+                )}
+
+                <Button
+                  onClick={() => setShowLossModal(true)}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  <TrendingDown className="w-4 h-4 mr-2" />
+                  Marcar como Perda
+                </Button>
+              </div>
             </div>
           )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Modal: Motivo da Perda */}
+      <Dialog open={showLossModal} onOpenChange={setShowLossModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Registrar Perda</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Categoria do Motivo *</Label>
+              <Select
+                value={lossReason.categoria}
+                onValueChange={(value) => setLossReason({ ...lossReason, categoria: value, motivo: "" })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a categoria..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="financeiro">Financeiro</SelectItem>
+                  <SelectItem value="timing">Timing/Momento</SelectItem>
+                  <SelectItem value="confianca">Confiança</SelectItem>
+                  <SelectItem value="concorrencia">Concorrência</SelectItem>
+                  <SelectItem value="necessidade">Necessidade/Produto</SelectItem>
+                  <SelectItem value="lead_invalido">Lead Inválido</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {lossReason.categoria && (
+              <div>
+                <Label>Motivo Específico *</Label>
+                <Select
+                  value={lossReason.motivo}
+                  onValueChange={(value) => setLossReason({ ...lossReason, motivo: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o motivo..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {motivosPerda[lossReason.categoria]?.map((motivo) => (
+                      <SelectItem key={motivo} value={motivo}>
+                        {motivo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div>
+              <Label>Observação Adicional</Label>
+              <Textarea
+                value={lossReason.observacao}
+                onChange={(e) => setLossReason({ ...lossReason, observacao: e.target.value })}
+                placeholder="Detalhes adicionais sobre a perda..."
+                rows={4}
+              />
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowLossModal(false);
+                  setLossReason({ categoria: "", motivo: "", observacao: "" });
+                }}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleMarkAsLoss}
+                variant="destructive"
+                className="flex-1"
+                disabled={!lossReason.categoria || !lossReason.motivo}
+              >
+                Confirmar Perda
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
