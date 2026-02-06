@@ -467,12 +467,12 @@ export default function Distribuicao({ userFuncao }) {
                   <CardTitle>Validação de Chegada - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
                   <p className="text-sm text-slate-700 mt-1 font-medium">
                     {isValidado ? (
-                      <span className="flex items-center gap-2 text-green-700 font-semibold">
+                      <span className="flex items-center gap-2 text-blue-700 font-semibold">
                         <CheckCircle2 className="w-4 h-4" />
                         Chegadas validadas por {getNomeUsuario(validacaoHoje?.validado_por)} às {validacaoHoje?.hora_validacao}
                       </span>
                     ) : (
-                      <span className="text-amber-700 font-semibold">Validação pendente para distribuição de leads</span>
+                      <span className="text-slate-600 font-semibold">Validação pendente para distribuição de leads</span>
                     )}
                   </p>
                 </div>
@@ -532,23 +532,23 @@ export default function Distribuicao({ userFuncao }) {
                         const podeEditar = !isValidado || modoEdicao;
                         
                         return (
-                          <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-green-50 border-l-4 border-green-500" : "hover:bg-slate-50"}>
+                          <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-blue-50 border-l-4 border-blue-400" : "hover:bg-slate-50"}>
                             <TableCell className="font-semibold text-slate-900">
                               {vendedor.full_name || vendedor.email}
                             </TableCell>
                             <TableCell>
                               {checkin ? (
                                 checkin.dentro_prazo ? (
-                                  <Badge className="bg-green-600 text-white font-semibold">
+                                  <Badge className="bg-emerald-500 text-white font-medium">
                                     No Prazo
                                   </Badge>
                                 ) : (
-                                  <Badge className="bg-red-600 text-white font-semibold">
+                                  <Badge className="bg-orange-500 text-white font-medium">
                                     Fora do Prazo
                                   </Badge>
                                 )
                               ) : (
-                                <Badge variant="outline" className="bg-slate-200 text-slate-800 font-semibold border-slate-400">
+                                <Badge variant="outline" className="bg-slate-100 text-slate-700 font-medium border-slate-300">
                                   Sem Check-in
                                 </Badge>
                               )}
@@ -556,20 +556,20 @@ export default function Distribuicao({ userFuncao }) {
                             <TableCell className="font-medium text-slate-900">
                               {checkin ? (
                                 <div className="flex items-center gap-2">
-                                  <Clock className="w-4 h-4 text-slate-600" />
+                                  <Clock className="w-4 h-4 text-slate-500" />
                                   <span className="font-semibold">{checkin.hora}</span>
                                 </div>
                               ) : (
-                                <span className="text-slate-500 text-sm font-medium">-</span>
+                                <span className="text-slate-400 text-sm font-medium">-</span>
                               )}
                             </TableCell>
                             <TableCell>
                               {isValidadoVendedor ? (
-                                <Badge className="bg-blue-600 text-white font-semibold">
+                                <Badge className="bg-blue-500 text-white font-medium">
                                   ✓ Validado
                                 </Badge>
                               ) : (
-                                <Badge variant="outline" className="border-slate-400 text-slate-700 font-semibold">
+                                <Badge variant="outline" className="border-slate-300 text-slate-600 font-medium">
                                   Não Validado
                                 </Badge>
                               )}
@@ -577,10 +577,10 @@ export default function Distribuicao({ userFuncao }) {
                             <TableCell className="text-center">
                               <Button
                                 size="sm"
-                                variant={isValidadoVendedor ? "destructive" : "default"}
+                                variant={isValidadoVendedor ? "outline" : "default"}
                                 onClick={() => toggleVendedor(vendedor.email)}
                                 disabled={!podeEditar}
-                                className={`font-semibold ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
+                                className={`font-medium ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "border-slate-300 text-slate-700 hover:bg-slate-100" : "bg-[#EFC200] hover:bg-[#D4A900] text-black"}`}
                               >
                                 {isValidadoVendedor ? (
                                   <>
