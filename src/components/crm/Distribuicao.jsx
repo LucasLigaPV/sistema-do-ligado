@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, Clock, TrendingUp, Settings, History, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send, User } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, TrendingUp, Settings, History, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -18,8 +18,8 @@ export default function Distribuicao({ userFuncao }) {
   const [selectedUser, setSelectedUser] = useState("");
   const [modoEdicao, setModoEdicao] = useState(false);
   const [vendedoresValidados, setVendedoresValidados] = useState([]);
-  const [vendedorManual, setVendedorManual] = useState("");
-  const [quantidadeManual, setQuantidadeManual] = useState(1);
+  const [vendedorSelecionado, setVendedorSelecionado] = useState("");
+  const [quantidadeLeads, setQuantidadeLeads] = useState(1);
 
   const queryClient = useQueryClient();
 
@@ -107,13 +107,6 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  const createPrioridadeMutation = useMutation({
-    mutationFn: (data) => base44.entities.ConfiguracaoDistribuicao.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["configuracoes_distribuicao"] });
-    },
-  });
-
   // Filtrar vendedores e líderes (incluindo masters)
   const vendedoresLideres = users.filter(u => 
     u.funcao === "vendedor" || u.funcao === "lider" || u.funcao === "master"
@@ -161,35 +154,37 @@ export default function Distribuicao({ userFuncao }) {
     ? checkinsFiltrados.filter(c => c.usuario_email === selectedUser)
     : checkinsFiltrados;
 
-  // Leads não distribuídos
-  const leadsNaoDistribuidos = leads.filter(l => !l.distribuido);
-
-  // Filtrar leads por período (manhã/tarde)
-  const leadsDisponiveis = () => {
-    const agora = new Date();
-    const horaAtual = format(agora, "HH:mm");
+  // Leads não distribuídos - filtrar por período (manhã/tarde)
+  const agora = new Date();
+  const horaAtual = format(agora, "HH:mm");
+  
+  const leadsNaoDistribuidos = leads.filter(l => {
+    if (l.distribuido) return false;
     
-    return leadsNaoDistribuidos.filter(lead => {
-      if (!lead.data) return true;
-      
-      const dataLead = new Date(lead.data + "T00:00:00");
-      const horaLead = lead.hora || "00:00";
-      
-      // Se o lead é de outro dia, disponibilizar
-      if (format(dataLead, "yyyy-MM-dd") !== format(agora, "yyyy-MM-dd")) {
-        return true;
-      }
-      
-      // Se é de hoje, verificar o período
-      if (horaLead <= horarioDistribuicaoManha) {
-        return true; // Leads da manhã
-      } else if (horaAtual >= horarioDistribuicaoTarde) {
-        return true; // Já passou horário da tarde, liberar leads da tarde
-      }
-      
-      return false; // Lead da tarde mas ainda não chegou o horário
-    });
-  };
+    // Se não tem data, incluir
+    if (!l.data) return true;
+    
+    // Verificar se o lead é de hoje
+    const leadData = format(new Date(l.data), "yyyy-MM-dd");
+    const hoje = format(new Date(), "yyyy-MM-dd");
+    
+    if (leadData !== hoje) return true; // Leads de outros dias sempre disponíveis
+    
+    // Leads de hoje: verificar horário
+    // Se ainda não passou o horário da manhã, mostrar apenas leads da manhã
+    if (horaAtual < horarioLimiteSemana) {
+      // Mostrar leads que chegaram até o horário da manhã
+      const leadHora = l.created_date ? format(new Date(l.created_date), "HH:mm") : "00:00";
+      return leadHora < horarioLimiteSemana;
+    } else if (horaAtual < horarioLimiteTarde) {
+      // Entre manhã e tarde: não mostrar nenhum lead de hoje ainda
+      return false;
+    } else {
+      // Após horário da tarde: mostrar leads que chegaram após horário da manhã
+      const leadHora = l.created_date ? format(new Date(l.created_date), "HH:mm") : "00:00";
+      return leadHora >= horarioLimiteSemana;
+    }
+  });
 
   // Obter configurações
   const getConfig = (tipo, valorPadrao) => {
@@ -200,81 +195,9 @@ export default function Distribuicao({ userFuncao }) {
   const horarioLimiteSemana = getConfig("horario_limite_semana", "10:31");
   const horarioLimiteSabado = getConfig("horario_limite_sabado", "10:30");
   const limiteLeadsSabado = getConfig("limite_leads_sabado", "5");
-  const horarioDistribuicaoManha = getConfig("horario_distribuicao_manha", "11:00");
-  const horarioDistribuicaoTarde = getConfig("horario_distribuicao_tarde", "15:00");
+  const horarioLimiteTarde = getConfig("horario_limite_tarde", "14:00");
 
-  // Distribuir leads manualmente
-  const distribuirManual = () => {
-    if (!vendedorManual) {
-      alert("Selecione um vendedor!");
-      return;
-    }
-
-    if (quantidadeManual < 1) {
-      alert("Quantidade deve ser maior que 0!");
-      return;
-    }
-
-    const leadsParaEnviar = leadsDisponiveis().slice(0, quantidadeManual);
-
-    if (leadsParaEnviar.length === 0) {
-      alert("Não há leads disponíveis para distribuir!");
-      return;
-    }
-
-    // Verificar se há configuração de prioridade para este vendedor
-    const prioridadeConfig = configuracoes.find(
-      c => c.tipo === `prioridade_${vendedorManual}`
-    );
-
-    if (prioridadeConfig) {
-      // Atualizar quantidade de prioridade
-      const novaQuantidade = parseInt(prioridadeConfig.valor) + quantidadeManual;
-      updateConfigMutation.mutate({
-        id: prioridadeConfig.id,
-        data: { valor: novaQuantidade.toString() }
-      });
-    } else {
-      // Criar nova configuração de prioridade
-      createPrioridadeMutation.mutate({
-        tipo: `prioridade_${vendedorManual}`,
-        valor: quantidadeManual.toString()
-      });
-    }
-
-    // Distribuir leads
-    leadsParaEnviar.forEach(lead => {
-      createNegociacaoMutation.mutate({
-        vendedor_email: vendedorManual,
-        etapa: "novo_lead",
-        nome_cliente: lead.nome,
-        telefone: lead.telefone,
-        email: lead.email || "",
-        placa: "",
-        modelo_veiculo: lead.modelo || "",
-        plano_interesse: "",
-        origem: "lead",
-        data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
-        plataforma: lead.plataforma || "",
-        posicionamento: lead.posicionamento || "",
-        ad: lead.ad || "",
-        adset: lead.adset || "",
-        campanha: lead.campanha || "",
-        pagina: lead.pagina || ""
-      });
-
-      updateLeadMutation.mutate({
-        id: lead.id,
-        data: { distribuido: true }
-      });
-    });
-
-    alert(`${leadsParaEnviar.length} lead(s) distribuído(s) para ${getNomeUsuario(vendedorManual)}!`);
-    setVendedorManual("");
-    setQuantidadeManual(1);
-  };
-
-  // Distribuir leads automaticamente
+  // Distribuir leads
   const distribuirLeads = () => {
     const agora = new Date();
     const diaSemana = agora.getDay();
@@ -296,20 +219,18 @@ export default function Distribuicao({ userFuncao }) {
       return;
     }
 
-    const leadsParaDistribuir = leadsDisponiveis();
-
-    if (leadsParaDistribuir.length === 0) {
-      alert("Não há leads disponíveis para distribuir neste período!");
+    if (leadsNaoDistribuidos.length === 0) {
+      alert("Não há leads para distribuir!");
       return;
     }
 
     if (isSabado) {
       // Sábado: 5 leads por pessoa
       const limite = parseInt(limiteLeadsSabado);
-      let leadsRestantes = [...leadsParaDistribuir];
+      let leadsParaDistribuir = [...leadsNaoDistribuidos];
 
       vendedoresElegiveis.forEach(vendedor => {
-        const leadsVendedor = leadsRestantes.slice(0, limite);
+        const leadsVendedor = leadsParaDistribuir.slice(0, limite);
         leadsVendedor.forEach(lead => {
           // Criar negociação
           createNegociacaoMutation.mutate({
@@ -338,42 +259,22 @@ export default function Distribuicao({ userFuncao }) {
           });
         });
         
-        leadsRestantes = leadsRestantes.slice(limite);
+        leadsParaDistribuir = leadsParaDistribuir.slice(limite);
       });
     } else {
-      // Segunda a sexta: por taxa de conversão com prioridade
+      // Segunda a sexta: por taxa de conversão
       const vendedoresOrdenados = vendedoresElegiveis
-        .map(v => {
-          const prioridadeConfig = configuracoes.find(c => c.tipo === `prioridade_${v.email}`);
-          return {
-            ...v,
-            taxaConversao: parseFloat(calcularTaxaConversao(v.email)),
-            prioridade: prioridadeConfig ? parseInt(prioridadeConfig.valor) : 0,
-            prioridadeConfigId: prioridadeConfig?.id
-          };
-        })
-        .sort((a, b) => {
-          // Primeiro por prioridade (maior primeiro), depois por taxa (menor primeiro)
-          if (b.prioridade !== a.prioridade) {
-            return b.prioridade - a.prioridade;
-          }
-          return a.taxaConversao - b.taxaConversao;
-        });
+        .map(v => ({
+          ...v,
+          taxaConversao: parseFloat(calcularTaxaConversao(v.email))
+        }))
+        .sort((a, b) => a.taxaConversao - b.taxaConversao); // Menor taxa primeiro
 
-      let leadsRestantes = [...leadsParaDistribuir];
+      let leadsParaDistribuir = [...leadsNaoDistribuidos];
       let indiceVendedor = 0;
 
-      leadsRestantes.forEach(lead => {
+      leadsParaDistribuir.forEach(lead => {
         const vendedor = vendedoresOrdenados[indiceVendedor % vendedoresOrdenados.length];
-        
-        // Se tem prioridade, decrementar
-        if (vendedor.prioridade > 0 && vendedor.prioridadeConfigId) {
-          updateConfigMutation.mutate({
-            id: vendedor.prioridadeConfigId,
-            data: { valor: (vendedor.prioridade - 1).toString() }
-          });
-          vendedor.prioridade--;
-        }
         
         // Criar negociação
         createNegociacaoMutation.mutate({
@@ -459,6 +360,59 @@ export default function Distribuicao({ userFuncao }) {
     }
   };
 
+  const distribuirManual = () => {
+    if (!vendedorSelecionado) {
+      alert("Selecione um vendedor!");
+      return;
+    }
+
+    if (quantidadeLeads < 1) {
+      alert("Quantidade deve ser maior que 0!");
+      return;
+    }
+
+    if (leadsNaoDistribuidos.length === 0) {
+      alert("Não há leads para distribuir!");
+      return;
+    }
+
+    const quantidade = Math.min(quantidadeLeads, leadsNaoDistribuidos.length);
+    const leadsParaDistribuir = leadsNaoDistribuidos.slice(0, quantidade);
+
+    leadsParaDistribuir.forEach(lead => {
+      // Criar negociação
+      createNegociacaoMutation.mutate({
+        vendedor_email: vendedorSelecionado,
+        etapa: "novo_lead",
+        nome_cliente: lead.nome,
+        telefone: lead.telefone,
+        email: lead.email || "",
+        placa: "",
+        modelo_veiculo: lead.modelo || "",
+        plano_interesse: "",
+        origem: "lead",
+        data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
+        plataforma: lead.plataforma || "",
+        posicionamento: lead.posicionamento || "",
+        ad: lead.ad || "",
+        adset: lead.adset || "",
+        campanha: lead.campanha || "",
+        pagina: lead.pagina || "",
+        prioridade: true // Marca como prioridade para próxima distribuição automática
+      });
+      
+      // Marcar lead como distribuído
+      updateLeadMutation.mutate({
+        id: lead.id,
+        data: { distribuido: true }
+      });
+    });
+
+    alert(`${quantidade} lead(s) distribuído(s) com sucesso para ${getNomeUsuario(vendedorSelecionado)}!`);
+    setVendedorSelecionado("");
+    setQuantidadeLeads(1);
+  };
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="dashboard">
@@ -489,10 +443,7 @@ export default function Distribuicao({ userFuncao }) {
                 <CardTitle className="text-sm font-medium text-slate-600">Leads na Fila</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-[#EFC200]">{leadsDisponiveis().length}</div>
-                <p className="text-xs text-slate-500 mt-1">
-                  {leadsNaoDistribuidos.length} total
-                </p>
+                <div className="text-3xl font-bold text-[#EFC200]">{leadsNaoDistribuidos.length}</div>
               </CardContent>
             </Card>
 
@@ -526,11 +477,11 @@ export default function Distribuicao({ userFuncao }) {
                   <Button
                     onClick={distribuirLeads}
                     className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                    disabled={leadsDisponiveis().length === 0 || !isValidado}
+                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado}
                     title={!isValidado ? "É necessário validar as chegadas primeiro" : ""}
                   >
                     <PlayCircle className="w-4 h-4 mr-2" />
-                    Distribuir Leads Automático
+                    Distribuir Leads
                   </Button>
                 </div>
                 {!isValidado && (
@@ -600,129 +551,95 @@ export default function Distribuicao({ userFuncao }) {
         <TabsContent value="manual" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Send className="w-5 h-5" />
-                Distribuição Manual de Leads
-              </CardTitle>
-              <p className="text-sm text-slate-600 mt-2">
-                Envie leads manualmente para vendedores específicos. O vendedor receberá prioridade nos próximos leads automáticos.
+              <CardTitle>Distribuição Manual de Leads</CardTitle>
+              <p className="text-sm text-slate-600">
+                Distribua leads manualmente para vendedores específicos. Os leads enviados manualmente terão prioridade na próxima distribuição automática.
               </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <p className="text-sm text-amber-900">
-                    <strong>Como funciona:</strong> Ao enviar leads manualmente, o vendedor selecionado terá prioridade 
-                    na próxima distribuição automática pela quantidade de leads enviados. Depois disso, volta para a fila normal.
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="w-5 h-5 text-blue-700" />
+                    <span className="font-semibold text-blue-900">
+                      Leads disponíveis na fila: {leadsNaoDistribuidos.length}
+                    </span>
+                  </div>
+                  <p className="text-sm text-blue-800">
+                    {horaAtual < horarioLimiteSemana
+                      ? `Período da manhã - Distribuindo leads até ${horarioLimiteSemana}`
+                      : horaAtual < horarioLimiteTarde
+                      ? `Aguardando horário da tarde (${horarioLimiteTarde}) para distribuir novos leads`
+                      : `Período da tarde - Distribuindo leads após ${horarioLimiteSemana}`
+                    }
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="bg-slate-50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm font-medium text-slate-600">Leads Disponíveis</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-[#EFC200]">{leadsDisponiveis().length}</div>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Período atual
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-slate-50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm font-medium text-slate-600">Total na Fila</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-slate-600">{leadsNaoDistribuidos.length}</div>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Todos os períodos
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-slate-50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm font-medium text-slate-600">Vendedores Ativos</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-blue-600">{vendedoresValidados.length}</div>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Validados hoje
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold text-lg mb-4">Enviar Leads</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                    <div className="space-y-2">
-                      <Label htmlFor="vendedor-manual">Vendedor</Label>
-                      <select
-                        id="vendedor-manual"
-                        value={vendedorManual}
-                        onChange={(e) => setVendedorManual(e.target.value)}
-                        className="w-full h-10 px-3 rounded-md border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#EFC200]"
-                      >
-                        <option value="">Selecione um vendedor</option>
-                        {vendedoresLideres.map(v => (
-                          <option key={v.email} value={v.email}>
-                            {v.full_name || v.email}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="quantidade-manual">Quantidade de Leads</Label>
-                      <Input
-                        id="quantidade-manual"
-                        type="number"
-                        min="1"
-                        max={leadsDisponiveis().length}
-                        value={quantidadeManual}
-                        onChange={(e) => setQuantidadeManual(parseInt(e.target.value) || 1)}
-                      />
-                    </div>
-
-                    <Button
-                      onClick={distribuirManual}
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                      disabled={!vendedorManual || leadsDisponiveis().length === 0}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Vendedor</Label>
+                    <select
+                      className="w-full px-3 py-2 border rounded-md bg-white"
+                      value={vendedorSelecionado}
+                      onChange={(e) => setVendedorSelecionado(e.target.value)}
                     >
-                      <Send className="w-4 h-4 mr-2" />
-                      Enviar Leads
-                    </Button>
+                      <option value="">Selecione um vendedor</option>
+                      {vendedoresLideres.map(v => (
+                        <option key={v.email} value={v.email}>
+                          {v.full_name || v.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Quantidade de Leads</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max={leadsNaoDistribuidos.length}
+                      value={quantidadeLeads}
+                      onChange={(e) => setQuantidadeLeads(parseInt(e.target.value) || 1)}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Máximo disponível: {leadsNaoDistribuidos.length}
+                    </p>
                   </div>
                 </div>
 
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold text-lg mb-4">Lista de Vendedores</h3>
+                <Button
+                  onClick={distribuirManual}
+                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold h-12 text-lg"
+                  disabled={!vendedorSelecionado || quantidadeLeads < 1 || leadsNaoDistribuidos.length === 0}
+                >
+                  <Send className="w-5 h-5 mr-2" />
+                  Enviar {quantidadeLeads} Lead(s)
+                </Button>
+
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Vendedores e Performance
+                  </h4>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Vendedor/Líder</TableHead>
+                        <TableHead>Vendedor</TableHead>
                         <TableHead>Taxa Conversão</TableHead>
                         <TableHead>Negociações</TableHead>
-                        <TableHead>Prioridade</TableHead>
+                        <TableHead>Vendas</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {vendedoresLideres.map(vendedor => {
                         const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === vendedor.email);
+                        const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
                         const taxaConversao = calcularTaxaConversao(vendedor.email);
-                        const prioridadeConfig = configuracoes.find(c => c.tipo === `prioridade_${vendedor.email}`);
-                        const prioridade = prioridadeConfig ? parseInt(prioridadeConfig.valor) : 0;
 
                         return (
                           <TableRow key={vendedor.email}>
                             <TableCell className="font-medium">
-                              <div className="flex items-center gap-2">
-                                <User className="w-4 h-4 text-slate-400" />
-                                {vendedor.full_name || vendedor.email}
-                              </div>
+                              {vendedor.full_name || vendedor.email}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" className="font-semibold">
@@ -730,15 +647,7 @@ export default function Distribuicao({ userFuncao }) {
                               </Badge>
                             </TableCell>
                             <TableCell>{negociacoesVendedor.length}</TableCell>
-                            <TableCell>
-                              {prioridade > 0 ? (
-                                <Badge className="bg-orange-500 text-white">
-                                  +{prioridade} leads
-                                </Badge>
-                              ) : (
-                                <span className="text-slate-400 text-sm">-</span>
-                              )}
-                            </TableCell>
+                            <TableCell>{vendasVendedor.length}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -954,26 +863,14 @@ export default function Distribuicao({ userFuncao }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Horário Distribuição Manhã</Label>
+                  <Label>Horário Distribuição da Tarde</Label>
                   <Input
                     type="time"
-                    defaultValue={horarioDistribuicaoManha}
-                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_manha", e.target.value)}
+                    defaultValue={horarioLimiteTarde}
+                    onBlur={(e) => salvarConfiguracao("horario_limite_tarde", e.target.value)}
                   />
                   <p className="text-xs text-slate-500">
-                    Leads até este horário serão distribuídos pela manhã
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Horário Distribuição Tarde</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioDistribuicaoTarde}
-                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_tarde", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Leads após o horário da manhã serão distribuídos a partir deste horário
+                    Horário para distribuir leads que chegaram após o período da manhã
                   </p>
                 </div>
               </div>
@@ -985,19 +882,19 @@ export default function Distribuicao({ userFuncao }) {
                 </h4>
                 <ul className="text-sm text-blue-800 space-y-1">
                   <li>
-                    <strong>Segunda a Sexta:</strong> Distribuição por taxa de conversão (com prioridade) para quem fizer check-in até {horarioLimiteSemana}
+                    <strong>Segunda a Sexta:</strong> Distribuição por taxa de conversão para quem fizer check-in até {horarioLimiteSemana}
+                  </li>
+                  <li>
+                    <strong>Horário da Manhã:</strong> Leads que chegam até {horarioLimiteSemana} são distribuídos no período da manhã
+                  </li>
+                  <li>
+                    <strong>Horário da Tarde:</strong> Leads que chegam após {horarioLimiteSemana} são distribuídos a partir de {horarioLimiteTarde}
                   </li>
                   <li>
                     <strong>Sábado:</strong> Máximo {limiteLeadsSabado} leads por vendedor que fizer check-in até {horarioLimiteSabado}
                   </li>
                   <li>
                     <strong>Domingo:</strong> Sem distribuição
-                  </li>
-                  <li>
-                    <strong>Períodos:</strong> Leads até {horarioDistribuicaoManha} são distribuídos pela manhã. Leads após este horário são distribuídos a partir das {horarioDistribuicaoTarde}
-                  </li>
-                  <li>
-                    <strong>Prioridade:</strong> Vendedores com distribuição manual recebem prioridade na próxima distribuição automática
                   </li>
                 </ul>
               </div>
