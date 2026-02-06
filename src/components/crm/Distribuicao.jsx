@@ -105,8 +105,10 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar vendedores e líderes
-  const vendedoresLideres = users.filter(u => u.funcao === "vendedor" || u.funcao === "lider");
+  // Filtrar vendedores e líderes (incluindo masters)
+  const vendedoresLideres = users.filter(u => 
+    u.funcao === "vendedor" || u.funcao === "lider" || u.funcao === "master"
+  );
 
   // Calcular taxa de conversão
   const calcularTaxaConversao = (email) => {
