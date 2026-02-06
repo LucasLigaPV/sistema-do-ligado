@@ -53,6 +53,13 @@ export default function ModalCheckin({ userEmail }) {
     const data = format(agora, "yyyy-MM-dd");
     const diaSemana = format(agora, "EEEE", { locale: ptBR });
     
+    // Buscar horários das configurações
+    const horarioSemanaConfig = configs.find(c => c.tipo === "horario_limite_semana");
+    const horarioSabadoConfig = configs.find(c => c.tipo === "horario_limite_sabado");
+    
+    const horarioLimiteSemana = horarioSemanaConfig?.valor || "10:31";
+    const horarioLimiteSabado = horarioSabadoConfig?.valor || "10:30";
+    
     // Verificar se está dentro do prazo
     const [horaAtual, minutoAtual] = hora.split(":").map(Number);
     const isDomingo = agora.getDay() === 0;
@@ -61,9 +68,11 @@ export default function ModalCheckin({ userEmail }) {
     let dentroPrazo = false;
     if (!isDomingo) {
       if (isSabado) {
-        dentroPrazo = horaAtual < 10 || (horaAtual === 10 && minutoAtual <= 30);
+        const [limiteHora, limiteMinuto] = horarioLimiteSabado.split(":").map(Number);
+        dentroPrazo = horaAtual < limiteHora || (horaAtual === limiteHora && minutoAtual <= limiteMinuto);
       } else {
-        dentroPrazo = horaAtual < 10 || (horaAtual === 10 && minutoAtual <= 31);
+        const [limiteHora, limiteMinuto] = horarioLimiteSemana.split(":").map(Number);
+        dentroPrazo = horaAtual < limiteHora || (horaAtual === limiteHora && minutoAtual <= limiteMinuto);
       }
     }
 
