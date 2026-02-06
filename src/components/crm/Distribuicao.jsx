@@ -154,6 +154,17 @@ export default function Distribuicao({ userFuncao }) {
     ? checkinsFiltrados.filter(c => c.usuario_email === selectedUser)
     : checkinsFiltrados;
 
+  // Obter configurações
+  const getConfig = (tipo, valorPadrao) => {
+    const config = configuracoes.find(c => c.tipo === tipo);
+    return config?.valor || valorPadrao;
+  };
+
+  const horarioLimiteSemana = getConfig("horario_limite_semana", "10:31");
+  const horarioLimiteSabado = getConfig("horario_limite_sabado", "10:30");
+  const limiteLeadsSabado = getConfig("limite_leads_sabado", "5");
+  const horarioLimiteTarde = getConfig("horario_limite_tarde", "14:00");
+
   // Leads não distribuídos - filtrar por período (manhã/tarde)
   const agora = new Date();
   const horaAtual = format(agora, "HH:mm");
@@ -185,17 +196,6 @@ export default function Distribuicao({ userFuncao }) {
       return leadHora >= horarioLimiteSemana;
     }
   });
-
-  // Obter configurações
-  const getConfig = (tipo, valorPadrao) => {
-    const config = configuracoes.find(c => c.tipo === tipo);
-    return config?.valor || valorPadrao;
-  };
-
-  const horarioLimiteSemana = getConfig("horario_limite_semana", "10:31");
-  const horarioLimiteSabado = getConfig("horario_limite_sabado", "10:30");
-  const limiteLeadsSabado = getConfig("limite_leads_sabado", "5");
-  const horarioLimiteTarde = getConfig("horario_limite_tarde", "14:00");
 
   // Distribuir leads
   const distribuirLeads = () => {
