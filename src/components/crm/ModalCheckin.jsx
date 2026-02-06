@@ -91,7 +91,7 @@ export default function ModalCheckin({ userEmail }) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <CheckCircle2 className="w-8 h-8 text-green-600" />
-            Check-in Diário
+            Recepção de Leads
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
