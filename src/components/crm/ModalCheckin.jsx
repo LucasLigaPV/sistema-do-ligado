@@ -16,6 +16,11 @@ export default function ModalCheckin({ userEmail }) {
     queryFn: () => base44.entities.Checkin.list(),
   });
 
+  const { data: configs = [] } = useQuery({
+    queryKey: ["configuracoes"],
+    queryFn: () => base44.entities.ConfiguracaoDistribuicao.list(),
+  });
+
   const createCheckinMutation = useMutation({
     mutationFn: (data) => base44.entities.Checkin.create(data),
     onSuccess: () => {
