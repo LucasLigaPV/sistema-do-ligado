@@ -138,7 +138,7 @@ export default function Distribuicao({ userFuncao }) {
         .map(c => c.usuario_email);
       setVendedoresValidados(emailsNoPrazo);
     }
-  }, [validacaoHoje, checkinsHoje]);
+  }, [validacaoHoje?.id]);
 
   // Filtrar check-ins por período
   const checkinsFiltrados = checkins.filter(c => {
@@ -465,14 +465,14 @@ export default function Distribuicao({ userFuncao }) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Validação de Chegada - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <p className="text-sm text-slate-700 mt-1 font-medium">
                     {isValidado ? (
-                      <span className="flex items-center gap-2 text-green-600">
+                      <span className="flex items-center gap-2 text-green-700 font-semibold">
                         <CheckCircle2 className="w-4 h-4" />
                         Chegadas validadas por {getNomeUsuario(validacaoHoje?.validado_por)} às {validacaoHoje?.hora_validacao}
                       </span>
                     ) : (
-                      "Validação pendente para distribuição de leads"
+                      <span className="text-amber-700 font-semibold">Validação pendente para distribuição de leads</span>
                     )}
                   </p>
                 </div>
@@ -498,9 +498,9 @@ export default function Distribuicao({ userFuncao }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm text-blue-900">
-                    <strong>Instruções:</strong> Selecione os vendedores que devem receber leads hoje. 
+                <div className="bg-blue-50 border border-blue-300 rounded-lg p-4">
+                  <p className="text-sm text-blue-950 font-medium">
+                    <strong className="font-bold">Instruções:</strong> Selecione os vendedores que devem receber leads hoje. 
                     Por padrão, são mostrados os vendedores que fizeram check-in dentro do prazo. 
                     Você pode adicionar ou remover vendedores manualmente conforme necessário.
                   </p>
@@ -532,44 +532,44 @@ export default function Distribuicao({ userFuncao }) {
                         const podeEditar = !isValidado || modoEdicao;
                         
                         return (
-                          <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-green-50" : ""}>
-                            <TableCell className="font-medium">
+                          <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-green-50 border-l-4 border-green-500" : "hover:bg-slate-50"}>
+                            <TableCell className="font-semibold text-slate-900">
                               {vendedor.full_name || vendedor.email}
                             </TableCell>
                             <TableCell>
                               {checkin ? (
                                 checkin.dentro_prazo ? (
-                                  <Badge className="bg-green-100 text-green-800">
+                                  <Badge className="bg-green-600 text-white font-semibold">
                                     No Prazo
                                   </Badge>
                                 ) : (
-                                  <Badge className="bg-red-100 text-red-800">
+                                  <Badge className="bg-red-600 text-white font-semibold">
                                     Fora do Prazo
                                   </Badge>
                                 )
                               ) : (
-                                <Badge variant="outline" className="bg-slate-100">
+                                <Badge variant="outline" className="bg-slate-200 text-slate-800 font-semibold border-slate-400">
                                   Sem Check-in
                                 </Badge>
                               )}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="font-medium text-slate-900">
                               {checkin ? (
                                 <div className="flex items-center gap-2">
-                                  <Clock className="w-4 h-4 text-slate-400" />
-                                  {checkin.hora}
+                                  <Clock className="w-4 h-4 text-slate-600" />
+                                  <span className="font-semibold">{checkin.hora}</span>
                                 </div>
                               ) : (
-                                <span className="text-slate-400 text-sm">-</span>
+                                <span className="text-slate-500 text-sm font-medium">-</span>
                               )}
                             </TableCell>
                             <TableCell>
                               {isValidadoVendedor ? (
-                                <Badge className="bg-blue-100 text-blue-800">
-                                  Validado
+                                <Badge className="bg-blue-600 text-white font-semibold">
+                                  ✓ Validado
                                 </Badge>
                               ) : (
-                                <Badge variant="outline">
+                                <Badge variant="outline" className="border-slate-400 text-slate-700 font-semibold">
                                   Não Validado
                                 </Badge>
                               )}
@@ -580,7 +580,7 @@ export default function Distribuicao({ userFuncao }) {
                                 variant={isValidadoVendedor ? "destructive" : "default"}
                                 onClick={() => toggleVendedor(vendedor.email)}
                                 disabled={!podeEditar}
-                                className={!podeEditar ? "opacity-50 cursor-not-allowed" : ""}
+                                className={`font-semibold ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
                               >
                                 {isValidadoVendedor ? (
                                   <>
@@ -602,11 +602,11 @@ export default function Distribuicao({ userFuncao }) {
                   </TableBody>
                 </Table>
 
-                <div className="bg-slate-50 rounded-lg p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-slate-600" />
-                    <span className="font-medium">
-                      Total de vendedores validados: <span className="text-[#EFC200] text-lg">{vendedoresValidados.length}</span>
+                <div className="bg-slate-100 border-2 border-slate-300 rounded-lg p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Users className="w-6 h-6 text-slate-800" />
+                    <span className="font-bold text-slate-900 text-lg">
+                      Total de vendedores validados: <span className="text-[#EFC200] text-2xl">{vendedoresValidados.length}</span>
                     </span>
                   </div>
                 </div>
