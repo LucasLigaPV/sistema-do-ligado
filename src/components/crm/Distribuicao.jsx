@@ -380,26 +380,27 @@ export default function Distribuicao({ userFuncao }) {
 
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
-                <Button
-                  onClick={distribuirLeads}
-                  className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                  disabled={leadsNaoDistribuidos.length === 0 || !isValidado}
-                  title={!isValidado ? "É necessário validar as chegadas primeiro" : ""}
-                >
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  Distribuir Leads
-                </Button>
-              </div>
-              {!isValidado && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
-                  <Shield className="w-5 h-5" />
-                  <span>
-                    Para distribuir leads, é necessário validar as chegadas primeiro na aba "Validação de Chegada"
-                  </span>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
+                  <Button
+                    onClick={distribuirLeads}
+                    className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado}
+                    title={!isValidado ? "É necessário validar as chegadas primeiro" : ""}
+                  >
+                    <PlayCircle className="w-4 h-4 mr-2" />
+                    Distribuir Leads
+                  </Button>
                 </div>
-              )}
+                {!isValidado && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
+                    <Shield className="w-5 h-5" />
+                    <span>
+                      Para distribuir leads, é necessário validar as chegadas primeiro na aba "Validação de Chegada"
+                    </span>
+                  </div>
+                )}
               </div>
             </CardHeader>
             <CardContent>
