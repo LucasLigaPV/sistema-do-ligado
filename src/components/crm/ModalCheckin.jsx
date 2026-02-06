@@ -118,8 +118,8 @@ export default function ModalCheckin({ userEmail }) {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
             <p className="font-medium mb-2">⏰ Horários Limite:</p>
             <ul className="space-y-1 text-xs">
-              <li>• Segunda a Sexta: <strong>10h31</strong></li>
-              <li>• Sábado: <strong>10h30</strong> (máx. 5 leads)</li>
+              <li>• Segunda a Sexta: <strong>{configs.find(c => c.tipo === "horario_limite_semana")?.valor || "10:31"}</strong></li>
+              <li>• Sábado: <strong>{configs.find(c => c.tipo === "horario_limite_sabado")?.valor || "10:30"}</strong> (máx. {configs.find(c => c.tipo === "limite_leads_sabado")?.valor || "5"} leads)</li>
               <li>• Domingo: Sem distribuição</li>
             </ul>
           </div>
