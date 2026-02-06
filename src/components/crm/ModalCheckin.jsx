@@ -134,7 +134,7 @@ export default function ModalCheckin({ userEmail }) {
             ) : (
               <>
                 <CheckCircle2 className="w-5 h-5 mr-2" />
-                Fazer Check-in
+                Pronto para receber Leads
               </>
             )}
           </Button>
