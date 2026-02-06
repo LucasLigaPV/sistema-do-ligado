@@ -517,38 +517,49 @@ export default function Distribuicao({ userFuncao }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {checkinsHoje.length === 0 ? (
+                    {vendedoresLideres.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center text-slate-500 py-8">
-                          Nenhum check-in realizado hoje
+                          Nenhum vendedor/líder cadastrado
                         </TableCell>
                       </TableRow>
                     ) : (
-                      checkinsHoje.map(checkin => {
-                        const isValidadoVendedor = vendedoresValidados.includes(checkin.usuario_email);
+                      vendedoresLideres.map(vendedor => {
+                        const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
+                        const isValidadoVendedor = vendedoresValidados.includes(vendedor.email);
                         const podeEditar = !isValidado || modoEdicao;
                         
                         return (
-                          <TableRow key={checkin.id} className={isValidadoVendedor ? "bg-green-50" : ""}>
+                          <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-green-50" : ""}>
                             <TableCell className="font-medium">
-                              {getNomeUsuario(checkin.usuario_email)}
+                              {vendedor.full_name || vendedor.email}
                             </TableCell>
                             <TableCell>
-                              {checkin.dentro_prazo ? (
-                                <Badge className="bg-green-100 text-green-800">
-                                  No Prazo
-                                </Badge>
+                              {checkin ? (
+                                checkin.dentro_prazo ? (
+                                  <Badge className="bg-green-100 text-green-800">
+                                    No Prazo
+                                  </Badge>
+                                ) : (
+                                  <Badge className="bg-red-100 text-red-800">
+                                    Fora do Prazo
+                                  </Badge>
+                                )
                               ) : (
-                                <Badge className="bg-red-100 text-red-800">
-                                  Fora do Prazo
+                                <Badge variant="outline" className="bg-slate-100">
+                                  Sem Check-in
                                 </Badge>
                               )}
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-slate-400" />
-                                {checkin.hora}
-                              </div>
+                              {checkin ? (
+                                <div className="flex items-center gap-2">
+                                  <Clock className="w-4 h-4 text-slate-400" />
+                                  {checkin.hora}
+                                </div>
+                              ) : (
+                                <span className="text-slate-400 text-sm">-</span>
+                              )}
                             </TableCell>
                             <TableCell>
                               {isValidadoVendedor ? (
@@ -565,7 +576,7 @@ export default function Distribuicao({ userFuncao }) {
                               <Button
                                 size="sm"
                                 variant={isValidadoVendedor ? "destructive" : "default"}
-                                onClick={() => toggleVendedor(checkin.usuario_email)}
+                                onClick={() => toggleVendedor(vendedor.email)}
                                 disabled={!podeEditar}
                                 className={!podeEditar ? "opacity-50 cursor-not-allowed" : ""}
                               >
