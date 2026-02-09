@@ -36,10 +36,38 @@ export default function Aprovacoes({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Equipe.list(),
   });
 
+  const createVendaMutation = useMutation({
+    mutationFn: (data) => base44.entities.Venda.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vendas"] });
+    },
+  });
+
   const updateNegociacaoMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Negociacao.update(id, data),
-    onSuccess: () => {
+    onSuccess: (_, { id, data }) => {
       queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+      
+      // Se aprovado, criar venda automaticamente
+      if (data.etapa === "venda_ativa") {
+        const negociacao = negociacoes.find(n => n.id === id);
+        if (negociacao) {
+          createVendaMutation.mutate({
+            vendedor: negociacao.vendedor_email,
+            data_venda: new Date().toISOString().split('T')[0],
+            etapa: "pagamento_ok",
+            cliente: negociacao.nome_cliente,
+            telefone: negociacao.telefone,
+            plano_vendido: negociacao.plano_interesse || "essencial",
+            placa: negociacao.placa || "",
+            valor_adesao: negociacao.valor_adesao || "",
+            forma_pagamento: "pix",
+            canal_venda: negociacao.origem === "indicacao" ? "indicacao" : negociacao.origem === "organico" ? "troca_veiculo" : "lead",
+            tem_indicacao: negociacao.origem === "indicacao" ? "sim" : "nao",
+          });
+        }
+      }
+      
       setShowApprovalModal(false);
       setSelectedNegociacao(null);
       setMotivoNegacao("");
