@@ -224,10 +224,22 @@ export default function Distribuicao({ userFuncao }) {
       return;
     }
 
+    // Embaralhar leads para distribuição randômica
+    const shuffleArray = (array) => {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
+
+    const leadsEmbaralhados = shuffleArray(leadsNaoDistribuidos);
+
     if (isSabado) {
-      // Sábado: 5 leads por pessoa
+      // Sábado: 5 leads por pessoa (randômico)
       const limite = parseInt(limiteLeadsSabado);
-      let leadsParaDistribuir = [...leadsNaoDistribuidos];
+      let leadsParaDistribuir = [...leadsEmbaralhados];
 
       vendedoresElegiveis.forEach(vendedor => {
         const leadsVendedor = leadsParaDistribuir.slice(0, limite);
@@ -262,47 +274,69 @@ export default function Distribuicao({ userFuncao }) {
         leadsParaDistribuir = leadsParaDistribuir.slice(limite);
       });
     } else {
-      // Segunda a sexta: por taxa de conversão
-      const vendedoresOrdenados = vendedoresElegiveis
+      // Segunda a sexta: distribuição proporcional à taxa de conversão (randômico)
+      const vendedoresComTaxa = vendedoresElegiveis
         .map(v => ({
           ...v,
           taxaConversao: parseFloat(calcularTaxaConversao(v.email))
-        }))
-        .sort((a, b) => a.taxaConversao - b.taxaConversao); // Menor taxa primeiro
+        }));
 
-      let leadsParaDistribuir = [...leadsNaoDistribuidos];
-      let indiceVendedor = 0;
+      // Calcular soma total das taxas
+      const somaTaxas = vendedoresComTaxa.reduce((sum, v) => sum + v.taxaConversao, 0);
 
-      leadsParaDistribuir.forEach(lead => {
-        const vendedor = vendedoresOrdenados[indiceVendedor % vendedoresOrdenados.length];
+      // Se todas taxas são 0, distribuir igualmente
+      const distribuicaoIgual = somaTaxas === 0;
+
+      // Calcular quantos leads cada vendedor deve receber
+      const leadsDistribuicao = vendedoresComTaxa.map(v => {
+        const proporcao = distribuicaoIgual 
+          ? 1 / vendedoresComTaxa.length 
+          : v.taxaConversao / somaTaxas;
+        const quantidade = Math.floor(leadsEmbaralhados.length * proporcao);
+        return { ...v, quantidadeLeads: quantidade };
+      });
+
+      // Distribuir leads restantes para quem tem maior taxa
+      const totalDistribuido = leadsDistribuicao.reduce((sum, v) => sum + v.quantidadeLeads, 0);
+      const leadsRestantes = leadsEmbaralhados.length - totalDistribuido;
+      
+      const vendedoresOrdenados = [...leadsDistribuicao].sort((a, b) => b.taxaConversao - a.taxaConversao);
+      for (let i = 0; i < leadsRestantes; i++) {
+        vendedoresOrdenados[i % vendedoresOrdenados.length].quantidadeLeads++;
+      }
+
+      // Distribuir leads
+      let indiceLeadAtual = 0;
+      leadsDistribuicao.forEach(vendedor => {
+        const leadsVendedor = leadsEmbaralhados.slice(indiceLeadAtual, indiceLeadAtual + vendedor.quantidadeLeads);
         
-        // Criar negociação
-        createNegociacaoMutation.mutate({
-          vendedor_email: vendedor.email,
-          etapa: "novo_lead",
-          nome_cliente: lead.nome,
-          telefone: lead.telefone,
-          email: lead.email || "",
-          placa: "",
-          modelo_veiculo: lead.modelo || "",
-          plano_interesse: "",
-          origem: "lead",
-          data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
-          plataforma: lead.plataforma || "",
-          posicionamento: lead.posicionamento || "",
-          ad: lead.ad || "",
-          adset: lead.adset || "",
-          campanha: lead.campanha || "",
-          pagina: lead.pagina || ""
-        });
-        
-        // Marcar lead como distribuído
-        updateLeadMutation.mutate({
-          id: lead.id,
-          data: { distribuido: true }
+        leadsVendedor.forEach(lead => {
+          createNegociacaoMutation.mutate({
+            vendedor_email: vendedor.email,
+            etapa: "novo_lead",
+            nome_cliente: lead.nome,
+            telefone: lead.telefone,
+            email: lead.email || "",
+            placa: "",
+            modelo_veiculo: lead.modelo || "",
+            plano_interesse: "",
+            origem: "lead",
+            data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
+            plataforma: lead.plataforma || "",
+            posicionamento: lead.posicionamento || "",
+            ad: lead.ad || "",
+            adset: lead.adset || "",
+            campanha: lead.campanha || "",
+            pagina: lead.pagina || ""
+          });
+          
+          updateLeadMutation.mutate({
+            id: lead.id,
+            data: { distribuido: true }
+          });
         });
 
-        indiceVendedor++;
+        indiceLeadAtual += vendedor.quantidadeLeads;
       });
     }
 
