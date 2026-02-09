@@ -235,7 +235,7 @@ export default function Admin() {
               </div>
             )}
 
-            {activeMenu === "crm-aprovacoes" && (
+            {activeMenu === "aprovacoes" && (
               <div>
                 <Aprovacoes userEmail={user?.email} userFuncao={user?.funcao} />
               </div>

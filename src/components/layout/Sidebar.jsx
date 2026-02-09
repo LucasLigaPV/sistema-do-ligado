@@ -52,13 +52,13 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       submenus: [
         { id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" },
         { id: "crm-negociacoes", label: "Negociações", icon: Handshake },
-        { id: "crm-aprovacoes", label: "Aprovações", icon: CheckCircle },
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
         { id: "crm-marketing", label: "Marketing", icon: Megaphone },
       ]
     },
+    { id: "aprovacoes", label: "Aprovações", icon: CheckCircle },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
 
