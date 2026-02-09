@@ -138,7 +138,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
-  const [showForm, setShowForm] = useState(false);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
   const [showAtivoAlert, setShowAtivoAlert] = useState(false);
 
@@ -248,19 +247,10 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
 
   return (
     <div className="space-y-6">
-      {/* Header with Button */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Registro de Vendas</h2>
-          <p className="text-slate-500">Acompanhe e gerencie todas as vendas</p>
-        </div>
-        <Button
-          onClick={() => setShowForm(true)}
-          className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black"
-        >
-          <Plus className="w-4 h-4" />
-          Registrar Nova Venda
-        </Button>
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-900">Registro de Vendas</h2>
+        <p className="text-slate-500">Vendas são criadas automaticamente quando aprovadas no CRM</p>
       </div>
 
       {/* Stats Cards */}
@@ -566,16 +556,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
           </Table>
         </div>
       </Card>
-
-      {/* Form Dialog */}
-      <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Registrar Nova Venda</DialogTitle>
-          </DialogHeader>
-          <FormularioVenda onSuccess={() => setShowForm(false)} userEmail={userEmail} />
-        </DialogContent>
-      </Dialog>
 
       {/* Ativo Alert Dialog */}
       <Dialog open={showAtivoAlert} onOpenChange={setShowAtivoAlert}>
