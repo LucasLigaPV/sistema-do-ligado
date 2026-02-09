@@ -24,6 +24,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showFilters, setShowFilters] = useState(false);
   const [showLossModal, setShowLossModal] = useState(false);
   const [lossReason, setLossReason] = useState({ categoria: "", motivo: "", observacao: "" });
+  const [showSubetapaModal, setShowSubetapaModal] = useState(false);
+  const [pendingSubetapa, setPendingSubetapa] = useState(null);
+  const [selectedSubetapa, setSelectedSubetapa] = useState("");
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
@@ -204,10 +207,34 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const dealId = result.draggableId;
     const newEtapa = result.destination.droppableId;
 
+    // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
+    if (newEtapa === "vistoria_assinatura_pix") {
+      const deal = negociacoes.find(n => n.id === dealId);
+      setPendingSubetapa({ id: dealId, etapa: newEtapa, currentSubetapa: deal?.subetapa });
+      setSelectedSubetapa(deal?.subetapa || "");
+      setShowSubetapaModal(true);
+    } else {
+      updateMutation.mutate({
+        id: dealId,
+        data: { etapa: newEtapa, subetapa: "" }
+      });
+    }
+  };
+
+  const handleConfirmSubetapa = () => {
+    if (!selectedSubetapa) {
+      alert("Por favor, selecione uma subetapa");
+      return;
+    }
+
     updateMutation.mutate({
-      id: dealId,
-      data: { etapa: newEtapa }
+      id: pendingSubetapa.id,
+      data: { etapa: pendingSubetapa.etapa, subetapa: selectedSubetapa }
     });
+
+    setShowSubetapaModal(false);
+    setPendingSubetapa(null);
+    setSelectedSubetapa("");
   };
 
   const handleCreateDeal = (e) => {
@@ -495,6 +522,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             <Car className="w-4 h-4" />
                                             {deal.placa}
                                           </div>
+                                        )}
+                                        {deal.subetapa && deal.etapa === "vistoria_assinatura_pix" && (
+                                          <Badge className="text-xs bg-blue-100 text-blue-800 border-blue-200">
+                                            {deal.subetapa === "aguardando_vistoria" && "Aguardando Vistoria"}
+                                            {deal.subetapa === "aguardando_assinatura" && "Aguardando Assinatura"}
+                                            {deal.subetapa === "aguardando_pix" && "Aguardando Pix"}
+                                          </Badge>
                                         )}
                                         {deal.valor_adesao && (
                                           <div className="text-sm font-medium text-slate-700">
@@ -866,6 +900,58 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Modal: Subetapa */}
+      <Dialog open={showSubetapaModal} onOpenChange={setShowSubetapaModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Selecionar Subetapa</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+              Selecione o status atual desta negociação:
+            </p>
+            <div>
+              <Label>Status *</Label>
+              <Select
+                value={selectedSubetapa}
+                onValueChange={setSelectedSubetapa}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o status..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="aguardando_vistoria">Aguardando Vistoria</SelectItem>
+                  <SelectItem value="aguardando_assinatura">Aguardando Assinatura</SelectItem>
+                  <SelectItem value="aguardando_pix">Aguardando Pix</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowSubetapaModal(false);
+                  setPendingSubetapa(null);
+                  setSelectedSubetapa("");
+                }}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleConfirmSubetapa}
+                className="flex-1 bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                disabled={!selectedSubetapa}
+              >
+                Confirmar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Modal: Motivo da Perda */}
       <Dialog open={showLossModal} onOpenChange={setShowLossModal}>
