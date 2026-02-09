@@ -235,6 +235,12 @@ export default function Admin() {
               </div>
             )}
 
+            {activeMenu === "crm-aprovacoes" && (
+              <div>
+                <Aprovacoes userEmail={user?.email} userFuncao={user?.funcao} />
+              </div>
+            )}
+
             {activeMenu === "crm-perdas" && (
               <div>
                 <div className="mb-4">
