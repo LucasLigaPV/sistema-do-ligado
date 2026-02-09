@@ -22,6 +22,7 @@ import {
   Briefcase,
   UsersRound,
   Handshake,
+  CheckCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -51,6 +52,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       submenus: [
         { id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" },
         { id: "crm-negociacoes", label: "Negociações", icon: Handshake },
+        { id: "crm-aprovacoes", label: "Aprovações", icon: CheckCircle },
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
