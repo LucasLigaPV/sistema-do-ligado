@@ -25,6 +25,7 @@ import FilaLeads from "../components/crm/FilaLeads";
 import PipelineNegociacoes from "../components/crm/PipelineNegociacoes";
 import Perdas from "../components/crm/Perdas";
 import Distribuicao from "../components/crm/Distribuicao";
+import Aprovacoes from "../components/crm/Aprovacoes";
 import ModalCheckin from "../components/crm/ModalCheckin";
 import DashboardCRM from "../components/crm/DashboardCRM";
 import DashboardMarketing from "../components/crm/DashboardMarketing";

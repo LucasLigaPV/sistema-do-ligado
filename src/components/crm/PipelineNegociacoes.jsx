@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown } from "lucide-react";
+import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2 } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
@@ -27,6 +27,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showSubetapaModal, setShowSubetapaModal] = useState(false);
   const [pendingSubetapa, setPendingSubetapa] = useState(null);
   const [selectedSubetapa, setSelectedSubetapa] = useState("");
+  const [showConferenciaModal, setShowConferenciaModal] = useState(false);
+  const [conferenciaData, setConferenciaData] = useState(null);
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
@@ -206,10 +208,30 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
     const dealId = result.draggableId;
     const newEtapa = result.destination.droppableId;
+    const deal = negociacoes.find(n => n.id === dealId);
 
-    // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-    if (newEtapa === "vistoria_assinatura_pix") {
-      const deal = negociacoes.find(n => n.id === dealId);
+    // Bloquear movimento de vendedores para "venda_ativa"
+    if (newEtapa === "venda_ativa" && (userFuncao === "vendedor" || userFuncao === "lider")) {
+      alert("Apenas a área de aprovações pode mover vendas para Venda Ativa!");
+      return;
+    }
+
+    // Bloquear movimento se informações já foram conferidas
+    if (deal?.informacoes_conferidas && deal?.etapa === "enviado_cadastro") {
+      alert("Esta venda já foi conferida e está aguardando aprovação. Não pode ser movida.");
+      return;
+    }
+
+    // Se for movido para "enviado_cadastro", abrir modal de conferência
+    if (newEtapa === "enviado_cadastro") {
+      setConferenciaData({
+        id: dealId,
+        etapa: newEtapa,
+        ...deal
+      });
+      setShowConferenciaModal(true);
+    } else if (newEtapa === "vistoria_assinatura_pix") {
+      // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
       setPendingSubetapa({ id: dealId, etapa: newEtapa, currentSubetapa: deal?.subetapa });
       setSelectedSubetapa(deal?.subetapa || "");
       setShowSubetapaModal(true);
@@ -235,6 +257,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setShowSubetapaModal(false);
     setPendingSubetapa(null);
     setSelectedSubetapa("");
+  };
+
+  const handleConferirInformacoes = () => {
+    if (!conferenciaData) return;
+
+    updateMutation.mutate({
+      id: conferenciaData.id,
+      data: {
+        ...conferenciaData,
+        etapa: "enviado_cadastro",
+        informacoes_conferidas: true,
+        data_conferencia: new Date().toISOString(),
+        status_aprovacao: "aguardando"
+      }
+    });
+
+    setShowConferenciaModal(false);
+    setConferenciaData(null);
   };
 
   const handleCreateDeal = (e) => {
@@ -900,6 +940,120 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Modal: Conferência de Informações */}
+      <Dialog open={showConferenciaModal} onOpenChange={setShowConferenciaModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Conferir Informações da Venda</DialogTitle>
+          </DialogHeader>
+          {conferenciaData && (
+            <div className="space-y-6">
+              <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-amber-900 mb-1">ATENÇÃO!</p>
+                    <p className="text-sm text-amber-800">
+                      Um erro nesta etapa pode comprometer a ativação e status da sua venda. Muita atenção!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Nome do Cliente *</Label>
+                  <Input
+                    value={conferenciaData.nome_cliente || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, nome_cliente: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Telefone *</Label>
+                  <Input
+                    value={conferenciaData.telefone || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, telefone: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    value={conferenciaData.email || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Placa</Label>
+                  <Input
+                    value={conferenciaData.placa || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, placa: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Modelo do Veículo</Label>
+                  <Input
+                    value={conferenciaData.modelo_veiculo || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, modelo_veiculo: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Plano</Label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md"
+                    value={conferenciaData.plano_interesse || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, plano_interesse: e.target.value })}
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="essencial">Essencial</option>
+                    <option value="principal">Principal</option>
+                  </select>
+                </div>
+                <div>
+                  <Label>Valor da Adesão</Label>
+                  <Input
+                    value={conferenciaData.valor_adesao || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, valor_adesao: e.target.value })}
+                    placeholder="R$ 0,00"
+                  />
+                </div>
+                <div>
+                  <Label>Valor da Mensalidade</Label>
+                  <Input
+                    value={conferenciaData.valor_mensalidade || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, valor_mensalidade: e.target.value })}
+                    placeholder="R$ 0,00"
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label>Observações</Label>
+                  <Textarea
+                    value={conferenciaData.observacoes || ""}
+                    onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <Button
+                  onClick={handleConferirInformacoes}
+                  className="w-full max-w-md bg-green-600 hover:bg-green-700 text-white h-12 text-base font-semibold"
+                  disabled={!conferenciaData.nome_cliente || !conferenciaData.telefone}
+                >
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  Informações Conferidas
+                </Button>
+              </div>
+
+              <p className="text-center text-sm text-amber-700 font-medium">
+                Um erro nesta etapa pode comprometer a ativação e status da sua venda, muita atenção!
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Modal: Subetapa */}
       <Dialog open={showSubetapaModal} onOpenChange={setShowSubetapaModal}>
