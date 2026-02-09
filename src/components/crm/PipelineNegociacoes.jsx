@@ -159,13 +159,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       "Veículo antigo, não vê necessidade",
       "Veículo roda pouco, não vê necessidade"
     ],
-    lead_invalido: [
+    situacoes_esporadicas: [
       "Vendeu o veículo",
       "Não consegui contato",
       "Não solicitou cotação",
       "Bloqueado",
-      "Cliente oculto",
-      "Veículo sem cobertura"
+      "Cliente oculto"
+    ],
+    lead_invalido: [
+      "Veículo sem cobertura",
+      "Número Incompleto"
     ]
   };
 
@@ -886,6 +889,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <SelectItem value="confianca">Confiança</SelectItem>
                   <SelectItem value="concorrencia">Concorrência</SelectItem>
                   <SelectItem value="necessidade">Necessidade/Produto</SelectItem>
+                  <SelectItem value="situacoes_esporadicas">Situações Esporádicas</SelectItem>
                   <SelectItem value="lead_invalido">Lead Inválido</SelectItem>
                 </SelectContent>
               </Select>
