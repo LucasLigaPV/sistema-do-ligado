@@ -882,6 +882,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     onChange={(e) => setEditedDeal({ ...editedDeal, valor_adesao: e.target.value })}
                   />
                 </div>
+                {editedDeal.etapa === "vistoria_assinatura_pix" && (
+                  <div className="col-span-2">
+                    <Label>Status da Subetapa</Label>
+                    <Select
+                      value={editedDeal.subetapa || ""}
+                      onValueChange={(value) => setEditedDeal({ ...editedDeal, subetapa: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="aguardando_vistoria">Aguardando Vistoria</SelectItem>
+                        <SelectItem value="aguardando_assinatura">Aguardando Assinatura</SelectItem>
+                        <SelectItem value="aguardando_pix">Aguardando Pix</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="col-span-2">
                   <Label>Consultor Responsável</Label>
                   <Input
