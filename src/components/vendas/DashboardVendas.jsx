@@ -83,6 +83,17 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     });
   }, [vendas, dataInicio, dataFim]);
 
+  // Estatísticas do mês atual
+  const vendasMesAtual = useMemo(() => {
+    const mesAtual = new Date().getMonth();
+    const anoAtual = new Date().getFullYear();
+    return vendas.filter(v => {
+      if (!v.data_venda) return false;
+      const dataVenda = new Date(v.data_venda);
+      return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual && v.etapa === "ativo";
+    }).length;
+  }, [vendas]);
+
   const estatisticas = useMemo(() => {
     const totalVendas = vendasFiltradas.length;
     const totalFaturamento = vendasFiltradas.reduce((sum, v) => {
