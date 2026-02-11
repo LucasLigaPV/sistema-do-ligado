@@ -1182,11 +1182,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     Marcar como Perda
                   </Button>
                 )}
-              </div>
-            </div>
-          )}
-        </SheetContent>
-      </Sheet>
+                </div>
+                </div>
+                );
+                })()}
+                </SheetContent>
+                </Sheet>
 
       {/* Modal: Conferência de Informações */}
       <Dialog open={showConferenciaModal} onOpenChange={setShowConferenciaModal}>
