@@ -53,7 +53,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         ...(user?.funcao === "master" ? [{ id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" }] : []),
         { id: "crm-negociacoes", label: "Negociações", icon: Handshake },
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
-        { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
+        ...(user?.funcao === "lider" || user?.funcao === "master" ? [{ id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp }] : []),
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
         ...(user?.funcao === "master" ? [{ id: "crm-marketing", label: "Marketing", icon: Megaphone }] : []),
       ]
