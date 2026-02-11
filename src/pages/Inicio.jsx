@@ -47,6 +47,14 @@ export default function Inicio() {
 
   const menuOptions = [
     {
+      title: "Pipeline de Negociações",
+      description: "Gerencie suas negociações em andamento",
+      icon: Target,
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600",
+      link: "/Admin?menu=crm-pipeline"
+    },
+    {
       title: "Vendas",
       description: "Registre e acompanhe suas vendas",
       icon: TrendingUp,
@@ -61,14 +69,6 @@ export default function Inicio() {
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
       link: "/Admin?menu=indicacoes"
-    },
-    {
-      title: "Pipeline de Negociações",
-      description: "Gerencie suas negociações em andamento",
-      icon: Target,
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
-      link: "/Admin?menu=crm-pipeline"
     },
     ...(user?.funcao === "master" ? [{
       title: "Fila de Leads",
