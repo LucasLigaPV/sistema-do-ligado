@@ -878,13 +878,28 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Input
                     value={editedDeal.nome_cliente}
                     onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
+                    maxLength={100}
                   />
                 </div>
                 <div>
                   <Label>Telefone</Label>
                   <Input
                     value={editedDeal.telefone}
-                    onChange={(e) => setEditedDeal({ ...editedDeal, telefone: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      let formatado = numeros;
+                      if (numeros.length <= 11) {
+                        if (numeros.length > 2) {
+                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                        }
+                        if (numeros.length > 7) {
+                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+                        }
+                        setEditedDeal({ ...editedDeal, telefone: formatado });
+                      }
+                    }}
+                    placeholder="(11) 00000-0000"
+                    maxLength={15}
                   />
                 </div>
                 <div>
@@ -898,7 +913,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Placa</Label>
                   <Input
                     value={editedDeal.placa || ""}
-                    onChange={(e) => setEditedDeal({ ...editedDeal, placa: e.target.value })}
+                    onChange={(e) => {
+                      const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                      let formatado = valor;
+                      if (valor.length > 3) {
+                        formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                      }
+                      setEditedDeal({ ...editedDeal, placa: formatado });
+                    }}
+                    placeholder="ABC-1D23"
+                    maxLength={8}
                   />
                 </div>
                 <div>
@@ -949,14 +973,26 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Valor da Mensalidade</Label>
                   <Input
                     value={editedDeal.valor_mensalidade || ""}
-                    onChange={(e) => setEditedDeal({ ...editedDeal, valor_mensalidade: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      const valor = (parseInt(numeros) || 0) / 100;
+                      const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                      setEditedDeal({ ...editedDeal, valor_mensalidade: formatado });
+                    }}
+                    placeholder="R$ 0,00"
                   />
                 </div>
                 <div>
                   <Label>Valor da Adesão</Label>
                   <Input
                     value={editedDeal.valor_adesao || ""}
-                    onChange={(e) => setEditedDeal({ ...editedDeal, valor_adesao: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      const valor = (parseInt(numeros) || 0) / 100;
+                      const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                      setEditedDeal({ ...editedDeal, valor_adesao: formatado });
+                    }}
+                    placeholder="R$ 0,00"
                   />
                 </div>
                 <div className="col-span-2">
@@ -1068,7 +1104,21 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Telefone *</Label>
                   <Input
                     value={conferenciaData.telefone || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, telefone: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      let formatado = numeros;
+                      if (numeros.length <= 11) {
+                        if (numeros.length > 2) {
+                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                        }
+                        if (numeros.length > 7) {
+                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+                        }
+                        setConferenciaData({ ...conferenciaData, telefone: formatado });
+                      }
+                    }}
+                    placeholder="(11) 00000-0000"
+                    maxLength={15}
                   />
                 </div>
                 <div>
@@ -1083,7 +1133,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Placa</Label>
                   <Input
                     value={conferenciaData.placa || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, placa: e.target.value })}
+                    onChange={(e) => {
+                      const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                      let formatado = valor;
+                      if (valor.length > 3) {
+                        formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                      }
+                      setConferenciaData({ ...conferenciaData, placa: formatado });
+                    }}
+                    placeholder="ABC-1D23"
+                    maxLength={8}
                   />
                 </div>
                 <div>
@@ -1112,7 +1171,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Valor da Adesão</Label>
                   <Input
                     value={conferenciaData.valor_adesao || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, valor_adesao: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      const valor = (parseInt(numeros) || 0) / 100;
+                      const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                      setConferenciaData({ ...conferenciaData, valor_adesao: formatado });
+                    }}
                     placeholder="R$ 0,00"
                   />
                 </div>
@@ -1120,7 +1184,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Label>Valor da Mensalidade</Label>
                   <Input
                     value={conferenciaData.valor_mensalidade || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, valor_mensalidade: e.target.value })}
+                    onChange={(e) => {
+                      const numeros = e.target.value.replace(/\D/g, '');
+                      const valor = (parseInt(numeros) || 0) / 100;
+                      const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                      setConferenciaData({ ...conferenciaData, valor_mensalidade: formatado });
+                    }}
                     placeholder="R$ 0,00"
                   />
                 </div>
