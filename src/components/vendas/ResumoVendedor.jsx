@@ -673,6 +673,51 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
             </p>
           </CardContent>
         </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Plano Van
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPorPlano["plano_van"] || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">
+              {totalVendas > 0 ? (((vendasPorPlano["plano_van"] || 0) / totalVendas) * 100).toFixed(1) : 0}% do total
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Plano Moto
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPorPlano["plano_moto"] || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">
+              {totalVendas > 0 ? (((vendasPorPlano["plano_moto"] || 0) / totalVendas) * 100).toFixed(1) : 0}% do total
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Plano Caminhão
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPorPlano["plano_caminhao"] || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">
+              {totalVendas > 0 ? (((vendasPorPlano["plano_caminhao"] || 0) / totalVendas) * 100).toFixed(1) : 0}% do total
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Gráficos */}
