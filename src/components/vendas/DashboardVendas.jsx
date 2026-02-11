@@ -103,6 +103,11 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       return sum + valor;
     }, 0);
 
+    const vendasAtivas = vendasFiltradas.filter(v => v.etapa === "ativo").length;
+    const vendasPagamentoOk = vendasFiltradas.filter(v => v.etapa === "pagamento_ok").length;
+    const vendasVistoriaOk = vendasFiltradas.filter(v => v.etapa === "vistoria_ok").length;
+    const vendasEmAtivacao = vendasFiltradas.filter(v => v.etapa === "em_ativacao").length;
+
     const ticketMedio = totalVendas > 0 ? totalFaturamento / totalVendas : 0;
 
     const vendasComIndicacao = vendasFiltradas.filter(v => v.tem_indicacao === "sim").length;
@@ -114,6 +119,10 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     return { 
       totalVendas, 
       totalFaturamento, 
+      vendasAtivas, 
+      vendasPagamentoOk, 
+      vendasVistoriaOk,
+      vendasEmAtivacao,
       ticketMedio,
       vendasComIndicacao,
       percentualIndicacao,
@@ -146,6 +155,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       const valor = parseFloat(venda.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
       vendedoresMap[venda.vendedor].totalFaturamento += valor;
       
+      if (venda.etapa === "ativo") vendedoresMap[venda.vendedor].vendasAtivas += 1;
+      if (venda.etapa === "pagamento_ok") vendedoresMap[venda.vendedor].vendasPagamentoOk += 1;
       if (venda.tem_indicacao === "sim") vendedoresMap[venda.vendedor].comIndicacao += 1;
     });
 

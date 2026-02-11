@@ -55,6 +55,7 @@ export default function Aprovacoes({ userEmail, userFuncao }) {
           createVendaMutation.mutate({
             vendedor: negociacao.vendedor_email,
             data_venda: new Date().toISOString().split('T')[0],
+            etapa: "pagamento_ok",
             cliente: negociacao.nome_cliente,
             telefone: negociacao.telefone,
             plano_vendido: negociacao.plano_interesse || "essencial",
