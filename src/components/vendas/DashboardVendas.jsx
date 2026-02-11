@@ -456,77 +456,115 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Canais de Venda */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle>Vendas por Canal</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dadosCanais.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={dadosCanais}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {dadosCanais.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={CORES_CANAIS[entry.canal] || "#94a3b8"} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  Nenhum dado disponível
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Vendas por Canal
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {dadosCanais.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={dadosCanais}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {dadosCanais.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={CORES_CANAIS[entry.canal] || "#94a3b8"} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-slate-400">
+                Nenhum dado disponível
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Planos Vendidos */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle>Vendas por Plano</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dadosPlanos.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={dadosPlanos}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" name="Quantidade" fill="#8b5cf6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[300px] flex items-center justify-center text-slate-400">
-                  Nenhum dado disponível
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="w-5 h-5" />
+              Vendas por Plano
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {dadosPlanos.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dadosPlanos}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="name" stroke="#64748b" style={{ fontSize: '12px' }} />
+                  <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                  <Tooltip />
+                  <Bar dataKey="value" name="Quantidade" fill="#64748b" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-slate-400">
+                Nenhum dado disponível
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Insights Estratégicos */}
+      {(userFuncao === "lider" || userRole === "admin") && (
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Insights Estratégicos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <div className="text-sm text-slate-600 mb-1">Melhor Consultor</div>
+                <div className="text-lg font-bold text-slate-900">
+                  {rankingVendedores[0]?.nome || "-"}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  {rankingVendedores[0]?.totalVendas || 0} vendas no período
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <div className="text-sm text-slate-600 mb-1">Canal Mais Efetivo</div>
+                <div className="text-lg font-bold text-slate-900 capitalize">
+                  {dadosCanais.sort((a, b) => b.value - a.value)[0]?.name || "-"}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  {dadosCanais.sort((a, b) => b.value - a.value)[0]?.value || 0} vendas
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <div className="text-sm text-slate-600 mb-1">Plano Mais Vendido</div>
+                <div className="text-lg font-bold text-slate-900 capitalize">
+                  {dadosPlanos.sort((a, b) => b.value - a.value)[0]?.name || "-"}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  {dadosPlanos.sort((a, b) => b.value - a.value)[0]?.value || 0} vendas
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
