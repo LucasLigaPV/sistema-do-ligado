@@ -329,12 +329,30 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const currentIndex = etapas.findIndex(e => e.id === selectedDeal.etapa);
     if (currentIndex < etapas.length - 1) {
       const nextEtapa = etapas[currentIndex + 1].id;
-      updateMutation.mutate({
-        id: selectedDeal.id,
-        data: { etapa: nextEtapa }
-      });
-      setSelectedDeal({ ...selectedDeal, etapa: nextEtapa });
-      setEditedDeal({ ...editedDeal, etapa: nextEtapa });
+      
+      // Se for movido para "enviado_cadastro", abrir modal de conferência
+      if (nextEtapa === "enviado_cadastro") {
+        setConferenciaData({
+          id: selectedDeal.id,
+          etapa: nextEtapa,
+          ...selectedDeal
+        });
+        setShowConferenciaModal(true);
+        setShowDetails(false);
+      } else if (nextEtapa === "vistoria_assinatura_pix") {
+        // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
+        setPendingSubetapa({ id: selectedDeal.id, etapa: nextEtapa, currentSubetapa: selectedDeal?.subetapa });
+        setSelectedSubetapa(selectedDeal?.subetapa || "");
+        setShowSubetapaModal(true);
+        setShowDetails(false);
+      } else {
+        updateMutation.mutate({
+          id: selectedDeal.id,
+          data: { etapa: nextEtapa, subetapa: "" }
+        });
+        setSelectedDeal({ ...selectedDeal, etapa: nextEtapa });
+        setEditedDeal({ ...editedDeal, etapa: nextEtapa });
+      }
     }
   };
 
@@ -343,12 +361,30 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const currentIndex = etapas.findIndex(e => e.id === selectedDeal.etapa);
     if (currentIndex > 0) {
       const prevEtapa = etapas[currentIndex - 1].id;
-      updateMutation.mutate({
-        id: selectedDeal.id,
-        data: { etapa: prevEtapa }
-      });
-      setSelectedDeal({ ...selectedDeal, etapa: prevEtapa });
-      setEditedDeal({ ...editedDeal, etapa: prevEtapa });
+      
+      // Se for movido para "enviado_cadastro", abrir modal de conferência
+      if (prevEtapa === "enviado_cadastro") {
+        setConferenciaData({
+          id: selectedDeal.id,
+          etapa: prevEtapa,
+          ...selectedDeal
+        });
+        setShowConferenciaModal(true);
+        setShowDetails(false);
+      } else if (prevEtapa === "vistoria_assinatura_pix") {
+        // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
+        setPendingSubetapa({ id: selectedDeal.id, etapa: prevEtapa, currentSubetapa: selectedDeal?.subetapa });
+        setSelectedSubetapa(selectedDeal?.subetapa || "");
+        setShowSubetapaModal(true);
+        setShowDetails(false);
+      } else {
+        updateMutation.mutate({
+          id: selectedDeal.id,
+          data: { etapa: prevEtapa, subetapa: "" }
+        });
+        setSelectedDeal({ ...selectedDeal, etapa: prevEtapa });
+        setEditedDeal({ ...editedDeal, etapa: prevEtapa });
+      }
     }
   };
 
