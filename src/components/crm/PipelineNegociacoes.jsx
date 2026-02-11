@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,6 +70,27 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
   });
+
+  // Real-time subscription para Negociacao
+  useEffect(() => {
+    const unsubscribe = base44.entities.Negociacao.subscribe((event) => {
+      queryClient.setQueryData(["negociacoes"], (old) => {
+        if (!old) return old;
+        
+        if (event.type === "create") {
+          return [...old, event.data];
+        } else if (event.type === "update") {
+          return old.map(n => n.id === event.id ? event.data : n);
+        } else if (event.type === "delete") {
+          return old.filter(n => n.id !== event.id);
+        }
+        
+        return old;
+      });
+    });
+
+    return unsubscribe;
+  }, [queryClient]);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Negociacao.create(data),
