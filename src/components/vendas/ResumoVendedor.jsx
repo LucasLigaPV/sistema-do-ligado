@@ -490,25 +490,25 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-slate-900">Relatório Geral</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-slate-200">
+          <Card className="border-0 shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Total de Vendas</p>
+                  <p className="text-sm text-slate-500">Total de Vendas</p>
                   <p className="text-3xl font-bold text-slate-900">{totalVendas}</p>
                 </div>
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-slate-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200">
+          <Card className="border-0 shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Total de Adesão</p>
+                  <p className="text-sm text-slate-500">Total de Adesão</p>
                   <p className="text-3xl font-bold text-slate-900">
                     R$ {formatarValor(totalAdesao)}
                   </p>
@@ -520,17 +520,17 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200">
+          <Card className="border-0 shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600">Plano Mais Vendido</p>
+                  <p className="text-sm text-slate-500">Plano Mais Vendido</p>
                   <p className="text-3xl font-bold text-slate-900 capitalize">
                     {planoMaisVendido}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                  <Package className="w-6 h-6 text-slate-600" />
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Package className="w-6 h-6 text-purple-600" />
                 </div>
               </div>
             </CardContent>
