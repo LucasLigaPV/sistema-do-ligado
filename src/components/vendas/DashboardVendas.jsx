@@ -382,58 +382,75 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
 
       {/* Ranking de Vendedores - Apenas para Líder e Admin */}
       {(userFuncao === "lider" || userRole === "admin") && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-[#EFC200]" />
-                Ranking de Vendedores
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {rankingVendedores.length > 0 ? (
-                  rankingVendedores.map((vendedor, index) => (
-                    <motion.div
-                      key={vendedor.email}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                          index === 0 ? "bg-[#EFC200] text-black" :
-                          index === 1 ? "bg-slate-300 text-slate-700" :
-                          index === 2 ? "bg-amber-600 text-white" :
-                          "bg-slate-200 text-slate-600"
-                        }`}>
-                          {index + 1}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-slate-900">{vendedor.nome}</p>
-                          <p className="text-xs text-slate-500">{vendedor.email}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-slate-900">{vendedor.totalVendas} vendas</p>
-                        <p className="text-sm text-emerald-600">R$ {formatarValor(vendedor.totalFaturamento)}</p>
-                      </div>
-                    </motion.div>
-                  ))
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-[#EFC200]" />
+              Performance dos Consultores
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-slate-200">
+                  <TableHead className="text-slate-700">Posição</TableHead>
+                  <TableHead className="text-slate-700">Consultor</TableHead>
+                  <TableHead className="text-center text-slate-700">Total Vendas</TableHead>
+                  <TableHead className="text-center text-slate-700">Ativas</TableHead>
+                  <TableHead className="text-center text-slate-700">Aguardando</TableHead>
+                  <TableHead className="text-center text-slate-700">Ticket Médio</TableHead>
+                  <TableHead className="text-right text-slate-700">Faturamento</TableHead>
+                  <TableHead className="text-center text-slate-700">% Indicação</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rankingVendedores.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center text-slate-500 py-8">
+                      Nenhum dado disponível no período
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  <div className="text-center py-10 text-slate-400">
-                    Nenhum vendedor encontrado
-                  </div>
+                  rankingVendedores.map((vendedor, index) => (
+                    <TableRow key={vendedor.email} className="border-slate-100">
+                      <TableCell className="font-semibold">
+                        {index === 0 && <span className="text-[#EFC200]">🥇</span>}
+                        {index === 1 && <span className="text-slate-400">🥈</span>}
+                        {index === 2 && <span className="text-amber-700">🥉</span>}
+                        {index > 2 && <span className="text-slate-600">{index + 1}º</span>}
+                      </TableCell>
+                      <TableCell className="font-medium text-slate-900">
+                        {vendedor.nome}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-300">
+                          {vendedor.totalVendas}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                          {vendedor.vendasAtivas}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-center text-slate-700">
+                        {vendedor.vendasPagamentoOk}
+                      </TableCell>
+                      <TableCell className="text-center text-slate-900">
+                        R$ {formatarValor(vendedor.ticketMedio)}
+                      </TableCell>
+                      <TableCell className="text-right text-slate-900 font-semibold">
+                        R$ {formatarValor(vendedor.totalFaturamento)}
+                      </TableCell>
+                      <TableCell className="text-center text-slate-700">
+                        {vendedor.percentualIndicacao.toFixed(1)}%
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       )}
 
       {/* Gráficos */}
