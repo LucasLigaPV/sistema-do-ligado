@@ -995,6 +995,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     }}
                     placeholder="(11) 00000-0000"
                     maxLength={15}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1002,6 +1003,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Input
                     value={editedDeal.email || ""}
                     onChange={(e) => setEditedDeal({ ...editedDeal, email: e.target.value })}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1018,6 +1020,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     }}
                     placeholder="ABC-1D23"
                     maxLength={8}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1025,6 +1028,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Input
                     value={editedDeal.modelo_veiculo || ""}
                     onChange={(e) => setEditedDeal({ ...editedDeal, modelo_veiculo: e.target.value })}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1032,8 +1036,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Select
                     value={editedDeal.plano_interesse || ""}
                     onValueChange={(value) => setEditedDeal({ ...editedDeal, plano_interesse: value })}
+                    disabled={isReadOnly}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger disabled={isReadOnly}>
                       <SelectValue placeholder="Selecione..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -1050,8 +1055,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Select
                     value={editedDeal.origem || ""}
                     onValueChange={(value) => setEditedDeal({ ...editedDeal, origem: value })}
+                    disabled={isReadOnly}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger disabled={isReadOnly}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1075,6 +1081,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       setEditedDeal({ ...editedDeal, valor_mensalidade: formatado });
                     }}
                     placeholder="R$ 0,00"
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1088,6 +1095,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       setEditedDeal({ ...editedDeal, valor_adesao: formatado });
                     }}
                     placeholder="R$ 0,00"
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div className="col-span-2">
@@ -1112,6 +1120,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     type="date"
                     value={editedDeal.data_entrada || format(new Date(selectedDeal.created_date), "yyyy-MM-dd")}
                     onChange={(e) => setEditedDeal({ ...editedDeal, data_entrada: e.target.value })}
+                    disabled={isReadOnly}
                   />
                 </div>
                 {selectedDeal.etapa === "vistoria_assinatura_pix" && (
@@ -1120,8 +1129,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <Select
                       value={editedDeal.subetapa || ""}
                       onValueChange={(value) => setEditedDeal({ ...editedDeal, subetapa: value })}
+                      disabled={isReadOnly}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger disabled={isReadOnly}>
                         <SelectValue placeholder="Selecione o status..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -1132,7 +1142,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </Select>
                   </div>
                 )}
-              </div>
+                </div>
 
               {/* Botões de Ação */}
               <div className="flex flex-col gap-3 pt-4 border-t">
