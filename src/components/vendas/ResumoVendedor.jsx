@@ -115,6 +115,45 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     ? chartData.sort((a, b) => b.value - a.value)[0]
     : null;
 
+  // Insights adicionais
+  const vendasPorPlano = vendasDoVendedor.reduce((acc, v) => {
+    acc[v.plano_vendido] = (acc[v.plano_vendido] || 0) + 1;
+    return acc;
+  }, {});
+
+  const vendasPorFormaPagamento = vendasDoVendedor.reduce((acc, v) => {
+    acc[v.forma_pagamento] = (acc[v.forma_pagamento] || 0) + 1;
+    return acc;
+  }, {});
+
+  const vendasPorCanal = vendasDoVendedor.reduce((acc, v) => {
+    acc[v.canal_venda] = (acc[v.canal_venda] || 0) + 1;
+    return acc;
+  }, {});
+
+  const taxaIndicacao = vendasDoVendedor.filter(v => v.tem_indicacao === "sim").length;
+  const percentualIndicacao = totalVendas > 0 ? ((taxaIndicacao / totalVendas) * 100).toFixed(1) : 0;
+
+  const vendasPix = vendasDoVendedor.filter(v => v.forma_pagamento === "pix").length;
+  const percentualPix = totalVendas > 0 ? ((vendasPix / totalVendas) * 100).toFixed(1) : 0;
+
+  // Distribuição por mês
+  const vendasPorMes = vendasDoVendedor.reduce((acc, v) => {
+    const mes = new Date(v.data_venda).toLocaleDateString('pt-BR', { month: 'short' });
+    acc[mes] = (acc[mes] || 0) + 1;
+    return acc;
+  }, {});
+
+  const chartVendasMensais = Object.entries(vendasPorMes).map(([mes, quantidade]) => ({
+    mes: mes.charAt(0).toUpperCase() + mes.slice(1),
+    vendas: quantidade
+  }));
+
+  const planoChartData = Object.entries(vendasPorPlano).map(([plano, count]) => ({
+    name: plano === "essencial" ? "Essencial" : "Principal",
+    value: count
+  }));
+
   // Calcular nível do plano de carreira
   const getNivelAtual = () => {
     for (let i = PLANO_CARREIRA.length - 1; i >= 0; i--) {
