@@ -32,6 +32,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
+  const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
+  const [accessDeniedReason, setAccessDeniedReason] = useState("");
   
   const [newDeal, setNewDeal] = useState({
     vendedor_email: userEmail,
