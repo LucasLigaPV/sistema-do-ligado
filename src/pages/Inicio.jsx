@@ -52,7 +52,7 @@ export default function Inicio() {
       icon: Target,
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600",
-      link: "/Admin?menu=crm-pipeline"
+      link: "/Admin?menu=crm-negociacoes"
     },
     {
       title: "Vendas",
@@ -76,7 +76,7 @@ export default function Inicio() {
       icon: ListChecks,
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
-      link: "/Admin?menu=crm-fila"
+      link: "/Admin?menu=crm-leads"
     }] : []),
     {
       title: "Perdas",
