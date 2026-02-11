@@ -845,29 +845,31 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           {selectedDeal && editedDeal && (
             <div className="space-y-6 mt-6">
               {/* Navegação de Etapas */}
-              <div className="flex items-center justify-between gap-2 pb-4 border-b">
+              <div className="flex items-center justify-between gap-3 pb-4 border-b">
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={handlePreviousStage}
                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0}
+                  className="h-12 px-6"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  <ChevronLeft className="w-5 h-5 mr-2" />
                   Anterior
                 </Button>
                 <div className="text-center flex-1">
-                  <Badge className="bg-[#EFC200] text-black">
+                  <Badge className="bg-[#EFC200] text-black text-base py-2 px-4">
                     {etapas.find(e => e.id === selectedDeal.etapa)?.label}
                   </Badge>
                 </div>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   onClick={handleAdvanceStage}
                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1}
+                  className="h-12 px-6"
                 >
                   Avançar
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                  <ChevronRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
 
