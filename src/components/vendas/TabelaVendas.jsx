@@ -222,15 +222,15 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       </div>
 
       {/* Stats Panel */}
-      <Card className="border-0 shadow-md bg-gradient-to-r from-emerald-50 to-emerald-100">
+      <Card className="border shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-emerald-700 font-medium mb-1">Total de Vendas</p>
-              <p className="text-4xl font-bold text-emerald-900">{filteredVendas.length}</p>
+              <p className="text-sm text-slate-600 mb-1">Total de Vendas</p>
+              <p className="text-4xl font-bold text-slate-900">{filteredVendas.length}</p>
             </div>
-            <div className="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center">
-              <TrendingUp className="w-8 h-8 text-emerald-700" />
+            <div className="w-14 h-14 bg-slate-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-7 h-7 text-slate-600" />
             </div>
           </div>
         </CardContent>
