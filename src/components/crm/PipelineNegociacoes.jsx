@@ -940,7 +940,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   variant="outline"
                   size="lg"
                   onClick={handlePreviousStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || (userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa))}
                   className="h-12 px-6"
                 >
                   <ChevronLeft className="w-5 h-5 mr-2" />
@@ -955,7 +955,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   variant="outline"
                   size="lg"
                   onClick={handleAdvanceStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || (userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa))}
                   className="h-12 px-6"
                 >
                   Avançar
