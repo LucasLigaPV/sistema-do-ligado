@@ -487,6 +487,36 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     selectedDeal.etapa === "enviado_cadastro"
   );
 
+  const isEtapaFinal = (etapa) => {
+    return ["enviado_cadastro", "negada", "venda_ativa"].includes(etapa);
+  };
+
+  const canAccessDeal = (deal) => {
+    if (userFuncao === "lider") return true;
+    if (userFuncao === "vendedor" && isEtapaFinal(deal.etapa)) return false;
+    return true;
+  };
+
+  const handleCardClick = (deal) => {
+    if (userFuncao === "vendedor" && isEtapaFinal(deal.etapa)) {
+      let reason = "";
+      if (deal.etapa === "enviado_cadastro") {
+        reason = "Esta venda está aguardando aprovação do time de aprovações.";
+      } else if (deal.etapa === "negada") {
+        reason = "Esta venda foi negada e não pode ser acessada.";
+      } else if (deal.etapa === "venda_ativa") {
+        reason = "Esta venda já está ativa e não pode ser editada.";
+      }
+      setAccessDeniedReason(reason);
+      setShowAccessDeniedModal(true);
+      return;
+    }
+    
+    setSelectedDeal(deal);
+    setEditedDeal({ ...deal });
+    setShowDetails(true);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
