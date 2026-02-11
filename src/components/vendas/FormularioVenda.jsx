@@ -21,12 +21,17 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
     etapa: "pagamento_ok",
     cliente: "",
     telefone: "",
+    email: "",
     plano_vendido: "",
     placa: "",
+    modelo_veiculo: "",
     valor_adesao: "",
+    valor_mensalidade: "",
     forma_pagamento: "",
     canal_venda: "",
     tem_indicacao: "nao",
+    plataforma: "",
+    observacoes: "",
   });
 
   const createMutation = useMutation({
@@ -90,6 +95,16 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
         </div>
 
         <div>
+          <Label>Email</Label>
+          <Input
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="email@exemplo.com"
+          />
+        </div>
+
+        <div>
           <Label>Plano Vendido *</Label>
           <Select
             value={formData.plano_vendido}
@@ -102,6 +117,9 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
             <SelectContent>
               <SelectItem value="essencial">Essencial</SelectItem>
               <SelectItem value="principal">Principal</SelectItem>
+              <SelectItem value="plano_van">Plano Van</SelectItem>
+              <SelectItem value="plano_moto">Plano Moto</SelectItem>
+              <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -120,12 +138,29 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
         </div>
 
         <div>
-          <Label>Valor Adesão (R$) *</Label>
+          <Label>Modelo do Veículo</Label>
+          <Input
+            value={formData.modelo_veiculo}
+            onChange={(e) => setFormData({ ...formData, modelo_veiculo: e.target.value })}
+            placeholder="Ex: Gol, HB20, etc"
+          />
+        </div>
+
+        <div>
+          <Label>Valor Adesão (R$)</Label>
           <Input
             value={formData.valor_adesao}
             onChange={(e) => setFormData({ ...formData, valor_adesao: e.target.value })}
-            placeholder="Ex: R$ 150,00"
-            required
+            placeholder="Ex: 250,00"
+          />
+        </div>
+
+        <div>
+          <Label>Valor Mensalidade (R$)</Label>
+          <Input
+            value={formData.valor_mensalidade}
+            onChange={(e) => setFormData({ ...formData, valor_mensalidade: e.target.value })}
+            placeholder="Ex: 89,90"
           />
         </div>
 
@@ -159,9 +194,21 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
             <SelectContent>
               <SelectItem value="lead">Lead</SelectItem>
               <SelectItem value="indicacao">Indicação</SelectItem>
+              <SelectItem value="organico">Orgânico</SelectItem>
+              <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
               <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+              <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        <div>
+          <Label>Plataforma</Label>
+          <Input
+            value={formData.plataforma}
+            onChange={(e) => setFormData({ ...formData, plataforma: e.target.value })}
+            placeholder="Ex: Facebook, Google, Instagram"
+          />
         </div>
 
         <div>
@@ -180,6 +227,15 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div>
+        <Label>Observações</Label>
+        <Input
+          value={formData.observacoes}
+          onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+          placeholder="Informações adicionais sobre a venda"
+        />
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t">
