@@ -92,8 +92,30 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
 
     const vendasAtivas = vendasFiltradas.filter(v => v.etapa === "ativo").length;
     const vendasPagamentoOk = vendasFiltradas.filter(v => v.etapa === "pagamento_ok").length;
+    const vendasVistoriaOk = vendasFiltradas.filter(v => v.etapa === "vistoria_ok").length;
+    const vendasEmAtivacao = vendasFiltradas.filter(v => v.etapa === "em_ativacao").length;
 
-    return { totalVendas, totalFaturamento, vendasAtivas, vendasPagamentoOk };
+    const ticketMedio = totalVendas > 0 ? totalFaturamento / totalVendas : 0;
+
+    const vendasComIndicacao = vendasFiltradas.filter(v => v.tem_indicacao === "sim").length;
+    const percentualIndicacao = totalVendas > 0 ? (vendasComIndicacao / totalVendas) * 100 : 0;
+
+    const vendasPix = vendasFiltradas.filter(v => v.forma_pagamento === "pix").length;
+    const percentualPix = totalVendas > 0 ? (vendasPix / totalVendas) * 100 : 0;
+
+    return { 
+      totalVendas, 
+      totalFaturamento, 
+      vendasAtivas, 
+      vendasPagamentoOk, 
+      vendasVistoriaOk,
+      vendasEmAtivacao,
+      ticketMedio,
+      vendasComIndicacao,
+      percentualIndicacao,
+      vendasPix,
+      percentualPix
+    };
   }, [vendasFiltradas]);
 
   const rankingVendedores = useMemo(() => {
