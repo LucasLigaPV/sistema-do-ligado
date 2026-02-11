@@ -131,17 +131,29 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
           email: venda.vendedor,
           totalVendas: 0,
           totalFaturamento: 0,
+          vendasAtivas: 0,
+          vendasPagamentoOk: 0,
+          ticketMedio: 0,
+          comIndicacao: 0,
         };
       }
       
       vendedoresMap[venda.vendedor].totalVendas += 1;
       const valor = parseFloat(venda.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
       vendedoresMap[venda.vendedor].totalFaturamento += valor;
+      
+      if (venda.etapa === "ativo") vendedoresMap[venda.vendedor].vendasAtivas += 1;
+      if (venda.etapa === "pagamento_ok") vendedoresMap[venda.vendedor].vendasPagamentoOk += 1;
+      if (venda.tem_indicacao === "sim") vendedoresMap[venda.vendedor].comIndicacao += 1;
     });
 
     return Object.values(vendedoresMap)
-      .sort((a, b) => b.totalVendas - a.totalVendas)
-      .slice(0, 10);
+      .map(v => ({
+        ...v,
+        ticketMedio: v.totalVendas > 0 ? v.totalFaturamento / v.totalVendas : 0,
+        percentualIndicacao: v.totalVendas > 0 ? (v.comIndicacao / v.totalVendas) * 100 : 0
+      }))
+      .sort((a, b) => b.totalVendas - a.totalVendas);
   }, [vendasFiltradas, usuarios, userFuncao, userRole]);
 
   const dadosCanais = useMemo(() => {
