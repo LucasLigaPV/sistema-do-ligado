@@ -214,8 +214,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   // Filtrar negociações por acesso
   let negociacoesVisiveis = negociacoes;
   if (userFuncao === "lider") {
+    // Líder vê todas as negociações da sua equipe
     negociacoesVisiveis = negociacoes.filter(n => todosVendedoresEquipe.includes(n.vendedor_email));
-  } else if (userFuncao === "vendedor") {
+  } else {
+    // Vendedor vê apenas suas próprias negociações
     negociacoesVisiveis = negociacoes.filter(n => n.vendedor_email === userEmail);
   }
 
