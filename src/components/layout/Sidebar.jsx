@@ -50,15 +50,15 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       icon: Users, 
       hasSubmenu: true,
       submenus: [
-        { id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" },
+        ...(user?.funcao === "master" ? [{ id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" }] : []),
         { id: "crm-negociacoes", label: "Negociações", icon: Handshake },
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         { id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp },
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
-        { id: "crm-marketing", label: "Marketing", icon: Megaphone },
+        ...(user?.funcao === "master" ? [{ id: "crm-marketing", label: "Marketing", icon: Megaphone }] : []),
       ]
     },
-    { id: "aprovacoes", label: "Aprovações", icon: CheckCircle },
+    ...(user?.funcao === "master" ? [{ id: "aprovacoes", label: "Aprovações", icon: CheckCircle }] : []),
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
 
