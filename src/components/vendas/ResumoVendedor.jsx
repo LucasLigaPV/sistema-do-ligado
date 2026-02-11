@@ -22,6 +22,8 @@ const CORES_CANAIS = {
   lead: "#3b82f6",
   indicacao: "#10b981",
   troca_veiculo: "#f59e0b",
+  troca_titularidade: "#ec4899",
+  segundo_veiculo: "#8b5cf6",
 };
 
 const formatarValor = (valor) => {
@@ -105,8 +107,19 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     return acc;
   }, {});
 
+  const formatarNomeCanal = (canal) => {
+    const nomes = {
+      lead: "Lead",
+      indicacao: "Indicação",
+      troca_veiculo: "Troca Veículo",
+      troca_titularidade: "Troca de Titularidade",
+      segundo_veiculo: "Segundo Veículo"
+    };
+    return nomes[canal] || canal;
+  };
+
   const chartData = Object.entries(canaisData).map(([canal, count]) => ({
-    name: canal === "lead" ? "Lead" : canal === "indicacao" ? "Indicação" : canal === "troca_veiculo" ? "Troca Veículo" : canal,
+    name: formatarNomeCanal(canal),
     value: count,
     percentage: ((count / totalVendas) * 100).toFixed(1),
   }));
@@ -149,8 +162,19 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     vendas: quantidade
   }));
 
+  const formatarNomePlano = (plano) => {
+    const nomes = {
+      essencial: "Essencial",
+      principal: "Principal",
+      plano_van: "Plano Van",
+      plano_moto: "Plano Moto",
+      plano_caminhao: "Plano Caminhão"
+    };
+    return nomes[plano] || plano;
+  };
+
   const planoChartData = Object.entries(vendasPorPlano).map(([plano, count]) => ({
-    name: plano === "essencial" ? "Essencial" : "Principal",
+    name: formatarNomePlano(plano),
     value: count
   }));
 
