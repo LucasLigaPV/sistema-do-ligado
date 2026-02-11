@@ -32,15 +32,7 @@ import {
   Eye,
   Trash2,
   Download,
-  Clock,
-  CheckCircle2,
-  TrendingUp,
-  Plus,
   UserPlus,
-  PartyPopper,
-  DollarSign,
-  Camera,
-  Loader,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -51,13 +43,6 @@ import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import FormularioVenda from "./FormularioVenda";
 import FormularioIndicacaoVenda from "./FormularioIndicacaoVenda";
-
-const etapaConfig = {
-  pagamento_ok: { label: "Pagamento OK", color: "bg-amber-100 text-amber-800 border border-amber-300", icon: DollarSign },
-  vistoria_ok: { label: "Vistoria OK", color: "bg-blue-100 text-blue-800 border border-blue-300", icon: Camera },
-  em_ativacao: { label: "Em Ativação", color: "bg-purple-100 text-purple-800 border border-purple-300", icon: Loader },
-  ativo: { label: "Ativo", color: "bg-emerald-100 text-emerald-800 border border-emerald-300", icon: CheckCircle2 },
-};
 
 const planoLabels = {
   essencial: "Essencial",
@@ -92,7 +77,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
   
   const [search, setSearch] = useState("");
-  const [etapaFilter, setEtapaFilter] = useState("all");
   const queryClient = useQueryClient();
 
   const { data: allVendas = [], isLoading } = useQuery({
@@ -139,7 +123,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
-  const [showAtivoAlert, setShowAtivoAlert] = useState(false);
 
   const vendas = userRole === "admin" 
     ? allVendas 
@@ -160,12 +143,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     onError: (err, variables, context) => {
       queryClient.setQueryData(["vendas"], context.previousVendas);
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vendas"] });
-      const venda = vendas.find(v => v.id === variables.id);
-      if (variables.data.etapa === "ativo" && venda?.tem_indicacao === "sim") {
-        setShowAtivoAlert(true);
-      }
     },
   });
 
@@ -179,7 +158,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       venda.cliente?.toLowerCase().includes(search.toLowerCase()) ||
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
-    const matchEtapa = etapaFilter === "all" || venda.etapa === etapaFilter;
     const matchConsultor = userFuncao === "lider" 
       ? consultorFilter.length === 0 || consultorFilter.includes(venda.vendedor)
       : true;
@@ -196,13 +174,12 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       if (dataVenda > fim) return false;
     }
     
-    return matchSearch && matchEtapa && matchConsultor;
+    return matchSearch && matchConsultor;
   });
 
   const exportToCSV = () => {
     const headers = [
       "Data",
-      "Etapa",
       "Cliente",
       "Telefone",
       "Plano",
@@ -215,7 +192,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     ];
     const rows = filteredVendas.map((v) => [
       v.data_venda ? format(new Date(v.data_venda), "dd/MM/yyyy") : "-",
-      v.etapa,
       v.cliente,
       v.telefone,
       v.plano_vendido,
@@ -234,16 +210,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     link.click();
   };
 
-  const getStats = () => {
-    const total = vendas.length;
-    const pagamentoOk = vendas.filter((v) => v.etapa === "pagamento_ok").length;
-    const vistoriaOk = vendas.filter((v) => v.etapa === "vistoria_ok").length;
-    const emAtivacao = vendas.filter((v) => v.etapa === "em_ativacao").length;
-    const ativas = vendas.filter((v) => v.etapa === "ativo").length;
-    return { total, pagamentoOk, vistoriaOk, emAtivacao, ativas };
-  };
 
-  const stats = getStats();
 
   return (
     <div className="space-y-6">
@@ -253,40 +220,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
         <p className="text-slate-500">Vendas são criadas automaticamente quando aprovadas no CRM</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-slate-500">Total</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-amber-600">Pagamento OK</p>
-            <p className="text-2xl font-bold text-amber-600">{stats.pagamentoOk}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-blue-600">Vistoria OK</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.vistoriaOk}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-purple-600">Em Ativação</p>
-            <p className="text-2xl font-bold text-purple-600">{stats.emAtivacao}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-emerald-600">Ativas</p>
-            <p className="text-2xl font-bold text-emerald-600">{stats.ativas}</p>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Filters */}
       <Card className="border-0 shadow-md">
         <CardContent className="p-4">
@@ -294,7 +227,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${userFuncao === "lider" ? "lg:grid-cols-6" : "lg:grid-cols-5"} gap-4`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${userFuncao === "lider" ? "lg:grid-cols-5" : "lg:grid-cols-4"} gap-4`}>
             <div className="lg:col-span-2">
               <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
               <div className="relative">
@@ -322,21 +255,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
               />
-            </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Etapa</Label>
-              <Select value={etapaFilter} onValueChange={setEtapaFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Etapa" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="pagamento_ok">Pagamento OK</SelectItem>
-                  <SelectItem value="vistoria_ok">Vistoria OK</SelectItem>
-                  <SelectItem value="em_ativacao">Em Ativação</SelectItem>
-                  <SelectItem value="ativo">Ativo</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             {userFuncao === "lider" && (
               <div>
@@ -427,7 +345,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead>Data</TableHead>
-                <TableHead>Etapa</TableHead>
                 {userFuncao === "lider" && <TableHead>Vendedor</TableHead>}
                 <TableHead>Cliente</TableHead>
                 <TableHead>Telefone</TableHead>
@@ -453,7 +370,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                   </TableRow>
                 ) : (
                   filteredVendas.map((venda) => {
-                    const EtapaIcon = etapaConfig[venda.etapa]?.icon || Clock;
                     return (
                       <motion.tr
                         key={venda.id}
@@ -464,42 +380,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                       >
                         <TableCell className="text-slate-600">
                           {venda.data_venda ? format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR }) : "-"}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={venda.etapa}
-                            onValueChange={(v) => updateMutation.mutate({ id: venda.id, data: { etapa: v } })}
-                          >
-                            <SelectTrigger className={`w-40 h-9 border-0 ${etapaConfig[venda.etapa]?.color} font-medium`}>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="pagamento_ok">
-                                <div className="flex items-center gap-2">
-                                  <DollarSign className="w-4 h-4" />
-                                  Pagamento OK
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="vistoria_ok">
-                                <div className="flex items-center gap-2">
-                                  <Camera className="w-4 h-4" />
-                                  Vistoria OK
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="em_ativacao">
-                                <div className="flex items-center gap-2">
-                                  <Loader className="w-4 h-4" />
-                                  Em Ativação
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="ativo">
-                                <div className="flex items-center gap-2">
-                                  <CheckCircle2 className="w-4 h-4" />
-                                  Ativo
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
                         </TableCell>
                         {userFuncao === "lider" && (
                           <TableCell className="font-medium">
@@ -521,10 +401,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => venda.etapa === "ativo" && setShowIndicacaoForm(venda)}
-                                disabled={venda.etapa !== "ativo"}
-                                className={venda.etapa === "ativo" ? "text-purple-600 hover:text-purple-700 hover:bg-purple-50" : "text-slate-300 cursor-not-allowed"}
-                                title={venda.etapa === "ativo" ? "Preencher indicação" : "Aguardando venda ativa"}
+                                onClick={() => setShowIndicacaoForm(venda)}
+                                className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                title="Preencher indicação"
                               >
                                 <UserPlus className="w-4 h-4" />
                               </Button>
@@ -557,33 +436,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
         </div>
       </Card>
 
-      {/* Ativo Alert Dialog */}
-      <Dialog open={showAtivoAlert} onOpenChange={setShowAtivoAlert}>
-        <DialogContent className="max-w-md">
-          <DialogHeader className="space-y-0">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                <PartyPopper className="w-6 h-6 text-emerald-600" />
-              </div>
-              <DialogTitle className="text-xl">Parabéns pela venda ativa!</DialogTitle>
-            </div>
-          </DialogHeader>
-          <div className="space-y-4 mt-2">
-            <p className="text-slate-600">
-              Esta venda é uma <span className="font-semibold text-purple-600">indicação</span>. 
-              Clique no ícone de pessoa <UserPlus className="w-4 h-4 inline text-purple-600" /> na venda 
-              para preencher os dados da indicação.
-            </p>
-            <Button
-              onClick={() => setShowAtivoAlert(false)}
-              className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
-            >
-              Ok, estou ciente
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Indicacao Form Dialog */}
       <Dialog open={!!showIndicacaoForm} onOpenChange={() => setShowIndicacaoForm(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -615,12 +467,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                   <p className="font-medium">
                     {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
                   </p>
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">Etapa</p>
-                  <Badge className={etapaConfig[selectedVenda.etapa]?.color}>
-                    {etapaConfig[selectedVenda.etapa]?.label}
-                  </Badge>
                 </div>
               </div>
 
