@@ -57,6 +57,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         { id: "crm-dashboard", label: "Dashboard", icon: BarChart3 },
       ]
     },
+    ...(user?.funcao === "master" ? [{ id: "crm-marketing", label: "Marketing", icon: Megaphone }] : []),
     ...(user?.funcao === "master" ? [{ id: "aprovacoes", label: "Aprovações", icon: CheckCircle }] : []),
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
