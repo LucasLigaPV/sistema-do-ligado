@@ -230,70 +230,155 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         </CardContent>
       </Card>
 
-      {/* Cards de Estatísticas */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-      >
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Total de Vendas</p>
-                <p className="text-3xl font-bold text-slate-900">{estatisticas.totalVendas}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
+      {/* Métricas Principais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Total de Vendas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.totalVendas}</div>
+            <p className="text-xs text-slate-500 mt-1">No período selecionado</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Faturamento Total</p>
-                <p className="text-2xl font-bold text-[#EFC200]">
-                  R$ {formatarValor(estatisticas.totalFaturamento)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-[#FFF9E6] rounded-full flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-[#EFC200]" />
-              </div>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Faturamento Total
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">
+              R$ {formatarValor(estatisticas.totalFaturamento)}
             </div>
+            <p className="text-xs text-slate-500 mt-1">Valor total gerado</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Vendas Ativas</p>
-                <p className="text-3xl font-bold text-emerald-600">{estatisticas.vendasAtivas}</p>
-              </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                <Package className="w-6 h-6 text-emerald-600" />
-              </div>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Ticket Médio
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">
+              R$ {formatarValor(estatisticas.ticketMedio)}
             </div>
+            <p className="text-xs text-slate-500 mt-1">Adesão média por venda</p>
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">Pagamento OK</p>
-                <p className="text-3xl font-bold text-amber-600">{estatisticas.vendasPagamentoOk}</p>
-              </div>
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                <Target className="w-6 h-6 text-amber-600" />
-              </div>
-            </div>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              Vendas Ativas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-700">{estatisticas.vendasAtivas}</div>
+            <p className="text-xs text-slate-500 mt-1">Associados ativos</p>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
+
+      {/* Funil de Vendas */}
+      <Card className="border-slate-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="w-5 h-5" />
+            Funil de Vendas
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-slate-50 rounded-lg">
+                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasPagamentoOk}</div>
+                <div className="text-xs text-slate-600 mt-1">Pagamento OK</div>
+              </div>
+              <div className="text-center p-4 bg-slate-50 rounded-lg">
+                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasVistoriaOk}</div>
+                <div className="text-xs text-slate-600 mt-1">Vistoria OK</div>
+              </div>
+              <div className="text-center p-4 bg-slate-50 rounded-lg">
+                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasEmAtivacao}</div>
+                <div className="text-xs text-slate-600 mt-1">Em Ativação</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-700">{estatisticas.vendasAtivas}</div>
+                <div className="text-xs text-green-600 mt-1">Ativo</div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Insights Adicionais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Vendas com Indicação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasComIndicacao}</div>
+            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualIndicacao.toFixed(1)}% do total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              Pagamentos via Pix
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasPix}</div>
+            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualPix.toFixed(1)}% do total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Percent className="w-4 h-4" />
+              Taxa de Conclusão
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">
+              {estatisticas.totalVendas > 0 ? ((estatisticas.vendasAtivas / estatisticas.totalVendas) * 100).toFixed(1) : 0}%
+            </div>
+            <p className="text-xs text-slate-500 mt-1">Vendas ativas / total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" />
+              Em Andamento
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">
+              {estatisticas.totalVendas - estatisticas.vendasAtivas}
+            </div>
+            <p className="text-xs text-slate-500 mt-1">Vendas aguardando ativação</p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Ranking de Vendedores - Apenas para Líder e Admin */}
       {(userFuncao === "lider" || userRole === "admin") && (
