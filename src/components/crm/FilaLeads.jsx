@@ -30,17 +30,10 @@ import {
 import { Search, Eye, Filter, Calendar } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isToday } from "date-fns";
 
-const statusConfig = {
-  novo: { label: "Novo", color: "bg-blue-500" },
-  contatado: { label: "Contatado", color: "bg-yellow-500" },
-  qualificado: { label: "Qualificado", color: "bg-purple-500" },
-  convertido: { label: "Convertido", color: "bg-green-500" },
-  perdido: { label: "Perdido", color: "bg-red-500" },
-};
+
 
 export default function FilaLeads() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("todos");
   const [filterPlataforma, setFilterPlataforma] = useState("todas");
   const [filterPosicionamento, setFilterPosicionamento] = useState("todos");
   const [filterAd, setFilterAd] = useState("todos");
@@ -59,12 +52,7 @@ export default function FilaLeads() {
     queryFn: () => base44.entities.Lead.list("-created_date"),
   });
 
-  const updateLeadMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leads"] });
-    },
-  });
+
 
   const filteredLeads = leads.filter((lead) => {
     const leadDate = lead.data ? new Date(lead.data) : new Date(lead.created_date);
@@ -74,14 +62,13 @@ export default function FilaLeads() {
       lead.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.telefone?.includes(searchTerm);
-    const matchStatus = filterStatus === "todos" || lead.status === filterStatus;
     const matchPlataforma = filterPlataforma === "todas" || lead.plataforma === filterPlataforma;
     const matchPosicionamento = filterPosicionamento === "todos" || lead.posicionamento === filterPosicionamento;
     const matchAd = filterAd === "todos" || lead.ad === filterAd;
     const matchAdset = filterAdset === "todos" || lead.adset === filterAdset;
     const matchCampanha = filterCampanha === "todas" || lead.campanha === filterCampanha;
     const matchPagina = filterPagina === "todas" || lead.pagina === filterPagina;
-    return matchDate && matchSearch && matchStatus && matchPlataforma && matchPosicionamento && matchAd && matchAdset && matchCampanha && matchPagina;
+    return matchDate && matchSearch && matchPlataforma && matchPosicionamento && matchAd && matchAdset && matchCampanha && matchPagina;
   });
 
   const plataformas = [...new Set(leads.map((l) => l.plataforma).filter(Boolean))];
@@ -90,13 +77,6 @@ export default function FilaLeads() {
   const adsets = [...new Set(leads.map((l) => l.adset).filter(Boolean))];
   const campanhas = [...new Set(leads.map((l) => l.campanha).filter(Boolean))];
   const paginas = [...new Set(leads.map((l) => l.pagina).filter(Boolean))];
-
-  const handleStatusChange = (leadId, newStatus) => {
-    updateLeadMutation.mutate({
-      id: leadId,
-      data: { status: newStatus },
-    });
-  };
 
   const handleViewDetails = (lead) => {
     setSelectedLead(lead);
@@ -187,19 +167,6 @@ export default function FilaLeads() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-4 flex-wrap">
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os Status</SelectItem>
-                  <SelectItem value="novo">Novo</SelectItem>
-                  <SelectItem value="contatado">Contatado</SelectItem>
-                  <SelectItem value="qualificado">Qualificado</SelectItem>
-                  <SelectItem value="convertido">Convertido</SelectItem>
-                  <SelectItem value="perdido">Perdido</SelectItem>
-                </SelectContent>
-              </Select>
               <Select value={filterPlataforma} onValueChange={setFilterPlataforma}>
                 <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Plataforma" />
@@ -308,7 +275,6 @@ export default function FilaLeads() {
                     <TableHead>Modelo</TableHead>
                     <TableHead>Plataforma</TableHead>
                     <TableHead>Campanha</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -333,37 +299,6 @@ export default function FilaLeads() {
                       </TableCell>
                       <TableCell className="text-sm text-slate-600">
                         {lead.campanha || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={lead.status}
-                          onValueChange={(value) =>
-                            handleStatusChange(lead.id, value)
-                          }
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`w-2 h-2 rounded-full ${
-                                  statusConfig[lead.status]?.color
-                                }`}
-                              />
-                              <span>{statusConfig[lead.status]?.label}</span>
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(statusConfig).map(([key, config]) => (
-                              <SelectItem key={key} value={key}>
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={`w-2 h-2 rounded-full ${config.color}`}
-                                  />
-                                  <span>{config.label}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
                       </TableCell>
                       <TableCell>
                         <Button
@@ -421,21 +356,11 @@ export default function FilaLeads() {
                   </label>
                   <p className="text-sm mt-1">{selectedLead.telefone}</p>
                 </div>
-                <div>
+                <div className="col-span-2">
                   <label className="text-sm font-medium text-slate-600">
                     Modelo
                   </label>
                   <p className="text-sm mt-1">{selectedLead.modelo || "-"}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-600">
-                    Status
-                  </label>
-                  <p className="text-sm mt-1">
-                    <Badge className={statusConfig[selectedLead.status]?.color}>
-                      {statusConfig[selectedLead.status]?.label}
-                    </Badge>
-                  </p>
                 </div>
               </div>
 
