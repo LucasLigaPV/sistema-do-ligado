@@ -347,8 +347,6 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
                   <TableHead className="text-slate-700">Posição</TableHead>
                   <TableHead className="text-slate-700">Consultor</TableHead>
                   <TableHead className="text-center text-slate-700">Total Vendas</TableHead>
-                  <TableHead className="text-center text-slate-700">Ativas</TableHead>
-                  <TableHead className="text-center text-slate-700">Aguardando</TableHead>
                   <TableHead className="text-center text-slate-700">Ticket Médio</TableHead>
                   <TableHead className="text-right text-slate-700">Faturamento</TableHead>
                   <TableHead className="text-center text-slate-700">% Indicação</TableHead>
