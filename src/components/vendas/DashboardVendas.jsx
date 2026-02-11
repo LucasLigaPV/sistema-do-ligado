@@ -286,16 +286,16 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200">
+        <Card className="border-green-200 bg-gradient-to-br from-green-50 to-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              Vendas Ativas
+            <CardTitle className="text-sm font-medium text-green-700 flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Clientes Ativos - {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-700">{estatisticas.vendasAtivas}</div>
-            <p className="text-xs text-slate-500 mt-1">Associados ativos</p>
+            <div className="text-3xl font-bold text-green-700">{vendasMesAtual}</div>
+            <p className="text-xs text-green-600 mt-1">Vendas ativas do mês vigente</p>
           </CardContent>
         </Card>
       </div>
