@@ -489,50 +489,64 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
       {/* Cards de Relatório Geral */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-slate-900">Relatório Geral</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Total de Vendas</p>
-                  <p className="text-3xl font-bold text-slate-900">{totalVendas}</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="border-slate-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4" />
+                Total de Vendas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">{totalVendas}</div>
+              <p className="text-xs text-slate-500 mt-1">Vendas concluídas</p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Total de Adesão</p>
-                  <p className="text-3xl font-bold text-slate-900">
-                    R$ {formatarValor(totalAdesao)}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-slate-600" />
-                </div>
+          <Card className="border-slate-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Total de Adesão
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">
+                R$ {formatarValor(totalAdesao)}
               </div>
+              <p className="text-xs text-slate-500 mt-1">Valor total gerado</p>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-md">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Plano Mais Vendido</p>
-                  <p className="text-3xl font-bold text-slate-900 capitalize">
-                    {planoMaisVendido}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Package className="w-6 h-6 text-purple-600" />
-                </div>
+          <Card className="border-slate-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+                <DollarSign className="w-4 h-4" />
+                Ticket Médio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900">
+                R$ {totalVendas > 0 ? formatarValor(totalAdesao / totalVendas) : "0,00"}
               </div>
+              <p className="text-xs text-slate-500 mt-1">Adesão média</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+                <Package className="w-4 h-4" />
+                Plano Mais Vendido
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-slate-900 capitalize">
+                {planoMaisVendido}
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                {planoCount[planoMaisVendido] || 0} vendas
+              </p>
             </CardContent>
           </Card>
         </div>
