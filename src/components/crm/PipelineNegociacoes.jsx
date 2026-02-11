@@ -932,7 +932,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           <SheetHeader>
             <SheetTitle>Detalhes da Negociação</SheetTitle>
           </SheetHeader>
-          {selectedDeal && editedDeal && (
+          {selectedDeal && editedDeal && (() => {
+            const isReadOnly = userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa);
+            return (
             <div className="space-y-6 mt-6">
               {/* Navegação de Etapas */}
               <div className="flex items-center justify-between gap-3 pb-4 border-b">
