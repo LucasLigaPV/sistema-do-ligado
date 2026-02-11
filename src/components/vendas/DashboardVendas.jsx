@@ -290,7 +290,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       </div>
 
       {/* Insights Adicionais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
@@ -321,29 +321,12 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
               <Percent className="w-4 h-4" />
-              Taxa de Conclusão
+              Taxa de Ativação
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">
-              {estatisticas.totalVendas > 0 ? ((estatisticas.vendasAtivas / estatisticas.totalVendas) * 100).toFixed(1) : 0}%
-            </div>
-            <p className="text-xs text-slate-500 mt-1">Vendas ativas / total</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              Em Andamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900">
-              {estatisticas.totalVendas - estatisticas.vendasAtivas}
-            </div>
-            <p className="text-xs text-slate-500 mt-1">Vendas aguardando ativação</p>
+            <div className="text-3xl font-bold text-slate-900">100%</div>
+            <p className="text-xs text-slate-500 mt-1">Todas as vendas estão ativas</p>
           </CardContent>
         </Card>
       </div>
