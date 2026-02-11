@@ -92,7 +92,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     return vendas.filter(v => {
       if (!v.data_venda) return false;
       const dataVenda = new Date(v.data_venda);
-      return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual && v.etapa === "ativo";
+      return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual;
     }).length;
   }, [vendas]);
 
