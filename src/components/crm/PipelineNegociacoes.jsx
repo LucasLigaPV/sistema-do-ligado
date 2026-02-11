@@ -1378,6 +1378,36 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         </DialogContent>
       </Dialog>
 
+      {/* Modal: Acesso Negado */}
+      <Dialog open={showAccessDeniedModal} onOpenChange={setShowAccessDeniedModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-amber-600" />
+              Acesso Limitado
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-slate-700">
+              {accessDeniedReason}
+            </p>
+            <div className="flex gap-2 pt-4">
+              <Button
+                onClick={() => {
+                  setShowAccessDeniedModal(false);
+                  setShowDetails(false);
+                  setSelectedDeal(null);
+                  setEditedDeal(null);
+                }}
+                className="flex-1 bg-[#EFC200] hover:bg-[#D4A900] text-black"
+              >
+                Entendido
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Modal: Motivo da Perda */}
       <Dialog open={showLossModal} onOpenChange={setShowLossModal}>
         <DialogContent className="max-w-md">
