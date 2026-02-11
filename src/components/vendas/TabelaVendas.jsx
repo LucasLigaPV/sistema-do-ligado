@@ -475,74 +475,203 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedVenda} onOpenChange={() => setSelectedVenda(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalhes da Venda</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <div className="w-10 h-10 bg-[#EFC200] rounded-lg flex items-center justify-center">
+                <Eye className="w-5 h-5 text-black" />
+              </div>
+              Detalhes da Venda
+            </DialogTitle>
           </DialogHeader>
           {selectedVenda && (() => {
             const indicacaoRelacionada = indicacoes.find(ind => ind.venda_id === selectedVenda.id);
             return (
-            <div className="space-y-6 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-slate-500">Data da Venda</p>
-                  <p className="font-medium">
-                    {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
-                  </p>
+            <div className="space-y-6 mt-6">
+              {/* Header com Data e Etapa */}
+              <div className="bg-slate-50 rounded-lg p-4 border-l-4 border-[#EFC200]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Data da Venda</p>
+                    <p className="text-2xl font-bold text-slate-900">
+                      {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
+                    </p>
+                  </div>
+                  <Badge className="bg-[#EFC200] text-black text-sm px-4 py-2">
+                    {selectedVenda.etapa === "pagamento_ok" && "Pagamento OK"}
+                    {selectedVenda.etapa === "vistoria_ok" && "Vistoria OK"}
+                    {selectedVenda.etapa === "em_ativacao" && "Em Ativação"}
+                    {selectedVenda.etapa === "ativo" && "Ativo"}
+                  </Badge>
                 </div>
               </div>
 
-              <div className="border-t pt-4">
-                <h4 className="font-semibold mb-3 text-slate-800">Dados do Cliente</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-slate-500">Nome</p>
-                    <p className="font-medium">{selectedVenda.cliente}</p>
+              {/* Dados do Cliente */}
+              <div>
+                <h4 className="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-[#EFC200] rounded-full"></div>
+                  Dados do Cliente
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Nome Completo</p>
+                    <p className="font-semibold text-slate-900">{selectedVenda.cliente}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Telefone</p>
-                    <p className="font-medium">{selectedVenda.telefone}</p>
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Telefone</p>
+                    <p className="font-semibold text-slate-900">{selectedVenda.telefone}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Placa</p>
-                    <p className="font-medium font-mono">{selectedVenda.placa}</p>
+                  {selectedVenda.email && (
+                    <div className="space-y-1">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">Email</p>
+                      <p className="font-semibold text-slate-900">{selectedVenda.email}</p>
+                    </div>
+                  )}
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Placa do Veículo</p>
+                    <p className="font-mono font-bold text-lg text-slate-900">{selectedVenda.placa}</p>
                   </div>
+                  {selectedVenda.modelo_veiculo && (
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">Modelo do Veículo</p>
+                      <p className="font-semibold text-slate-900">{selectedVenda.modelo_veiculo}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="border-t pt-4">
-                <h4 className="font-semibold mb-3 text-slate-800">Informações da Venda</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-slate-500">Plano Vendido</p>
-                    <p className="font-medium">{planoLabels[selectedVenda.plano_vendido] || selectedVenda.plano_vendido}</p>
+              {/* Informações Financeiras */}
+              <div>
+                <h4 className="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-emerald-500 rounded-full"></div>
+                  Informações Financeiras
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="border-emerald-200 bg-emerald-50">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-emerald-700 uppercase tracking-wide mb-1">Valor Adesão</p>
+                      <p className="text-2xl font-bold text-emerald-600">
+                        R$ {formatarValorExibicao(selectedVenda.valor_adesao)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  {selectedVenda.valor_mensalidade && (
+                    <Card className="border-blue-200 bg-blue-50">
+                      <CardContent className="p-4">
+                        <p className="text-xs text-blue-700 uppercase tracking-wide mb-1">Mensalidade</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          R$ {formatarValorExibicao(selectedVenda.valor_mensalidade)}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
+                  <Card className="border-slate-200 bg-white">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Pagamento</p>
+                      <p className="text-lg font-bold text-slate-900">
+                        {selectedVenda.forma_pagamento === "pix" ? "Pix" : "Crédito"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Informações da Venda */}
+              <div>
+                <h4 className="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
+                  Detalhes da Venda
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Plano Vendido</p>
+                    <Badge variant="outline" className="text-sm font-semibold">
+                      {planoLabels[selectedVenda.plano_vendido] || selectedVenda.plano_vendido}
+                    </Badge>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Valor Adesão</p>
-                    <p className="font-medium text-emerald-600">R$ {formatarValorExibicao(selectedVenda.valor_adesao)}</p>
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Canal de Venda</p>
+                    <p className="font-semibold text-slate-900">
+                      {canalLabels[selectedVenda.canal_venda] || selectedVenda.canal_venda}
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Forma de Pagamento</p>
-                    <p className="font-medium">{selectedVenda.forma_pagamento === "pix" ? "Pix" : "Crédito"}</p>
+                  <div className="space-y-1">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Possui Indicação</p>
+                    <Badge className={selectedVenda.tem_indicacao === "sim" ? "bg-purple-500" : "bg-slate-400"}>
+                      {selectedVenda.tem_indicacao === "sim" ? "Sim" : "Não"}
+                    </Badge>
                   </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Canal de Venda</p>
-                    <p className="font-medium">{canalLabels[selectedVenda.canal_venda] || selectedVenda.canal_venda}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Possui Indicação</p>
-                    <p className="font-medium">{selectedVenda.tem_indicacao === "sim" ? "Sim" : "Não"}</p>
-                  </div>
-                  {selectedVenda.tem_indicacao === "sim" && (
-                    <div>
-                      <p className="text-sm text-slate-500">Valor Indicação</p>
-                      <p className="font-medium text-purple-600">
-                        {indicacaoRelacionada?.valor_indicacao ? `R$ ${indicacaoRelacionada.valor_indicacao}` : "-"}
+                  {selectedVenda.tem_indicacao === "sim" && indicacaoRelacionada?.valor_indicacao && (
+                    <div className="space-y-1">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">Valor Indicação</p>
+                      <p className="font-bold text-purple-600 text-lg">
+                        R$ {indicacaoRelacionada.valor_indicacao}
                       </p>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* Marketing e Publicidade - Apenas para Admin */}
+              {userRole === "admin" && (selectedVenda.plataforma || selectedVenda.posicionamento || selectedVenda.ad || selectedVenda.adset || selectedVenda.campanha || selectedVenda.pagina) && (
+                <div>
+                  <h4 className="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-purple-500 rounded-full"></div>
+                    Marketing e Publicidade
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    {selectedVenda.plataforma && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Plataforma</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.plataforma}</p>
+                      </div>
+                    )}
+                    {selectedVenda.posicionamento && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Posicionamento</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.posicionamento}</p>
+                      </div>
+                    )}
+                    {selectedVenda.campanha && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Campanha</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.campanha}</p>
+                      </div>
+                    )}
+                    {selectedVenda.adset && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Conjunto de Anúncios</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.adset}</p>
+                      </div>
+                    )}
+                    {selectedVenda.ad && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Anúncio</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.ad}</p>
+                      </div>
+                    )}
+                    {selectedVenda.pagina && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-purple-700 uppercase tracking-wide">Página</p>
+                        <p className="font-semibold text-slate-900">{selectedVenda.pagina}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Observações */}
+              {selectedVenda.observacoes && (
+                <div>
+                  <h4 className="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-slate-400 rounded-full"></div>
+                    Observações
+                  </h4>
+                  <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-slate-400">
+                    <p className="text-slate-700">{selectedVenda.observacoes}</p>
+                  </div>
+                </div>
+              )}
             </div>
           );
           })()}
