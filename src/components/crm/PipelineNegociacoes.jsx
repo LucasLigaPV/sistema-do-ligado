@@ -672,11 +672,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                      className={`bg-white cursor-move hover:shadow-md transition-shadow ${
                                        snapshot.isDragging ? "shadow-lg rotate-2" : ""
                                      }`}
-                                     onClick={() => {
-                                       setSelectedDeal(deal);
-                                       setEditedDeal({ ...deal });
-                                       setShowDetails(true);
-                                     }}
+                                     onClick={() => handleCardClick(deal)}
                                    >
                                       <CardContent className="p-4 space-y-2">
                                         <div className="font-medium text-sm">
