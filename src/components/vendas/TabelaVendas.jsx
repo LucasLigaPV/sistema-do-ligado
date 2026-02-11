@@ -48,12 +48,18 @@ import FormularioIndicacaoVenda from "./FormularioIndicacaoVenda";
 const planoLabels = {
   essencial: "Essencial",
   principal: "Principal",
+  plano_van: "Plano Van",
+  plano_moto: "Plano Moto",
+  plano_caminhao: "Plano Caminhão",
 };
 
 const canalLabels = {
   lead: "Lead",
   indicacao: "Indicação",
+  organico: "Orgânico",
+  troca_titularidade: "Troca de Titularidade",
   troca_veiculo: "Troca de Veículo",
+  segundo_veiculo: "Segundo Veículo",
 };
 
 const formatarValorExibicao = (valor) => {
@@ -405,7 +411,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
                         <TableCell>{venda.telefone}</TableCell>
                         <TableCell>
-                          <Badge variant="outline">{planoLabels[venda.plano_vendido]}</Badge>
+                          <Badge variant="outline">{planoLabels[venda.plano_vendido] || venda.plano_vendido}</Badge>
                         </TableCell>
                         <TableCell className="font-mono text-sm">{venda.placa}</TableCell>
                         <TableCell className="font-semibold text-emerald-600">
@@ -509,7 +515,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-slate-500">Plano Vendido</p>
-                    <p className="font-medium">{planoLabels[selectedVenda.plano_vendido]}</p>
+                    <p className="font-medium">{planoLabels[selectedVenda.plano_vendido] || selectedVenda.plano_vendido}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Valor Adesão</p>
@@ -521,7 +527,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Canal de Venda</p>
-                    <p className="font-medium">{canalLabels[selectedVenda.canal_venda]}</p>
+                    <p className="font-medium">{canalLabels[selectedVenda.canal_venda] || selectedVenda.canal_venda}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Possui Indicação</p>
