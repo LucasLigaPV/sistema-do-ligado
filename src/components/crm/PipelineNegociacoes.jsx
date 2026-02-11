@@ -267,6 +267,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       setSelectedSubetapa(deal?.subetapa || "");
       setShowSubetapaModal(true);
     } else {
+      // Atualização otimista para feedback imediato
+      queryClient.setQueryData(["negociacoes"], (old) => {
+        return old.map(n => n.id === dealId ? { ...n, etapa: newEtapa, subetapa: "" } : n);
+      });
+      
       updateMutation.mutate({
         id: dealId,
         data: { etapa: newEtapa, subetapa: "" }
