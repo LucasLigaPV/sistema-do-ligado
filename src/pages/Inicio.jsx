@@ -70,14 +70,14 @@ export default function Inicio() {
       iconColor: "text-purple-600",
       link: "/Admin?menu=crm-pipeline"
     },
-    {
+    ...(user?.funcao === "master" ? [{
       title: "Fila de Leads",
       description: "Visualize e gerencie a fila de leads",
       icon: ListChecks,
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
       link: "/Admin?menu=crm-fila"
-    },
+    }] : []),
     {
       title: "Perdas",
       description: "Analise leads e negociações perdidas",
@@ -102,14 +102,14 @@ export default function Inicio() {
       iconColor: "text-indigo-600",
       link: "/Admin?menu=crm-dashboard"
     },
-    {
+    ...(user?.funcao === "master" ? [{
       title: "Dashboard de Marketing",
       description: "Análise de campanhas e criativos",
       icon: Megaphone,
       bgColor: "bg-pink-50",
       iconColor: "text-pink-600",
       link: "/Admin?menu=crm-marketing"
-    },
+    }] : []),
     ...(isAdmin ? [{
       title: "Configurações",
       description: "Gerencie usuários e equipes",
