@@ -14,10 +14,7 @@ export default function Inicio() {
   const [activeMenu, setActiveMenu] = useState("inicio");
   const navigate = useNavigate();
 
-  const { data: banners = [] } = useQuery({
-    queryKey: ["banners"],
-    queryFn: () => base44.entities.Banner.list(),
-  });
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -44,8 +41,6 @@ export default function Inicio() {
   if (!user) {
     return null;
   }
-
-  const bannerAtivo = banners.find(b => b.ativo);
 
   const isAdmin = user?.role === "admin";
   const isLeader = user?.funcao === "lider";
@@ -137,35 +132,6 @@ export default function Inicio() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            {/* Banner de Comunicados */}
-            {bannerAtivo && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
-                {bannerAtivo.link ? (
-                  <a href={bannerAtivo.link} target="_blank" rel="noopener noreferrer">
-                    <div className="relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">
-                      <img
-                        src={bannerAtivo.imagem_url}
-                        alt={bannerAtivo.titulo}
-                        className="w-full h-auto object-cover"
-                      />
-                    </div>
-                  </a>
-                ) : (
-                  <div className="relative rounded-2xl overflow-hidden shadow-lg">
-                    <img
-                      src={bannerAtivo.imagem_url}
-                      alt={bannerAtivo.titulo}
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-                )}
-              </motion.div>
-            )}
-
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-2">Bem-vindo ao Sistema</h2>
               <p className="text-slate-500">Escolha uma opção abaixo para começar</p>
