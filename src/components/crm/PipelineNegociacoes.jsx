@@ -971,6 +971,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={editedDeal.nome_cliente}
                     onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
                     maxLength={100}
+                    disabled={userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa)}
                   />
                 </div>
                 <div>
