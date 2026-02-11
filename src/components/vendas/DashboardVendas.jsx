@@ -355,7 +355,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
               <TableBody>
                 {rankingVendedores.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center text-slate-500 py-8">
+                    <TableCell colSpan={6} className="text-center text-slate-500 py-8">
                       Nenhum dado disponível no período
                     </TableCell>
                   </TableRow>
@@ -372,17 +372,9 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
                         {vendedor.nome}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-300">
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                           {vendedor.totalVendas}
                         </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                          {vendedor.vendasAtivas}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center text-slate-700">
-                        {vendedor.vendasPagamentoOk}
                       </TableCell>
                       <TableCell className="text-center text-slate-900">
                         R$ {formatarValor(vendedor.ticketMedio)}
