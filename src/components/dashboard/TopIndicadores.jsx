@@ -40,13 +40,13 @@ export default function TopIndicadores({ indicacoes }) {
   };
 
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-[#EFC200] to-[#D4A900] text-black">
-        <CardTitle className="flex items-center gap-2 text-xl">
-          <Trophy className="w-6 h-6" />
+    <Card className="border-slate-200">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Trophy className="w-5 h-5 text-[#EFC200]" />
           Top 10 Indicadores
         </CardTitle>
-        <p className="text-sm text-black/80 mt-1">
+        <p className="text-sm text-slate-500 mt-1">
           Pessoas que mais indicaram associados
         </p>
       </CardHeader>
@@ -64,7 +64,7 @@ export default function TopIndicadores({ indicacoes }) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors border border-slate-200"
               >
                 <div className="flex items-center gap-4 flex-1">
                   <div className="flex items-center justify-center w-8">
@@ -85,19 +85,17 @@ export default function TopIndicadores({ indicacoes }) {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <Badge className="bg-[#EFC200] text-black font-semibold">
-                      {indicador.total} {indicador.total === 1 ? "indicação" : "indicações"}
-                    </Badge>
-                    <div className="flex gap-1 mt-1 justify-end">
+                    <div className="text-2xl font-bold text-slate-900">{indicador.total}</div>
+                    <div className="flex gap-1 mt-1 justify-end flex-wrap">
                       {indicador.pagas > 0 && (
-                        <span className="text-xs text-emerald-600 font-medium">
+                        <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
                           {indicador.pagas} paga{indicador.pagas > 1 ? "s" : ""}
-                        </span>
+                        </Badge>
                       )}
                       {indicador.aprovadas > 0 && (
-                        <span className="text-xs text-blue-600 font-medium">
-                          • {indicador.aprovadas} aprovada{indicador.aprovadas > 1 ? "s" : ""}
-                        </span>
+                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                          {indicador.aprovadas} aprovada{indicador.aprovadas > 1 ? "s" : ""}
+                        </Badge>
                       )}
                     </div>
                   </div>

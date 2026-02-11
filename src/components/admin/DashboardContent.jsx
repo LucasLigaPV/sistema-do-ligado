@@ -115,13 +115,15 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start">
                       <Filter className="w-4 h-4 mr-2" />
-                      {consultorFilter.length === 0 
-                        ? "Todos" 
-                        : consultorFilter.length === 1
-                        ? (userFuncao === "lider" 
-                            ? (users.find(u => u.email === consultorFilter[0])?.full_name || consultorFilter[0])
-                            : consultorFilter[0])
-                        : `${consultorFilter.length} selecionados`}
+                      <span className="truncate">
+                        {consultorFilter.length === 0 
+                          ? "Todos" 
+                          : consultorFilter.length === 1
+                          ? (userFuncao === "lider" 
+                              ? (users.find(u => u.email === consultorFilter[0])?.full_name || consultorFilter[0])
+                              : consultorFilter[0])
+                          : `${consultorFilter.length} selecionados`}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-64 p-3">

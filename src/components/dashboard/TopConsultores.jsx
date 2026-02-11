@@ -39,13 +39,13 @@ export default function TopConsultores({ indicacoes }) {
   const colors = ["#EFC200", "#D4A900", "#F5D84A", "#C49700", "#EFC200", "#D4A900", "#F5D84A", "#C49700"];
 
   return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-[#D4A900] to-[#EFC200] text-black">
-        <CardTitle className="flex items-center gap-2 text-xl">
-          <TrendingUp className="w-6 h-6" />
+    <Card className="border-slate-200">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Users className="w-5 h-5 text-slate-600" />
           Consultores - Indicações Recebidas
         </CardTitle>
-        <p className="text-sm text-black/80 mt-1">
+        <p className="text-sm text-slate-500 mt-1">
           Ranking de consultores por número de indicações
         </p>
       </CardHeader>
@@ -63,12 +63,13 @@ export default function TopConsultores({ indicacoes }) {
                 <BarChart data={chartData}>
                   <XAxis 
                     dataKey="nome" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 11 }}
                     angle={-45}
                     textAnchor="end"
                     height={80}
+                    stroke="#64748b"
                   />
-                  <YAxis tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 11 }} stroke="#64748b" />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "white",
@@ -76,11 +77,7 @@ export default function TopConsultores({ indicacoes }) {
                       borderRadius: "8px",
                     }}
                   />
-                  <Bar dataKey="total" radius={[8, 8, 0, 0]}>
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                    ))}
-                  </Bar>
+                  <Bar dataKey="total" radius={[4, 4, 0, 0]} fill="#64748b" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -93,14 +90,14 @@ export default function TopConsultores({ indicacoes }) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors border border-slate-200"
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#EFC200] text-black font-bold">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold text-sm flex-shrink-0">
                       {index + 1}
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">{consultor.nome}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-slate-900 truncate" title={consultor.nome}>{consultor.nome}</p>
                       <div className="flex flex-wrap gap-2 mt-1">
                         {consultor.pendentes > 0 && (
                           <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
@@ -120,10 +117,10 @@ export default function TopConsultores({ indicacoes }) {
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className="bg-[#EFC200] text-black font-bold text-base px-4 py-1">
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-2xl font-bold text-slate-900">
                       {consultor.total}
-                    </Badge>
+                    </div>
                   </div>
                 </motion.div>
               ))}

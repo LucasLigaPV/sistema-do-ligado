@@ -104,7 +104,7 @@ export default function ResumoIndicacoes({ indicacoes }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {cards.map((card, index) => {
         const Icon = card.icon;
         return (
@@ -114,12 +114,16 @@ export default function ResumoIndicacoes({ indicacoes }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className={`border-2 ${card.color} shadow-md hover:shadow-lg transition-shadow`}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl ${card.color}`}>
-                    <Icon className={`w-6 h-6 ${card.iconColor}`} />
-                  </div>
+            <Card className="border-slate-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+                  <Icon className="w-4 h-4" />
+                  {card.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-end justify-between">
+                  <div className="text-3xl font-bold text-slate-900">{card.value}</div>
                   {card.trend !== null && (
                     <div className={`flex items-center gap-1 text-sm font-medium ${
                       parseFloat(card.trend) >= 0 ? "text-emerald-600" : "text-red-600"
@@ -133,8 +137,6 @@ export default function ResumoIndicacoes({ indicacoes }) {
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-slate-600 mb-1">{card.title}</p>
-                <p className="text-3xl font-bold text-slate-900">{card.value}</p>
               </CardContent>
             </Card>
           </motion.div>
