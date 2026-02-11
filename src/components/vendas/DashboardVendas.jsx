@@ -289,38 +289,6 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         </Card>
       </div>
 
-      {/* Funil de Vendas */}
-      <Card className="border-slate-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5" />
-            Funil de Vendas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-slate-50 rounded-lg">
-                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasPagamentoOk}</div>
-                <div className="text-xs text-slate-600 mt-1">Pagamento OK</div>
-              </div>
-              <div className="text-center p-4 bg-slate-50 rounded-lg">
-                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasVistoriaOk}</div>
-                <div className="text-xs text-slate-600 mt-1">Vistoria OK</div>
-              </div>
-              <div className="text-center p-4 bg-slate-50 rounded-lg">
-                <div className="text-2xl font-bold text-slate-900">{estatisticas.vendasEmAtivacao}</div>
-                <div className="text-xs text-slate-600 mt-1">Em Ativação</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-700">{estatisticas.vendasAtivas}</div>
-                <div className="text-xs text-green-600 mt-1">Ativo</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Insights Adicionais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
