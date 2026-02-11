@@ -33,6 +33,7 @@ import {
   Trash2,
   Download,
   UserPlus,
+  TrendingUp,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -219,6 +220,21 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
         <h2 className="text-2xl font-bold text-slate-900">Registro de Vendas</h2>
         <p className="text-slate-500">Vendas são criadas automaticamente quando aprovadas no CRM</p>
       </div>
+
+      {/* Stats Panel */}
+      <Card className="border-0 shadow-md bg-gradient-to-r from-emerald-50 to-emerald-100">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-emerald-700 font-medium mb-1">Total de Vendas</p>
+              <p className="text-4xl font-bold text-emerald-900">{filteredVendas.length}</p>
+            </div>
+            <div className="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center">
+              <TrendingUp className="w-8 h-8 text-emerald-700" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <Card className="border-0 shadow-md">
