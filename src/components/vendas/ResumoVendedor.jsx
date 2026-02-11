@@ -325,7 +325,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
             {proximoNivel && (
               <div className={`rounded-lg p-4 mt-6 ${nivelAtual.nivel === "Nível 1" ? "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200" : "bg-slate-50"}`}>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mb-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900">Próximo nível: {proximoNivel.nivel}</p>
                     <p className="text-xs text-slate-500 mt-1">
@@ -342,11 +342,27 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                     <p className="text-xs text-slate-500">{totalVendas}/{proximoNivel.vendas}</p>
                   </div>
                 </div>
-                <div className="overflow-hidden">
-                  <Progress 
-                    value={progressoAnimado} 
-                    className="h-2.5 bg-slate-200 mt-3 transition-all duration-1000 ease-out" 
-                  />
+                
+                {/* Barra de progresso para próximo nível */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-slate-600">
+                    <span>{nivelAtual.nivel}</span>
+                    <span>{proximoNivel.nivel}</span>
+                  </div>
+                  <div className="relative h-3 bg-slate-200 rounded-full overflow-hidden">
+                    <div 
+                      className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out ${
+                        nivelAtual.nivel === "Nível 1" 
+                          ? "bg-gradient-to-r from-blue-500 to-indigo-500" 
+                          : "bg-gradient-to-r from-[#EFC200] to-[#D4A900]"
+                      }`}
+                      style={{ width: `${progressoAnimado}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>{nivelAtual.vendas} vendas</span>
+                    <span>{proximoNivel.vendas} vendas</span>
+                  </div>
                 </div>
               </div>
             )}
