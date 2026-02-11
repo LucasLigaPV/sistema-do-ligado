@@ -592,11 +592,138 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
         </div>
       </div>
 
-      {/* Gráfico de Canais de Venda */}
+      {/* Insights Adicionais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <ShoppingCart className="w-4 h-4" />
+              Vendas com Indicação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{taxaIndicacao}</div>
+            <p className="text-xs text-slate-500 mt-1">{percentualIndicacao}% do total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              Pagamentos via Pix
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPix}</div>
+            <p className="text-xs text-slate-500 mt-1">{percentualPix}% do total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Plano Essencial
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPorPlano["essencial"] || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">
+              {totalVendas > 0 ? (((vendasPorPlano["essencial"] || 0) / totalVendas) * 100).toFixed(1) : 0}% do total
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Plano Principal
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{vendasPorPlano["principal"] || 0}</div>
+            <p className="text-xs text-slate-500 mt-1">
+              {totalVendas > 0 ? (((vendasPorPlano["principal"] || 0) / totalVendas) * 100).toFixed(1) : 0}% do total
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-0 shadow-md">
+        {/* Vendas por Mês */}
+        <Card className="border-slate-200">
           <CardHeader>
-            <CardTitle>Canais de Venda</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Vendas por Mês
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {chartVendasMensais.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartVendasMensais}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="mes" stroke="#64748b" style={{ fontSize: '12px' }} />
+                  <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
+                  <Tooltip />
+                  <Bar dataKey="vendas" fill="#64748b" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-slate-400">
+                Nenhum dado disponível
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Distribuição por Plano */}
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="w-5 h-5" />
+              Distribuição por Plano
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {planoChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={planoChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#8b5cf6" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-slate-400">
+                Nenhum dado disponível
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Canais de Venda */}
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Canais de Venda
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {chartData.length > 0 ? (
@@ -630,45 +757,40 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
           </CardContent>
         </Card>
 
-        <Card className="border-0 shadow-md">
+        {/* Breakdown por Canal */}
+        <Card className="border-slate-200">
           <CardHeader>
-            <CardTitle>Canal Principal</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Detalhamento de Canais
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {canalPrincipal ? (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-gradient-to-br from-[#EFC200] to-[#D4A900] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="w-12 h-12 text-white" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-slate-900 capitalize mb-2">
-                    {canalPrincipal.name}
-                  </h3>
-                  <p className="text-slate-500">
-                    {canalPrincipal.value} vendas ({canalPrincipal.percentage}%)
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {chartData.map((canal, index) => (
-                    <div key={index}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="capitalize text-slate-700">{canal.name}</span>
-                        <span className="text-slate-500">{canal.percentage}%</span>
-                      </div>
-                      <Progress 
-                        value={parseFloat(canal.percentage)} 
-                        className="h-2"
-                      />
+            <div className="space-y-4">
+              {chartData.length > 0 ? (
+                chartData.map((canal, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-slate-700 capitalize">{canal.name}</span>
+                      <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-300">
+                        {canal.value} vendas
+                      </Badge>
                     </div>
-                  ))}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-slate-500">
+                        <span>Participação</span>
+                        <span className="font-semibold">{canal.percentage}%</span>
+                      </div>
+                      <Progress value={parseFloat(canal.percentage)} className="h-2" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="h-[250px] flex items-center justify-center text-slate-400">
+                  Nenhum dado disponível
                 </div>
-              </div>
-            ) : (
-              <div className="h-full flex items-center justify-center text-slate-400">
-                Nenhum dado disponível
-              </div>
-            )}
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
