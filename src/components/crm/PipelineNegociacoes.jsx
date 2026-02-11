@@ -691,6 +691,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <SelectContent>
                     <SelectItem value="essencial">Essencial</SelectItem>
                     <SelectItem value="principal">Principal</SelectItem>
+                    <SelectItem value="plano_van">Plano Van</SelectItem>
+                    <SelectItem value="plano_moto">Plano Moto</SelectItem>
+                    <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -707,6 +710,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <SelectItem value="lead">Lead</SelectItem>
                     <SelectItem value="indicacao">Indicação</SelectItem>
                     <SelectItem value="organico">Orgânico</SelectItem>
+                    <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
+                    <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+                    <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -878,6 +884,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <SelectContent>
                       <SelectItem value="essencial">Essencial</SelectItem>
                       <SelectItem value="principal">Principal</SelectItem>
+                      <SelectItem value="plano_van">Plano Van</SelectItem>
+                      <SelectItem value="plano_moto">Plano Moto</SelectItem>
+                      <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -894,6 +903,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       <SelectItem value="lead">Lead</SelectItem>
                       <SelectItem value="indicacao">Indicação</SelectItem>
                       <SelectItem value="organico">Orgânico</SelectItem>
+                      <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
+                      <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+                      <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1055,6 +1067,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <option value="">Selecione...</option>
                     <option value="essencial">Essencial</option>
                     <option value="principal">Principal</option>
+                    <option value="plano_van">Plano Van</option>
+                    <option value="plano_moto">Plano Moto</option>
+                    <option value="plano_caminhao">Plano Caminhão</option>
                   </select>
                 </div>
                 <div>
