@@ -1134,14 +1134,23 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
               {/* Botões de Ação */}
               <div className="flex flex-col gap-3 pt-4 border-t">
+                {userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa) && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                    {selectedDeal.etapa === "enviado_cadastro" && "Esta venda está aguardando aprovação do time de aprovações."}
+                    {selectedDeal.etapa === "negada" && "Esta venda foi negada."}
+                    {selectedDeal.etapa === "venda_ativa" && "Esta venda já está ativa."}
+                  </div>
+                )}
+
                 <Button
                   onClick={handleUpdateDeal}
                   className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                  disabled={userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa)}
                 >
                   Salvar Alterações
                 </Button>
-                
-                {canShowSaleButton && (
+
+                {canShowSaleButton && userFuncao !== "vendedor" && (
                   <Button
                     onClick={handleMarkAsSold}
                     className="w-full bg-green-600 hover:bg-green-700 text-white"
@@ -1151,14 +1160,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </Button>
                 )}
 
-                <Button
-                  onClick={() => setShowLossModal(true)}
-                  variant="destructive"
-                  className="w-full"
-                >
-                  <TrendingDown className="w-4 h-4 mr-2" />
-                  Marcar como Perda
-                </Button>
+                {!(isEtapaFinal(selectedDeal.etapa) && userFuncao === "vendedor") && (
+                  <Button
+                    onClick={() => setShowLossModal(true)}
+                    variant="destructive"
+                    className="w-full"
+                  >
+                    <TrendingDown className="w-4 h-4 mr-2" />
+                    Marcar como Perda
+                  </Button>
+                )}
               </div>
             </div>
           )}
