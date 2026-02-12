@@ -45,7 +45,14 @@ export default function Distribuicao({ userFuncao }) {
 
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: async () => {
+      try {
+        return await base44.entities.User.list();
+      } catch (error) {
+        console.warn("Não foi possível carregar usuários:", error);
+        return [];
+      }
+    },
   });
 
   const { data: equipes = [] } = useQuery({
