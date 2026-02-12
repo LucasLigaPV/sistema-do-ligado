@@ -107,15 +107,10 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar vendedores e líderes (verificar ambos role e funcao para compatibilidade)
+  // Filtrar vendedores e líderes pela funcao
   const vendedoresLideres = users.filter(u => 
-    u.funcao === "vendedor" || u.funcao === "lider" || 
-    u.role === "vendedor" || u.role === "lider"
+    u.funcao === "vendedor" || u.funcao === "lider"
   );
-
-  console.log("Total de usuários:", users.length);
-  console.log("Vendedores/Líderes filtrados:", vendedoresLideres.length);
-  console.log("Usuários:", users.map(u => ({ email: u.email, funcao: u.funcao, role: u.role })));
 
   // Calcular taxa de conversão
   const calcularTaxaConversao = (email) => {
