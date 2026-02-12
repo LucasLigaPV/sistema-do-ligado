@@ -167,7 +167,7 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar vendedores e líderes pela funcao
+  // Filtrar APENAS vendedores e líderes pela funcao (excluir master, admin, etc)
   const vendedoresLideres = users.filter(u => 
     u.funcao === "vendedor" || u.funcao === "lider"
   );
