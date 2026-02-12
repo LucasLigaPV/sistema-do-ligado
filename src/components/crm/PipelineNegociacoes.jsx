@@ -492,26 +492,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   };
 
   const canAccessDeal = (deal) => {
-    if (userFuncao === "lider") return true;
-    if (userFuncao === "vendedor" && isEtapaFinal(deal.etapa)) return false;
+    // Ninguém pode editar etapas finais (apenas visualizar)
     return true;
   };
 
   const handleCardClick = (deal) => {
-    if (userFuncao === "vendedor" && isEtapaFinal(deal.etapa)) {
-      let reason = "";
-      if (deal.etapa === "enviado_cadastro") {
-        reason = "Esta venda está aguardando aprovação do time de aprovações.";
-      } else if (deal.etapa === "negada") {
-        reason = "Esta venda foi negada e não pode ser acessada.";
-      } else if (deal.etapa === "venda_ativa") {
-        reason = "Esta venda já está ativa e não pode ser editada.";
-      }
-      setAccessDeniedReason(reason);
-      setShowAccessDeniedModal(true);
-      return;
-    }
-    
     setSelectedDeal(deal);
     setEditedDeal({ ...deal });
     setShowDetails(true);
@@ -933,7 +918,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             <SheetTitle>Detalhes da Negociação</SheetTitle>
           </SheetHeader>
           {selectedDeal && editedDeal && (() => {
-            const isReadOnly = userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa);
+            const isReadOnly = isEtapaFinal(selectedDeal.etapa);
             return (
             <div className="space-y-6 mt-6">
               {/* Navegação de Etapas */}
@@ -942,7 +927,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   variant="outline"
                   size="lg"
                   onClick={handlePreviousStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || (userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa))}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa)}
                   className="h-12 px-6"
                 >
                   <ChevronLeft className="w-5 h-5 mr-2" />
@@ -957,7 +942,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   variant="outline"
                   size="lg"
                   onClick={handleAdvanceStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || (userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa))}
+                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa)}
                   className="h-12 px-6"
                 >
                   Avançar
@@ -973,7 +958,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={editedDeal.nome_cliente}
                     onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
                     maxLength={100}
-                    disabled={userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa)}
+                    disabled={isReadOnly}
                   />
                 </div>
                 <div>
@@ -1146,23 +1131,23 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
               {/* Botões de Ação */}
               <div className="flex flex-col gap-3 pt-4 border-t">
-                {userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa) && (
+                {isEtapaFinal(selectedDeal.etapa) && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-                    {selectedDeal.etapa === "enviado_cadastro" && "Esta venda está aguardando aprovação do time de aprovações."}
-                    {selectedDeal.etapa === "negada" && "Esta venda foi negada."}
-                    {selectedDeal.etapa === "venda_ativa" && "Esta venda já está ativa."}
+                    {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
+                    {selectedDeal.etapa === "negada" && "❌ Esta venda foi negada. Visualização apenas."}
+                    {selectedDeal.etapa === "venda_ativa" && "✅ Esta venda já está ativa. A placa está em processo de ativação."}
                   </div>
                 )}
 
                 <Button
                   onClick={handleUpdateDeal}
                   className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                  disabled={userFuncao === "vendedor" && isEtapaFinal(selectedDeal.etapa)}
+                  disabled={isEtapaFinal(selectedDeal.etapa)}
                 >
                   Salvar Alterações
                 </Button>
 
-                {canShowSaleButton && userFuncao !== "vendedor" && (
+                {canShowSaleButton && userFuncao !== "vendedor" && !isEtapaFinal(selectedDeal.etapa) && (
                   <Button
                     onClick={handleMarkAsSold}
                     className="w-full bg-green-600 hover:bg-green-700 text-white"
@@ -1172,7 +1157,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </Button>
                 )}
 
-                {!(isEtapaFinal(selectedDeal.etapa) && userFuncao === "vendedor") && (
+                {!isEtapaFinal(selectedDeal.etapa) && (
                   <Button
                     onClick={() => setShowLossModal(true)}
                     variant="destructive"
