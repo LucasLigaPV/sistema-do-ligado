@@ -74,37 +74,53 @@ export default function Distribuicao({ userFuncao }) {
     if (usersAdmin.length > 0) return usersAdmin;
 
     // Se não temos acesso aos users, construir lista de vendedores/líderes únicos
-    const emailsUnicos = new Set();
     const usuariosMap = new Map();
 
-    // Adicionar de negociações
+    // Adicionar de negociações como vendedor
     negociacoes.forEach(n => {
-      if (n.vendedor_email) {
-        emailsUnicos.add(n.vendedor_email);
+      if (n.vendedor_email && !usuariosMap.has(n.vendedor_email)) {
+        usuariosMap.set(n.vendedor_email, {
+          email: n.vendedor_email,
+          full_name: n.vendedor_email.split('@')[0],
+          funcao: "vendedor"
+        });
       }
     });
 
     // Adicionar de equipes
     equipes.forEach(e => {
+      // Líder
       if (e.lider_email) {
-        emailsUnicos.add(e.lider_email);
+        usuariosMap.set(e.lider_email, {
+          email: e.lider_email,
+          full_name: e.lider_email.split('@')[0],
+          funcao: "lider"
+        });
       }
-      e.membros?.forEach(m => emailsUnicos.add(m));
+      // Membros como vendedores
+      e.membros?.forEach(email => {
+        if (!usuariosMap.has(email)) {
+          usuariosMap.set(email, {
+            email,
+            full_name: email.split('@')[0],
+            funcao: "vendedor"
+          });
+        }
+      });
     });
 
-    // Adicionar de checkins
+    // Adicionar de checkins como vendedor
     checkins.forEach(c => {
-      if (c.usuario_email) {
-        emailsUnicos.add(c.usuario_email);
+      if (c.usuario_email && !usuariosMap.has(c.usuario_email)) {
+        usuariosMap.set(c.usuario_email, {
+          email: c.usuario_email,
+          full_name: c.usuario_email.split('@')[0],
+          funcao: "vendedor"
+        });
       }
     });
 
-    // Criar objetos de usuário básicos
-    return Array.from(emailsUnicos).map(email => ({
-      email,
-      full_name: email.split('@')[0],
-      funcao: "vendedor" // padrão, pode ser sobrescrito
-    }));
+    return Array.from(usuariosMap.values());
   }, [usersAdmin, negociacoes, equipes, checkins]);
 
   const updateLeadMutation = useMutation({
