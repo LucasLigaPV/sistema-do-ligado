@@ -43,13 +43,12 @@ export default function Distribuicao({ userFuncao }) {
     queryFn: () => base44.entities.Checkin.list(),
   });
 
-  const { data: users = [] } = useQuery({
+  const { data: usersAdmin = [] } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       try {
         return await base44.entities.User.list();
       } catch (error) {
-        console.warn("Não foi possível carregar usuários:", error);
         return [];
       }
     },
@@ -69,6 +68,44 @@ export default function Distribuicao({ userFuncao }) {
     queryKey: ["validacoes_chegada"],
     queryFn: () => base44.entities.ValidacaoChegada.list(),
   });
+
+  // Construir lista de usuários a partir de outras entidades (fallback quando user.list falha)
+  const users = React.useMemo(() => {
+    if (usersAdmin.length > 0) return usersAdmin;
+
+    // Se não temos acesso aos users, construir lista de vendedores/líderes únicos
+    const emailsUnicos = new Set();
+    const usuariosMap = new Map();
+
+    // Adicionar de negociações
+    negociacoes.forEach(n => {
+      if (n.vendedor_email) {
+        emailsUnicos.add(n.vendedor_email);
+      }
+    });
+
+    // Adicionar de equipes
+    equipes.forEach(e => {
+      if (e.lider_email) {
+        emailsUnicos.add(e.lider_email);
+      }
+      e.membros?.forEach(m => emailsUnicos.add(m));
+    });
+
+    // Adicionar de checkins
+    checkins.forEach(c => {
+      if (c.usuario_email) {
+        emailsUnicos.add(c.usuario_email);
+      }
+    });
+
+    // Criar objetos de usuário básicos
+    return Array.from(emailsUnicos).map(email => ({
+      email,
+      full_name: email.split('@')[0],
+      funcao: "vendedor" // padrão, pode ser sobrescrito
+    }));
+  }, [usersAdmin, negociacoes, equipes, checkins]);
 
   const updateLeadMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
