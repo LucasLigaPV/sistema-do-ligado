@@ -107,9 +107,9 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar vendedores e líderes (incluindo masters)
+  // Filtrar vendedores e líderes
   const vendedoresLideres = users.filter(u => 
-    u.funcao === "vendedor" || u.funcao === "lider" || u.funcao === "master"
+    u.role === "vendedor" || u.role === "lider"
   );
 
   // Calcular taxa de conversão
