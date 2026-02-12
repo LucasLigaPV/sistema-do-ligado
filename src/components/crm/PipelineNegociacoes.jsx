@@ -180,7 +180,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     { id: "em_negociacao", label: "Em Negociação", icon: Handshake },
     { id: "vistoria_assinatura_pix", label: "Vistoria/Assinatura/Pix", icon: FileCheck },
     { id: "enviado_cadastro", label: "Enviado para Cadastro", icon: Send },
-    { id: "negada", label: "Negada", icon: XCircle },
+    { id: "reprovado", label: "Reprovado", icon: XCircle },
     { id: "venda_ativa", label: "Venda Ativa", icon: CheckCircle },
   ];
 
@@ -336,6 +336,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setConferenciaData(null);
   };
 
+  const handleReprovaCorrigida = () => {
+    if (!selectedDeal) return;
+
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: {
+        etapa: "enviado_cadastro",
+        informacoes_conferidas: true,
+        data_conferencia: new Date().toISOString(),
+        status_aprovacao: "aguardando"
+      }
+    });
+
+    setShowDetails(false);
+    setSelectedDeal(null);
+    setEditedDeal(null);
+  };
+
   const handleCreateDeal = (e) => {
     e.preventDefault();
     createMutation.mutate(newDeal);
@@ -488,7 +506,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   );
 
   const isEtapaFinal = (etapa) => {
-    return ["enviado_cadastro", "negada", "venda_ativa"].includes(etapa);
+    return ["enviado_cadastro", "reprovado", "venda_ativa"].includes(etapa);
   };
 
   const canAccessDeal = (deal) => {
@@ -686,6 +704,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             ? format(new Date(deal.data_entrada), "dd/MM/yyyy")
                                             : format(new Date(deal.created_date), "dd/MM/yyyy")}
                                         </div>
+                                        {deal.etapa === "reprovado" && deal.motivo_negacao && (
+                                          <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
+                                            <strong>Motivo:</strong> {deal.motivo_negacao}
+                                          </div>
+                                        )}
                                         {userFuncao === "lider" && (
                                           <div className="text-xs text-slate-500 pt-1 border-t">
                                             {getNomeVendedor(deal.vendedor_email)}
@@ -1134,18 +1157,36 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 {isEtapaFinal(selectedDeal.etapa) && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
                     {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
-                    {selectedDeal.etapa === "negada" && "❌ Esta venda foi negada. Visualização apenas."}
+                    {selectedDeal.etapa === "reprovado" && (
+                      <div>
+                        <p className="font-semibold mb-1">❌ Esta venda foi reprovada.</p>
+                        {selectedDeal.motivo_negacao && (
+                          <p className="text-xs mt-1"><strong>Motivo:</strong> {selectedDeal.motivo_negacao}</p>
+                        )}
+                      </div>
+                    )}
                     {selectedDeal.etapa === "venda_ativa" && "✅ Esta venda já está ativa. A placa está em processo de ativação."}
                   </div>
                 )}
 
-                <Button
-                  onClick={handleUpdateDeal}
-                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                  disabled={isEtapaFinal(selectedDeal.etapa)}
-                >
-                  Salvar Alterações
-                </Button>
+                {selectedDeal.etapa === "reprovado" && (
+                  <Button
+                    onClick={handleReprovaCorrigida}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Reprova Corrigida
+                  </Button>
+                )}
+
+                {!isEtapaFinal(selectedDeal.etapa) && (
+                  <Button
+                    onClick={handleUpdateDeal}
+                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                  >
+                    Salvar Alterações
+                  </Button>
+                )}
 
                 {canShowSaleButton && userFuncao !== "vendedor" && !isEtapaFinal(selectedDeal.etapa) && (
                   <Button
