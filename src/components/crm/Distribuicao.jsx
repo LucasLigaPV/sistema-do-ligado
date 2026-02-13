@@ -18,6 +18,8 @@ export default function Distribuicao({ userFuncao }) {
   const [selectedUser, setSelectedUser] = useState("");
   const [modoEdicao, setModoEdicao] = useState(false);
   const [vendedoresValidados, setVendedoresValidados] = useState([]);
+  const [modoEdicao2Turno, setModoEdicao2Turno] = useState(false);
+  const [vendedoresValidados2Turno, setVendedoresValidados2Turno] = useState([]);
   const [vendedorSelecionado, setVendedorSelecionado] = useState("");
   const [quantidadeLeads, setQuantidadeLeads] = useState(1);
 
@@ -187,8 +189,12 @@ export default function Distribuicao({ userFuncao }) {
   const checkinsHoje = checkins.filter(c => c.data === hoje);
   
   // Verificar se há validação hoje
-  const validacaoHoje = validacoes.find(v => v.data === hoje);
+  const validacaoHoje = validacoes.find(v => v.data === hoje && v.turno === "1");
   const isValidado = validacaoHoje !== undefined;
+  
+  // Verificar se há validação do 2º turno hoje
+  const validacao2TurnoHoje = validacoes.find(v => v.data === hoje && v.turno === "2");
+  const isValidado2Turno = validacao2TurnoHoje !== undefined;
 
   // Atualizar lista de vendedores validados quando houver validação
   React.useEffect(() => {
@@ -202,6 +208,16 @@ export default function Distribuicao({ userFuncao }) {
       setVendedoresValidados(emailsNoPrazo);
     }
   }, [validacaoHoje?.id]);
+
+  // Atualizar lista de vendedores validados do 2º turno
+  React.useEffect(() => {
+    if (validacao2TurnoHoje) {
+      setVendedoresValidados2Turno(validacao2TurnoHoje.vendedores_validados || []);
+    } else {
+      // Se não há validação do 2º turno, usar os que foram validados no 1º turno
+      setVendedoresValidados2Turno(vendedoresValidados);
+    }
+  }, [validacao2TurnoHoje?.id, vendedoresValidados]);
 
   // Filtrar check-ins por período
   const checkinsFiltrados = checkins.filter(c => {
@@ -436,7 +452,8 @@ export default function Distribuicao({ userFuncao }) {
         data: {
           vendedores_validados: vendedoresValidados,
           validado_por: user.email,
-          hora_validacao: format(agora, "HH:mm")
+          hora_validacao: format(agora, "HH:mm"),
+          turno: "1"
         }
       });
     } else {
@@ -445,7 +462,35 @@ export default function Distribuicao({ userFuncao }) {
         data: hoje,
         validado_por: user.email,
         vendedores_validados: vendedoresValidados,
-        hora_validacao: format(agora, "HH:mm")
+        hora_validacao: format(agora, "HH:mm"),
+        turno: "1"
+      });
+    }
+  };
+
+  const validarChegadas2Turno = async () => {
+    const user = await base44.auth.me();
+    const agora = new Date();
+    
+    if (validacao2TurnoHoje) {
+      // Atualizar validação existente do 2º turno
+      updateValidacaoMutation.mutate({
+        id: validacao2TurnoHoje.id,
+        data: {
+          vendedores_validados: vendedoresValidados2Turno,
+          validado_por: user.email,
+          hora_validacao: format(agora, "HH:mm"),
+          turno: "2"
+        }
+      });
+    } else {
+      // Criar nova validação do 2º turno
+      createValidacaoMutation.mutate({
+        data: hoje,
+        validado_por: user.email,
+        vendedores_validados: vendedoresValidados2Turno,
+        hora_validacao: format(agora, "HH:mm"),
+        turno: "2"
       });
     }
   };
@@ -455,6 +500,14 @@ export default function Distribuicao({ userFuncao }) {
       setVendedoresValidados(vendedoresValidados.filter(e => e !== email));
     } else {
       setVendedoresValidados([...vendedoresValidados, email]);
+    }
+  };
+
+  const toggleVendedor2Turno = (email) => {
+    if (vendedoresValidados2Turno.includes(email)) {
+      setVendedoresValidados2Turno(vendedoresValidados2Turno.filter(e => e !== email));
+    } else {
+      setVendedoresValidados2Turno([...vendedoresValidados2Turno, email]);
     }
   };
 
@@ -591,6 +644,15 @@ export default function Distribuicao({ userFuncao }) {
                   </div>
                 )}
 
+                {!isValidado2Turno && agora.getDay() !== 6 && agora.getDay() !== 0 && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
+                    <Shield className="w-4 h-4 text-slate-500" />
+                    <span>
+                      Para distribuir leads do 2º turno, é necessário validar as chegadas do 2º turno
+                    </span>
+                  </div>
+                )}
+
                 {/* Divisor */}
                 <div className="relative py-2">
                   <div className="absolute inset-0 flex items-center">
@@ -724,11 +786,12 @@ export default function Distribuicao({ userFuncao }) {
 
         {/* Validação de Chegada */}
         <TabsContent value="checkins" className="space-y-4">
+          {/* Validação 1º Turno / Sábado */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Validação de Chegada - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
+                  <CardTitle>Validação de Chegada {agora.getDay() === 6 ? "(Sábado)" : "(1º Turno)"} - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
                   <p className="text-sm text-slate-700 mt-1 font-medium">
                     {isValidado ? (
                       <span className="flex items-center gap-2 text-blue-700 font-semibold">
@@ -869,6 +932,160 @@ export default function Distribuicao({ userFuncao }) {
               </div>
             </CardContent>
           </Card>
+
+          {/* Validação 2º Turno - Apenas Segunda a Sexta */}
+          {agora.getDay() !== 6 && agora.getDay() !== 0 && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Validação de Chegada (2º Turno) - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
+                    <p className="text-sm text-slate-700 mt-1 font-medium">
+                      {horaAtual < horarioDistribuicao2Turno ? (
+                        <span className="text-amber-600 font-semibold flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          Disponível a partir de {horarioDistribuicao2Turno}
+                        </span>
+                      ) : isValidado2Turno ? (
+                        <span className="flex items-center gap-2 text-blue-700 font-semibold">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Chegadas validadas por {getNomeUsuario(validacao2TurnoHoje?.validado_por)} às {validacao2TurnoHoje?.hora_validacao}
+                        </span>
+                      ) : (
+                        <span className="text-slate-600 font-semibold">Validação pendente para distribuição de leads do 2º turno</span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {isValidado2Turno && !modoEdicao2Turno && horaAtual >= horarioDistribuicao2Turno && (
+                      <Button
+                        variant="outline"
+                        onClick={() => setModoEdicao2Turno(true)}
+                      >
+                        Alterar Validação
+                      </Button>
+                    )}
+                    <Button
+                      onClick={validarChegadas2Turno}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      disabled={vendedoresValidados2Turno.length === 0 || createValidacaoMutation.isPending || horaAtual < horarioDistribuicao2Turno}
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      {isValidado2Turno && !modoEdicao2Turno ? "Validado" : "Validar Chegadas"}
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Vendedor/Líder</TableHead>
+                        <TableHead>Check-in</TableHead>
+                        <TableHead>Hora</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-center">
+                          {isValidado2Turno && !modoEdicao2Turno ? "Validado" : "Ação"}
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vendedoresLideres.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-slate-500 py-8">
+                            Nenhum vendedor/líder cadastrado
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        vendedoresLideres.map(vendedor => {
+                          const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
+                          const isValidadoVendedor = vendedoresValidados2Turno.includes(vendedor.email);
+                          const podeEditar = (!isValidado2Turno || modoEdicao2Turno) && horaAtual >= horarioDistribuicao2Turno;
+                          
+                          return (
+                            <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-blue-50 border-l-4 border-blue-400" : "hover:bg-slate-50"}>
+                              <TableCell className="font-semibold text-slate-900">
+                                {vendedor.full_name || vendedor.email}
+                              </TableCell>
+                              <TableCell>
+                                {checkin ? (
+                                  checkin.dentro_prazo ? (
+                                    <Badge className="bg-emerald-500 text-white font-medium">
+                                      No Prazo
+                                    </Badge>
+                                  ) : (
+                                    <Badge className="bg-orange-500 text-white font-medium">
+                                      Fora do Prazo
+                                    </Badge>
+                                  )
+                                ) : (
+                                  <Badge variant="outline" className="bg-slate-100 text-slate-700 font-medium border-slate-300">
+                                    Sem Check-in
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="font-medium text-slate-900">
+                                {checkin ? (
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-slate-500" />
+                                    <span className="font-semibold">{checkin.hora}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-slate-400 text-sm font-medium">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {isValidadoVendedor ? (
+                                  <Badge className="bg-blue-500 text-white font-medium">
+                                    ✓ Validado
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="border-slate-300 text-slate-600 font-medium">
+                                    Não Validado
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Button
+                                  size="sm"
+                                  variant={isValidadoVendedor ? "outline" : "default"}
+                                  onClick={() => toggleVendedor2Turno(vendedor.email)}
+                                  disabled={!podeEditar}
+                                  className={`font-medium ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "border-slate-300 text-slate-700 hover:bg-slate-100" : "bg-[#EFC200] hover:bg-[#D4A900] text-black"}`}
+                                >
+                                  {isValidadoVendedor ? (
+                                    <>
+                                      <UserX className="w-4 h-4 mr-1" />
+                                      Remover
+                                    </>
+                                  ) : (
+                                    <>
+                                      <UserCheck className="w-4 h-4 mr-1" />
+                                      Adicionar
+                                    </>
+                                  )}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
+                    </TableBody>
+                  </Table>
+
+                  <div className="bg-slate-100 border-2 border-slate-300 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Users className="w-6 h-6 text-slate-800" />
+                      <span className="font-bold text-slate-900 text-lg">
+                        Total de vendedores validados (2º turno): <span className="text-[#EFC200] text-2xl">{vendedoresValidados2Turno.length}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* Distribuição Manual */}
