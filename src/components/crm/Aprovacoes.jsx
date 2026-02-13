@@ -52,8 +52,12 @@ export default function Aprovacoes({ userEmail, userFuncao }) {
       if (data.etapa === "venda_ativa") {
         const negociacao = negociacoes.find(n => n.id === id);
         if (negociacao) {
+          const user = users.find(u => u.email === negociacao.vendedor_email);
+          const nomeVendedor = user?.data?.nome_exibicao || user?.full_name || negociacao.vendedor_email;
+          
           createVendaMutation.mutate({
-            vendedor: negociacao.vendedor_email,
+            vendedor: nomeVendedor,
+            email_vendedor: negociacao.vendedor_email,
             data_venda: new Date().toISOString().split('T')[0],
             etapa: "pagamento_ok",
             cliente: negociacao.nome_cliente,
@@ -109,7 +113,7 @@ export default function Aprovacoes({ userEmail, userFuncao }) {
 
   const getNomeVendedor = (email) => {
     const user = users.find(u => u.email === email);
-    return user?.full_name || email;
+    return user?.data?.nome_exibicao || user?.full_name || email;
   };
 
   const handleAprovar = async () => {

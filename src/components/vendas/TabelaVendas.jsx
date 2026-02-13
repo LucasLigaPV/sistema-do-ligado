@@ -135,8 +135,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const vendas = userRole === "admin" 
     ? allVendas 
     : userFuncao === "lider"
-    ? allVendas.filter((v) => membrosEquipe.includes(v.vendedor))
-    : allVendas.filter(v => v.vendedor === userEmail);
+    ? allVendas.filter((v) => membrosEquipe.includes(v.email_vendedor))
+    : allVendas.filter(v => v.email_vendedor === userEmail);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Venda.update(id, data),
@@ -167,7 +167,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase());
     const matchConsultor = userFuncao === "lider" 
-      ? consultorFilter.length === 0 || consultorFilter.includes(venda.vendedor)
+      ? consultorFilter.length === 0 || consultorFilter.includes(venda.email_vendedor)
       : true;
     
     if (dataInicio && venda.data_venda) {
@@ -406,7 +406,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                         </TableCell>
                         {userFuncao === "lider" && (
                           <TableCell className="font-medium">
-                            {getNomeVendedor(venda.vendedor, users)}
+                            {venda.vendedor}
                           </TableCell>
                         )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
@@ -438,7 +438,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                             >
                               <Eye className="w-4 h-4 text-slate-500" />
                             </Button>
-                            {(userRole === "admin" || userFuncao === "lider" || venda.vendedor === userEmail) && (
+                            {(userRole === "admin" || userFuncao === "lider" || venda.email_vendedor === userEmail) && (
                               <Button
                                 variant="ghost"
                                 size="icon"
