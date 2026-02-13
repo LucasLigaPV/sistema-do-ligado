@@ -221,7 +221,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       "Não consegui contato",
       "Não solicitou cotação",
       "Bloqueado",
-      "Cliente oculto"
+      "Cliente oculto",
+      "Erro na Criação do Lead"
     ],
     lead_invalido: [
       "Veículo sem cobertura",
