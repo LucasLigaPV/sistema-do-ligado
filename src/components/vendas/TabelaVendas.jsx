@@ -75,7 +75,7 @@ const formatarValorExibicao = (valor) => {
 
 const getNomeVendedor = (email, users, minhaEquipe = []) => {
   const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
-  return user?.full_name || email;
+  return user?.nome_exibicao || user?.full_name || email;
 };
 
 export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
