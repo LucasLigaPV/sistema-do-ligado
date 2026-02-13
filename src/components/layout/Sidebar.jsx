@@ -24,6 +24,7 @@ import {
   Handshake,
   CheckCircle,
   Inbox,
+  XCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -309,20 +310,24 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 : "bg-red-50 border border-red-200"
             } ${!isOpen ? "text-center" : ""}`}>
               {isOpen ? (
-                <>
-                  <div className={`flex items-center gap-2 mb-1 ${
-                    checkinHoje.dentro_prazo ? "text-green-700" : "text-red-700"
-                  }`}>
+                <div className={`flex items-center justify-center gap-2 ${
+                  checkinHoje.dentro_prazo ? "text-green-700" : "text-red-700"
+                }`}>
+                  {checkinHoje.dentro_prazo ? (
                     <CheckCircle className="w-4 h-4" />
-                    <p className="text-xs font-semibold">
-                      {checkinHoje.dentro_prazo ? "Pronto para Leads" : "Fora do horário"}
-                    </p>
-                  </div>
-                </>
+                  ) : (
+                    <XCircle className="w-4 h-4" />
+                  )}
+                  <p className="text-xs font-semibold">
+                    {checkinHoje.dentro_prazo ? "Pronto para Leads" : "Fora do horário"}
+                  </p>
+                </div>
               ) : (
-                <CheckCircle className={`w-5 h-5 mx-auto ${
-                  checkinHoje.dentro_prazo ? "text-green-600" : "text-red-600"
-                }`} />
+                checkinHoje.dentro_prazo ? (
+                  <CheckCircle className="w-5 h-5 mx-auto text-green-600" />
+                ) : (
+                  <XCircle className="w-5 h-5 mx-auto text-red-600" />
+                )
               )}
             </div>
           ) : (
@@ -560,10 +565,14 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                     ? "bg-green-50 border border-green-200" 
                     : "bg-red-50 border border-red-200"
                 }`}>
-                  <div className={`flex items-center gap-2 ${
+                  <div className={`flex items-center justify-center gap-2 ${
                     checkinHoje.dentro_prazo ? "text-green-700" : "text-red-700"
                   }`}>
-                    <CheckCircle className="w-4 h-4" />
+                    {checkinHoje.dentro_prazo ? (
+                      <CheckCircle className="w-4 h-4" />
+                    ) : (
+                      <XCircle className="w-4 h-4" />
+                    )}
                     <p className="text-xs font-semibold">
                       {checkinHoje.dentro_prazo ? "Pronto para Leads" : "Fora do horário"}
                     </p>
