@@ -86,17 +86,17 @@ export default function Admin() {
                     <p className="text-slate-500">Visualize e acompanhe todas as indicações</p>
                   </div>
 
-                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                  <TabsList className="bg-transparent p-0 gap-2 h-auto border-b border-slate-200">
                     <TabsTrigger
                       value="indicacoes"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <TableIcon className="w-4 h-4" />
                       Indicações
                     </TabsTrigger>
                     <TabsTrigger
                       value="dashboard"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <BarChart3 className="w-4 h-4" />
                       Dashboard
@@ -122,24 +122,24 @@ export default function Admin() {
                     <p className="text-slate-500">Registre, acompanhe e gerencie suas vendas</p>
                   </div>
 
-                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                  <TabsList className="bg-transparent p-0 gap-2 h-auto border-b border-slate-200">
                     <TabsTrigger
                       value="registrar"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <TableIcon className="w-4 h-4" />
                       Registrar e Acompanhar
                     </TabsTrigger>
                     <TabsTrigger
                       value="resumo"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <FileText className="w-4 h-4" />
                       Resumo
                     </TabsTrigger>
                     <TabsTrigger
                       value="dashboard"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <BarChart3 className="w-4 h-4" />
                       Dashboard
@@ -147,7 +147,7 @@ export default function Admin() {
                     {(user?.funcao === "master") && (
                       <TabsTrigger
                         value="fechamentos"
-                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                       >
                         <ShieldCheck className="w-4 h-4" />
                         Fechamentos
@@ -182,17 +182,17 @@ export default function Admin() {
                     <p className="text-slate-500">Gerencie configurações do sistema</p>
                   </div>
 
-                  <TabsList className="bg-white shadow-md p-1.5 rounded-xl h-14">
+                  <TabsList className="bg-transparent p-0 gap-2 h-auto border-b border-slate-200">
                     <TabsTrigger
                       value="usuarios"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <Users className="w-4 h-4" />
                       Usuários
                     </TabsTrigger>
                     <TabsTrigger
                       value="edicao"
-                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                     >
                       <Settings className="w-4 h-4" />
                       Edição de Usuários
@@ -200,7 +200,7 @@ export default function Admin() {
                     {user?.funcao === "master" && (
                       <TabsTrigger
                         value="equipes"
-                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                        className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:border-[#EFC200] rounded-t-lg border-b-2 border-transparent px-6 py-3 bg-transparent hover:bg-slate-50 transition-colors"
                       >
                         <UsersRound className="w-4 h-4" />
                         Equipes
