@@ -319,16 +319,23 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
           ) : (
             <Button
               variant="ghost"
-              className={`w-full gap-3 hover:bg-slate-100 relative ${
-                !isOpen ? "justify-center" : "justify-start"
+              className={`w-full gap-3 hover:bg-slate-100 ${
+                !isOpen ? "justify-center" : "justify-between"
               }`}
               onClick={() => setShowCheckinModal(true)}
             >
-              <Inbox className="w-5 h-5 flex-shrink-0" />
-              {isOpen && <span>Receber Leads</span>}
-              <span className="absolute top-1 right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
-                <span className="text-white text-xs font-bold">!</span>
-              </span>
+              <div className="flex items-center gap-3">
+                <Inbox className="w-5 h-5 flex-shrink-0" />
+                {isOpen && <span>Receber Leads</span>}
+              </div>
+              {isOpen && (
+                <span className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                  <span className="text-white text-xs font-bold">!</span>
+                </span>
+              )}
+              {!isOpen && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse shadow-lg" />
+              )}
             </Button>
           )}
           
@@ -549,12 +556,14 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
               ) : (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 hover:bg-slate-100 mb-2 relative"
+                  className="w-full justify-between gap-3 hover:bg-slate-100 mb-2"
                   onClick={() => setShowCheckinModal(true)}
                 >
-                  <Inbox className="w-5 h-5" />
-                  <span>Receber Leads</span>
-                  <span className="absolute top-1 right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                  <div className="flex items-center gap-3">
+                    <Inbox className="w-5 h-5" />
+                    <span>Receber Leads</span>
+                  </div>
+                  <span className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
                     <span className="text-white text-xs font-bold">!</span>
                   </span>
                 </Button>
