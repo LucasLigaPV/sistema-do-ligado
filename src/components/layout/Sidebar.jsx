@@ -303,17 +303,26 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
         {/* User Section */}
         <div className="p-3 border-t space-y-2">
           {checkinHoje ? (
-            <div className={`px-3 py-2 mb-2 rounded-lg bg-green-50 border border-green-200 ${!isOpen ? "text-center" : ""}`}>
+            <div className={`px-3 py-2 mb-2 rounded-lg ${
+              checkinHoje.dentro_prazo 
+                ? "bg-green-50 border border-green-200" 
+                : "bg-red-50 border border-red-200"
+            } ${!isOpen ? "text-center" : ""}`}>
               {isOpen ? (
                 <>
-                  <div className="flex items-center gap-2 text-green-700 mb-1">
+                  <div className={`flex items-center gap-2 mb-1 ${
+                    checkinHoje.dentro_prazo ? "text-green-700" : "text-red-700"
+                  }`}>
                     <CheckCircle className="w-4 h-4" />
-                    <p className="text-xs font-semibold">Pronto para Leads</p>
+                    <p className="text-xs font-semibold">
+                      {checkinHoje.dentro_prazo ? "Pronto para Leads" : "Fora do horário"}
+                    </p>
                   </div>
-                  <p className="text-xs text-green-600">Check-in: {checkinHoje.hora}</p>
                 </>
               ) : (
-                <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
+                <CheckCircle className={`w-5 h-5 mx-auto ${
+                  checkinHoje.dentro_prazo ? "text-green-600" : "text-red-600"
+                }`} />
               )}
             </div>
           ) : (
@@ -546,12 +555,19 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             {/* User Section */}
             <div className="p-3 border-t space-y-2">
               {checkinHoje ? (
-                <div className="px-3 py-3 mb-2 rounded-lg bg-green-50 border border-green-200">
-                  <div className="flex items-center gap-2 text-green-700 mb-1">
+                <div className={`px-3 py-3 mb-2 rounded-lg ${
+                  checkinHoje.dentro_prazo 
+                    ? "bg-green-50 border border-green-200" 
+                    : "bg-red-50 border border-red-200"
+                }`}>
+                  <div className={`flex items-center gap-2 ${
+                    checkinHoje.dentro_prazo ? "text-green-700" : "text-red-700"
+                  }`}>
                     <CheckCircle className="w-4 h-4" />
-                    <p className="text-xs font-semibold">Pronto para Leads</p>
+                    <p className="text-xs font-semibold">
+                      {checkinHoje.dentro_prazo ? "Pronto para Leads" : "Fora do horário"}
+                    </p>
                   </div>
-                  <p className="text-xs text-green-600">Check-in: {checkinHoje.hora}</p>
                 </div>
               ) : (
                 <Button
