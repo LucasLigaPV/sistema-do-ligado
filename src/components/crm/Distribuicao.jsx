@@ -795,12 +795,12 @@ export default function Distribuicao({ userFuncao }) {
                   <CardTitle>Validação de Chegada {agora.getDay() === 6 ? "(Sábado)" : "(1º Turno)"} - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
                   <p className="text-sm text-slate-700 mt-1 font-medium">
                     {isValidado ? (
-                      <span className="flex items-center gap-2 text-blue-700 font-semibold">
+                      <span className="flex items-center gap-2 text-slate-700 font-medium">
                         <CheckCircle2 className="w-4 h-4" />
-                        Chegadas validadas por {getNomeUsuario(validacaoHoje?.validado_por)} às {validacaoHoje?.hora_validacao}
+                        Validado por {getNomeUsuario(validacaoHoje?.validado_por)} às {validacaoHoje?.hora_validacao}
                       </span>
                     ) : (
-                      <span className="text-slate-600 font-semibold">Validação pendente para distribuição de leads</span>
+                      <span className="text-slate-500 font-medium">Validação pendente</span>
                     )}
                   </p>
                 </div>
@@ -815,7 +815,7 @@ export default function Distribuicao({ userFuncao }) {
                   )}
                   <Button
                     onClick={validarChegadas}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-slate-900 hover:bg-slate-800 text-white"
                     disabled={vendedoresValidados.length === 0 || createValidacaoMutation.isPending}
                   >
                     <Shield className="w-4 h-4 mr-2" />
@@ -859,16 +859,16 @@ export default function Distribuicao({ userFuncao }) {
                             <TableCell>
                               {checkin ? (
                                 checkin.dentro_prazo ? (
-                                  <Badge className="bg-emerald-500 text-white font-medium">
-                                    No Prazo
+                                  <Badge variant="outline" className="border-slate-300 text-slate-700 font-medium">
+                                    ✓ No Prazo
                                   </Badge>
                                 ) : (
-                                  <Badge className="bg-orange-500 text-white font-medium">
+                                  <Badge variant="outline" className="border-slate-300 text-slate-600 font-medium">
                                     Fora do Prazo
                                   </Badge>
                                 )
                               ) : (
-                                <Badge variant="outline" className="bg-slate-100 text-slate-700 font-medium border-slate-300">
+                                <Badge variant="outline" className="border-slate-200 text-slate-400 font-medium">
                                   Sem Check-in
                                 </Badge>
                               )}
@@ -885,22 +885,22 @@ export default function Distribuicao({ userFuncao }) {
                             </TableCell>
                             <TableCell>
                               {isValidadoVendedor ? (
-                                <Badge className="bg-blue-500 text-white font-medium">
+                                <Badge variant="outline" className="border-slate-400 text-slate-900 font-semibold">
                                   ✓ Validado
                                 </Badge>
                               ) : (
-                                <Badge variant="outline" className="border-slate-300 text-slate-600 font-medium">
-                                  Não Validado
+                                <Badge variant="outline" className="border-slate-200 text-slate-400 font-medium">
+                                  Pendente
                                 </Badge>
                               )}
                             </TableCell>
                             <TableCell className="text-center">
                               <Button
                                 size="sm"
-                                variant={isValidadoVendedor ? "outline" : "default"}
+                                variant="outline"
                                 onClick={() => toggleVendedor(vendedor.email)}
                                 disabled={!podeEditar}
-                                className={`font-medium ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "border-slate-300 text-slate-700 hover:bg-slate-100" : "bg-[#EFC200] hover:bg-[#D4A900] text-black"}`}
+                                className={`font-medium border-slate-300 hover:bg-slate-100 ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "text-slate-900" : "text-slate-600"}`}
                               >
                                 {isValidadoVendedor ? (
                                   <>
@@ -922,11 +922,11 @@ export default function Distribuicao({ userFuncao }) {
                   </TableBody>
                 </Table>
 
-                <div className="bg-slate-100 border-2 border-slate-300 rounded-lg p-4 flex items-center justify-between">
+                <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between bg-white">
                   <div className="flex items-center gap-3">
-                    <Users className="w-6 h-6 text-slate-800" />
-                    <span className="font-bold text-slate-900 text-lg">
-                      Total de vendedores validados: <span className="text-[#EFC200] text-2xl">{vendedoresValidados.length}</span>
+                    <Users className="w-5 h-5 text-slate-500" />
+                    <span className="font-semibold text-slate-700 text-base">
+                      Total de vendedores validados: <span className="text-slate-900 text-xl font-bold ml-1">{vendedoresValidados.length}</span>
                     </span>
                   </div>
                 </div>
@@ -943,17 +943,17 @@ export default function Distribuicao({ userFuncao }) {
                     <CardTitle>Validação de Chegada (2º Turno) - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
                     <p className="text-sm text-slate-700 mt-1 font-medium">
                       {horaAtual < horarioDistribuicao2Turno ? (
-                        <span className="text-amber-600 font-semibold flex items-center gap-2">
+                        <span className="text-slate-500 font-medium flex items-center gap-2">
                           <Clock className="w-4 h-4" />
                           Disponível a partir de {horarioDistribuicao2Turno}
                         </span>
                       ) : isValidado2Turno ? (
-                        <span className="flex items-center gap-2 text-blue-700 font-semibold">
+                        <span className="flex items-center gap-2 text-slate-700 font-medium">
                           <CheckCircle2 className="w-4 h-4" />
-                          Chegadas validadas por {getNomeUsuario(validacao2TurnoHoje?.validado_por)} às {validacao2TurnoHoje?.hora_validacao}
+                          Validado por {getNomeUsuario(validacao2TurnoHoje?.validado_por)} às {validacao2TurnoHoje?.hora_validacao}
                         </span>
                       ) : (
-                        <span className="text-slate-600 font-semibold">Validação pendente para distribuição de leads do 2º turno</span>
+                        <span className="text-slate-500 font-medium">Validação pendente</span>
                       )}
                     </p>
                   </div>
@@ -968,7 +968,7 @@ export default function Distribuicao({ userFuncao }) {
                     )}
                     <Button
                       onClick={validarChegadas2Turno}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="bg-slate-900 hover:bg-slate-800 text-white"
                       disabled={vendedoresValidados2Turno.length === 0 || createValidacaoMutation.isPending || horaAtual < horarioDistribuicao2Turno}
                     >
                       <Shield className="w-4 h-4 mr-2" />
@@ -1005,8 +1005,8 @@ export default function Distribuicao({ userFuncao }) {
                           const podeEditar = (!isValidado2Turno || modoEdicao2Turno) && horaAtual >= horarioDistribuicao2Turno;
                           
                           return (
-                            <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-blue-50 border-l-4 border-blue-400" : "hover:bg-slate-50"}>
-                              <TableCell className="font-semibold text-slate-900">
+                            <TableRow key={vendedor.email} className={isValidadoVendedor ? "bg-slate-50/50 border-l-2 border-slate-400" : "hover:bg-slate-50/30"}>
+                              <TableCell className="font-medium text-slate-900">
                                 {vendedor.full_name || vendedor.email}
                               </TableCell>
                               <TableCell>
@@ -1075,11 +1075,11 @@ export default function Distribuicao({ userFuncao }) {
                     </TableBody>
                   </Table>
 
-                  <div className="bg-slate-100 border-2 border-slate-300 rounded-lg p-4 flex items-center justify-between">
+                  <div className="border border-slate-200 rounded-lg p-4 flex items-center justify-between bg-white">
                     <div className="flex items-center gap-3">
-                      <Users className="w-6 h-6 text-slate-800" />
-                      <span className="font-bold text-slate-900 text-lg">
-                        Total de vendedores validados (2º turno): <span className="text-[#EFC200] text-2xl">{vendedoresValidados2Turno.length}</span>
+                      <Users className="w-5 h-5 text-slate-500" />
+                      <span className="font-semibold text-slate-700 text-base">
+                        Total de vendedores validados (2º turno): <span className="text-slate-900 text-xl font-bold ml-1">{vendedoresValidados2Turno.length}</span>
                       </span>
                     </div>
                   </div>
