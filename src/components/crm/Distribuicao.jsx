@@ -166,6 +166,7 @@ export default function Distribuicao({ userFuncao }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["validacoes_chegada"] });
       setModoEdicao(false);
+      setModoEdicao2Turno(false);
     },
   });
 
@@ -622,8 +623,8 @@ export default function Distribuicao({ userFuncao }) {
 
                     <button
                       onClick={distribuirLeads}
-                      disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao2Turno}
-                      title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao2Turno ? `Disponível a partir de ${horarioDistribuicao2Turno}` : ""}
+                      disabled={leadsNaoDistribuidos.length === 0 || !isValidado2Turno || horaAtual < horarioDistribuicao2Turno}
+                      title={!isValidado2Turno ? "É necessário validar as chegadas do 2º turno primeiro" : horaAtual < horarioDistribuicao2Turno ? `Disponível a partir de ${horarioDistribuicao2Turno}` : ""}
                       className="flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
                     >
                       <div className="flex items-center gap-3">
