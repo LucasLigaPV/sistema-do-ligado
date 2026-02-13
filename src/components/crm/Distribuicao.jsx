@@ -405,7 +405,7 @@ export default function Distribuicao({ userFuncao }) {
 
   const getNomeUsuario = (email) => {
     const user = users.find(u => u.email === email);
-    return user?.full_name || email;
+    return user?.nome_exibicao || user?.full_name || email;
   };
 
   const salvarConfiguracao = (tipo, valor) => {
