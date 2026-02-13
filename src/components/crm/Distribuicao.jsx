@@ -992,13 +992,12 @@ export default function Distribuicao({ userFuncao }) {
                     <TableBody>
                       {vendedoresLideres.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-slate-500 py-8">
+                          <TableCell colSpan={3} className="text-center text-slate-500 py-8">
                             Nenhum vendedor/líder cadastrado
                           </TableCell>
                         </TableRow>
                       ) : (
                         vendedoresLideres.map(vendedor => {
-                          const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
                           const isValidadoVendedor = vendedoresValidados2Turno.includes(vendedor.email);
                           const podeEditar = (!isValidado2Turno || modoEdicao2Turno) && horaAtual >= horarioDistribuicao2Turno;
                           
@@ -1008,50 +1007,23 @@ export default function Distribuicao({ userFuncao }) {
                                 {vendedor.full_name || vendedor.email}
                               </TableCell>
                               <TableCell>
-                                {checkin ? (
-                                  checkin.dentro_prazo ? (
-                                    <Badge className="bg-emerald-500 text-white font-medium">
-                                      No Prazo
-                                    </Badge>
-                                  ) : (
-                                    <Badge className="bg-orange-500 text-white font-medium">
-                                      Fora do Prazo
-                                    </Badge>
-                                  )
-                                ) : (
-                                  <Badge variant="outline" className="bg-slate-100 text-slate-700 font-medium border-slate-300">
-                                    Sem Check-in
-                                  </Badge>
-                                )}
-                              </TableCell>
-                              <TableCell className="font-medium text-slate-900">
-                                {checkin ? (
-                                  <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-slate-500" />
-                                    <span className="font-semibold">{checkin.hora}</span>
-                                  </div>
-                                ) : (
-                                  <span className="text-slate-400 text-sm font-medium">-</span>
-                                )}
-                              </TableCell>
-                              <TableCell>
                                 {isValidadoVendedor ? (
-                                  <Badge className="bg-blue-500 text-white font-medium">
+                                  <Badge variant="outline" className="border-slate-400 text-slate-900 font-semibold">
                                     ✓ Validado
                                   </Badge>
                                 ) : (
-                                  <Badge variant="outline" className="border-slate-300 text-slate-600 font-medium">
-                                    Não Validado
+                                  <Badge variant="outline" className="border-slate-200 text-slate-400 font-medium">
+                                    Pendente
                                   </Badge>
                                 )}
                               </TableCell>
                               <TableCell className="text-center">
                                 <Button
                                   size="sm"
-                                  variant={isValidadoVendedor ? "outline" : "default"}
+                                  variant="outline"
                                   onClick={() => toggleVendedor2Turno(vendedor.email)}
                                   disabled={!podeEditar}
-                                  className={`font-medium ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "border-slate-300 text-slate-700 hover:bg-slate-100" : "bg-[#EFC200] hover:bg-[#D4A900] text-black"}`}
+                                  className={`font-medium border-slate-300 hover:bg-slate-100 ${!podeEditar ? "opacity-50 cursor-not-allowed" : ""} ${isValidadoVendedor ? "text-slate-900" : "text-slate-600"}`}
                                 >
                                   {isValidadoVendedor ? (
                                     <>
