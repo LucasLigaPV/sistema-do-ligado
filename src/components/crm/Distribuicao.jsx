@@ -519,13 +519,13 @@ export default function Distribuicao({ userFuncao }) {
             <TrendingUp className="w-4 h-4" />
             Dashboard
           </TabsTrigger>
-          <TabsTrigger value="manual" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
-            <Send className="w-4 h-4" />
-            Distribuição Manual
-          </TabsTrigger>
           <TabsTrigger value="checkins" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
             <UserCheck className="w-4 h-4" />
             Validação de Chegada
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
+            <Send className="w-4 h-4" />
+            Distribuição Manual
           </TabsTrigger>
           <TabsTrigger value="configuracoes" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
             <Settings className="w-4 h-4" />
@@ -696,118 +696,6 @@ export default function Distribuicao({ userFuncao }) {
           </Card>
         </TabsContent>
 
-        {/* Distribuição Manual */}
-        <TabsContent value="manual" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribuição Manual de Leads</CardTitle>
-              <p className="text-sm text-slate-600">
-                Distribua leads manualmente para vendedores específicos. Os leads enviados manualmente terão prioridade na próxima distribuição automática.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-5 h-5 text-blue-700" />
-                    <span className="font-semibold text-blue-900">
-                      Leads disponíveis na fila: {leadsNaoDistribuidos.length}
-                    </span>
-                  </div>
-                  <p className="text-sm text-blue-800">
-                    {horaAtual < horarioLimiteSemana
-                      ? `Período da manhã - Distribuindo leads até ${horarioLimiteSemana}`
-                      : horaAtual < horarioLimiteTarde
-                      ? `Aguardando horário da tarde (${horarioLimiteTarde}) para distribuir novos leads`
-                      : `Período da tarde - Distribuindo leads após ${horarioLimiteSemana}`
-                    }
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label>Vendedor</Label>
-                    <select
-                      className="w-full px-3 py-2 border rounded-md bg-white"
-                      value={vendedorSelecionado}
-                      onChange={(e) => setVendedorSelecionado(e.target.value)}
-                    >
-                      <option value="">Selecione um vendedor</option>
-                      {vendedoresLideres.map(v => (
-                        <option key={v.email} value={v.email}>
-                          {v.full_name || v.email}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Quantidade de Leads</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      max={leadsNaoDistribuidos.length}
-                      value={quantidadeLeads}
-                      onChange={(e) => setQuantidadeLeads(parseInt(e.target.value) || 1)}
-                    />
-                    <p className="text-xs text-slate-500">
-                      Máximo disponível: {leadsNaoDistribuidos.length}
-                    </p>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={distribuirManual}
-                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold h-12 text-lg"
-                  disabled={!vendedorSelecionado || quantidadeLeads < 1 || leadsNaoDistribuidos.length === 0}
-                >
-                  <Send className="w-5 h-5 mr-2" />
-                  Enviar {quantidadeLeads} Lead(s)
-                </Button>
-
-                <div className="border-t pt-4">
-                  <h4 className="font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5" />
-                    Vendedores e Performance
-                  </h4>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Vendedor</TableHead>
-                        <TableHead>Taxa Conversão</TableHead>
-                        <TableHead>Negociações</TableHead>
-                        <TableHead>Vendas</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {vendedoresLideres.map(vendedor => {
-                        const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === vendedor.email);
-                        const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
-                        const taxaConversao = calcularTaxaConversao(vendedor.email);
-
-                        return (
-                          <TableRow key={vendedor.email}>
-                            <TableCell className="font-medium">
-                              {vendedor.full_name || vendedor.email}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="font-semibold">
-                                {taxaConversao}%
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{negociacoesVendedor.length}</TableCell>
-                            <TableCell>{vendasVendedor.length}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Validação de Chegada */}
         <TabsContent value="checkins" className="space-y-4">
           <Card>
@@ -951,6 +839,118 @@ export default function Distribuicao({ userFuncao }) {
                       Total de vendedores validados: <span className="text-[#EFC200] text-2xl">{vendedoresValidados.length}</span>
                     </span>
                   </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Distribuição Manual */}
+        <TabsContent value="manual" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Distribuição Manual de Leads</CardTitle>
+              <p className="text-sm text-slate-600">
+                Distribua leads manualmente para vendedores específicos. Os leads enviados manualmente terão prioridade na próxima distribuição automática.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="w-5 h-5 text-blue-700" />
+                    <span className="font-semibold text-blue-900">
+                      Leads disponíveis na fila: {leadsNaoDistribuidos.length}
+                    </span>
+                  </div>
+                  <p className="text-sm text-blue-800">
+                    {horaAtual < horarioLimiteSemana
+                      ? `Período da manhã - Distribuindo leads até ${horarioLimiteSemana}`
+                      : horaAtual < horarioLimiteTarde
+                      ? `Aguardando horário da tarde (${horarioLimiteTarde}) para distribuir novos leads`
+                      : `Período da tarde - Distribuindo leads após ${horarioLimiteSemana}`
+                    }
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Vendedor</Label>
+                    <select
+                      className="w-full px-3 py-2 border rounded-md bg-white"
+                      value={vendedorSelecionado}
+                      onChange={(e) => setVendedorSelecionado(e.target.value)}
+                    >
+                      <option value="">Selecione um vendedor</option>
+                      {vendedoresLideres.map(v => (
+                        <option key={v.email} value={v.email}>
+                          {v.full_name || v.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Quantidade de Leads</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max={leadsNaoDistribuidos.length}
+                      value={quantidadeLeads}
+                      onChange={(e) => setQuantidadeLeads(parseInt(e.target.value) || 1)}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Máximo disponível: {leadsNaoDistribuidos.length}
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={distribuirManual}
+                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold h-12 text-lg"
+                  disabled={!vendedorSelecionado || quantidadeLeads < 1 || leadsNaoDistribuidos.length === 0}
+                >
+                  <Send className="w-5 h-5 mr-2" />
+                  Enviar {quantidadeLeads} Lead(s)
+                </Button>
+
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Vendedores e Performance
+                  </h4>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Vendedor</TableHead>
+                        <TableHead>Taxa Conversão</TableHead>
+                        <TableHead>Negociações</TableHead>
+                        <TableHead>Vendas</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vendedoresLideres.map(vendedor => {
+                        const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === vendedor.email);
+                        const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
+                        const taxaConversao = calcularTaxaConversao(vendedor.email);
+
+                        return (
+                          <TableRow key={vendedor.email}>
+                            <TableCell className="font-medium">
+                              {vendedor.full_name || vendedor.email}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="font-semibold">
+                                {taxaConversao}%
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{negociacoesVendedor.length}</TableCell>
+                            <TableCell>{vendasVendedor.length}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             </CardContent>
