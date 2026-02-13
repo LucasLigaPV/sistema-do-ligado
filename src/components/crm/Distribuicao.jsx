@@ -225,6 +225,9 @@ export default function Distribuicao({ userFuncao }) {
   const horarioLimiteSabado = getConfig("horario_limite_sabado", "10:30");
   const limiteLeadsSabado = getConfig("limite_leads_sabado", "5");
   const horarioLimiteTarde = getConfig("horario_limite_tarde", "14:00");
+  const horarioDistribuicao1Turno = getConfig("horario_distribuicao_1turno", "10:35");
+  const horarioDistribuicao2Turno = getConfig("horario_distribuicao_2turno", "14:05");
+  const horarioDistribuicaoSabado = getConfig("horario_distribuicao_sabado", "10:35");
 
   // Leads não distribuídos - filtrar por período (manhã/tarde)
   const agora = new Date();
@@ -532,6 +535,78 @@ export default function Distribuicao({ userFuncao }) {
 
         {/* Dashboard */}
         <TabsContent value="dashboard" className="space-y-4">
+          {/* Botões de Distribuição */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Distribuição de Leads</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Botões Segunda a Sexta */}
+                {agora.getDay() !== 6 && agora.getDay() !== 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button
+                      onClick={distribuirLeads}
+                      className="bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
+                      disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao1Turno}
+                      title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao1Turno ? `Disponível a partir de ${horarioDistribuicao1Turno}` : ""}
+                    >
+                      <PlayCircle className="w-5 h-5 mr-2" />
+                      Distribuir Leads 1º Turno
+                      {horaAtual < horarioDistribuicao1Turno && (
+                        <Badge className="ml-2 bg-slate-600">
+                          Disponível às {horarioDistribuicao1Turno}
+                        </Badge>
+                      )}
+                    </Button>
+
+                    <Button
+                      onClick={distribuirLeads}
+                      className="bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
+                      disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao2Turno}
+                      title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao2Turno ? `Disponível a partir de ${horarioDistribuicao2Turno}` : ""}
+                    >
+                      <PlayCircle className="w-5 h-5 mr-2" />
+                      Distribuir Leads 2º Turno
+                      {horaAtual < horarioDistribuicao2Turno && (
+                        <Badge className="ml-2 bg-slate-600">
+                          Disponível às {horarioDistribuicao2Turno}
+                        </Badge>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Botão Sábado */}
+                {agora.getDay() === 6 && (
+                  <Button
+                    onClick={distribuirLeads}
+                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
+                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
+                    title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
+                  >
+                    <PlayCircle className="w-5 h-5 mr-2" />
+                    Distribuir Leads Sábado ({limiteLeadsSabado} leads por vendedor)
+                    {horaAtual < horarioDistribuicaoSabado && (
+                      <Badge className="ml-2 bg-slate-600">
+                        Disponível às {horarioDistribuicaoSabado}
+                      </Badge>
+                    )}
+                  </Button>
+                )}
+
+                {!isValidado && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
+                    <Shield className="w-5 h-5" />
+                    <span>
+                      Para distribuir leads, é necessário validar as chegadas primeiro na aba "Validação de Chegada"
+                    </span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-3">
@@ -566,28 +641,7 @@ export default function Distribuicao({ userFuncao }) {
 
           <Card>
             <CardHeader>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
-                  <Button
-                    onClick={distribuirLeads}
-                    className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado}
-                    title={!isValidado ? "É necessário validar as chegadas primeiro" : ""}
-                  >
-                    <PlayCircle className="w-4 h-4 mr-2" />
-                    Distribuir Leads
-                  </Button>
-                </div>
-                {!isValidado && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
-                    <Shield className="w-5 h-5" />
-                    <span>
-                      Para distribuir leads, é necessário validar as chegadas primeiro na aba "Validação de Chegada"
-                    </span>
-                  </div>
-                )}
-              </div>
+              <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -905,38 +959,91 @@ export default function Distribuicao({ userFuncao }) {
 
         {/* Configurações */}
         <TabsContent value="configuracoes" className="space-y-4">
+          {/* Regras Segunda a Sexta */}
           <Card>
             <CardHeader>
-              <CardTitle>Regras de Distribuição</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Regras de Segunda a Sexta
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>Horário Limite (Segunda a Sexta)</Label>
+                  <Label className="font-semibold">Horário Limite</Label>
                   <Input
                     type="time"
                     defaultValue={horarioLimiteSemana}
                     onBlur={(e) => salvarConfiguracao("horario_limite_semana", e.target.value)}
                   />
                   <p className="text-xs text-slate-500">
-                    Check-ins após este horário não receberão leads
+                    Horário que qualifica ou desqualifica um vendedor para receber leads de acordo com o horário do seu check-in
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Horário Limite (Sábado)</Label>
+                  <Label className="font-semibold">Horário Distribuição 1º Turno</Label>
+                  <Input
+                    type="time"
+                    defaultValue={horarioDistribuicao1Turno}
+                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_1turno", e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500">
+                    Horário que libera o botão de distribuir leads do 1º turno no dashboard
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-semibold">Horário Distribuição 2º Turno</Label>
+                  <Input
+                    type="time"
+                    defaultValue={horarioDistribuicao2Turno}
+                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_2turno", e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500">
+                    Horário que libera o botão de distribuir leads do 2º turno no dashboard
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Regras Sábado */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Regras de Sábado
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="font-semibold">Horário Limite</Label>
                   <Input
                     type="time"
                     defaultValue={horarioLimiteSabado}
                     onBlur={(e) => salvarConfiguracao("horario_limite_sabado", e.target.value)}
                   />
                   <p className="text-xs text-slate-500">
-                    Check-ins após este horário não receberão leads
+                    Horário que qualifica ou desqualifica um vendedor para receber leads de acordo com o horário do seu check-in
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Limite de Leads (Sábado)</Label>
+                  <Label className="font-semibold">Horário Distribuição Sábado</Label>
+                  <Input
+                    type="time"
+                    defaultValue={horarioDistribuicaoSabado}
+                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_sabado", e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500">
+                    Horário que libera o botão de distribuir leads do sábado no dashboard
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-semibold">Limite de Leads</Label>
                   <Input
                     type="number"
                     defaultValue={limiteLeadsSabado}
@@ -945,45 +1052,9 @@ export default function Distribuicao({ userFuncao }) {
                     max="20"
                   />
                   <p className="text-xs text-slate-500">
-                    Quantidade máxima de leads por vendedor aos sábados
+                    Quantidade exata de leads distribuídos para cada vendedor aos sábados, ignorando taxa de conversão
                   </p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Horário Distribuição da Tarde</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioLimiteTarde}
-                    onBlur={(e) => salvarConfiguracao("horario_limite_tarde", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário para distribuir leads que chegaram após o período da manhã
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">
-                <h4 className="font-semibold text-blue-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  Regras Atuais
-                </h4>
-                <ul className="text-sm text-blue-800 space-y-1">
-                  <li>
-                    <strong>Segunda a Sexta:</strong> Distribuição por taxa de conversão para quem fizer check-in até {horarioLimiteSemana}
-                  </li>
-                  <li>
-                    <strong>Horário da Manhã:</strong> Leads que chegam até {horarioLimiteSemana} são distribuídos no período da manhã
-                  </li>
-                  <li>
-                    <strong>Horário da Tarde:</strong> Leads que chegam após {horarioLimiteSemana} são distribuídos a partir de {horarioLimiteTarde}
-                  </li>
-                  <li>
-                    <strong>Sábado:</strong> Máximo {limiteLeadsSabado} leads por vendedor que fizer check-in até {horarioLimiteSabado}
-                  </li>
-                  <li>
-                    <strong>Domingo:</strong> Sem distribuição
-                  </li>
-                </ul>
               </div>
             </CardContent>
           </Card>
