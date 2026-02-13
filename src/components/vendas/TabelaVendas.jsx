@@ -106,21 +106,14 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
   const { data: users = [] } = useQuery({
-    queryKey: ["users", membrosEquipe],
+    queryKey: ["users"],
     queryFn: async () => {
-      if (!membrosEquipe.length) return [];
       try {
-        // Busca cada usuário individualmente por email
-        const usuarioPromises = membrosEquipe.map(email =>
-          base44.entities.User.filter({ email }).then(result => result[0] || null)
-        );
-        const results = await Promise.all(usuarioPromises);
-        return results.filter(Boolean);
+        return await base44.entities.User.list();
       } catch {
         return [];
       }
     },
-    enabled: membrosEquipe.length > 0,
   });
 
   const [consultorFilter, setConsultorFilter] = useState(
@@ -294,7 +287,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                           ? "Todos da Equipe" 
                           : consultorFilter.map(email => {
                               const user = users.find(u => u.email === email);
-                              return user?.full_name || email;
+                              return user?.nome_exibicao || user?.full_name || email;
                             }).join(", ")}
                       </span>
                       <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
