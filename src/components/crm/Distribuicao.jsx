@@ -538,66 +538,87 @@ export default function Distribuicao({ userFuncao }) {
           {/* Botões de Distribuição */}
           <Card>
             <CardHeader>
-              <CardTitle>Distribuição de Leads</CardTitle>
+              <CardTitle className="text-lg font-semibold text-slate-800">Distribuição de Leads</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Botões Segunda a Sexta */}
                 {agora.getDay() !== 6 && agora.getDay() !== 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button
                       onClick={distribuirLeads}
-                      className="bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
                       disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao1Turno}
                       title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao1Turno ? `Disponível a partir de ${horarioDistribuicao1Turno}` : ""}
+                      className="flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
                     >
-                      <PlayCircle className="w-5 h-5 mr-2" />
-                      Distribuir Leads 1º Turno
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                          <PlayCircle className="w-5 h-5 text-slate-600" />
+                        </div>
+                        <div className="text-left">
+                          <div className="font-medium text-slate-900">1º Turno</div>
+                          <div className="text-xs text-slate-500">Distribuir leads da manhã</div>
+                        </div>
+                      </div>
                       {horaAtual < horarioDistribuicao1Turno && (
-                        <Badge className="ml-2 bg-slate-600">
-                          Disponível às {horarioDistribuicao1Turno}
+                        <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
+                          {horarioDistribuicao1Turno}
                         </Badge>
                       )}
-                    </Button>
+                    </button>
 
-                    <Button
+                    <button
                       onClick={distribuirLeads}
-                      className="bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
                       disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao2Turno}
                       title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao2Turno ? `Disponível a partir de ${horarioDistribuicao2Turno}` : ""}
+                      className="flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
                     >
-                      <PlayCircle className="w-5 h-5 mr-2" />
-                      Distribuir Leads 2º Turno
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                          <PlayCircle className="w-5 h-5 text-slate-600" />
+                        </div>
+                        <div className="text-left">
+                          <div className="font-medium text-slate-900">2º Turno</div>
+                          <div className="text-xs text-slate-500">Distribuir leads da tarde</div>
+                        </div>
+                      </div>
                       {horaAtual < horarioDistribuicao2Turno && (
-                        <Badge className="ml-2 bg-slate-600">
-                          Disponível às {horarioDistribuicao2Turno}
+                        <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
+                          {horarioDistribuicao2Turno}
                         </Badge>
                       )}
-                    </Button>
+                    </button>
                   </div>
                 )}
 
                 {/* Botão Sábado */}
-                <Button
+                <button
                   onClick={distribuirLeads}
-                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
                   disabled={agora.getDay() !== 6 || leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
                   title={agora.getDay() !== 6 ? "Disponível apenas aos sábados" : !isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
                 >
-                  <PlayCircle className="w-5 h-5 mr-2" />
-                  Distribuir Leads Sábado ({limiteLeadsSabado} leads por vendedor)
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                      <PlayCircle className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-medium text-slate-900">Sábado</div>
+                      <div className="text-xs text-slate-500">{limiteLeadsSabado} leads por vendedor</div>
+                    </div>
+                  </div>
                   {agora.getDay() === 6 && horaAtual < horarioDistribuicaoSabado && (
-                    <Badge className="ml-2 bg-slate-600">
-                      Disponível às {horarioDistribuicaoSabado}
+                    <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
+                      {horarioDistribuicaoSabado}
                     </Badge>
                   )}
-                </Button>
+                </button>
 
                 {!isValidado && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
-                    <Shield className="w-5 h-5" />
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
+                    <Shield className="w-4 h-4 text-slate-500" />
                     <span>
-                      Para distribuir leads, é necessário validar as chegadas primeiro na aba "Validação de Chegada"
+                      É necessário validar as chegadas primeiro na aba "Validação de Chegada"
                     </span>
                   </div>
                 )}
