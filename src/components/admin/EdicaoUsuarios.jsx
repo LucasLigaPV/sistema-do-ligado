@@ -33,7 +33,7 @@ export default function EdicaoUsuarios() {
 
   const abrirEdicao = (usuario) => {
     setUsuarioEditando(usuario);
-    setNomeCompleto(usuario.Nome_Completo || "");
+    setNomeCompleto(usuario.nome_exibicao || "");
     setDialogAberto(true);
   };
 
@@ -42,7 +42,7 @@ export default function EdicaoUsuarios() {
 
     updateUserMutation.mutate({
       id: usuarioEditando.id,
-      data: { Nome_Completo: nomeCompleto }
+      data: { nome_exibicao: nomeCompleto }
     });
   };
 
@@ -77,7 +77,7 @@ export default function EdicaoUsuarios() {
                 <TableRow key={usuario.id}>
                   <TableCell className="font-medium">{usuario.email}</TableCell>
                   <TableCell>
-                    {usuario.Nome_Completo || (
+                    {usuario.nome_exibicao || (
                       <span className="text-slate-400 italic">Não preenchido</span>
                     )}
                   </TableCell>
@@ -114,11 +114,11 @@ export default function EdicaoUsuarios() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Nome Completo</Label>
+              <Label>Nome de Exibição</Label>
               <Input
                 value={nomeCompleto}
                 onChange={(e) => setNomeCompleto(e.target.value)}
-                placeholder="Digite o nome completo"
+                placeholder="Digite o nome de exibição"
               />
             </div>
             <div className="space-y-2">
