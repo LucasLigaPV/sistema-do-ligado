@@ -19,6 +19,7 @@ import TabelaFechamentos from "../components/vendas/TabelaFechamentos";
 import DashboardVendas from "../components/vendas/DashboardVendas";
 import GerenciamentoUsuarios from "../components/admin/GerenciamentoUsuarios";
 import GerenciamentoEquipes from "../components/admin/GerenciamentoEquipes";
+import EdicaoUsuarios from "../components/admin/EdicaoUsuarios";
 import DashboardLider from "../components/dashboard/DashboardLider";
 import Sidebar from "../components/layout/Sidebar";
 import FilaLeads from "../components/crm/FilaLeads";
@@ -189,6 +190,13 @@ export default function Admin() {
                       <Users className="w-4 h-4" />
                       Usuários
                     </TabsTrigger>
+                    <TabsTrigger
+                      value="edicao"
+                      className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black rounded-lg px-6 h-11"
+                    >
+                      <Settings className="w-4 h-4" />
+                      Edição de Usuários
+                    </TabsTrigger>
                     {user?.funcao === "master" && (
                       <TabsTrigger
                         value="equipes"
@@ -202,6 +210,10 @@ export default function Admin() {
 
                   <TabsContent value="usuarios">
                     <GerenciamentoUsuarios />
+                  </TabsContent>
+
+                  <TabsContent value="edicao">
+                    <EdicaoUsuarios />
                   </TabsContent>
 
                   <TabsContent value="equipes">
