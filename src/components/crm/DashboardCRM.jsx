@@ -39,7 +39,8 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     
     if (userFuncao === "lider") {
       const equipe = equipes.find(e => e.lider_email === userEmail);
-      return dentroIntervalo && equipe?.membros?.includes(n.vendedor_email);
+      // Líder vê suas próprias vendas + vendas dos membros da equipe
+      return dentroIntervalo && (n.vendedor_email === userEmail || equipe?.membros?.includes(n.vendedor_email));
     }
     if (userFuncao === "vendedor") {
       return dentroIntervalo && n.vendedor_email === userEmail;
@@ -54,7 +55,8 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     
     if (userFuncao === "lider") {
       const equipe = equipes.find(e => e.lider_email === userEmail);
-      return dentroIntervalo && equipe?.membros?.includes(p.vendedor_email);
+      // Líder vê suas próprias perdas + perdas dos membros da equipe
+      return dentroIntervalo && (p.vendedor_email === userEmail || equipe?.membros?.includes(p.vendedor_email));
     }
     if (userFuncao === "vendedor") {
       return dentroIntervalo && p.vendedor_email === userEmail;
