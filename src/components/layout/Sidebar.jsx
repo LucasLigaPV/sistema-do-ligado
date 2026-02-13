@@ -318,8 +318,8 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             </div>
           ) : (
             <Button
-              variant="default"
-              className={`w-full gap-3 bg-[#EFC200] hover:bg-[#D4A900] text-black ${
+              variant="ghost"
+              className={`w-full gap-3 hover:bg-slate-100 ${
                 !isOpen ? "justify-center" : "justify-start"
               }`}
               onClick={() => setShowCheckinModal(true)}
@@ -545,8 +545,8 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 </div>
               ) : (
                 <Button
-                  variant="default"
-                  className="w-full justify-start gap-3 bg-[#EFC200] hover:bg-[#D4A900] text-black mb-2"
+                  variant="ghost"
+                  className="w-full justify-start gap-3 hover:bg-slate-100 mb-2"
                   onClick={() => setShowCheckinModal(true)}
                 >
                   <Inbox className="w-5 h-5" />
