@@ -794,14 +794,6 @@ export default function Distribuicao({ userFuncao }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-300 rounded-lg p-4">
-                  <p className="text-sm text-blue-950 font-medium">
-                    <strong className="font-bold">Instruções:</strong> Selecione os vendedores que devem receber leads hoje. 
-                    Por padrão, são mostrados os vendedores que fizeram check-in dentro do prazo. 
-                    Você pode adicionar ou remover vendedores manualmente conforme necessário.
-                  </p>
-                </div>
-
                 <Table>
                   <TableHeader>
                     <TableRow>
