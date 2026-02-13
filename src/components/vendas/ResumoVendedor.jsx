@@ -299,7 +299,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
             <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
               <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Selecione um vendedor">
-                  {users.find(u => u.email === vendedorSelecionado)?.full_name || vendedorSelecionado}
+                  {users.find(u => u.email === vendedorSelecionado)?.nome_exibicao || users.find(u => u.email === vendedorSelecionado)?.full_name || vendedorSelecionado}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -307,7 +307,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                    const user = users.find(u => u.email === email);
                    return (
                      <SelectItem key={email} value={email}>
-                       {user?.full_name || email} {email === userEmail ? "(Você)" : ""}
+                       {user?.nome_exibicao || user?.full_name || email} {email === userEmail ? "(Você)" : ""}
                      </SelectItem>
                    );
                  })}
