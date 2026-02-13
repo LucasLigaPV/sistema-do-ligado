@@ -73,9 +73,13 @@ const formatarValorExibicao = (valor) => {
   });
 };
 
-const getNomeVendedor = (email, users, minhaEquipe = []) => {
-  const user = users.find(u => u.email && u.email.toLowerCase() === email?.toLowerCase());
-  return user?.nome_exibicao || user?.full_name || email;
+const getNomeVendedor = (email, users) => {
+  if (!email) return "N/A";
+  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (user) {
+    return user.nome_exibicao || user.full_name || email;
+  }
+  return email;
 };
 
 export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
@@ -320,7 +324,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                       {membrosEquipe.map((email) => {
                          const isChecked = consultorFilter.includes(email);
                          const isCurrentUser = email === userEmail;
-                         const nomeVendedor = getNomeVendedor(email, users, membrosEquipe);
+                         const nomeVendedor = getNomeVendedor(email, users);
                          return (
                            <div key={email} className={`flex items-center gap-2 truncate p-2 rounded-md transition-colors ${isChecked ? 'bg-amber-100' : 'hover:bg-slate-100'}`}>
                              <Checkbox 
@@ -402,7 +406,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                         </TableCell>
                         {userFuncao === "lider" && (
                           <TableCell className="font-medium">
-                            {getNomeVendedor(venda.vendedor, users, membrosEquipe)}
+                            {getNomeVendedor(venda.vendedor, users)}
                           </TableCell>
                         )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
