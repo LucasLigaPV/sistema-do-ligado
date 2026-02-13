@@ -13,7 +13,8 @@ export default function ModalCheckin({ userEmail }) {
 
   const { data: checkins = [] } = useQuery({
     queryKey: ["checkins", userEmail],
-    queryFn: () => base44.entities.Checkin.list(),
+    queryFn: () => base44.entities.Checkin.filter({ usuario_email: userEmail }),
+    enabled: !!userEmail,
   });
 
   const { data: configs = [] } = useQuery({
