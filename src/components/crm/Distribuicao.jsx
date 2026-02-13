@@ -983,8 +983,6 @@ export default function Distribuicao({ userFuncao }) {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Vendedor/Líder</TableHead>
-                        <TableHead>Check-in</TableHead>
-                        <TableHead>Hora</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="text-center">
                           {isValidado2Turno && !modoEdicao2Turno ? "Validado" : "Ação"}
