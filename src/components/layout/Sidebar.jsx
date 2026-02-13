@@ -319,13 +319,14 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
           ) : (
             <Button
               variant="ghost"
-              className={`w-full gap-3 hover:bg-slate-100 ${
+              className={`w-full gap-3 hover:bg-slate-100 relative ${
                 !isOpen ? "justify-center" : "justify-start"
               }`}
               onClick={() => setShowCheckinModal(true)}
             >
               <Inbox className="w-5 h-5 flex-shrink-0" />
               {isOpen && <span>Receber Leads</span>}
+              <span className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
             </Button>
           )}
           
@@ -546,11 +547,12 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
               ) : (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 hover:bg-slate-100 mb-2"
+                  className="w-full justify-start gap-3 hover:bg-slate-100 mb-2 relative"
                   onClick={() => setShowCheckinModal(true)}
                 >
                   <Inbox className="w-5 h-5" />
                   <span>Receber Leads</span>
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                 </Button>
               )}
               
