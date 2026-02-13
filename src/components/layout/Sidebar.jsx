@@ -326,7 +326,9 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             >
               <Inbox className="w-5 h-5 flex-shrink-0" />
               {isOpen && <span>Receber Leads</span>}
-              <span className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+              <span className="absolute top-1 right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                <span className="text-white text-xs font-bold">!</span>
+              </span>
             </Button>
           )}
           
@@ -552,7 +554,9 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 >
                   <Inbox className="w-5 h-5" />
                   <span>Receber Leads</span>
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                  <span className="absolute top-1 right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
+                    <span className="text-white text-xs font-bold">!</span>
+                  </span>
                 </Button>
               )}
               
