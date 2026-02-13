@@ -578,22 +578,20 @@ export default function Distribuicao({ userFuncao }) {
                 )}
 
                 {/* Botão Sábado */}
-                {agora.getDay() === 6 && (
-                  <Button
-                    onClick={distribuirLeads}
-                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
-                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
-                    title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
-                  >
-                    <PlayCircle className="w-5 h-5 mr-2" />
-                    Distribuir Leads Sábado ({limiteLeadsSabado} leads por vendedor)
-                    {horaAtual < horarioDistribuicaoSabado && (
-                      <Badge className="ml-2 bg-slate-600">
-                        Disponível às {horarioDistribuicaoSabado}
-                      </Badge>
-                    )}
-                  </Button>
-                )}
+                <Button
+                  onClick={distribuirLeads}
+                  className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black h-14 text-lg font-semibold"
+                  disabled={agora.getDay() !== 6 || leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
+                  title={agora.getDay() !== 6 ? "Disponível apenas aos sábados" : !isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
+                >
+                  <PlayCircle className="w-5 h-5 mr-2" />
+                  Distribuir Leads Sábado ({limiteLeadsSabado} leads por vendedor)
+                  {agora.getDay() === 6 && horaAtual < horarioDistribuicaoSabado && (
+                    <Badge className="ml-2 bg-slate-600">
+                      Disponível às {horarioDistribuicaoSabado}
+                    </Badge>
+                  )}
+                </Button>
 
                 {!isValidado && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-2 text-amber-800 text-sm">
