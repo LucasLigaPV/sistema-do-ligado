@@ -591,6 +591,13 @@ export default function Distribuicao({ userFuncao }) {
                   </div>
                 )}
 
+                {/* Divisor */}
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                </div>
+
                 {/* Botão Sábado */}
                 <button
                   onClick={distribuirLeads}
