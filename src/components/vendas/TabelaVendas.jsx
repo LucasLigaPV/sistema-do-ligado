@@ -105,16 +105,20 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ["all_users"],
     queryFn: async () => {
       try {
-        return await base44.entities.User.list();
-      } catch {
+        const usersList = await base44.entities.User.list();
+        return usersList;
+      } catch (error) {
+        console.error("Erro ao buscar usuários:", error);
         return [];
       }
     },
   });
+
+  const users = allUsers;
 
   const [consultorFilter, setConsultorFilter] = useState(
     userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
