@@ -805,9 +805,25 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                               </Badge>
                                             )}
                                           </div>
-                                          {deal.etapa === "reprovado" && deal.motivo_negacao && (
-                                            <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
-                                              <strong>Motivo:</strong> {deal.motivo_negacao}
+                                          {deal.status_aprovacao === "reprovado" && (
+                                            <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
+                                              {deal.motivo_reprova_categoria && (
+                                                <div>
+                                                  <strong>Categoria:</strong> {
+                                                    deal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
+                                                    deal.motivo_reprova_categoria === "contrato" ? "Contrato" :
+                                                    deal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
+                                                    deal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
+                                                    deal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
+                                                    deal.motivo_reprova_categoria
+                                                  }
+                                                </div>
+                                              )}
+                                              {deal.motivo_reprova_detalhe && (
+                                                <div>
+                                                  <strong>Detalhe:</strong> {deal.motivo_reprova_detalhe}
+                                                </div>
+                                              )}
                                             </div>
                                           )}
                                           {userFuncao === "lider" && (
@@ -1300,19 +1316,30 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               {/* Botões de Ação */}
               <div className="flex flex-col gap-3 pt-4 border-t">
                 {isEtapaFinal(selectedDeal.etapa) && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-                    {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
-                    {selectedDeal.etapa === "reprovado" && (
-                      <div>
-                        <p className="font-semibold mb-1">❌ Esta venda foi reprovada.</p>
-                        {selectedDeal.motivo_negacao && (
-                          <p className="text-xs mt-1"><strong>Motivo:</strong> {selectedDeal.motivo_negacao}</p>
-                        )}
-                      </div>
-                    )}
-                    {selectedDeal.etapa === "venda_ativa" && "✅ Esta venda já está ativa. A placa está em processo de ativação."}
-                  </div>
-                )}
+                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                     {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
+                     {selectedDeal.status_aprovacao === "reprovado" && (
+                       <div className="space-y-2">
+                         <p className="font-semibold">❌ Esta venda foi reprovada pelo time de aprovações.</p>
+                         {selectedDeal.motivo_reprova_categoria && (
+                           <p className="text-xs"><strong>Motivo:</strong> {
+                             selectedDeal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
+                             selectedDeal.motivo_reprova_categoria === "contrato" ? "Contrato" :
+                             selectedDeal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
+                             selectedDeal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
+                             selectedDeal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
+                             selectedDeal.motivo_reprova_categoria
+                           }</p>
+                         )}
+                         {selectedDeal.motivo_reprova_detalhe && (
+                           <p className="text-xs"><strong>Detalhe:</strong> {selectedDeal.motivo_reprova_detalhe}</p>
+                         )}
+                         <p className="text-xs mt-2 pt-2 border-t border-amber-300">Corrija os pontos acima e clique em "Reprova Corrigida" após as alterações.</p>
+                       </div>
+                     )}
+                     {selectedDeal.etapa === "venda_ativa" && "✅ Esta venda já está ativa. A placa está em processo de ativação."}
+                   </div>
+                 )}
 
                 {selectedDeal.etapa === "reprovado" && (
                   <Button
