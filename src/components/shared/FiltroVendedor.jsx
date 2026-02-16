@@ -13,8 +13,12 @@ export default function FiltroVendedor({
   userEmail = ""
 }) {
   const getNomeVendedor = (email) => {
-    const user = users.find(u => u.email === email);
-    return user?.nome_exibicao || user?.data?.nome_exibicao || user?.full_name || email;
+    if (!email) return "N/A";
+    const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+    if (user) {
+      return user.nome_exibicao || user.full_name || email;
+    }
+    return email;
   };
 
   const allSelected = vendedoresSelecionados.length === todosVendedores.length;
