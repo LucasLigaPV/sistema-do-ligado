@@ -502,8 +502,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   };
 
   const vendedoresDisponiveis = todosVendedoresEquipe
-    .map(email => users.find(u => u.email === email))
-    .filter(u => u !== undefined);
+    .map(email => {
+      const user = users.find(u => u.email === email);
+      return user || { email: email, full_name: email };
+    });
 
   const toggleVendedor = (email) => {
     setSelectedVendedores(prev => 
