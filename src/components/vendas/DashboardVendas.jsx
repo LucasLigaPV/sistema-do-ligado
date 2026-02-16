@@ -335,19 +335,6 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Vendas com Indicação
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasComIndicacao}</div>
-            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualIndicacao.toFixed(1)}% do total</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
               <Target className="w-4 h-4" />
               Vendas com Lead
             </CardTitle>
@@ -355,6 +342,19 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
           <CardContent>
             <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasLead}</div>
             <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualLead.toFixed(1)}% do total</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Vendas com Indicação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasComIndicacao}</div>
+            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualIndicacao.toFixed(1)}% do total</p>
           </CardContent>
         </Card>
 
