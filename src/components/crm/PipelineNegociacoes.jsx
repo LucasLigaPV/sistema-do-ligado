@@ -32,6 +32,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
+  const [selectedOrigens, setSelectedOrigens] = useState([]);
+  const [origemLogic, setOrigemLogic] = useState("e");
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
   
@@ -256,6 +258,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   // Aplicar filtro de vendedores (apenas para líderes)
   if (userFuncao === "lider" && selectedVendedores.length > 0) {
     negociacoesVisiveis = negociacoesVisiveis.filter(n => selectedVendedores.includes(n.vendedor_email));
+  }
+
+  // Aplicar filtro de origem
+  if (selectedOrigens.length > 0) {
+    negociacoesVisiveis = negociacoesVisiveis.filter(n => {
+      const temOrigem = selectedOrigens.includes(n.origem || "lead");
+      return origemLogic === "e" ? temOrigem : !temOrigem;
+    });
   }
 
   const handleDragEnd = (result) => {
@@ -503,6 +513,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     );
   };
 
+  const toggleOrigem = (origem) => {
+    setSelectedOrigens(prev => 
+      prev.includes(origem) 
+        ? prev.filter(o => o !== origem)
+        : [...prev, origem]
+    );
+  };
+
+  const origensDisponiveis = [
+    { value: "lead", label: "Lead" },
+    { value: "indicacao", label: "Indicação" },
+    { value: "organico", label: "Orgânico" },
+    { value: "troca_titularidade", label: "Troca de Titularidade" },
+    { value: "troca_veiculo", label: "Troca de Veículo" },
+    { value: "segundo_veiculo", label: "Segundo Veículo" },
+    { value: "migracao", label: "Migração" }
+  ];
+
   const canShowSaleButton = selectedDeal && (
     selectedDeal.etapa === "vistoria_assinatura_pix" ||
     selectedDeal.etapa === "enviado_cadastro"
@@ -540,9 +568,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             <Button variant="outline" className="h-16 w-16 flex-col gap-1 p-2 relative" size="sm">
               <Filter className="w-5 h-5" />
               <span className="text-[10px]">Filtros</span>
-              {(selectedVendedores.length > 0 || startDate || endDate) && (
+              {(selectedVendedores.length > 0 || selectedOrigens.length > 0 || startDate || endDate) && (
                 <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-[#EFC200] text-black text-xs">
-                  {selectedVendedores.length > 0 ? selectedVendedores.length : "•"}
+                  {(selectedVendedores.length + selectedOrigens.length) || "•"}
                 </Badge>
               )}
             </Button>
@@ -581,6 +609,47 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs">Origem</Label>
+                  <Select value={origemLogic} onValueChange={setOrigemLogic}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="e">É</SelectItem>
+                      <SelectItem value="nao_e">Não é</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-2">
+                    {origensDisponiveis.map((origem) => (
+                      <div key={origem.value} className="flex items-center gap-2">
+                        <Checkbox
+                          id={origem.value}
+                          checked={selectedOrigens.includes(origem.value)}
+                          onCheckedChange={() => toggleOrigem(origem.value)}
+                          className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
+                        />
+                        <label
+                          htmlFor={origem.value}
+                          className="text-sm cursor-pointer flex-1"
+                        >
+                          {origem.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  {selectedOrigens.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedOrigens([])}
+                      className="w-full text-xs"
+                    >
+                      Limpar Seleção
+                    </Button>
+                  )}
                 </div>
 
                 {userFuncao === "lider" && (
