@@ -311,8 +311,21 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                   vendedoresSelecionados={consultorFilter}
                   todosVendedores={membrosEquipe}
                   onSelectionChange={setConsultorFilter}
-                  users={users}
                   userEmail={userEmail}
+                  nomesPorEmail={(() => {
+                    const map = {};
+                    allIndicacoes.forEach(ind => {
+                      if (ind.email_consultor && ind.consultor_responsavel) {
+                        map[ind.email_consultor] = ind.consultor_responsavel;
+                      }
+                    });
+                    users.forEach(u => {
+                      if (u.email && u.full_name) {
+                        map[u.email] = map[u.email] || u.full_name;
+                      }
+                    });
+                    return map;
+                  })()}
                 />
               ) : (
                 <div>
