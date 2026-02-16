@@ -558,9 +558,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   }
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 h-screen overflow-hidden">
       {/* Barra lateral fixa com botões */}
-      <div className="flex-shrink-0 w-16 flex flex-col gap-3 sticky top-4 self-start">
+      <div className="flex-shrink-0 w-14 sm:w-16 flex flex-col gap-3 sticky top-4 self-start">
         <Popover open={showFilters} onOpenChange={setShowFilters}>
           <PopoverTrigger asChild>
             <Button variant="outline" className="h-16 w-16 flex-col gap-1 p-2 relative" size="sm">
@@ -718,10 +718,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 overflow-hidden">
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="overflow-x-auto pb-4">
-            <div className="flex gap-3 min-w-max pb-2">
+          <div className="overflow-x-auto overflow-y-hidden h-full pb-4">
+            <div className="flex gap-3 pb-2 h-full">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               const IconComponent = etapa.icon;
@@ -732,9 +732,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-72 sm:w-80 lg:w-96 flex-shrink-0"
+                      className="w-64 sm:w-72 md:w-80 lg:w-96 flex-shrink-0"
                     >
-                      <Card className="bg-white shadow-sm flex flex-col border" style={{ height: 'calc(100vh - 120px)' }}>
+                      <Card className="bg-white shadow-sm flex flex-col border h-full">
                         <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
