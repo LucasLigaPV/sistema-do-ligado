@@ -14,7 +14,7 @@ export default function FiltroVendedor({
 }) {
   const getNomeVendedor = (email) => {
     const user = users.find(u => u.email === email);
-    return user?.data?.nome_exibicao || user?.full_name || email;
+    return user?.nome_exibicao || user?.data?.nome_exibicao || user?.full_name || email;
   };
 
   const allSelected = vendedoresSelecionados.length === todosVendedores.length;
