@@ -760,14 +760,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  style={{
-                                    ...provided.draggableProps.style,
-                                    transition: snapshot.isDragging ? 'none' : 'transform 0.2s ease'
-                                  }}
                                  >
                                   <Card
-                                    className={`bg-white cursor-move hover:shadow-md transition-shadow ${
-                                      snapshot.isDragging ? "shadow-lg scale-105 opacity-90" : ""
+                                    className={`bg-white cursor-move hover:shadow-md ${
+                                      snapshot.isDragging ? "shadow-lg" : ""
                                     }`}
                                     onClick={() => handleCardClick(deal)}
                                   >
