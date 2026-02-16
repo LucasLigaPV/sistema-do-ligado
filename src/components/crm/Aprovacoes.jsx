@@ -148,7 +148,7 @@ export default function Aprovacoes({ userEmail, userFuncao }) {
         aprovado_por: user.email,
         data_aprovacao: new Date().toISOString(),
         informacoes_conferidas: false,
-        etapa: "negada"
+        etapa: "reprovado"
       }
     });
   };
