@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText, Upload, Wrench, FileSignature, CreditCard } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
 import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
 
 export default function KanbanAprovacoes({ userEmail, userFuncao }) {
@@ -46,35 +45,41 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     },
   });
 
-  // Filtrar negociações em análise
-  let negociacoesAnalise = negociacoes.filter(n => 
-    n.informacoes_conferidas && 
-    n.etapa === "enviado_cadastro" &&
-    n.status_aprovacao !== "aprovado"
+  const negociacoesAnalise = useMemo(() => 
+    negociacoes.filter(n => 
+      n.informacoes_conferidas && 
+      n.etapa === "enviado_cadastro" &&
+      n.status_aprovacao !== "aprovado"
+    ), 
+    [negociacoes]
   );
 
-  const etapas = [
+  const etapas = useMemo(() => [
     { id: "aguardando", label: "Aguardando Análise", icon: Clock },
     { id: "analisando", label: "Analisando", icon: Eye },
     { id: "reprovado", label: "Reprovado", icon: XCircle },
     { id: "corrigido", label: "Corrigidos", icon: CheckCircle2 },
     { id: "aprovado", label: "Aprovados", icon: ThumbsUp },
-  ];
+  ], []);
 
-  const categoriesMotivo = {
+  const categoriesMotivo = useMemo(() => ({
     documentacao: "Documentação",
     contrato: "Contrato",
     vistoria_fotos: "Vistoria - Fotos",
     vistoria_videos: "Vistoria - Vídeos",
     preenchimento: "Preenchimento",
-  };
+  }), []);
 
-  const getNomeVendedor = (email) => {
-    const user = users.find(u => u.email === email);
-    return user?.full_name || email;
-  };
+  const userMap = useMemo(() => 
+    Object.fromEntries(users.map(u => [u.email, u.full_name])), 
+    [users]
+  );
 
-  const handleDragEnd = (result) => {
+  const getNomeVendedor = useCallback((email) => {
+    return userMap[email] || email;
+  }, [userMap]);
+
+  const handleDragEnd = useCallback((result) => {
     if (!result.destination) return;
 
     const dealId = result.draggableId;
@@ -83,54 +88,42 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
     if (!deal) return;
 
-    // Se for reprovar, abrir modal
     if (newStatus === "reprovado") {
       setSelectedDeal(deal);
       setShowModal(true);
       return;
     }
 
-    // Se for corrigido, volta para enviado_cadastro na pipeline do vendedor
+    const updateData = {
+      id: dealId,
+      data: {}
+    };
+
     if (newStatus === "corrigido") {
-      updateMutation.mutate({
-        id: dealId,
-        data: {
-          status_aprovacao: "corrigido",
-          etapa: "enviado_cadastro",
-          informacoes_conferidas: false,
-        }
-      });
-      return;
+      updateData.data = {
+        status_aprovacao: "corrigido",
+        etapa: "enviado_cadastro",
+        informacoes_conferidas: false,
+      };
+    } else if (newStatus === "aprovado") {
+      updateData.data = {
+        status_aprovacao: "aprovado",
+        etapa: "venda_ativa",
+        aprovado_por: userEmail,
+        data_aprovacao: new Date().toISOString(),
+      };
+    } else if (newStatus === "analisando") {
+      updateData.data = {
+        status_aprovacao: "analisando",
+        analisado_por: userEmail,
+        data_analise: new Date().toISOString(),
+      };
     }
 
-    // Se for aprovado
-    if (newStatus === "aprovado") {
-      updateMutation.mutate({
-        id: dealId,
-        data: {
-          status_aprovacao: "aprovado",
-          etapa: "venda_ativa",
-          aprovado_por: userEmail,
-          data_aprovacao: new Date().toISOString(),
-        }
-      });
-      return;
-    }
+    updateMutation.mutate(updateData);
+  }, [negociacoes, userEmail, updateMutation]);
 
-    // Para analisando
-    if (newStatus === "analisando") {
-      updateMutation.mutate({
-        id: dealId,
-        data: {
-          status_aprovacao: "analisando",
-          analisado_por: userEmail,
-          data_analise: new Date().toISOString(),
-        }
-      });
-    }
-  };
-
-  const handleReprovar = () => {
+  const handleReprovar = useCallback(() => {
     if (!selectedDeal || !categoria || !motivo) {
       alert("Preencha todos os campos");
       return;
@@ -147,32 +140,41 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         data_analise: new Date().toISOString(),
       }
     });
-  };
+  }, [selectedDeal, categoria, motivo, userEmail, updateMutation]);
 
-  const handleCardClick = (deal) => {
+  const handleCardClick = useCallback((deal) => {
     setSelectedDeal(deal);
     setShowDetails(true);
-  };
+  }, []);
 
-  // Buscar todas as reprovas do mesmo cliente
-  const historicoReprov = negociacoes.filter(n => 
-    n.nome_cliente === selectedDeal?.nome_cliente && 
-    n.motivo_reprova_categoria
-  ).sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise));
+  const historicoReprov = useMemo(() => 
+    selectedDeal 
+      ? negociacoes
+          .filter(n => 
+            n.nome_cliente === selectedDeal.nome_cliente && 
+            n.motivo_reprova_categoria
+          )
+          .sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise))
+      : [],
+    [negociacoes, selectedDeal?.nome_cliente]
+  );
 
   return (
     <div className="space-y-6">
       <PainelEstatisticasAprovacoes negociacoes={negociacoes} />
 
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext onDragEnd={handleDragEnd} enableDefaultSensors={true}>
         <div className="overflow-x-auto pb-4">
           <div className="flex gap-3 min-w-max">
             {etapas.map((etapa) => {
-              const dealsNaEtapa = negociacoesAnalise.filter(n => n.status_aprovacao === etapa.id);
+              const dealsNaEtapa = useMemo(() => 
+                negociacoesAnalise.filter(n => n.status_aprovacao === etapa.id),
+                [negociacoesAnalise, etapa.id]
+              );
               const IconComponent = etapa.icon;
 
               return (
-                <Droppable key={etapa.id} droppableId={etapa.id}>
+                <Droppable key={etapa.id} droppableId={etapa.id} type="DEAL">
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -195,7 +197,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                         </CardHeader>
                         <CardContent className="space-y-2 flex-1 overflow-y-auto">
                           {dealsNaEtapa.map((deal, index) => (
-                            <Draggable key={deal.id} draggableId={deal.id} index={index}>
+                            <Draggable key={`deal-${deal.id}`} draggableId={deal.id} index={index} type="DEAL">
                               {(provided, snapshot) => (
                                 <div
                                   ref={provided.innerRef}
