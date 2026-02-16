@@ -349,6 +349,92 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
+              {/* Informações da Negociação */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-slate-900 mb-3">Informações da Negociação</h3>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Plano</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.plano_interesse || "-"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Origem</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.origem || "-"}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Valor Adesão</Label>
+                      <p className="text-sm font-medium text-slate-900">{selectedDeal.valor_adesao || "-"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Valor Mensalidade</Label>
+                      <p className="text-sm font-medium text-slate-900">{selectedDeal.valor_mensalidade || "-"}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Data de Entrada</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.data_entrada ? format(new Date(selectedDeal.data_entrada), "dd/MM/yyyy") : "-"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Etapa</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.etapa || "-"}</p>
+                    </div>
+                  </div>
+                  {selectedDeal.observacoes && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Observações</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.observacoes}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Informações de Análise */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-slate-900 mb-3">Análise e Aprovação</h3>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Status</Label>
+                      <Badge className="mt-1 bg-slate-100 text-slate-800 border-slate-200 capitalize">
+                        {selectedDeal.status_aprovacao || "aguardando"}
+                      </Badge>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Consultor</Label>
+                      <p className="text-sm text-slate-900">{getNomeVendedor(selectedDeal.vendedor_email) || "-"}</p>
+                    </div>
+                  </div>
+                  {selectedDeal.analisado_por && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Analisado Por</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.analisado_por}</p>
+                    </div>
+                  )}
+                  {selectedDeal.data_analise && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Data de Análise</Label>
+                      <p className="text-sm text-slate-900">{format(new Date(selectedDeal.data_analise), "dd/MM/yyyy HH:mm")}</p>
+                    </div>
+                  )}
+                  {selectedDeal.aprovado_por && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Aprovado Por</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.aprovado_por}</p>
+                    </div>
+                  )}
+                  {selectedDeal.data_aprovacao && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Data de Aprovação</Label>
+                      <p className="text-sm text-slate-900">{format(new Date(selectedDeal.data_aprovacao), "dd/MM/yyyy HH:mm")}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Checklist */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
