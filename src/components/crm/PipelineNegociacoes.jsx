@@ -1045,7 +1045,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                    variant="outline"
                    size="lg"
                    onClick={handlePreviousStage}
-                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa)}
+                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
                    className="h-12 px-6"
                  >
                    <ChevronLeft className="w-5 h-5 mr-2" />
