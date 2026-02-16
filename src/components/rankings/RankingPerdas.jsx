@@ -47,14 +47,14 @@ export default function RankingPerdas({ perdas, users }) {
   };
 
   return (
-    <Card className="border-slate-200">
+    <Card className="border-slate-200 flex flex-col h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <XCircle className="w-5 h-5 text-slate-600" />
           Perdas por Motivo
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-auto">
         <div className="space-y-3">
           {rankingArray.map((vendedor, index) => (
             <motion.div
