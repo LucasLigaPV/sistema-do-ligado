@@ -37,6 +37,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [crmExpanded, setCrmExpanded] = useState(false);
   const [controleExpanded, setControleExpanded] = useState(false);
+  const [aprovacoesExpanded, setAprovacoesExpanded] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
 
   const queryClient = useQueryClient();
@@ -130,7 +131,16 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
       ]
     },
     ...(user?.funcao === "master" ? [{ id: "crm-marketing", label: "Marketing", icon: Megaphone }] : []),
-    ...(user?.funcao === "master" ? [{ id: "aprovacoes", label: "Aprovações", icon: CheckCircle }] : []),
+    ...(user?.funcao === "master" ? [{ 
+      id: "aprovacoes", 
+      label: "Aprovações", 
+      icon: CheckCircle,
+      hasSubmenu: true,
+      submenus: [
+        { id: "aprovacoes-avaliar", label: "Avaliar", icon: CheckCircle },
+        { id: "aprovacoes-dashboard", label: "Dashboard", icon: BarChart3 },
+      ]
+    }] : []),
     { id: "rankings", label: "Rankings", icon: Trophy },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
@@ -232,10 +242,12 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
             }
             
             if (item.hasSubmenu) {
-              const isExpanded = item.id === "crm" ? crmExpanded : controleExpanded;
+              const isExpanded = item.id === "crm" ? crmExpanded : item.id === "controle" ? controleExpanded : aprovacoesExpanded;
               const toggleExpanded = item.id === "crm" 
                 ? () => setCrmExpanded(!crmExpanded) 
-                : () => setControleExpanded(!controleExpanded);
+                : item.id === "controle"
+                ? () => setControleExpanded(!controleExpanded)
+                : () => setAprovacoesExpanded(!aprovacoesExpanded);
               
               return (
                 <div key={item.id}>
@@ -486,10 +498,12 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
                 }
                 
                 if (item.hasSubmenu) {
-                  const isExpanded = item.id === "crm" ? crmExpanded : controleExpanded;
+                  const isExpanded = item.id === "crm" ? crmExpanded : item.id === "controle" ? controleExpanded : aprovacoesExpanded;
                   const toggleExpanded = item.id === "crm" 
                     ? () => setCrmExpanded(!crmExpanded) 
-                    : () => setControleExpanded(!controleExpanded);
+                    : item.id === "controle"
+                    ? () => setControleExpanded(!controleExpanded)
+                    : () => setAprovacoesExpanded(!aprovacoesExpanded);
                   
                   return (
                     <div key={item.id}>
