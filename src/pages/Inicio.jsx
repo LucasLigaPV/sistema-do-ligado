@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, TrendingUp, Users, Settings, Target, BarChart3, ListChecks, TrendingDown, Megaphone } from "lucide-react";
+import { FileText, TrendingUp, Users, Settings, Target, BarChart3, ListChecks, TrendingDown, Megaphone, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
@@ -101,6 +101,14 @@ export default function Inicio() {
       bgColor: "bg-indigo-50",
       iconColor: "text-indigo-600",
       link: "/Admin?menu=crm-dashboard"
+    },
+    {
+      title: "Rankings",
+      description: "Acompanhe o desempenho da equipe",
+      icon: Trophy,
+      bgColor: "bg-[#FFF9E6]",
+      iconColor: "text-[#EFC200]",
+      link: "/Rankings"
     },
     ...(user?.funcao === "master" ? [{
       title: "Dashboard de Marketing",
