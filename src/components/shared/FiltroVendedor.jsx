@@ -16,7 +16,7 @@ export default function FiltroVendedor({
     if (!email) return "N/A";
     const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
     if (user) {
-      return user.nome_exibicao || user.full_name || email;
+      return user.data?.nome_exibicao || user.nome_exibicao || user.full_name || email;
     }
     return email;
   };
