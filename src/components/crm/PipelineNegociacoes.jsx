@@ -352,7 +352,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         etapa: "enviado_cadastro",
         informacoes_conferidas: true,
         data_conferencia: new Date().toISOString(),
-        status_aprovacao: "aguardando"
+        status_aprovacao: "corrigido"
       }
     });
 
