@@ -1,4 +1,6 @@
 import React from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,9 +14,39 @@ export default function FiltroVendedor({
   userEmail = "",
   nomesPorEmail = {}
 }) {
+  // Buscar nomes de todas as fontes de dados disponíveis
+  const { data: vendas = [] } = useQuery({
+    queryKey: ["vendas_nomes"],
+    queryFn: () => base44.entities.Venda.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: negociacoes = [] } = useQuery({
+    queryKey: ["negociacoes_nomes"],
+    queryFn: () => base44.entities.Negociacao.list(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Construir mapa de nomes a partir de TODAS as fontes
+  const nomesCompletos = React.useMemo(() => {
+    const map = { ...nomesPorEmail };
+
+    // Vendas: email_vendedor -> vendedor (nome)
+    vendas.forEach(v => {
+      if (v.email_vendedor && v.vendedor && !map[v.email_vendedor]) {
+        map[v.email_vendedor] = v.vendedor;
+      }
+    });
+
+    // Negociações: vendedor_email -> created_by pode ser útil mas não tem nome
+    // Porém se houver nome no campo de venda associado, já pegamos acima
+
+    return map;
+  }, [nomesPorEmail, vendas, negociacoes]);
+
   const getNomeVendedor = (email) => {
     if (!email) return "N/A";
-    return nomesPorEmail[email] || email;
+    return nomesCompletos[email] || email;
   };
 
   const allSelected = vendedoresSelecionados.length === todosVendedores.length;
