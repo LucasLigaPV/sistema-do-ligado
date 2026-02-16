@@ -36,6 +36,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [origemLogic, setOrigemLogic] = useState("e");
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
+  const [columnWidth, setColumnWidth] = useState(320);
   
   const [newDeal, setNewDeal] = useState({
     vendedor_email: userEmail,
@@ -95,6 +96,23 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
     return unsubscribe;
   }, [queryClient]);
+
+  // Responsividade do viewport
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const sidebarWidth = 64;
+      const gap = 12;
+      const padding = 24;
+      const availableWidth = width - sidebarWidth - padding - (gap * 9);
+      const colWidth = Math.max(280, Math.floor(availableWidth / 10));
+      setColumnWidth(colWidth);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Negociacao.create(data),
@@ -560,7 +578,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
       {/* Barra lateral fixa com botões */}
-      <div className="flex-shrink-0 w-14 sm:w-16 flex flex-col gap-3 p-2 sm:p-3 bg-white border-r">
+      <div className="flex-shrink-0 w-16 flex flex-col gap-3 p-3 bg-white border-r border-slate-200">
         <Popover open={showFilters} onOpenChange={setShowFilters}>
           <PopoverTrigger asChild>
             <Button variant="outline" className="h-16 w-16 flex-col gap-1 p-2 relative" size="sm">
@@ -721,7 +739,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       <div className="flex-1 overflow-hidden flex flex-col">
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="flex-1 overflow-x-auto overflow-y-hidden">
-            <div className="flex gap-2 p-3 h-full">
+            <div className="inline-flex gap-3 p-4 h-full min-w-full">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               const IconComponent = etapa.icon;
@@ -732,23 +750,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-72 flex-shrink-0 h-full"
+                      style={{ width: columnWidth }}
+                      className="flex-shrink-0 h-full"
                     >
-                      <Card className="bg-white shadow-sm flex flex-col border h-full rounded-lg">
-                        <CardHeader className="pb-3 bg-slate-50/50">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <IconComponent className="w-4 h-4 text-slate-600" />
-                              <CardTitle className="text-sm font-semibold text-slate-700">
+                      <Card className="bg-white shadow-sm flex flex-col border h-full">
+                        <CardHeader className="pb-3 bg-slate-50/50 flex-shrink-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <IconComponent className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                              <CardTitle className="text-sm font-semibold text-slate-700 truncate">
                                 {etapa.label}
                               </CardTitle>
                             </div>
-                            <Badge variant="secondary" className="bg-white border">
+                            <Badge variant="secondary" className="bg-white border flex-shrink-0">
                               {dealsNaEtapa.length}
                             </Badge>
                           </div>
                         </CardHeader>
-                        <CardContent className="space-y-2 flex-1 overflow-y-auto">
+                        <CardContent className="space-y-2 flex-1 overflow-y-auto min-w-0">
                             {dealsNaEtapa.map((deal, index) => (
                               <Draggable
                                 key={deal.id}
