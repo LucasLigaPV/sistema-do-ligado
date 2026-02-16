@@ -1505,7 +1505,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 <Button
                   onClick={handleConferirInformacoes}
                   className="w-full max-w-md bg-green-600 hover:bg-green-700 text-white h-12 text-base font-semibold"
-                  disabled={!conferenciaData.nome_cliente || !conferenciaData.telefone}
+                  disabled={!conferenciaData.nome_cliente || !conferenciaData.telefone || !conferenciaData.cadastro_preenchido_power || !conferenciaData.documentacoes_enviadas_power || !conferenciaData.vistoria_realizada || !conferenciaData.contrato_assinado || !conferenciaData.pagamento_realizado}
                 >
                   <CheckCircle2 className="w-5 h-5 mr-2" />
                   Informações Conferidas
