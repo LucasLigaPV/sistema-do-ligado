@@ -1363,6 +1363,33 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
+              <div className="space-y-3">
+                <Label className="font-semibold text-slate-900">Checklist de Envio *</Label>
+                <div className="space-y-2">
+                  {[
+                    { key: "cadastro_preenchido_power", label: "Preencheu Cadastro na Power" },
+                    { key: "documentacoes_enviadas_power", label: "Subiu as Documentações na Power" },
+                    { key: "vistoria_realizada", label: "Vistoria Realizada" },
+                    { key: "contrato_assinado", label: "Contrato Assinado" },
+                    { key: "pagamento_realizado", label: "Pagamento Realizado" }
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center gap-3">
+                      <Checkbox
+                        id={`conf-${item.key}`}
+                        checked={conferenciaData[item.key] || false}
+                        onCheckedChange={(checked) => {
+                          setConferenciaData({ ...conferenciaData, [item.key]: checked });
+                        }}
+                        className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200]"
+                      />
+                      <label htmlFor={`conf-${item.key}`} className="text-sm cursor-pointer flex-1">
+                        {item.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Nome do Cliente *</Label>
