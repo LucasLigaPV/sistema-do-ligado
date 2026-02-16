@@ -491,7 +491,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return user?.full_name || email;
   };
 
-  const vendedoresDisponiveis = users.filter(u => todosVendedoresEquipe.includes(u.email));
+  const vendedoresDisponiveis = todosVendedoresEquipe
+    .map(email => users.find(u => u.email === email))
+    .filter(u => u !== undefined);
 
   const toggleVendedor = (email) => {
     setSelectedVendedores(prev => 
