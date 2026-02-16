@@ -65,8 +65,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   const vendas = userRole === "admin" 
     ? allVendas 
     : userFuncao === "lider"
-    ? allVendas.filter((v) => membrosEquipe.includes(v.vendedor))
-    : allVendas.filter(v => v.vendedor === userEmail);
+    ? allVendas.filter((v) => membrosEquipe.includes(v.email_vendedor || v.vendedor))
+    : allVendas.filter(v => v.email_vendedor === userEmail || v.vendedor === userEmail);
 
   const vendasFiltradas = useMemo(() => {
     return vendas.filter((venda) => {
@@ -137,11 +137,12 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     const vendedoresMap = {};
     
     vendasFiltradas.forEach(venda => {
-      if (!vendedoresMap[venda.vendedor]) {
-        const usuario = usuarios.find(u => u.email === venda.vendedor);
-        vendedoresMap[venda.vendedor] = {
-          nome: usuario?.full_name || venda.vendedor,
-          email: venda.vendedor,
+      const vendedorKey = venda.email_vendedor || venda.vendedor;
+      if (!vendedoresMap[vendedorKey]) {
+        const usuario = usuarios.find(u => u.email === vendedorKey);
+        vendedoresMap[vendedorKey] = {
+          nome: usuario?.nome_exibicao || usuario?.full_name || venda.vendedor || vendedorKey,
+          email: vendedorKey,
           totalVendas: 0,
           totalFaturamento: 0,
           vendasAtivas: 0,
@@ -151,13 +152,13 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         };
       }
       
-      vendedoresMap[venda.vendedor].totalVendas += 1;
+      vendedoresMap[vendedorKey].totalVendas += 1;
       const valor = parseFloat(venda.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
-      vendedoresMap[venda.vendedor].totalFaturamento += valor;
+      vendedoresMap[vendedorKey].totalFaturamento += valor;
       
-      if (venda.etapa === "ativo") vendedoresMap[venda.vendedor].vendasAtivas += 1;
-      if (venda.etapa === "pagamento_ok") vendedoresMap[venda.vendedor].vendasPagamentoOk += 1;
-      if (venda.tem_indicacao === "sim") vendedoresMap[venda.vendedor].comIndicacao += 1;
+      if (venda.etapa === "ativo") vendedoresMap[vendedorKey].vendasAtivas += 1;
+      if (venda.etapa === "pagamento_ok") vendedoresMap[vendedorKey].vendasPagamentoOk += 1;
+      if (venda.tem_indicacao === "sim") vendedoresMap[vendedorKey].comIndicacao += 1;
     });
 
     return Object.values(vendedoresMap)
