@@ -297,8 +297,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       setShowConferenciaModal(true);
     } else if (newEtapa === "vistoria_assinatura_pix") {
       // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-      setPendingSubetapa({ id: dealId, etapa: newEtapa, currentSubetapa: deal?.subetapa });
-      setSelectedSubetapa(deal?.subetapa || "");
+      setPendingSubetapa({ id: dealId, etapa: newEtapa, currentSubetapa: deal?.subetapas || [] });
+      setSelectedSubetapa(deal?.subetapas || []);
       setShowSubetapaModal(true);
     } else {
       // Atualizar imediatamente
@@ -310,19 +310,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   };
 
   const handleConfirmSubetapa = () => {
-    if (!selectedSubetapa) {
-      alert("Por favor, selecione uma subetapa");
+    if (selectedSubetapa.length === 0) {
+      alert("Por favor, selecione pelo menos uma subetapa");
       return;
     }
 
     updateMutation.mutate({
       id: pendingSubetapa.id,
-      data: { etapa: pendingSubetapa.etapa, subetapa: selectedSubetapa }
+      data: { etapa: pendingSubetapa.etapa, subetapas: selectedSubetapa }
     });
 
     setShowSubetapaModal(false);
     setPendingSubetapa(null);
-    setSelectedSubetapa("");
+    setSelectedSubetapa([]);
   };
 
   const handleConferirInformacoes = () => {
@@ -426,8 +426,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         setShowDetails(false);
       } else if (prevEtapa === "vistoria_assinatura_pix") {
         // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-        setPendingSubetapa({ id: selectedDeal.id, etapa: prevEtapa, currentSubetapa: selectedDeal?.subetapa });
-        setSelectedSubetapa(selectedDeal?.subetapa || "");
+        setPendingSubetapa({ id: selectedDeal.id, etapa: prevEtapa, currentSubetapa: selectedDeal?.subetapas || [] });
+        setSelectedSubetapa(selectedDeal?.subetapas || []);
         setShowSubetapaModal(true);
         setShowDetails(false);
       } else {
@@ -777,12 +777,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             {deal.placa}
                                           </div>
                                         )}
-                                        {deal.subetapa && deal.etapa === "vistoria_assinatura_pix" && (
-                                          <Badge className="text-xs bg-blue-100 text-blue-800 border-blue-200">
-                                            {deal.subetapa === "aguardando_vistoria" && "Aguardando Vistoria"}
-                                            {deal.subetapa === "aguardando_assinatura" && "Aguardando Assinatura"}
-                                            {deal.subetapa === "aguardando_pix" && "Aguardando Pix"}
-                                          </Badge>
+                                        {deal.subetapas && deal.etapa === "vistoria_assinatura_pix" && (
+                                          <div className="flex flex-wrap gap-1">
+                                            {deal.subetapas.map((subetapa) => (
+                                              <Badge key={subetapa} className="text-xs bg-blue-100 text-blue-800 border-blue-200">
+                                                {subetapa === "aguardando_vistoria" && "Vistoria"}
+                                                {subetapa === "aguardando_assinatura" && "Assinatura"}
+                                                {subetapa === "aguardando_pix" && "Pix"}
+                                              </Badge>
+                                            ))}
+                                          </div>
                                         )}
                                         {deal.valor_adesao && (
                                           <div className="text-sm font-medium text-slate-700">
@@ -1224,24 +1228,32 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   />
                 </div>
                 {selectedDeal.etapa === "vistoria_assinatura_pix" && (
-                  <div className="col-span-2">
-                    <Label>Status da Subetapa</Label>
-                    <Select
-                      value={editedDeal.subetapa || ""}
-                      onValueChange={(value) => setEditedDeal({ ...editedDeal, subetapa: value })}
-                      disabled={isReadOnly}
-                    >
-                      <SelectTrigger disabled={isReadOnly}>
-                        <SelectValue placeholder="Selecione o status..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="aguardando_vistoria">Aguardando Vistoria</SelectItem>
-                        <SelectItem value="aguardando_assinatura">Aguardando Assinatura</SelectItem>
-                        <SelectItem value="aguardando_pix">Aguardando Pix</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                   <div className="col-span-2 space-y-2">
+                     <Label>Aguardando</Label>
+                     <div className="space-y-2">
+                       {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
+                         <div key={sub} className="flex items-center gap-2">
+                           <Checkbox
+                             id={`sub-${sub}`}
+                             checked={(editedDeal.subetapas || []).includes(sub)}
+                             onCheckedChange={(checked) => {
+                               const newSubetapas = checked
+                                 ? [...(editedDeal.subetapas || []), sub]
+                                 : (editedDeal.subetapas || []).filter(s => s !== sub);
+                               setEditedDeal({ ...editedDeal, subetapas: newSubetapas });
+                             }}
+                             disabled={isReadOnly}
+                           />
+                           <label htmlFor={`sub-${sub}`} className="text-sm cursor-pointer flex-1">
+                             {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
+                             {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
+                             {sub === "aguardando_pix" && "Aguardando Pix"}
+                           </label>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                 )}
                 </div>
 
               {/* Botões de Ação */}
@@ -1461,27 +1473,33 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       <Dialog open={showSubetapaModal} onOpenChange={setShowSubetapaModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Selecionar Subetapa</DialogTitle>
+            <DialogTitle>Aguardando</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-slate-600">
-              Selecione o status atual desta negociação:
+              Selecione os status que a negociação está aguardando:
             </p>
-            <div>
-              <Label>Status *</Label>
-              <Select
-                value={selectedSubetapa}
-                onValueChange={setSelectedSubetapa}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o status..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="aguardando_vistoria">Aguardando Vistoria</SelectItem>
-                  <SelectItem value="aguardando_assinatura">Aguardando Assinatura</SelectItem>
-                  <SelectItem value="aguardando_pix">Aguardando Pix</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="space-y-3">
+              {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
+                <div key={sub} className="flex items-center gap-3">
+                  <Checkbox
+                    id={`modal-${sub}`}
+                    checked={selectedSubetapa.includes(sub)}
+                    onCheckedChange={(checked) => {
+                      setSelectedSubetapa(checked
+                        ? [...selectedSubetapa, sub]
+                        : selectedSubetapa.filter(s => s !== sub)
+                      );
+                    }}
+                    className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200]"
+                  />
+                  <label htmlFor={`modal-${sub}`} className="text-sm cursor-pointer flex-1">
+                    {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
+                    {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
+                    {sub === "aguardando_pix" && "Aguardando Pix"}
+                  </label>
+                </div>
+              ))}
             </div>
 
             <div className="flex gap-2 pt-4">
@@ -1491,7 +1509,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 onClick={() => {
                   setShowSubetapaModal(false);
                   setPendingSubetapa(null);
-                  setSelectedSubetapa("");
+                  setSelectedSubetapa([]);
                 }}
                 className="flex-1"
               >
@@ -1500,7 +1518,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               <Button
                 onClick={handleConfirmSubetapa}
                 className="flex-1 bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                disabled={!selectedSubetapa}
+                disabled={selectedSubetapa.length === 0}
               >
                 Confirmar
               </Button>
