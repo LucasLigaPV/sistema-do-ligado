@@ -789,25 +789,32 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                           </div>
                                         )}
                                         {deal.valor_adesao && (
-                                          <div className="text-sm font-medium text-slate-700">
-                                            {deal.valor_adesao}
+                                            <div className="text-sm font-medium text-slate-700">
+                                              {deal.valor_adesao}
+                                            </div>
+                                          )}
+                                          <div className="flex items-center justify-between gap-2">
+                                            <div className="text-xs text-slate-500">
+                                              {deal.data_entrada 
+                                                ? format(new Date(deal.data_entrada), "dd/MM/yyyy")
+                                                : format(new Date(deal.created_date), "dd/MM/yyyy")}
+                                            </div>
+                                            {deal.status_aprovacao === "analisando" && (
+                                              <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs">
+                                                Em análise
+                                              </Badge>
+                                            )}
                                           </div>
-                                        )}
-                                        <div className="text-xs text-slate-500">
-                                          {deal.data_entrada 
-                                            ? format(new Date(deal.data_entrada), "dd/MM/yyyy")
-                                            : format(new Date(deal.created_date), "dd/MM/yyyy")}
-                                        </div>
-                                        {deal.etapa === "reprovado" && deal.motivo_negacao && (
-                                          <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
-                                            <strong>Motivo:</strong> {deal.motivo_negacao}
-                                          </div>
-                                        )}
-                                        {userFuncao === "lider" && (
-                                          <div className="text-xs text-slate-500 pt-1 border-t">
-                                            {getNomeVendedor(deal.vendedor_email)}
-                                          </div>
-                                        )}
+                                          {deal.etapa === "reprovado" && deal.motivo_negacao && (
+                                            <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
+                                              <strong>Motivo:</strong> {deal.motivo_negacao}
+                                            </div>
+                                          )}
+                                          {userFuncao === "lider" && (
+                                            <div className="text-xs text-slate-500 pt-1 border-t">
+                                              {getNomeVendedor(deal.vendedor_email)}
+                                            </div>
+                                          )}
                                       </CardContent>
                                     </Card>
                                   </div>
