@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp } from "lucide-react";
+import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
 
 export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [showModal, setShowModal] = useState(false);
@@ -50,11 +51,11 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   );
 
   const etapas = [
-    { id: "aguardando", label: "Aguardando Análise", icon: Clock, color: "bg-amber-50" },
-    { id: "analisando", label: "Analisando", icon: Eye, color: "bg-blue-50" },
-    { id: "reprovado", label: "Reprovado", icon: XCircle, color: "bg-red-50" },
-    { id: "corrigido", label: "Corrigidos", icon: CheckCircle2, color: "bg-green-50" },
-    { id: "aprovado", label: "Aprovados", icon: ThumbsUp, color: "bg-emerald-50" },
+    { id: "aguardando", label: "Aguardando Análise", icon: Clock },
+    { id: "analisando", label: "Analisando", icon: Eye },
+    { id: "reprovado", label: "Reprovado", icon: XCircle },
+    { id: "corrigido", label: "Corrigidos", icon: CheckCircle2 },
+    { id: "aprovado", label: "Aprovados", icon: ThumbsUp },
   ];
 
   const categoriesMotivo = {
@@ -147,14 +148,11 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Fila de Aprovações</h2>
-        <p className="text-slate-600">Gerencie as vendas em processo de aprovação</p>
-      </div>
+      <PainelEstatisticasAprovacoes negociacoes={negociacoes} />
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="overflow-x-auto pb-4">
-          <div className="flex gap-4 min-w-max">
+          <div className="flex gap-3 min-w-max">
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesAnalise.filter(n => n.status_aprovacao === etapa.id);
               const IconComponent = etapa.icon;
@@ -165,21 +163,23 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="w-80 flex-shrink-0"
+                      className="w-96 flex-shrink-0"
                     >
-                      <Card className={`${etapa.color} border`}>
-                        <CardHeader className="pb-3">
+                      <Card className="bg-white shadow-sm border flex flex-col" style={{ height: 'calc(100vh - 250px)' }}>
+                        <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <IconComponent className="w-5 h-5 text-slate-700" />
-                              <CardTitle className="text-sm font-semibold">
+                              <IconComponent className="w-4 h-4 text-slate-600" />
+                              <CardTitle className="text-sm font-semibold text-slate-700">
                                 {etapa.label}
                               </CardTitle>
                             </div>
-                            <Badge variant="secondary">{dealsNaEtapa.length}</Badge>
+                            <Badge variant="secondary" className="bg-white border">
+                              {dealsNaEtapa.length}
+                            </Badge>
                           </div>
                         </CardHeader>
-                        <CardContent className="space-y-2 max-h-96 overflow-y-auto">
+                        <CardContent className="space-y-2 flex-1 overflow-y-auto">
                           {dealsNaEtapa.map((deal, index) => (
                             <Draggable key={deal.id} draggableId={deal.id} index={index}>
                               {(provided, snapshot) => (
@@ -188,32 +188,32 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
+                                  <Card
+                                    className={`bg-white cursor-move hover:shadow-md ${
+                                      snapshot.isDragging ? "shadow-lg" : ""
+                                    }`}
                                   >
-                                    <Card className="bg-white cursor-move hover:shadow-md">
-                                      <CardContent className="p-3 space-y-1.5">
-                                        <div className="font-medium text-sm text-slate-900">
-                                          {deal.nome_cliente}
+                                    <CardContent className="p-4 space-y-2">
+                                      <div className="font-medium text-sm">
+                                        {deal.nome_cliente}
+                                      </div>
+                                      {deal.placa && (
+                                        <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
+                                          <Car className="w-4 h-4" />
+                                          {deal.placa}
                                         </div>
-                                        {deal.placa && (
-                                          <div className="text-xs text-[#EFC200] font-semibold">
-                                            {deal.placa}
-                                          </div>
-                                        )}
-                                        <div className="text-xs text-slate-500 flex justify-between">
-                                          <span>{getNomeVendedor(deal.vendedor_email)}</span>
-                                          <span>{format(new Date(deal.data_conferencia), "dd/MM")}</span>
+                                      )}
+                                      <div className="flex justify-between text-xs text-slate-500 pt-1 border-t">
+                                        <span>{getNomeVendedor(deal.vendedor_email)}</span>
+                                        <span>{format(new Date(deal.data_conferencia), "dd/MM/yyyy")}</span>
+                                      </div>
+                                      {deal.motivo_reprova_categoria && (
+                                        <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
+                                          <strong>{categoriesMotivo[deal.motivo_reprova_categoria]}:</strong> {deal.motivo_reprova_detalhe}
                                         </div>
-                                        {deal.motivo_reprova_categoria && (
-                                          <div className="text-xs bg-red-50 border border-red-200 text-red-700 p-2 rounded mt-2">
-                                            <strong>{categoriesMotivo[deal.motivo_reprova_categoria]}:</strong> {deal.motivo_reprova_detalhe}
-                                          </div>
-                                        )}
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
+                                      )}
+                                    </CardContent>
+                                  </Card>
                                 </div>
                               )}
                             </Draggable>
