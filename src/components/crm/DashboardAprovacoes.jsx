@@ -117,8 +117,8 @@ export default function DashboardAprovacoes() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Dashboard de Aprovações</h2>
-        <p className="text-slate-600">Análise e performance do processo de aprovação</p>
+        <h2 className="text-2xl font-bold text-slate-900">Aprovações - Dashboard</h2>
+        <p className="text-slate-600">Insights e análise de performance de aprovações</p>
       </div>
 
       {/* Filtro de Data */}
