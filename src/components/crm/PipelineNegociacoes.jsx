@@ -666,24 +666,33 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 {userFuncao === "lider" && (
                   <div className="space-y-2">
                     <Label className="text-xs">Vendedores da Equipe</Label>
-                    <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-2">
-                      {vendedoresDisponiveis.map((vendedor) => (
-                        <div key={vendedor.email} className="flex items-center gap-2">
-                          <Checkbox
-                            id={vendedor.email}
-                            checked={selectedVendedores.includes(vendedor.email)}
-                            onCheckedChange={() => toggleVendedor(vendedor.email)}
-                            className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
-                          />
-                          <label
-                            htmlFor={vendedor.email}
-                            className="text-sm cursor-pointer flex-1"
-                          >
-                            {vendedor.full_name || vendedor.email}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
+                    <Select value={selectedVendedores.length > 0 ? "selected" : ""}>
+                      <SelectTrigger className="h-9 text-xs">
+                        <SelectValue placeholder="Selecionar vendedores...">
+                          {selectedVendedores.length > 0 
+                            ? `${selectedVendedores.length} selecionado${selectedVendedores.length > 1 ? 's' : ''}`
+                            : "Selecionar vendedores..."}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vendedoresDisponiveis.map((vendedor) => (
+                          <div key={vendedor.email} className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-100 cursor-pointer">
+                            <Checkbox
+                              id={`vendedor-${vendedor.email}`}
+                              checked={selectedVendedores.includes(vendedor.email)}
+                              onCheckedChange={() => toggleVendedor(vendedor.email)}
+                              className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
+                            />
+                            <label
+                              htmlFor={`vendedor-${vendedor.email}`}
+                              className="text-sm cursor-pointer flex-1"
+                            >
+                              {vendedor.full_name || vendedor.email}
+                            </label>
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {selectedVendedores.length > 0 && (
                       <Button
                         variant="ghost"
