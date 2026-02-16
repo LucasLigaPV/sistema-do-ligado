@@ -147,7 +147,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       id: selectedDeal.id,
       data: {
         status_aprovacao: "reprovado",
-        etapa: "enviado_cadastro",
+        etapa: "reprovado",
         motivo_reprova_categoria: categoria,
         motivo_reprova_detalhe: motivo,
         analisado_por: userEmail,
