@@ -290,7 +290,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 nomesPorEmail={(() => {
                   const map = {};
                   allVendas.forEach(v => {
-                    if (v.email_vendedor && v.vendedor) {
+                    if (v.email_vendedor && v.vendedor && v.vendedor !== v.email_vendedor) {
                       map[v.email_vendedor] = v.vendedor;
                     }
                   });
