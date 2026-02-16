@@ -109,7 +109,7 @@ export default function DashboardRankings() {
         </motion.div>
 
         {/* Grid de Rankings em 2 colunas */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 auto-rows-fr">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

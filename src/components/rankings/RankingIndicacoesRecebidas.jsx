@@ -48,7 +48,9 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {rankingArray.map((vendedor, index) => (
+          {rankingArray.length === 0 ? (
+            <p className="text-slate-500 text-center py-8">Nenhuma indicação recebida encontrada</p>
+          ) : rankingArray.map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, x: -20 }}
