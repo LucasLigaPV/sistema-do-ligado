@@ -17,6 +17,7 @@ import {
   TrendingUp,
   TrendingDown,
   BarChart3,
+  Trophy,
   Megaphone,
   ChevronDown,
   Briefcase,
@@ -130,7 +131,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange }) {
     },
     ...(user?.funcao === "master" ? [{ id: "crm-marketing", label: "Marketing", icon: Megaphone }] : []),
     ...(user?.funcao === "master" ? [{ id: "aprovacoes", label: "Aprovações", icon: CheckCircle }] : []),
-    { id: "rankings", label: "Rankings", icon: TrendingUp },
+    { id: "rankings", label: "Rankings", icon: Trophy },
     ...((user?.role === "admin" || user?.funcao === "master") ? [{ id: "configuracoes", label: "Usuários e Equipes", icon: UsersRound }] : []),
   ];
 
