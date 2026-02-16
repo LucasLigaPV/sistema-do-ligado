@@ -36,9 +36,41 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Negociacao.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      await base44.entities.Negociacao.update(id, data);
+      
+      // Se aprovado, cria registro na Venda
+      if (data.status_aprovacao === "aprovado") {
+        const deal = negociacoes.find(n => n.id === id);
+        if (deal) {
+          await base44.entities.Venda.create({
+            vendedor: getNomeVendedor(deal.vendedor_email),
+            email_vendedor: deal.vendedor_email,
+            data_venda: new Date().toISOString().split('T')[0],
+            etapa: "pagamento_ok",
+            cliente: deal.nome_cliente,
+            telefone: deal.telefone,
+            email: deal.email || "",
+            plano_vendido: deal.plano_interesse || "",
+            placa: deal.placa || "",
+            modelo_veiculo: deal.modelo_veiculo || "",
+            valor_adesao: deal.valor_adesao || "",
+            valor_mensalidade: deal.valor_mensalidade || "",
+            forma_pagamento: "pix",
+            canal_venda: deal.origem || "lead",
+            plataforma: deal.plataforma || "",
+            posicionamento: deal.posicionamento || "",
+            ad: deal.ad || "",
+            adset: deal.adset || "",
+            campanha: deal.campanha || "",
+            pagina: deal.pagina || "",
+          });
+        }
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+      queryClient.invalidateQueries({ queryKey: ["vendas"] });
       setShowModal(false);
       setSelectedDeal(null);
       setMotivo("");
