@@ -9,13 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText, Upload, Wrench, FileSignature, CreditCard } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
 
 export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [showModal, setShowModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [motivo, setMotivo] = useState("");
   const [categoria, setCategoria] = useState("");
@@ -146,6 +149,17 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     });
   };
 
+  const handleCardClick = (deal) => {
+    setSelectedDeal(deal);
+    setShowDetails(true);
+  };
+
+  // Buscar todas as reprovas do mesmo cliente
+  const historicoReprov = negociacoes.filter(n => 
+    n.nome_cliente === selectedDeal?.nome_cliente && 
+    n.motivo_reprova_categoria
+  ).sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise));
+
   return (
     <div className="space-y-6">
       <PainelEstatisticasAprovacoes negociacoes={negociacoes} />
@@ -189,9 +203,10 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                   {...provided.dragHandleProps}
                                 >
                                   <Card
-                                    className={`bg-white cursor-move hover:shadow-md ${
+                                    className={`bg-white cursor-pointer hover:shadow-md ${
                                       snapshot.isDragging ? "shadow-lg" : ""
                                     }`}
+                                    onClick={() => handleCardClick(deal)}
                                   >
                                     <CardContent className="p-4 space-y-2">
                                       <div className="font-medium text-sm">
@@ -230,6 +245,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         </div>
       </DragDropContext>
 
+      {/* Modal: Reprova */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -294,6 +310,114 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Sheet: Detalhes da Negociação */}
+      <Sheet open={showDetails} onOpenChange={setShowDetails}>
+        <SheetContent side="right" className="w-full sm:w-[600px] sm:max-w-[600px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Detalhes da Negociação</SheetTitle>
+          </SheetHeader>
+          {selectedDeal && (
+            <div className="space-y-6 mt-6">
+              {/* Informações Básicas */}
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-xs font-semibold text-slate-500">Cliente</Label>
+                  <p className="text-sm font-medium text-slate-900">{selectedDeal.nome_cliente}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-500">Telefone</Label>
+                    <p className="text-sm text-slate-900">{selectedDeal.telefone}</p>
+                  </div>
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-500">Email</Label>
+                    <p className="text-sm text-slate-900">{selectedDeal.email || "-"}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-500">Placa</Label>
+                    <p className="text-sm font-semibold text-[#EFC200]">{selectedDeal.placa || "-"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-500">Modelo</Label>
+                    <p className="text-sm text-slate-900">{selectedDeal.modelo_veiculo || "-"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Checklist */}
+              <div className="border-t pt-4">
+                <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#EFC200]" />
+                  Checklist do Consultor
+                </h3>
+                <div className="space-y-2.5">
+                  {[
+                    { key: "cadastro_preenchido_power", label: "Cadastro Preenchido na Power", icon: FileText },
+                    { key: "documentacoes_enviadas_power", label: "Documentações Enviadas", icon: Upload },
+                    { key: "vistoria_realizada", label: "Vistoria Realizada", icon: Wrench },
+                    { key: "contrato_assinado", label: "Contrato Assinado", icon: FileSignature },
+                    { key: "pagamento_realizado", label: "Pagamento Realizado", icon: CreditCard }
+                  ].map((item) => {
+                    const IconComponent = item.icon;
+                    const isChecked = selectedDeal[item.key] || false;
+                    return (
+                      <div 
+                        key={item.key} 
+                        className={`flex items-center gap-3 p-3 rounded-lg ${
+                          isChecked 
+                            ? "bg-green-50 border border-green-200" 
+                            : "bg-slate-50 border border-slate-200"
+                        }`}
+                      >
+                        <Checkbox
+                          checked={isChecked}
+                          disabled
+                          className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                        />
+                        <IconComponent className={`w-4 h-4 flex-shrink-0 ${isChecked ? "text-green-600" : "text-slate-400"}`} />
+                        <span className={`text-sm flex-1 font-medium ${isChecked ? "text-green-700" : "text-slate-700"}`}>
+                          {item.label}
+                        </span>
+                        {isChecked && <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Histórico de Reprovas */}
+              {historicoReprov.length > 0 && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                    <XCircle className="w-5 h-5 text-red-600" />
+                    Histórico de Reprovas
+                  </h3>
+                  <div className="space-y-3">
+                    {historicoReprov.map((rep, index) => (
+                      <div key={rep.id} className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-xs font-semibold text-red-700">
+                              {categoriesMotivo[rep.motivo_reprova_categoria]}
+                            </p>
+                            <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
+                          </div>
+                          <span className="text-xs text-red-600 flex-shrink-0">
+                            {format(new Date(rep.data_analise), "dd/MM/yyyy")}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
