@@ -856,7 +856,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   value={newDeal.valor_mensalidade}
                   onChange={(e) => {
                     const numeros = e.target.value.replace(/\D/g, '');
-                    const valor = (parseInt(numeros) || 0) / 100;
+                    const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                     const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                     setNewDeal({ ...newDeal, valor_mensalidade: formatado });
                   }}
@@ -869,7 +869,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   value={newDeal.valor_adesao}
                   onChange={(e) => {
                     const numeros = e.target.value.replace(/\D/g, '');
-                    const valor = (parseInt(numeros) || 0) / 100;
+                    const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                     const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                     setNewDeal({ ...newDeal, valor_adesao: formatado });
                   }}
@@ -1087,7 +1087,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={editedDeal.valor_mensalidade || ""}
                     onChange={(e) => {
                       const numeros = e.target.value.replace(/\D/g, '');
-                      const valor = (parseInt(numeros) || 0) / 100;
+                      const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                       const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                       setEditedDeal({ ...editedDeal, valor_mensalidade: formatado });
                     }}
@@ -1101,7 +1101,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={editedDeal.valor_adesao || ""}
                     onChange={(e) => {
                       const numeros = e.target.value.replace(/\D/g, '');
-                      const valor = (parseInt(numeros) || 0) / 100;
+                      const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                       const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                       setEditedDeal({ ...editedDeal, valor_adesao: formatado });
                     }}
@@ -1319,7 +1319,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={conferenciaData.valor_adesao || ""}
                     onChange={(e) => {
                       const numeros = e.target.value.replace(/\D/g, '');
-                      const valor = (parseInt(numeros) || 0) / 100;
+                      const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                       const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                       setConferenciaData({ ...conferenciaData, valor_adesao: formatado });
                     }}
@@ -1332,7 +1332,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={conferenciaData.valor_mensalidade || ""}
                     onChange={(e) => {
                       const numeros = e.target.value.replace(/\D/g, '');
-                      const valor = (parseInt(numeros) || 0) / 100;
+                      const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                       const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                       setConferenciaData({ ...conferenciaData, valor_mensalidade: formatado });
                     }}
