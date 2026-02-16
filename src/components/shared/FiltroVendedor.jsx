@@ -9,20 +9,12 @@ export default function FiltroVendedor({
   vendedoresSelecionados, 
   todosVendedores, 
   onSelectionChange,
-  users = [],
   userEmail = "",
   nomesPorEmail = {}
 }) {
   const getNomeVendedor = (email) => {
     if (!email) return "N/A";
-    // Primeiro tenta pelo mapa de nomes passado diretamente
-    if (nomesPorEmail[email]) return nomesPorEmail[email];
-    // Fallback para users se disponível
-    const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-    if (user) {
-      return user.data?.nome_exibicao || user.nome_exibicao || user.full_name || email;
-    }
-    return email;
+    return nomesPorEmail[email] || email;
   };
 
   const allSelected = vendedoresSelecionados.length === todosVendedores.length;
