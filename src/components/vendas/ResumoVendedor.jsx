@@ -82,7 +82,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     enabled: userFuncao === "lider" && membrosEquipe.length > 0,
   });
 
-  const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado) && v.etapa === "ativo");
+  const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
 
   // Calcular estatísticas
   const totalVendas = vendasDoVendedor.length;
