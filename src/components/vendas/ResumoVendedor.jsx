@@ -415,11 +415,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                   </div>
                   <div className="relative h-3 bg-slate-200 rounded-full overflow-hidden">
                     <div 
-                      className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out ${
-                        nivelAtual.nivel === "Nível 1" 
-                          ? "bg-gradient-to-r from-blue-500 to-indigo-500" 
-                          : "bg-gradient-to-r from-[#EFC200] to-[#D4A900]"
-                      }`}
+                      className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-[#EFC200] to-[#D4A900]"
                       style={{ width: `${progressoAnimado}%` }}
                     />
                   </div>
