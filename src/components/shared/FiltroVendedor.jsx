@@ -1,11 +1,21 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChevronDown } from "lucide-react";
+
+function formatarEmailComoNome(email) {
+  if (!email) return "N/A";
+  const parte = email.split("@")[0];
+  // "lucasmoreira" -> "Lucas Moreira"
+  return parte
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/[._-]/g, " ")
+    .split(" ")
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+    .join(" ");
+}
 
 export default function FiltroVendedor({ 
   vendedoresSelecionados, 
@@ -14,39 +24,10 @@ export default function FiltroVendedor({
   userEmail = "",
   nomesPorEmail = {}
 }) {
-  // Buscar nomes de todas as fontes de dados disponíveis
-  const { data: vendas = [] } = useQuery({
-    queryKey: ["vendas_nomes"],
-    queryFn: () => base44.entities.Venda.list(),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const { data: negociacoes = [] } = useQuery({
-    queryKey: ["negociacoes_nomes"],
-    queryFn: () => base44.entities.Negociacao.list(),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // Construir mapa de nomes a partir de TODAS as fontes
-  const nomesCompletos = React.useMemo(() => {
-    const map = { ...nomesPorEmail };
-
-    // Vendas: email_vendedor -> vendedor (nome)
-    vendas.forEach(v => {
-      if (v.email_vendedor && v.vendedor && !map[v.email_vendedor]) {
-        map[v.email_vendedor] = v.vendedor;
-      }
-    });
-
-    // Negociações: vendedor_email -> created_by pode ser útil mas não tem nome
-    // Porém se houver nome no campo de venda associado, já pegamos acima
-
-    return map;
-  }, [nomesPorEmail, vendas, negociacoes]);
-
   const getNomeVendedor = (email) => {
     if (!email) return "N/A";
-    return nomesCompletos[email] || email;
+    if (nomesPorEmail[email]) return nomesPorEmail[email];
+    return formatarEmailComoNome(email);
   };
 
   const allSelected = vendedoresSelecionados.length === todosVendedores.length;
