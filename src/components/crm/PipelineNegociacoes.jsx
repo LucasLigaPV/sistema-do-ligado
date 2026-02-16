@@ -26,7 +26,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [lossReason, setLossReason] = useState({ categoria: "", motivo: "", observacao: "" });
   const [showSubetapaModal, setShowSubetapaModal] = useState(false);
   const [pendingSubetapa, setPendingSubetapa] = useState(null);
-  const [selectedSubetapa, setSelectedSubetapa] = useState("");
+  const [selectedSubetapa, setSelectedSubetapa] = useState([]);
   const [showConferenciaModal, setShowConferenciaModal] = useState(false);
   const [conferenciaData, setConferenciaData] = useState(null);
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
@@ -304,7 +304,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       // Atualizar imediatamente
       updateMutation.mutate({
         id: dealId,
-        data: { etapa: newEtapa, subetapa: "" }
+        data: { etapa: newEtapa, subetapas: [] }
       });
     }
   };
@@ -394,14 +394,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         setShowDetails(false);
       } else if (nextEtapa === "vistoria_assinatura_pix") {
         // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-        setPendingSubetapa({ id: selectedDeal.id, etapa: nextEtapa, currentSubetapa: selectedDeal?.subetapa });
-        setSelectedSubetapa(selectedDeal?.subetapa || "");
+        setPendingSubetapa({ id: selectedDeal.id, etapa: nextEtapa, currentSubetapa: selectedDeal?.subetapas || [] });
+        setSelectedSubetapa(selectedDeal?.subetapas || []);
         setShowSubetapaModal(true);
         setShowDetails(false);
       } else {
         updateMutation.mutate({
           id: selectedDeal.id,
-          data: { etapa: nextEtapa, subetapa: "" }
+          data: { etapa: nextEtapa, subetapas: [] }
         });
         setSelectedDeal({ ...selectedDeal, etapa: nextEtapa });
         setEditedDeal({ ...editedDeal, etapa: nextEtapa });
@@ -433,7 +433,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       } else {
         updateMutation.mutate({
           id: selectedDeal.id,
-          data: { etapa: prevEtapa, subetapa: "" }
+          data: { etapa: prevEtapa, subetapas: [] }
         });
         setSelectedDeal({ ...selectedDeal, etapa: prevEtapa });
         setEditedDeal({ ...editedDeal, etapa: prevEtapa });
