@@ -301,11 +301,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       setSelectedSubetapa(deal?.subetapa || "");
       setShowSubetapaModal(true);
     } else {
-      // Atualização otimista para feedback imediato
-      queryClient.setQueryData(["negociacoes"], (old) => {
-        return old.map(n => n.id === dealId ? { ...n, etapa: newEtapa, subetapa: "" } : n);
-      });
-      
+      // Atualizar imediatamente
       updateMutation.mutate({
         id: dealId,
         data: { etapa: newEtapa, subetapa: "" }
@@ -761,16 +757,20 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                               >
                                 {(provided, snapshot) => (
                                  <div
-                                   ref={provided.innerRef}
-                                   {...provided.draggableProps}
-                                   {...provided.dragHandleProps}
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={{
+                                    ...provided.draggableProps.style,
+                                    transition: snapshot.isDragging ? 'none' : 'transform 0.2s ease'
+                                  }}
                                  >
-                                   <Card
-                                     className={`bg-white cursor-move hover:shadow-md transition-shadow ${
-                                       snapshot.isDragging ? "shadow-lg rotate-2" : ""
-                                     }`}
-                                     onClick={() => handleCardClick(deal)}
-                                   >
+                                  <Card
+                                    className={`bg-white cursor-move hover:shadow-md transition-shadow ${
+                                      snapshot.isDragging ? "shadow-lg scale-105 opacity-90" : ""
+                                    }`}
+                                    onClick={() => handleCardClick(deal)}
+                                  >
                                       <CardContent className="p-4 space-y-2">
                                         <div className="font-medium text-sm">
                                           {deal.nome_cliente}
