@@ -70,6 +70,14 @@ export default function ResumoIndicacoes({ indicacoes }) {
       trend: stats.crescimento,
     },
     {
+      title: "Valor Total Pago",
+      value: `R$ ${stats.valorTotal.toFixed(2)}`,
+      icon: DollarSign,
+      color: "bg-emerald-50 border-emerald-200",
+      iconColor: "text-emerald-600",
+      trend: null,
+    },
+    {
       title: "Aguardando Aprovação",
       value: stats.pendentes,
       icon: Clock,
@@ -88,14 +96,6 @@ export default function ResumoIndicacoes({ indicacoes }) {
     {
       title: "Pagas",
       value: stats.pagas,
-      icon: DollarSign,
-      color: "bg-emerald-50 border-emerald-200",
-      iconColor: "text-emerald-600",
-      trend: null,
-    },
-    {
-      title: "Valor Total Pago",
-      value: `R$ ${stats.valorTotal.toFixed(2)}`,
       icon: DollarSign,
       color: "bg-emerald-50 border-emerald-200",
       iconColor: "text-emerald-600",
