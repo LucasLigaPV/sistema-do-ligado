@@ -198,6 +198,7 @@ export default function FormularioVenda({ onSuccess, userEmail }) {
               <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
               <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
               <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
+              <SelectItem value="migracao">Migração</SelectItem>
             </SelectContent>
           </Select>
         </div>
