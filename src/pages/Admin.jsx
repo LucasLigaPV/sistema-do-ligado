@@ -30,6 +30,7 @@ import Aprovacoes from "../components/crm/Aprovacoes";
 import ModalCheckin from "../components/crm/ModalCheckin";
 import DashboardCRM from "../components/crm/DashboardCRM";
 import DashboardMarketing from "../components/crm/DashboardMarketing";
+import DashboardRankings from "../components/rankings/DashboardRankings";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -286,6 +287,16 @@ export default function Admin() {
                   <p className="text-slate-500 text-sm">Análise de performance de campanhas e criativos</p>
                 </div>
                 <DashboardMarketing />
+              </div>
+            )}
+
+            {activeMenu === "rankings" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Rankings</h2>
+                  <p className="text-slate-500 text-sm">Acompanhe o desempenho e celebre as conquistas da equipe</p>
+                </div>
+                <DashboardRankings />
               </div>
             )}
           </motion.div>

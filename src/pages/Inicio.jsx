@@ -106,9 +106,9 @@ export default function Inicio() {
       title: "Rankings",
       description: "Acompanhe o desempenho da equipe",
       icon: Trophy,
-      bgColor: "bg-[#FFF9E6]",
-      iconColor: "text-[#EFC200]",
-      link: "/Rankings"
+      bgColor: "bg-slate-50",
+      iconColor: "text-slate-700",
+      link: "/Admin?menu=rankings"
     },
     ...(user?.funcao === "master" ? [{
       title: "Dashboard de Marketing",

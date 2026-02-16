@@ -22,10 +22,10 @@ export default function RankingVendasIndicacao({ vendas, users }) {
     .slice(0, 10);
 
   const getMedalIcon = (index) => {
-    if (index === 0) return <Trophy className="w-5 h-5 text-[#EFC200]" />;
-    if (index === 1) return <Award className="w-5 h-5 text-slate-400" />;
-    if (index === 2) return <Medal className="w-5 h-5 text-amber-700" />;
-    return <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm">{index + 1}</div>;
+    if (index === 0) return <Trophy className="w-5 h-5 text-slate-700" />;
+    if (index === 1) return <Award className="w-5 h-5 text-slate-500" />;
+    if (index === 2) return <Medal className="w-5 h-5 text-slate-400" />;
+    return <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">{index + 1}</div>;
   };
 
   return (
@@ -45,7 +45,7 @@ export default function RankingVendasIndicacao({ vendas, users }) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
               className={`flex items-center justify-between p-4 rounded-lg border ${
-                index === 0 ? 'bg-[#FFF9E6] border-[#EFC200]' : 'bg-white border-slate-200'
+                index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200'
               }`}
             >
               <div className="flex items-center gap-4">
