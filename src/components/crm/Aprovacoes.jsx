@@ -13,7 +13,18 @@ import { CheckCircle2, XCircle, Clock, Search, User, Phone, Mail, Car, Calendar,
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// Este arquivo foi substituído por ApprovacoesMenu que gerencia as abas
+// Ver ApprovacoesMenu.jsx para a nova implementação
+
+import ApprovacoesMenu from "./ApprovacoesMenu";
+
 export default function Aprovacoes({ userEmail, userFuncao }) {
+  return <ApprovacoesMenu userEmail={userEmail} userFuncao={userFuncao} />;
+}
+
+/*
+// Código anterior mantido para referência
+function AprovacoesPreviousVersion({ userEmail, userFuncao }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNegociacao, setSelectedNegociacao] = useState(null);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
