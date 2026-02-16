@@ -1040,33 +1040,67 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             return (
             <div className="space-y-6 mt-6">
               {/* Navegação de Etapas */}
-              <div className="flex items-center justify-between gap-3 pb-4 border-b">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handlePreviousStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa)}
-                  className="h-12 px-6"
-                >
-                  <ChevronLeft className="w-5 h-5 mr-2" />
-                  Anterior
-                </Button>
-                <div className="text-center flex-1">
-                  <Badge className="bg-[#EFC200] text-black text-base py-2 px-4">
-                    {etapas.find(e => e.id === selectedDeal.etapa)?.label}
-                  </Badge>
-                </div>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleAdvanceStage}
-                  disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa)}
-                  className="h-12 px-6"
-                >
-                  Avançar
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
+               <div className="flex items-center justify-between gap-3 pb-4 border-b">
+                 <Button
+                   variant="outline"
+                   size="lg"
+                   onClick={handlePreviousStage}
+                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa)}
+                   className="h-12 px-6"
+                 >
+                   <ChevronLeft className="w-5 h-5 mr-2" />
+                   Anterior
+                 </Button>
+                 <div className="text-center flex-1">
+                   <Select
+                     value={editedDeal.etapa}
+                     onValueChange={(value) => {
+                       const newEtapa = value;
+
+                       if (newEtapa === "enviado_cadastro") {
+                         setConferenciaData({
+                           id: selectedDeal.id,
+                           etapa: newEtapa,
+                           ...editedDeal
+                         });
+                         setShowConferenciaModal(true);
+                       } else if (newEtapa === "vistoria_assinatura_pix") {
+                         setPendingSubetapa({ id: selectedDeal.id, etapa: newEtapa, currentSubetapa: editedDeal?.subetapas || [] });
+                         setSelectedSubetapa(editedDeal?.subetapas || []);
+                         setShowSubetapaModal(true);
+                       } else {
+                         updateMutation.mutate({
+                           id: selectedDeal.id,
+                           data: { ...editedDeal, etapa: newEtapa, subetapas: [] }
+                         });
+                         setEditedDeal({ ...editedDeal, etapa: newEtapa });
+                       }
+                     }}
+                     disabled={isEtapaFinal(selectedDeal.etapa)}
+                   >
+                     <SelectTrigger className="w-full max-w-xs mx-auto">
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {etapas.map((etapa) => (
+                         <SelectItem key={etapa.id} value={etapa.id}>
+                           {etapa.label}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+                 <Button
+                   variant="outline"
+                   size="lg"
+                   onClick={handleAdvanceStage}
+                   disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa)}
+                   className="h-12 px-6"
+                 >
+                   Avançar
+                   <ChevronRight className="w-5 h-5 ml-2" />
+                 </Button>
+               </div>
 
               {/* Campos Editáveis */}
               <div className="grid grid-cols-2 gap-4">
