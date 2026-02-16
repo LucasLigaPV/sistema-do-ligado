@@ -244,9 +244,23 @@ export default function Admin() {
               </div>
             )}
 
-            {activeMenu === "aprovacoes" && (
+            {activeMenu === "aprovacoes-avaliar" && (
               <div>
-                <Aprovacoes userEmail={user?.email} userFuncao={user?.funcao} />
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Aprovações - Avaliar</h2>
+                  <p className="text-slate-500 text-sm">Gerencie a fila de aprovações com drag and drop</p>
+                </div>
+                <Aprovacoes userEmail={user?.email} userFuncao={user?.funcao} activeTab="avaliar" />
+              </div>
+            )}
+
+            {activeMenu === "aprovacoes-dashboard" && (
+              <div>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold text-slate-900">Aprovações - Dashboard</h2>
+                  <p className="text-slate-500 text-sm">Insights e análise de performance de aprovações</p>
+                </div>
+                <Aprovacoes userEmail={user?.email} userFuncao={user?.funcao} activeTab="dashboard" />
               </div>
             )}
 
