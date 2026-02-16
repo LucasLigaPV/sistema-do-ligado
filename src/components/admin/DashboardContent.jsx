@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import ResumoIndicacoes from "../dashboard/ResumoIndicacoes";
 import TopIndicadores from "../dashboard/TopIndicadores";
 import TopConsultores from "../dashboard/TopConsultores";
+import RankingIndicacoesRecebidas from "../dashboard/RankingIndicacoesRecebidas";
 
 export default function DashboardContent({ userEmail, userRole, userFuncao }) {
   const [dataInicio, setDataInicio] = useState("");
@@ -231,6 +232,15 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
               </motion.div>
             )}
           </div>
+
+          {/* Ranking de Indicações Recebidas */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <RankingIndicacoesRecebidas />
+          </motion.div>
         </>
       )}
     </div>
