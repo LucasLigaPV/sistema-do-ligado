@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import { format, startOfMonth, endOfMonth } from "date-fns";
-import { Search, TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, Eye, XCircle } from "lucide-react";
 
 export default function DashboardAprovacoes() {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
@@ -50,35 +50,55 @@ export default function DashboardAprovacoes() {
   const totalAvaliadas = reprovados + corrigidos + aprovados;
   const taxaAprovacao = totalAvaliadas > 0 ? ((aprovados / totalAvaliadas) * 100).toFixed(1) : 0;
 
-  // Motivos de reprova
+  // Motivos de reprova com detalhes
   const reprovacoes = negociacoesAnalise.filter(n => n.status_aprovacao === "reprovado");
   const motivosData = {};
+  const motivosDetalhes = {};
+
   reprovacoes.forEach(r => {
     const categoria = r.motivo_reprova_categoria || "não especificado";
+    const detalhe = r.motivo_reprova_detalhe || "Sem detalhe";
+    
     motivosData[categoria] = (motivosData[categoria] || 0) + 1;
+    
+    if (!motivosDetalhes[categoria]) {
+      motivosDetalhes[categoria] = {};
+    }
+    motivosDetalhes[categoria][detalhe] = (motivosDetalhes[categoria][detalhe] || 0) + 1;
   });
 
+  const categoriasMotivo = {
+    documentacao: "Documentação",
+    contrato: "Contrato",
+    vistoria_fotos: "Vistoria - Fotos",
+    vistoria_videos: "Vistoria - Vídeos",
+    preenchimento: "Preenchimento",
+  };
+
   const motivosChartData = Object.entries(motivosData).map(([categoria, count]) => ({
-    name: categoria === "documentacao" ? "Documentação" :
-          categoria === "contrato" ? "Contrato" :
-          categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
-          categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
-          "Preenchimento",
+    name: categoriasMotivo[categoria] || categoria,
     value: count,
-  }));
+    id: categoria,
+  })).sort((a, b) => b.value - a.value);
 
   // Performance por consultor
   const performanceData = {};
+  const consultoresReprovacoes = {};
+
   negociacoesAnalise.forEach(n => {
     const vendedor = getNomeVendedor(n.vendedor_email);
     if (!performanceData[vendedor]) {
-      performanceData[vendedor] = { enviados: 0, aprovados: 0, reprovados: 0, taxa: 0 };
+      performanceData[vendedor] = { enviados: 0, aprovados: 0, reprovados: 0, corrigidos: 0, taxa: 0, motivos: {} };
     }
     performanceData[vendedor].enviados++;
     if (n.status_aprovacao === "aprovado") {
       performanceData[vendedor].aprovados++;
     } else if (n.status_aprovacao === "reprovado") {
       performanceData[vendedor].reprovados++;
+      const motivo = n.motivo_reprova_categoria || "não especificado";
+      performanceData[vendedor].motivos[motivo] = (performanceData[vendedor].motivos[motivo] || 0) + 1;
+    } else if (n.status_aprovacao === "corrigido") {
+      performanceData[vendedor].corrigidos++;
     }
   });
 
@@ -87,28 +107,28 @@ export default function DashboardAprovacoes() {
     data.taxa = data.enviados > 0 ? ((data.aprovados / data.enviados) * 100).toFixed(0) : 0;
   });
 
-  const performanceArray = Object.entries(performanceData).map(([vendedor, data]) => ({
-    vendedor,
-    ...data,
-  }));
-
-  const cores = ["#EFC200", "#10B981", "#EF4444", "#3B82F6", "#8B5CF6"];
+  const performanceArray = Object.entries(performanceData)
+    .map(([vendedor, data]) => ({
+      vendedor,
+      ...data,
+    }))
+    .sort((a, b) => b.reprovados - a.reprovados);
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-slate-900">Dashboard de Aprovações</h2>
-        <p className="text-slate-600">Insights e análise de performance</p>
+        <p className="text-slate-600">Análise e performance do processo de aprovação</p>
       </div>
 
       {/* Filtro de Data */}
-      <Card className="border-0 shadow-md">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Período</CardTitle>
+      <Card className="border-0 bg-white">
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-sm font-semibold">Período</CardTitle>
         </CardHeader>
-        <CardContent className="flex gap-4">
+        <CardContent className="flex gap-4 pt-4">
           <div className="flex-1">
-            <Label className="text-xs text-slate-600 mb-1 block">De</Label>
+            <Label className="text-xs text-slate-600 mb-2 block font-medium">De</Label>
             <Input
               type="date"
               value={startDate}
@@ -117,7 +137,7 @@ export default function DashboardAprovacoes() {
             />
           </div>
           <div className="flex-1">
-            <Label className="text-xs text-slate-600 mb-1 block">Até</Label>
+            <Label className="text-xs text-slate-600 mb-2 block font-medium">Até</Label>
             <Input
               type="date"
               value={endDate}
@@ -130,155 +150,210 @@ export default function DashboardAprovacoes() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 bg-white">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-600 mb-1">Aguardando</p>
-            <p className="text-2xl font-bold text-amber-600">{aguardando}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-4 h-4 text-slate-400" />
+              <p className="text-xs text-slate-600">Aguardando</p>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{aguardando}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 bg-white">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-600 mb-1">Analisando</p>
-            <p className="text-2xl font-bold text-blue-600">{analisando}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <Eye className="w-4 h-4 text-slate-400" />
+              <p className="text-xs text-slate-600">Analisando</p>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{analisando}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 bg-white">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-600 mb-1">Reprovados</p>
-            <p className="text-2xl font-bold text-red-600">{reprovados}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <XCircle className="w-4 h-4 text-slate-400" />
+              <p className="text-xs text-slate-600">Reprovados</p>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{reprovados}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 bg-white">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-600 mb-1">Corrigidos</p>
-            <p className="text-2xl font-bold text-green-600">{corrigidos}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="w-4 h-4 text-slate-400" />
+              <p className="text-xs text-slate-600">Corrigidos</p>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{corrigidos}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
+        <Card className="border-0 bg-white">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-600 mb-1">Aprovados</p>
-            <p className="text-2xl font-bold text-emerald-600">{aprovados}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="w-4 h-4 text-slate-400" />
+              <p className="text-xs text-slate-600">Aprovados</p>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{aprovados}</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Taxa de Aprovação */}
-      <Card className="border-0 shadow-md">
+      <Card className="border-0 bg-white">
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-sm font-semibold">Taxa de Aprovação</CardTitle>
+        </CardHeader>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-slate-600 mb-1">Taxa de Aprovação</p>
               <p className="text-4xl font-bold text-slate-900">{taxaAprovacao}%</p>
-              <p className="text-xs text-slate-500 mt-2">De {totalAvaliadas} vendas analisadas</p>
+              <p className="text-xs text-slate-500 mt-2">De {totalAvaliadas} analisadas</p>
             </div>
-            <div className="text-right">
-              <div className="flex items-center justify-end gap-1 text-emerald-600 mb-2">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-sm font-semibold">{aprovados} aprovadas</span>
+            <div className="text-right space-y-2">
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-sm text-slate-600">{aprovados} aprovadas</span>
               </div>
-              <div className="flex items-center justify-end gap-1 text-red-600">
-                <TrendingDown className="w-4 h-4" />
-                <span className="text-sm font-semibold">{reprovados} reprovadas</span>
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-sm text-slate-600">{reprovados} reprovadas</span>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Gráficos */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Motivos de Reprova */}
-        {motivosChartData.length > 0 && (
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle className="text-sm">Motivos de Reprova</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={motivosChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={(entry) => `${entry.name}: ${entry.value}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {motivosChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={cores[index % cores.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Status da Fila */}
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-sm">Status da Fila</CardTitle>
+      {/* Motivos de Reprova - Detalhado */}
+      {motivosChartData.length > 0 && (
+        <Card className="border-0 bg-white">
+          <CardHeader className="pb-3 border-b">
+            <CardTitle className="text-sm font-semibold">Análise Detalhada de Reprovas</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={[{ 
-                name: "Vendas", 
-                aguardando, 
-                analisando, 
-                reprovado: reprovados,
-                corrigido: corrigidos,
-                aprovado: aprovados 
-              }]}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="aguardando" fill="#F59E0B" />
-                <Bar dataKey="analisando" fill="#3B82F6" />
-                <Bar dataKey="reprovado" fill="#EF4444" />
-                <Bar dataKey="corrigido" fill="#10B981" />
-                <Bar dataKey="aprovado" fill="#059669" />
-              </BarChart>
-            </ResponsiveContainer>
+          <CardContent className="pt-4">
+            <div className="space-y-4">
+              {motivosChartData.map((item) => (
+                <div key={item.id} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-slate-900">{item.name}</h4>
+                    <Badge className="bg-slate-100 text-slate-700 border-slate-200">{item.value} reprova{item.value > 1 ? 's' : ''}</Badge>
+                  </div>
+                  
+                  {motivosDetalhes[item.id] && Object.entries(motivosDetalhes[item.id]).length > 0 && (
+                    <div className="space-y-2">
+                      {Object.entries(motivosDetalhes[item.id])
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([detalhe, count]) => (
+                          <div key={detalhe} className="flex items-center justify-between text-sm bg-slate-50 p-2 rounded">
+                            <span className="text-slate-700">{detalhe}</span>
+                            <Badge variant="outline" className="text-xs">{count}x</Badge>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Status da Fila */}
+      <Card className="border-0 bg-white">
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-sm font-semibold">Status da Fila</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={[{ 
+              name: "Vendas", 
+              aguardando, 
+              analisando, 
+              reprovado: reprovados,
+              corrigido: corrigidos,
+              aprovado: aprovados 
+            }]}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="name" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="aguardando" fill="#94a3b8" />
+              <Bar dataKey="analisando" fill="#64748b" />
+              <Bar dataKey="reprovado" fill="#dc2626" />
+              <Bar dataKey="corrigido" fill="#f59e0b" />
+              <Bar dataKey="aprovado" fill="#059669" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Performance e Ranking por Motivos de Reprova */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Performance por Consultor */}
+        <Card className="border-0 bg-white">
+          <CardHeader className="pb-3 border-b">
+            <CardTitle className="text-sm font-semibold">Performance por Consultor</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="space-y-3">
+              {performanceArray.map((perf, idx) => (
+                <div key={idx} className="border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-medium text-sm text-slate-900">{perf.vendedor}</p>
+                    <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-xs">{perf.taxa}%</Badge>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="bg-slate-50 p-2 rounded">
+                      <p className="text-slate-600">Enviadas</p>
+                      <p className="font-semibold text-slate-900">{perf.enviados}</p>
+                    </div>
+                    <div className="bg-slate-50 p-2 rounded">
+                      <p className="text-slate-600">Aprovadas</p>
+                      <p className="font-semibold text-slate-900">{perf.aprovados}</p>
+                    </div>
+                    <div className="bg-slate-50 p-2 rounded">
+                      <p className="text-slate-600">Reprovadas</p>
+                      <p className="font-semibold text-slate-900">{perf.reprovados}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ranking por Motivos de Reprova */}
+        <Card className="border-0 bg-white">
+          <CardHeader className="pb-3 border-b">
+            <CardTitle className="text-sm font-semibold">Top Consultores por Reprova</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="space-y-3">
+              {performanceArray
+                .filter(p => p.reprovados > 0)
+                .slice(0, 5)
+                .map((perf, idx) => (
+                  <div key={idx} className="border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-medium text-sm text-slate-900">#{idx + 1} - {perf.vendedor}</p>
+                      <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">{perf.reprovados} reprova{perf.reprovados > 1 ? 's' : ''}</Badge>
+                    </div>
+                    
+                    {Object.entries(perf.motivos).length > 0 && (
+                      <div className="space-y-1">
+                        {Object.entries(perf.motivos)
+                          .sort((a, b) => b[1] - a[1])
+                          .map(([motivo, count]) => (
+                            <div key={motivo} className="flex items-center justify-between text-xs bg-slate-50 p-1.5 rounded">
+                              <span className="text-slate-700">{categoriasMotivo[motivo] || motivo}</span>
+                              <span className="font-medium text-slate-900">{count}x</span>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Performance por Consultor */}
-      <Card className="border-0 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-sm">Performance por Consultor</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {performanceArray.map((perf, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div className="flex-1">
-                  <p className="font-medium text-sm text-slate-900">{perf.vendedor}</p>
-                  <p className="text-xs text-slate-500">{perf.enviados} enviadas</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <p className="text-xs text-slate-600">Aprovados</p>
-                    <p className="text-sm font-semibold text-emerald-600">{perf.aprovados}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-slate-600">Reprovados</p>
-                    <p className="text-sm font-semibold text-red-600">{perf.reprovados}</p>
-                  </div>
-                  <Badge className={perf.taxa >= 70 ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}>
-                    {perf.taxa}%
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
