@@ -16,8 +16,12 @@ import TopConsultores from "../dashboard/TopConsultores";
 import RankingIndicacoesRecebidas from "../dashboard/RankingIndicacoesRecebidas";
 
 export default function DashboardContent({ userEmail, userRole, userFuncao }) {
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  const hoje = new Date();
+  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+  
+  const [dataInicio, setDataInicio] = useState(primeiroDiaMes.toISOString().split('T')[0]);
+  const [dataFim, setDataFim] = useState(ultimoDiaMes.toISOString().split('T')[0]);
   const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? [userEmail] : (userRole === "admin" ? [] : [userEmail]));
   const [statusFilter, setStatusFilter] = useState("all");
 
