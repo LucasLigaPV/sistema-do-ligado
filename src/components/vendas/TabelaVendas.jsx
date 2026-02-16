@@ -162,10 +162,12 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   });
 
   const filteredVendas = vendas.filter((venda) => {
+    const nomeVendedor = getNomeVendedor(venda.email_vendedor, users);
     const matchSearch =
       venda.cliente?.toLowerCase().includes(search.toLowerCase()) ||
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
-      venda.telefone?.toLowerCase().includes(search.toLowerCase());
+      venda.telefone?.toLowerCase().includes(search.toLowerCase()) ||
+      nomeVendedor?.toLowerCase().includes(search.toLowerCase());
     const matchConsultor = userFuncao === "lider" 
       ? consultorFilter.length === 0 || consultorFilter.includes(venda.email_vendedor)
       : true;
