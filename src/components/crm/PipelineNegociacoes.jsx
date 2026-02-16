@@ -1292,16 +1292,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </Button>
                 )}
 
-                {canShowSaleButton && userFuncao !== "vendedor" && !isEtapaFinal(selectedDeal.etapa) && (
-                  <Button
-                    onClick={handleMarkAsSold}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Marcar como Venda
-                  </Button>
-                )}
-
                 {!isEtapaFinal(selectedDeal.etapa) && (
                   <Button
                     onClick={() => setShowLossModal(true)}
