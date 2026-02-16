@@ -288,6 +288,15 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 onSelectionChange={setConsultorFilter}
                 users={users}
                 userEmail={userEmail}
+                nomesPorEmail={(() => {
+                  const map = {};
+                  allVendas.forEach(v => {
+                    if (v.email_vendedor && v.vendedor) {
+                      map[v.email_vendedor] = v.vendedor;
+                    }
+                  });
+                  return map;
+                })()}
               />
             )}
           </div>
