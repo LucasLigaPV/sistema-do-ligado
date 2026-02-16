@@ -6,8 +6,8 @@ import KanbanAprovacoes from "./KanbanAprovacoes";
 import DashboardAprovacoes from "./DashboardAprovacoes";
 import { Columns3, BarChart3 } from "lucide-react";
 
-export default function ApprovacoesMenu({ userEmail, userFuncao }) {
-  const [activeTab, setActiveTab] = useState("avaliar");
+export default function ApprovacoesMenu({ userEmail, userFuncao, activeTab: initialTab = "avaliar" }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   return (
     <div className="space-y-6">
