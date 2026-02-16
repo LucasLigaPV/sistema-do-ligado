@@ -59,10 +59,20 @@ export default function GerenciamentoEquipes() {
     const equipe = equipes.find((e) => e.id === equipeId);
     if (!equipe) return;
 
+    const vendedor = users.find(u => u.email === vendedorEmail);
     const novosMembros = [...(equipe.membros || []), vendedorEmail];
+    const novosNomes = { ...(equipe.nomes_membros || {}) };
+    if (vendedor) {
+      novosNomes[vendedorEmail] = vendedor.nome_exibicao || vendedor.full_name || vendedorEmail;
+    }
+    // Também adicionar o líder no mapa de nomes
+    const lider = users.find(u => u.email === equipe.lider_email);
+    if (lider && !novosNomes[equipe.lider_email]) {
+      novosNomes[equipe.lider_email] = lider.nome_exibicao || lider.full_name || equipe.lider_email;
+    }
     updateEquipeMutation.mutate({
       id: equipeId,
-      data: { membros: novosMembros },
+      data: { membros: novosMembros, nomes_membros: novosNomes },
     });
   };
 
@@ -71,11 +81,43 @@ export default function GerenciamentoEquipes() {
     if (!equipe) return;
 
     const novosMembros = (equipe.membros || []).filter((m) => m !== vendedorEmail);
+    const novosNomes = { ...(equipe.nomes_membros || {}) };
+    delete novosNomes[vendedorEmail];
     updateEquipeMutation.mutate({
       id: equipeId,
-      data: { membros: novosMembros },
+      data: { membros: novosMembros, nomes_membros: novosNomes },
     });
   };
+
+  // Sincronizar nomes dos membros existentes ao carregar
+  React.useEffect(() => {
+    if (!users.length || !equipes.length) return;
+    equipes.forEach(equipe => {
+      const nomesAtuais = equipe.nomes_membros || {};
+      const novosNomes = { ...nomesAtuais };
+      let mudou = false;
+
+      // Líder
+      const lider = users.find(u => u.email === equipe.lider_email);
+      if (lider && !novosNomes[equipe.lider_email]) {
+        novosNomes[equipe.lider_email] = lider.nome_exibicao || lider.full_name || equipe.lider_email;
+        mudou = true;
+      }
+
+      // Membros
+      (equipe.membros || []).forEach(email => {
+        const user = users.find(u => u.email === email);
+        if (user && !novosNomes[email]) {
+          novosNomes[email] = user.nome_exibicao || user.full_name || email;
+          mudou = true;
+        }
+      });
+
+      if (mudou) {
+        base44.entities.Equipe.update(equipe.id, { nomes_membros: novosNomes });
+      }
+    });
+  }, [users, equipes]);
 
   if (loadingEquipes || loadingUsers) {
     return (
