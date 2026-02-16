@@ -113,8 +113,11 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     const vendasComIndicacao = vendasFiltradas.filter(v => v.tem_indicacao === "sim").length;
     const percentualIndicacao = totalVendas > 0 ? (vendasComIndicacao / totalVendas) * 100 : 0;
 
-    const vendasPix = vendasFiltradas.filter(v => v.forma_pagamento === "pix").length;
-    const percentualPix = totalVendas > 0 ? (vendasPix / totalVendas) * 100 : 0;
+    const vendasLead = vendasFiltradas.filter(v => v.canal_venda === "lead").length;
+    const percentualLead = totalVendas > 0 ? (vendasLead / totalVendas) * 100 : 0;
+
+    const vendasOutrosCanais = vendasFiltradas.filter(v => v.canal_venda !== "lead" && v.canal_venda !== "indicacao").length;
+    const percentualOutrosCanais = totalVendas > 0 ? (vendasOutrosCanais / totalVendas) * 100 : 0;
 
     return { 
       totalVendas, 
@@ -126,8 +129,10 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       ticketMedio,
       vendasComIndicacao,
       percentualIndicacao,
-      vendasPix,
-      percentualPix
+      vendasLead,
+      percentualLead,
+      vendasOutrosCanais,
+      percentualOutrosCanais
     };
   }, [vendasFiltradas]);
 
@@ -343,26 +348,26 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
-              <CreditCard className="w-4 h-4" />
-              Pagamentos via Pix
+              <Target className="w-4 h-4" />
+              Vendas com Lead
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasPix}</div>
-            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualPix.toFixed(1)}% do total</p>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasLead}</div>
+            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualLead.toFixed(1)}% do total</p>
           </CardContent>
         </Card>
 
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-slate-700 flex items-center gap-2">
-              <Percent className="w-4 h-4" />
-              Taxa de Ativação
+              <TrendingUp className="w-4 h-4" />
+              Vendas de Outros Canais
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">100%</div>
-            <p className="text-xs text-slate-500 mt-1">Todas as vendas estão ativas</p>
+            <div className="text-3xl font-bold text-slate-900">{estatisticas.vendasOutrosCanais}</div>
+            <p className="text-xs text-slate-500 mt-1">{estatisticas.percentualOutrosCanais.toFixed(1)}% do total</p>
           </CardContent>
         </Card>
       </div>
