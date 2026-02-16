@@ -1363,30 +1363,48 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label className="font-semibold text-slate-900">Checklist de Envio *</Label>
-                <div className="space-y-2">
-                  {[
-                    { key: "cadastro_preenchido_power", label: "Preencheu Cadastro na Power" },
-                    { key: "documentacoes_enviadas_power", label: "Subiu as Documentações na Power" },
-                    { key: "vistoria_realizada", label: "Vistoria Realizada" },
-                    { key: "contrato_assinado", label: "Contrato Assinado" },
-                    { key: "pagamento_realizado", label: "Pagamento Realizado" }
-                  ].map((item) => (
-                    <div key={item.key} className="flex items-center gap-3">
-                      <Checkbox
-                        id={`conf-${item.key}`}
-                        checked={conferenciaData[item.key] || false}
-                        onCheckedChange={(checked) => {
-                          setConferenciaData({ ...conferenciaData, [item.key]: checked });
-                        }}
-                        className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200]"
-                      />
-                      <label htmlFor={`conf-${item.key}`} className="text-sm cursor-pointer flex-1">
-                        {item.label}
-                      </label>
-                    </div>
-                  ))}
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-4 border border-slate-200">
+                  <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-[#EFC200]" />
+                    Checklist de Envio
+                  </h3>
+                  <div className="space-y-2.5">
+                    {[
+                      { key: "cadastro_preenchido_power", label: "Preencheu Cadastro na Power", icon: FileText },
+                      { key: "documentacoes_enviadas_power", label: "Subiu as Documentações na Power", icon: Upload },
+                      { key: "vistoria_realizada", label: "Vistoria Realizada", icon: Wrench },
+                      { key: "contrato_assinado", label: "Contrato Assinado", icon: FileSignature },
+                      { key: "pagamento_realizado", label: "Pagamento Realizado", icon: CreditCard }
+                    ].map((item) => {
+                      const IconComponent = item.icon;
+                      const isChecked = conferenciaData[item.key] || false;
+                      return (
+                        <div 
+                          key={item.key} 
+                          className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                            isChecked 
+                              ? "bg-green-50 border border-green-200" 
+                              : "bg-white border border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <Checkbox
+                            id={`conf-${item.key}`}
+                            checked={isChecked}
+                            onCheckedChange={(checked) => {
+                              setConferenciaData({ ...conferenciaData, [item.key]: checked });
+                            }}
+                            className={`data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] flex-shrink-0 ${isChecked ? "ring-2 ring-[#EFC200]" : ""}`}
+                          />
+                          <IconComponent className={`w-4 h-4 flex-shrink-0 ${isChecked ? "text-green-600" : "text-slate-400"}`} />
+                          <label htmlFor={`conf-${item.key}`} className={`text-sm cursor-pointer flex-1 font-medium ${isChecked ? "text-green-700" : "text-slate-700"}`}>
+                            {item.label}
+                          </label>
+                          {isChecked && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
