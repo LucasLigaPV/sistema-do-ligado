@@ -90,8 +90,8 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
   const indicacoes = userRole === "admin" ?
   allIndicacoes :
   userFuncao === "lider" ?
-  allIndicacoes.filter((ind) => membrosEquipe.includes(ind.consultor_responsavel)) :
-  allIndicacoes.filter((ind) => ind.consultor_responsavel === userEmail);
+  allIndicacoes.filter((ind) => membrosEquipe.includes(ind.email_consultor)) :
+  allIndicacoes.filter((ind) => ind.email_consultor === userEmail);
 
   const { data: configs = [] } = useQuery({
     queryKey: ["configs"],
@@ -154,7 +154,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
       ind.consultor_responsavel?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || ind.status === statusFilter;
     const matchConsultor =
-      consultorFilter.length === 0 || consultorFilter.includes(ind.consultor_responsavel);
+      consultorFilter.length === 0 || consultorFilter.includes(ind.email_consultor);
 
     // Filtro de data
     if (dataInicio) {

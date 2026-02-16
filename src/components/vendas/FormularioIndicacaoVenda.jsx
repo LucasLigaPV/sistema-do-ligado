@@ -27,6 +27,7 @@ export default function FormularioIndicacaoVenda({ venda, onSuccess }) {
   const [formData, setFormData] = useState({
     venda_id: venda.id,
     consultor_responsavel: venda.vendedor,
+    email_consultor: venda.email_vendedor,
     nome_indicado: venda.cliente || "",
     placa_indicado: venda.placa || "",
     nome_indicador: "",

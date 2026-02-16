@@ -77,9 +77,16 @@ export default function FormularioIndicacao({ onSuccess }) {
     },
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    createMutation.mutate({ ...formData, consultor_responsavel: userEmail, status: "pendente" });
+    const user = await base44.auth.me();
+    const nomeConsultor = user?.data?.nome_exibicao || user?.full_name || userEmail;
+    createMutation.mutate({ 
+      ...formData, 
+      consultor_responsavel: nomeConsultor,
+      email_consultor: userEmail, 
+      status: "pendente" 
+    });
   };
 
   const handleChange = (field, value) => {
