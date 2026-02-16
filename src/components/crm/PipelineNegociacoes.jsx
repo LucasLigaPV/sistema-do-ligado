@@ -613,32 +613,43 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
                 <div className="space-y-2">
                   <Label className="text-xs">Origem</Label>
-                  <Select value={origemLogic} onValueChange={setOrigemLogic}>
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="e">É</SelectItem>
-                      <SelectItem value="nao_e">Não é</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-2">
-                    {origensDisponiveis.map((origem) => (
-                      <div key={origem.value} className="flex items-center gap-2">
-                        <Checkbox
-                          id={origem.value}
-                          checked={selectedOrigens.includes(origem.value)}
-                          onCheckedChange={() => toggleOrigem(origem.value)}
-                          className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
-                        />
-                        <label
-                          htmlFor={origem.value}
-                          className="text-sm cursor-pointer flex-1"
-                        >
-                          {origem.label}
-                        </label>
-                      </div>
-                    ))}
+                  <div className="flex gap-2">
+                    <Select value={origemLogic} onValueChange={setOrigemLogic}>
+                      <SelectTrigger className="h-9 text-xs w-24">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="e">É</SelectItem>
+                        <SelectItem value="nao_e">Não é</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={selectedOrigens.length > 0 ? "selected" : ""}>
+                      <SelectTrigger className="h-9 text-xs flex-1">
+                        <SelectValue placeholder="Selecionar origens...">
+                          {selectedOrigens.length > 0 
+                            ? `${selectedOrigens.length} selecionada${selectedOrigens.length > 1 ? 's' : ''}`
+                            : "Selecionar origens..."}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {origensDisponiveis.map((origem) => (
+                          <div key={origem.value} className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-100 cursor-pointer">
+                            <Checkbox
+                              id={`origem-${origem.value}`}
+                              checked={selectedOrigens.includes(origem.value)}
+                              onCheckedChange={() => toggleOrigem(origem.value)}
+                              className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
+                            />
+                            <label
+                              htmlFor={`origem-${origem.value}`}
+                              className="text-sm cursor-pointer flex-1"
+                            >
+                              {origem.label}
+                            </label>
+                          </div>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   {selectedOrigens.length > 0 && (
                     <Button
