@@ -38,7 +38,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ChevronDown } from "lucide-react";
+import FiltroVendedor from "../shared/FiltroVendedor";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
@@ -280,76 +280,13 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
               />
             </div>
             {userFuncao === "lider" && (
-              <div>
-                <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between h-9 px-3"
-                    >
-                      <span className="text-sm text-slate-700 truncate">
-                        {consultorFilter.length === 0 
-                          ? "Selecione vendedor" 
-                          : consultorFilter.length === membrosEquipe.length 
-                          ? "Todos da Equipe" 
-                          : consultorFilter.map(email => {
-                              const user = users.find(u => u.email === email);
-                              return user?.nome_exibicao || user?.full_name || email;
-                            }).join(", ")}
-                      </span>
-                      <ChevronDown className="w-4 h-4 opacity-50 flex-shrink-0" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-3" align="start">
-                    <div className="space-y-3">
-                    <div className="flex items-center gap-2 p-2 rounded-md hover:bg-amber-50">
-                      <Checkbox 
-                        id="all-team"
-                        checked={consultorFilter.length === membrosEquipe.length}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setConsultorFilter(membrosEquipe);
-                          } else {
-                            setConsultorFilter([]);
-                          }
-                        }}
-                        className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#D4A900]"
-                      />
-                      <Label htmlFor="all-team" className="text-sm font-medium cursor-pointer">
-                        Todos da Equipe
-                      </Label>
-                    </div>
-                    <div className="border-t pt-2 space-y-2 max-h-48 overflow-y-auto">
-                      {membrosEquipe.map((email) => {
-                         const isChecked = consultorFilter.includes(email);
-                         const isCurrentUser = email === userEmail;
-                         const nomeVendedor = getNomeVendedor(email, users);
-                         return (
-                           <div key={email} className={`flex items-center gap-2 truncate p-2 rounded-md transition-colors ${isChecked ? 'bg-amber-100' : 'hover:bg-slate-100'}`}>
-                             <Checkbox 
-                               id={`seller-${email}`}
-                               checked={isChecked}
-                               onCheckedChange={(checked) => {
-                                 if (checked) {
-                                   setConsultorFilter([...consultorFilter, email]);
-                                 } else {
-                                   setConsultorFilter(consultorFilter.filter(e => e !== email));
-                                 }
-                               }}
-                               className={isChecked ? "data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#D4A900]" : ""}
-                             />
-                             <Label htmlFor={`seller-${email}`} className="text-sm cursor-pointer truncate font-medium">
-                               {nomeVendedor} {isCurrentUser && "(Você)"}
-                             </Label>
-                           </div>
-                         );
-                       })}
-                    </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <FiltroVendedor
+                vendedoresSelecionados={consultorFilter}
+                todosVendedores={membrosEquipe}
+                onSelectionChange={setConsultorFilter}
+                users={users}
+                userEmail={userEmail}
+              />
             )}
           </div>
           <div className="mt-4">

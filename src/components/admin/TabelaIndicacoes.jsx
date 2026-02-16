@@ -46,6 +46,7 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
+import FiltroVendedor from "../shared/FiltroVendedor";
 
 const statusConfig = {
   pendente: { label: "Pendente", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
@@ -304,58 +305,44 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                 </SelectContent>
               </Select>
             </div>
-            {(userRole === "admin" || userFuncao === "lider") &&
-            <div>
-                <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Filter className="w-4 h-4 mr-2" />
-                      <span className="truncate">
-                        {consultorFilter.length === 0 
-                          ? "Todos" 
-                          : consultorFilter.length === 1
-                          ? (userFuncao === "lider" 
-                              ? (users.find(u => u.email === consultorFilter[0])?.full_name || consultorFilter[0])
-                              : consultorFilter[0])
-                          : `${consultorFilter.length} selecionados`}
-                      </span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 p-3">
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-3 pb-2 border-b cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
-                        <Checkbox
-                          checked={consultorFilter.length === 0}
-                          onCheckedChange={(checked) => {
-                            if (checked) setConsultorFilter([]);
-                          }}
-                        />
-                        <span className="text-sm font-medium text-slate-700">Todos</span>
-                      </label>
-                      <div className="max-h-64 overflow-y-auto space-y-1">
-                        {userFuncao === "lider" ? (
-                          membrosEquipe.map((email) => {
-                            const user = users.find(u => u.email === email);
-                            const nome = user?.full_name || email;
-                            return (
-                              <label key={email} className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
-                                <Checkbox
-                                  checked={consultorFilter.includes(email)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setConsultorFilter([...consultorFilter, email]);
-                                    } else {
-                                      setConsultorFilter(consultorFilter.filter(c => c !== email));
-                                    }
-                                  }}
-                                />
-                                <span className="text-sm text-slate-700">{nome}</span>
-                              </label>
-                            );
-                          })
-                        ) : (
-                          consultoresDisponiveis.map((c) => (
+            {(userRole === "admin" || userFuncao === "lider") && (
+              userFuncao === "lider" ? (
+                <FiltroVendedor
+                  vendedoresSelecionados={consultorFilter}
+                  todosVendedores={membrosEquipe}
+                  onSelectionChange={setConsultorFilter}
+                  users={users}
+                  userEmail={userEmail}
+                />
+              ) : (
+                <div>
+                  <Label className="text-sm text-slate-600 mb-2 block">Vendedor</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Filter className="w-4 h-4 mr-2" />
+                        <span className="truncate">
+                          {consultorFilter.length === 0 
+                            ? "Todos" 
+                            : consultorFilter.length === 1
+                            ? consultorFilter[0]
+                            : `${consultorFilter.length} selecionados`}
+                        </span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-3">
+                      <div className="space-y-2">
+                        <label className="flex items-center gap-3 pb-2 border-b cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
+                          <Checkbox
+                            checked={consultorFilter.length === 0}
+                            onCheckedChange={(checked) => {
+                              if (checked) setConsultorFilter([]);
+                            }}
+                          />
+                          <span className="text-sm font-medium text-slate-700">Todos</span>
+                        </label>
+                        <div className="max-h-64 overflow-y-auto space-y-1">
+                          {consultoresDisponiveis.map((c) => (
                             <label key={c} className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 -mx-3 px-3 py-2 rounded-md transition-colors">
                               <Checkbox
                                 checked={consultorFilter.includes(c)}
@@ -369,14 +356,14 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                               />
                               <span className="text-sm text-slate-700">{c}</span>
                             </label>
-                          ))
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            }
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )
+            )}
           </div>
           <div className="mt-4">
             <Button variant="outline" onClick={exportToCSV} className="gap-2 w-full md:w-auto">
