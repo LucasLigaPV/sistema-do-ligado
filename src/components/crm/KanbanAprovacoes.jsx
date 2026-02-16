@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText, Upload, Wrench, FileSignature, CreditCard } from "lucide-react";
+import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText, Upload, Wrench, FileSignature, CreditCard, Search, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
@@ -21,6 +21,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [motivo, setMotivo] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const queryClient = useQueryClient();
 
@@ -53,6 +54,19 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     ), 
     [negociacoes]
   );
+
+  const negociacoesFiltradas = useMemo(() => {
+    if (!searchTerm.trim()) return negociacoesAnalise;
+    
+    const termo = searchTerm.toLowerCase();
+    return negociacoesAnalise.filter(n => 
+      n.nome_cliente?.toLowerCase().includes(termo) ||
+      n.placa?.toLowerCase().includes(termo) ||
+      n.telefone?.includes(termo) ||
+      n.email?.toLowerCase().includes(termo) ||
+      getNomeVendedor(n.vendedor_email)?.toLowerCase().includes(termo)
+    );
+  }, [negociacoesAnalise, searchTerm, getNomeVendedor]);
 
   const etapas = useMemo(() => [
     { id: "aguardando", label: "Aguardando Análise", icon: Clock },
@@ -163,13 +177,33 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     <div className="space-y-6">
       <PainelEstatisticasAprovacoes negociacoes={negociacoes} />
 
+      {/* Barra de Pesquisa */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Buscar por cliente, placa, telefone, email ou consultor..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+        />
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm("")}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
       <DragDropContext onDragEnd={handleDragEnd} enableDefaultSensors={true}>
         <div className="overflow-x-auto pb-4">
           <div className="flex gap-3 min-w-max">
             {etapas.map((etapa) => {
               const dealsNaEtapa = useMemo(() => 
-                negociacoesAnalise.filter(n => n.status_aprovacao === etapa.id),
-                [negociacoesAnalise, etapa.id]
+                negociacoesFiltradas.filter(n => n.status_aprovacao === etapa.id),
+                [negociacoesFiltradas, etapa.id]
               );
               const IconComponent = etapa.icon;
 
