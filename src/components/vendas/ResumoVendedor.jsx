@@ -601,8 +601,8 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-slate-900 capitalize">
-                {planoMaisVendido}
+              <div className="text-3xl font-bold text-slate-900">
+                {formatarNomePlano(planoMaisVendido)}
               </div>
               <p className="text-xs text-slate-500 mt-1">
                 {planoCount[planoMaisVendido] || 0} vendas
