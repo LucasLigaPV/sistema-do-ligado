@@ -286,7 +286,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 vendedoresSelecionados={consultorFilter}
                 todosVendedores={membrosEquipe}
                 onSelectionChange={setConsultorFilter}
-                users={users}
                 userEmail={userEmail}
                 nomesPorEmail={(() => {
                   const map = {};
