@@ -465,10 +465,36 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
             <CardTitle className="text-sm text-slate-700">Tempo Médio no Funil</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">
-              {totalNegociacoes > 0 ? Math.round(totalNegociacoes / etapas.length) : 0} leads
-            </div>
-            <p className="text-xs text-slate-600 mt-1">Por etapa em média</p>
+            {(() => {
+              const vendasFechadas = negociacoesFiltradas.filter(n => n.etapa === "venda_ativa");
+              if (vendasFechadas.length === 0) {
+                return (
+                  <>
+                    <div className="text-2xl font-bold text-slate-900">-</div>
+                    <p className="text-xs text-slate-600 mt-1">Nenhuma venda finalizada</p>
+                  </>
+                );
+              }
+
+              const temposEmMs = vendasFechadas.map(v => {
+                const dataInicio = new Date(v.data_entrada || v.created_date);
+                const dataFim = new Date(v.updated_date);
+                return dataFim - dataInicio;
+              });
+
+              const tempoMedioMs = temposEmMs.reduce((a, b) => a + b, 0) / temposEmMs.length;
+              const dias = Math.floor(tempoMedioMs / (1000 * 60 * 60 * 24));
+              const horas = Math.floor((tempoMedioMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+              return (
+                <>
+                  <div className="text-2xl font-bold text-slate-900">
+                    {dias}d {horas}h
+                  </div>
+                  <p className="text-xs text-slate-600 mt-1">Média para fechamento ({vendasFechadas.length} vendas)</p>
+                </>
+              );
+            })()}
           </CardContent>
         </Card>
 
