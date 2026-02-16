@@ -42,8 +42,8 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
   const indicacoes = userRole === "admin" 
     ? allIndicacoes 
     : userFuncao === "lider"
-    ? allIndicacoes.filter(ind => membrosEquipe.includes(ind.consultor_responsavel))
-    : allIndicacoes.filter(ind => ind.consultor_responsavel === userEmail);
+    ? allIndicacoes.filter(ind => membrosEquipe.includes(ind.email_consultor || ind.consultor_responsavel))
+    : allIndicacoes.filter(ind => ind.email_consultor === userEmail || ind.consultor_responsavel === userEmail);
 
   const { data: configs = [] } = useQuery({
     queryKey: ["configs"],
@@ -68,7 +68,7 @@ export default function DashboardContent({ userEmail, userRole, userFuncao }) {
     }
 
     // Filtro de consultor
-    if (consultorFilter.length > 0 && !consultorFilter.includes(ind.consultor_responsavel)) {
+    if (consultorFilter.length > 0 && !consultorFilter.includes(ind.email_consultor || ind.consultor_responsavel)) {
       return false;
     }
 
