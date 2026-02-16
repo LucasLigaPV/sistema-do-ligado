@@ -43,7 +43,7 @@ export default function TopConsultores({ indicacoes }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="w-5 h-5 text-slate-600" />
-          Consultores - Indicações Recebidas
+          Consultores - Ranking de Indicações Fechadas
         </CardTitle>
         <p className="text-sm text-slate-500 mt-1">
           Ranking de consultores por número de indicações
