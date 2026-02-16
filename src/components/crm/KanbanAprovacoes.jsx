@@ -46,6 +46,15 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     },
   });
 
+  const userMap = useMemo(() => 
+    Object.fromEntries(users.map(u => [u.email, u.full_name])), 
+    [users]
+  );
+
+  const getNomeVendedor = useCallback((email) => {
+    return userMap[email] || email;
+  }, [userMap]);
+
   const negociacoesAnalise = useMemo(() => 
     negociacoes.filter(n => 
       n.informacoes_conferidas && 
@@ -83,15 +92,6 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     vistoria_videos: "Vistoria - Vídeos",
     preenchimento: "Preenchimento",
   }), []);
-
-  const userMap = useMemo(() => 
-    Object.fromEntries(users.map(u => [u.email, u.full_name])), 
-    [users]
-  );
-
-  const getNomeVendedor = useCallback((email) => {
-    return userMap[email] || email;
-  }, [userMap]);
 
   const handleDragEnd = useCallback((result) => {
     if (!result.destination) return;
