@@ -108,7 +108,7 @@ export default function DashboardRankings() {
           <RankingVendas vendas={vendasFiltradas} users={users} />
         </motion.div>
 
-        {/* Rankings de Vendas */}
+        {/* Grid de Rankings em 2 colunas */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -124,10 +124,6 @@ export default function DashboardRankings() {
           >
             <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
           </motion.div>
-        </div>
-
-        {/* Rankings de Negociações */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -142,10 +138,6 @@ export default function DashboardRankings() {
           >
             <RankingCotacoes negociacoes={negociacoes} users={users} />
           </motion.div>
-        </div>
-
-        {/* Rankings de Indicações e Perdas */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
