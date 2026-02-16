@@ -275,9 +275,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const newEtapa = result.destination.droppableId;
     const deal = negociacoes.find(n => n.id === dealId);
 
-    // Bloquear movimento de vendedores para "venda_ativa"
-    if (newEtapa === "venda_ativa" && (userFuncao === "vendedor" || userFuncao === "lider")) {
-      alert("Apenas a área de aprovações pode mover vendas para Venda Ativa!");
+    // Bloquear movimento de vendedores para "venda_ativa" e "reprovado"
+    if ((newEtapa === "venda_ativa" || newEtapa === "reprovado") && (userFuncao === "vendedor" || userFuncao === "lider")) {
+      alert("Apenas a área de aprovações pode mover vendas para Venda Ativa ou Reprovado!");
       return;
     }
 
