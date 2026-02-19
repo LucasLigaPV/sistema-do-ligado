@@ -9,8 +9,79 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Search, RotateCcw, LayoutList, LayoutGrid, Phone, Mail, Car, Calendar, DollarSign, User } from "lucide-react";
+import { Search, RotateCcw, LayoutList, LayoutGrid, Phone, Mail, Car, Calendar, DollarSign, User, Download } from "lucide-react";
 import { format } from "date-fns";
+
+const exportarCSV = (perdas, users) => {
+  const getNomeVendedor = (email) => {
+    const user = users.find(u => u.email === email);
+    return user?.full_name || email;
+  };
+
+  const categoriasLabels = {
+    financeiro: "Financeiro",
+    timing: "Timing/Momento",
+    confianca: "Confiança",
+    concorrencia: "Concorrência",
+    necessidade: "Necessidade/Produto",
+    lead_invalido: "Lead Inválido"
+  };
+
+  const headers = [
+    "Data da Perda",
+    "Cliente",
+    "Telefone",
+    "Email",
+    "Placa",
+    "Modelo",
+    "Plano",
+    "Categoria",
+    "Motivo",
+    "Observação",
+    "Etapa da Perda",
+    "Consultor",
+    "Valor Adesão",
+    "Valor Mensalidade",
+    "Origem",
+    "Plataforma",
+    "Campanha"
+  ];
+
+  const rows = perdas.map(p => [
+    format(new Date(p.data_perda), "dd/MM/yyyy"),
+    p.nome_cliente || "",
+    p.telefone || "",
+    p.email || "",
+    p.placa || "",
+    p.modelo_veiculo || "",
+    p.plano_interesse || "",
+    categoriasLabels[p.categoria_motivo] || p.categoria_motivo || "",
+    p.motivo_perda || "",
+    p.observacao_perda || "",
+    p.etapa_perda || "",
+    getNomeVendedor(p.vendedor_email),
+    p.valor_adesao || "",
+    p.valor_mensalidade || "",
+    p.origem || "",
+    p.plataforma || "",
+    p.campanha || ""
+  ]);
+
+  const csvContent = [
+    headers.join(","),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+  ].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", `perdas_${format(new Date(), "yyyy-MM-dd")}.csv`);
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 export default function Perdas({ userEmail, userFuncao }) {
   const [viewMode, setViewMode] = useState("list");
