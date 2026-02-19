@@ -224,6 +224,14 @@ export default function Perdas({ userEmail, userFuncao }) {
         </div>
         <div className="flex gap-2">
           <Button
+            variant="outline"
+            onClick={() => exportarCSV(perdasVisiveis, users)}
+            disabled={perdasVisiveis.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Exportar CSV
+          </Button>
+          <Button
             variant={viewMode === "list" ? "default" : "outline"}
             size="icon"
             onClick={() => setViewMode("list")}
