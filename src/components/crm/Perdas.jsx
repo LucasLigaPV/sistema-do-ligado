@@ -145,7 +145,10 @@ export default function Perdas({ userEmail, userFuncao }) {
 
   // Filtrar perdas por acesso
   let perdasVisiveis = perdas;
-  if (userFuncao === "lider") {
+  if (userFuncao === "master") {
+    // Master vê tudo
+    perdasVisiveis = perdas;
+  } else if (userFuncao === "lider") {
     perdasVisiveis = perdas.filter(p => todosVendedoresEquipe.includes(p.vendedor_email));
   } else if (userFuncao === "vendedor") {
     perdasVisiveis = perdas.filter(p => p.vendedor_email === userEmail);
