@@ -547,11 +547,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return user?.full_name || email;
   };
 
-  const vendedoresDisponiveis = todosVendedoresEquipe
-    .map(email => {
-      const user = users.find(u => u.email === email);
-      return user || { email: email, full_name: email };
-    });
+  const vendedoresDisponiveis = userFuncao === "master"
+    ? users.filter(u => u.funcao === "vendedor" || u.funcao === "lider").map(u => ({ email: u.email, full_name: u.full_name }))
+    : todosVendedoresEquipe.map(email => {
+        const user = users.find(u => u.email === email);
+        return user || { email: email, full_name: email };
+      });
 
   const toggleVendedor = (email) => {
     setSelectedVendedores(prev => 
