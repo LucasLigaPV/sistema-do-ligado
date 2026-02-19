@@ -46,7 +46,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     placa: "",
     modelo_veiculo: "",
     plano_interesse: "",
-    origem: "lead",
+    origem: "indicacao",
     data_entrada: format(new Date(), "yyyy-MM-dd"),
     valor_mensalidade: "",
     valor_adesao: "",
@@ -110,7 +110,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         placa: "",
         modelo_veiculo: "",
         plano_interesse: "",
-        origem: "lead",
+        origem: "indicacao",
         data_entrada: format(new Date(), "yyyy-MM-dd"),
         valor_mensalidade: "",
         valor_adesao: "",
@@ -948,7 +948,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="lead">Lead</SelectItem>
                     <SelectItem value="indicacao">Indicação</SelectItem>
                     <SelectItem value="organico">Orgânico</SelectItem>
                     <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
@@ -1215,9 +1214,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   <Select
                     value={editedDeal.origem || ""}
                     onValueChange={(value) => setEditedDeal({ ...editedDeal, origem: value })}
-                    disabled={isReadOnly}
+                    disabled={isReadOnly || selectedDeal.origem === "lead"}
                   >
-                    <SelectTrigger disabled={isReadOnly}>
+                    <SelectTrigger disabled={isReadOnly || selectedDeal.origem === "lead"}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1230,6 +1229,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       <SelectItem value="migracao">Migração</SelectItem>
                     </SelectContent>
                   </Select>
+                  {selectedDeal.origem === "lead" && (
+                    <p className="text-xs text-slate-500 mt-1">Campo travado - negociação distribuída como lead</p>
+                  )}
                 </div>
                 <div>
                   <Label>Valor da Mensalidade</Label>
