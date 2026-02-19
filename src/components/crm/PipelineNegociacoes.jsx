@@ -173,6 +173,47 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     },
   });
 
+  const handleReprovaCorrigida = () => {
+    if (!selectedDeal) return;
+
+    const motivosAtualizados = selectedDeal.motivos_reprova?.map(m => ({
+      ...m,
+      corrigido: true
+    })) || [];
+
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: {
+        etapa: "enviado_cadastro",
+        status_aprovacao: "corrigido",
+        motivos_reprova: motivosAtualizados,
+      },
+    });
+    setShowDetails(false);
+  };
+
+  const handleToggleCorrecao = (index) => {
+    if (!selectedDeal || !selectedDeal.motivos_reprova) return;
+
+    const motivosAtualizados = [...selectedDeal.motivos_reprova];
+    motivosAtualizados[index] = {
+      ...motivosAtualizados[index],
+      corrigido: !motivosAtualizados[index].corrigido
+    };
+
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: {
+        motivos_reprova: motivosAtualizados,
+      },
+    });
+  };
+
+  const todosMotivosCorrigidos = (deal) => {
+    if (!deal?.motivos_reprova || deal.motivos_reprova.length === 0) return true;
+    return deal.motivos_reprova.every(m => m.corrigido);
+  };
+
   const etapas = [
     { id: "novo_lead", label: "Novo Lead", icon: Sparkles },
     { id: "abordagem", label: "Abordagem", icon: MessageCircle },
