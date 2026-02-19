@@ -388,7 +388,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
             </div>
 
             {proximoNivel && (
-              <div className={`rounded-lg p-4 mt-6 ${nivelAtual.nivel === "Nível 1" ? "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200" : "bg-slate-50"}`}>
+              <div className={`rounded-lg p-4 mt-6 ${nivelAtual.nivel === "Nível 1" ? "bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200" : "bg-slate-50"}`}>
                 <div className="flex justify-between items-center mb-3">
                   <div>
                     <p className="text-sm font-medium text-slate-900">Próximo nível: {proximoNivel.nivel}</p>
