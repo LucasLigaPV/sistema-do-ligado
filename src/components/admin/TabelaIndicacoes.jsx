@@ -62,7 +62,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "lider" ? [userEmail] : (userRole === "admin" ? [] : [userEmail]));
+  const [consultorFilter, setConsultorFilter] = useState(userFuncao === "master" ? [] : userFuncao === "lider" ? [userEmail] : (userRole === "admin" ? [] : [userEmail]));
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedIndicacao, setSelectedIndicacao] = useState(null);
@@ -88,7 +88,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
   const minhaEquipe = equipes.find((e) => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  const indicacoes = userRole === "admin" ?
+  const indicacoes = userFuncao === "master" || userRole === "admin" ?
   allIndicacoes :
   userFuncao === "lider" ?
   allIndicacoes.filter((ind) => membrosEquipe.includes(ind.email_consultor)) :

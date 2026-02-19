@@ -125,14 +125,14 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const users = allUsers;
 
   const [consultorFilter, setConsultorFilter] = useState(
-    userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
+    userFuncao === "master" ? [] : userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
   );
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
 
-  const vendas = userRole === "admin" 
+  const vendas = userFuncao === "master" || userRole === "admin" 
     ? allVendas 
     : userFuncao === "lider"
     ? allVendas.filter((v) => membrosEquipe.includes(v.email_vendedor))
