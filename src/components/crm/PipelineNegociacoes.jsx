@@ -833,11 +833,28 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             {deal.telefone}
                                           </div>
                                         )}
-                                        {deal.origem && (
-                                          <Badge className={`text-xs border ${origensConfig[deal.origem]?.color || "bg-slate-50 text-slate-700 border-slate-200"}`}>
-                                            {origensConfig[deal.origem]?.label || deal.origem}
-                                          </Badge>
-                                        )}
+                                        <div className="flex items-center justify-between gap-2">
+                                          {deal.origem && (
+                                            <Badge className={`text-xs border ${origensConfig[deal.origem]?.color || "bg-slate-50 text-slate-700 border-slate-200"}`}>
+                                              {origensConfig[deal.origem]?.label || deal.origem}
+                                            </Badge>
+                                          )}
+                                          {deal.temperatura && (
+                                            <div className="flex items-center gap-1">
+                                              {deal.temperatura === "quente" ? (
+                                                <>
+                                                  <Flame className="w-3.5 h-3.5 text-orange-500" />
+                                                  <span className="text-xs font-medium text-orange-600">Quente</span>
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <Snowflake className="w-3.5 h-3.5 text-blue-400" />
+                                                  <span className="text-xs font-medium text-blue-500">Frio</span>
+                                                </>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
                                         {deal.placa && (
                                           <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
                                             <Car className="w-4 h-4" />
