@@ -321,8 +321,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return matchDate;
   });
 
-  // Aplicar filtro de vendedores (apenas para líderes)
-  if (userFuncao === "lider" && selectedVendedores.length > 0) {
+  // Aplicar filtro de vendedores (para líderes e master)
+  if ((userFuncao === "lider" || userFuncao === "master") && selectedVendedores.length > 0) {
     negociacoesVisiveis = negociacoesVisiveis.filter(n => selectedVendedores.includes(n.vendedor_email));
   }
 
