@@ -396,7 +396,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                       Faltam {proximoNivel.vendas - totalVendas} vendas
                     </p>
                     {nivelAtual.nivel === "Nível 1" && (
-                      <p className="text-xs text-blue-600 font-medium mt-2">
+                      <p className="text-xs text-amber-600 font-medium mt-2">
                         💪 Continue assim! Chegue a 20 vendas e comece a ganhar comissões!
                       </p>
                     )}
