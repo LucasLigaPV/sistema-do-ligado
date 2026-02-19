@@ -100,8 +100,10 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
   });
 
   // Consultores disponíveis para filtro
-  const consultoresDisponiveis = userFuncao === "lider" ?
-  membrosEquipe.map((email) => users.find((u) => u.email === email)?.full_name || email).filter(Boolean) :
+  const consultoresDisponiveis = (userFuncao === "lider" || userFuncao === "master") ?
+  (userFuncao === "master" 
+    ? users.filter(u => u.funcao === "vendedor" || u.funcao === "lider").map(u => u.full_name).filter(Boolean)
+    : membrosEquipe.map((email) => users.find((u) => u.email === email)?.full_name || email).filter(Boolean)) :
   configs.find((c) => c.tipo === "consultores")?.opcoes || [];
 
   const updateMutation = useMutation({
