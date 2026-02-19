@@ -796,6 +796,23 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                         <div className="font-medium text-sm">
                                           {deal.nome_cliente}
                                         </div>
+                                        {deal.telefone && (
+                                          <div 
+                                            className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer hover:text-[#EFC200] transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              abrirWhatsApp(deal.telefone);
+                                            }}
+                                          >
+                                            <Phone className="w-3.5 h-3.5" />
+                                            {deal.telefone}
+                                          </div>
+                                        )}
+                                        {deal.origem && (
+                                          <Badge className={`text-xs border ${origensConfig[deal.origem]?.color || "bg-slate-50 text-slate-700 border-slate-200"}`}>
+                                            {origensConfig[deal.origem]?.label || deal.origem}
+                                          </Badge>
+                                        )}
                                         {deal.placa && (
                                           <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
                                             <Car className="w-4 h-4" />
