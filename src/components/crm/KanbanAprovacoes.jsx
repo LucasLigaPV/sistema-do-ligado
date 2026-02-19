@@ -463,10 +463,62 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-xs font-semibold text-slate-500">Status</Label>
-                      <Badge className="mt-1 bg-slate-100 text-slate-800 border-slate-200 capitalize">
-                        {selectedDeal.status_aprovacao || "aguardando"}
-                      </Badge>
+                      <Label className="text-xs font-semibold text-slate-500 mb-2 block">Alterar Status</Label>
+                      <Select
+                        value={selectedDeal.status_aprovacao || "aguardando"}
+                        onValueChange={(newStatus) => {
+                          if (newStatus === "reprovado") {
+                            setShowDetails(false);
+                            setSelectedDeal(selectedDeal);
+                            setShowModal(true);
+                          } else if (newStatus === "corrigido") {
+                            updateMutation.mutate({
+                              id: selectedDeal.id,
+                              data: {
+                                status_aprovacao: "corrigido",
+                                etapa: "enviado_cadastro",
+                                informacoes_conferidas: false,
+                              }
+                            });
+                          } else if (newStatus === "aprovado") {
+                            updateMutation.mutate({
+                              id: selectedDeal.id,
+                              data: {
+                                status_aprovacao: "aprovado",
+                                etapa: "venda_ativa",
+                                aprovado_por: userEmail,
+                                data_aprovacao: new Date().toISOString(),
+                              }
+                            });
+                          } else if (newStatus === "analisando") {
+                            updateMutation.mutate({
+                              id: selectedDeal.id,
+                              data: {
+                                status_aprovacao: "analisando",
+                                analisado_por: userEmail,
+                                data_analise: new Date().toISOString(),
+                              }
+                            });
+                          } else {
+                            updateMutation.mutate({
+                              id: selectedDeal.id,
+                              data: { status_aprovacao: newStatus }
+                            });
+                          }
+                          setShowDetails(false);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="aguardando">Aguardando Análise</SelectItem>
+                          <SelectItem value="analisando">Analisando</SelectItem>
+                          <SelectItem value="reprovado">Reprovado</SelectItem>
+                          <SelectItem value="corrigido">Corrigidos</SelectItem>
+                          <SelectItem value="aprovado">Aprovados</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label className="text-xs font-semibold text-slate-500">Consultor</Label>
