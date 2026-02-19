@@ -1399,13 +1399,67 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                  )}
 
                 {selectedDeal.etapa === "reprovado" && (
-                  <Button
-                    onClick={handleReprovaCorrigida}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Reprova Corrigida
-                  </Button>
+                  <>
+                    {selectedDeal.motivos_reprova && selectedDeal.motivos_reprova.length > 0 && (
+                      <div className="border-t pt-4">
+                        <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                          <XCircle className="w-5 h-5 text-red-600" />
+                          Pendências a Corrigir
+                        </h3>
+                        <div className="space-y-2.5 mb-4">
+                          {selectedDeal.motivos_reprova.map((motivo, index) => {
+                            const categoriesMotivo = {
+                              documentacao: "Documentação",
+                              contrato: "Contrato",
+                              vistoria_fotos: "Vistoria - Fotos",
+                              vistoria_videos: "Vistoria - Vídeos",
+                              preenchimento: "Preenchimento",
+                            };
+                            return (
+                              <div 
+                                key={index}
+                                className={`flex items-start gap-3 p-3 rounded-lg transition-all border ${
+                                  motivo.corrigido 
+                                    ? "bg-green-50 border-green-200" 
+                                    : "bg-red-50 border-red-200"
+                                }`}
+                              >
+                                <Checkbox
+                                  checked={motivo.corrigido || false}
+                                  onCheckedChange={() => handleToggleCorrecao(index)}
+                                  className={`flex-shrink-0 mt-0.5 ${motivo.corrigido ? "data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" : "data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"}`}
+                                />
+                                <div className="flex-1">
+                                  <p className={`text-sm font-semibold ${motivo.corrigido ? "text-green-700 line-through" : "text-red-700"}`}>
+                                    {categoriesMotivo[motivo.categoria]}
+                                  </p>
+                                  <p className={`text-xs mt-1 ${motivo.corrigido ? "text-green-600 line-through" : "text-red-600"}`}>
+                                    {motivo.detalhe}
+                                  </p>
+                                </div>
+                                {motivo.corrigido && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <Button
+                      onClick={handleReprovaCorrigida}
+                      disabled={!todosMotivosCorrigidos(selectedDeal)}
+                      className={`w-full ${
+                        todosMotivosCorrigidos(selectedDeal)
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-slate-300 cursor-not-allowed"
+                      } text-white`}
+                    >
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      {todosMotivosCorrigidos(selectedDeal) 
+                        ? "Pendências Corrigidas - Enviar" 
+                        : "Marque Todas as Correções"}
+                    </Button>
+                  </>
                 )}
 
                 {!isEtapaFinal(selectedDeal.etapa) && (
