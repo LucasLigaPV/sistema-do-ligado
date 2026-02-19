@@ -62,7 +62,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  const vendas = userRole === "admin" 
+  const vendas = userRole === "admin" || userFuncao === "master"
     ? allVendas 
     : userFuncao === "lider"
     ? allVendas.filter((v) => membrosEquipe.includes(v.email_vendedor || v.vendedor))
