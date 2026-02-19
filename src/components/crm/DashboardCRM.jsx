@@ -279,15 +279,15 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-slate-900">
               <TrendingUp className="w-5 h-5" />
-              Mensalidade Recorrente
+              Média Mensal Vendida
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold text-slate-900">
-              R$ {valorMensalidadeTotal.toFixed(2).replace(".", ",")}
+              R$ {mediaMensalVendida.toFixed(2).replace(".", ",")}
             </div>
             <p className="text-sm text-slate-600 mt-2">
-              Receita mensal recorrente gerada
+              Média por venda ativa no período
             </p>
           </CardContent>
         </Card>
