@@ -1275,6 +1275,46 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </div>
                 </div>
                 <div>
+                  <Label>Temperatura</Label>
+                  <Select 
+                    value={editedDeal.temperatura || ""} 
+                    onValueChange={(value) => setEditedDeal({ ...editedDeal, temperatura: value })}
+                    disabled={isReadOnly}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecionar...">
+                        {editedDeal.temperatura === "quente" && (
+                          <span className="flex items-center gap-2">
+                            <Flame className="w-4 h-4 text-orange-500" />
+                            Quente
+                          </span>
+                        )}
+                        {editedDeal.temperatura === "frio" && (
+                          <span className="flex items-center gap-2">
+                            <Snowflake className="w-4 h-4 text-blue-400" />
+                            Frio
+                          </span>
+                        )}
+                        {!editedDeal.temperatura && "Selecionar..."}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="quente">
+                        <span className="flex items-center gap-2">
+                          <Flame className="w-4 h-4 text-orange-500" />
+                          Quente
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="frio">
+                        <span className="flex items-center gap-2">
+                          <Snowflake className="w-4 h-4 text-blue-400" />
+                          Frio
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <Label>Email</Label>
                   <Input
                     value={editedDeal.email || ""}
