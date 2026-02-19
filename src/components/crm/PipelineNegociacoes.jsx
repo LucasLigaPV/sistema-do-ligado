@@ -849,22 +849,42 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                           </div>
                                           {deal.status_aprovacao === "reprovado" && (
                                             <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
-                                              {deal.motivo_reprova_categoria && (
-                                                <div>
-                                                  <strong>Categoria:</strong> {
-                                                    deal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
-                                                    deal.motivo_reprova_categoria === "contrato" ? "Contrato" :
-                                                    deal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
-                                                    deal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
-                                                    deal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
-                                                    deal.motivo_reprova_categoria
-                                                  }
-                                                </div>
-                                              )}
-                                              {deal.motivo_reprova_detalhe && (
-                                                <div>
-                                                  <strong>Detalhe:</strong> {deal.motivo_reprova_detalhe}
-                                                </div>
+                                              {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
+                                                deal.motivos_reprova.map((motivo, idx) => {
+                                                  const categoriesMotivo = {
+                                                    documentacao: "Documentação",
+                                                    contrato: "Contrato",
+                                                    vistoria_fotos: "Vistoria - Fotos",
+                                                    vistoria_videos: "Vistoria - Vídeos",
+                                                    preenchimento: "Preenchimento",
+                                                  };
+                                                  return (
+                                                    <div key={idx} className={motivo.corrigido ? "opacity-60 line-through" : ""}>
+                                                      <strong>{categoriesMotivo[motivo.categoria]}:</strong> {motivo.detalhe}
+                                                      {motivo.corrigido && " ✓"}
+                                                    </div>
+                                                  );
+                                                })
+                                              ) : (
+                                                <>
+                                                  {deal.motivo_reprova_categoria && (
+                                                    <div>
+                                                      <strong>Categoria:</strong> {
+                                                        deal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
+                                                        deal.motivo_reprova_categoria === "contrato" ? "Contrato" :
+                                                        deal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
+                                                        deal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
+                                                        deal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
+                                                        deal.motivo_reprova_categoria
+                                                      }
+                                                    </div>
+                                                  )}
+                                                  {deal.motivo_reprova_detalhe && (
+                                                    <div>
+                                                      <strong>Detalhe:</strong> {deal.motivo_reprova_detalhe}
+                                                    </div>
+                                                  )}
+                                                </>
                                               )}
                                             </div>
                                           )}
