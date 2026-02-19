@@ -711,9 +711,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   )}
                 </div>
 
-                {userFuncao === "lider" && (
+                {(userFuncao === "lider" || userFuncao === "master") && (
                   <div className="space-y-2">
-                    <Label className="text-xs">Vendedores da Equipe</Label>
+                    <Label className="text-xs">{userFuncao === "master" ? "Vendedores" : "Vendedores da Equipe"}</Label>
                     <Select value={selectedVendedores.length > 0 ? "selected" : ""}>
                       <SelectTrigger className="h-9 text-xs">
                         <SelectValue placeholder="Selecionar vendedores...">
