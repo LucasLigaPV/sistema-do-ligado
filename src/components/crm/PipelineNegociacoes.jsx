@@ -1179,25 +1179,38 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
                 <div>
                   <Label>Telefone</Label>
-                  <Input
-                    value={editedDeal.telefone}
-                    onChange={(e) => {
-                      const numeros = e.target.value.replace(/\D/g, '');
-                      let formatado = numeros;
-                      if (numeros.length <= 11) {
-                        if (numeros.length > 2) {
-                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                  <div className="flex gap-2">
+                    <Input
+                      value={editedDeal.telefone}
+                      onChange={(e) => {
+                        const numeros = e.target.value.replace(/\D/g, '');
+                        let formatado = numeros;
+                        if (numeros.length <= 11) {
+                          if (numeros.length > 2) {
+                            formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                          }
+                          if (numeros.length > 7) {
+                            formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+                          }
+                          setEditedDeal({ ...editedDeal, telefone: formatado });
                         }
-                        if (numeros.length > 7) {
-                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
-                        }
-                        setEditedDeal({ ...editedDeal, telefone: formatado });
-                      }
-                    }}
-                    placeholder="(11) 00000-0000"
-                    maxLength={15}
-                    disabled={isReadOnly}
-                  />
+                      }}
+                      placeholder="(11) 00000-0000"
+                      maxLength={15}
+                      disabled={isReadOnly}
+                      className="flex-1"
+                    />
+                    {editedDeal.telefone && (
+                      <Button
+                        type="button"
+                        size="icon"
+                        onClick={() => abrirWhatsApp(editedDeal.telefone)}
+                        className="bg-emerald-500 hover:bg-emerald-600 text-white flex-shrink-0"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <Label>Email</Label>
