@@ -37,6 +37,10 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     const dentroIntervalo = (!startDate || dataEntrada >= new Date(startDate)) &&
                            (!endDate || dataEntrada <= new Date(endDate + "T23:59:59"));
     
+    if (userFuncao === "master") {
+      // Master vê tudo
+      return dentroIntervalo;
+    }
     if (userFuncao === "lider") {
       const equipe = equipes.find(e => e.lider_email === userEmail);
       // Líder vê suas próprias vendas + vendas dos membros da equipe
@@ -53,6 +57,10 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     const dentroIntervalo = (!startDate || dataPerda >= new Date(startDate)) &&
                            (!endDate || dataPerda <= new Date(endDate + "T23:59:59"));
     
+    if (userFuncao === "master") {
+      // Master vê tudo
+      return dentroIntervalo;
+    }
     if (userFuncao === "lider") {
       const equipe = equipes.find(e => e.lider_email === userEmail);
       // Líder vê suas próprias perdas + perdas dos membros da equipe
