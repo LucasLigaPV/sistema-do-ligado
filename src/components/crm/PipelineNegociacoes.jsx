@@ -228,7 +228,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     ],
     lead_invalido: [
       "Veículo sem cobertura",
-      "Número Incompleto"
+      "Número Incompleto",
+      "Lead Repetido"
     ]
   };
 
