@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard } from "lucide-react";
+import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
