@@ -409,23 +409,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setConferenciaData(null);
   };
 
-  const handleReprovaCorrigida = () => {
-    if (!selectedDeal) return;
 
-    updateMutation.mutate({
-      id: selectedDeal.id,
-      data: {
-        etapa: "enviado_cadastro",
-        informacoes_conferidas: true,
-        data_conferencia: new Date().toISOString(),
-        status_aprovacao: "corrigido"
-      }
-    });
-
-    setShowDetails(false);
-    setSelectedDeal(null);
-    setEditedDeal(null);
-  };
 
   const handleCreateDeal = (e) => {
     e.preventDefault();
