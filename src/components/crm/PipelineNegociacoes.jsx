@@ -233,6 +233,27 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     ]
   };
 
+  const origensConfig = {
+    lead: { label: "Lead", color: "bg-blue-50 text-blue-700 border-blue-200" },
+    indicacao: { label: "Indicação", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+    organico: { label: "Orgânico", color: "bg-purple-50 text-purple-700 border-purple-200" },
+    troca_titularidade: { label: "Troca Titular", color: "bg-orange-50 text-orange-700 border-orange-200" },
+    troca_veiculo: { label: "Troca Veículo", color: "bg-cyan-50 text-cyan-700 border-cyan-200" },
+    segundo_veiculo: { label: "2º Veículo", color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
+    migracao: { label: "Migração", color: "bg-pink-50 text-pink-700 border-pink-200" }
+  };
+
+  const formatarTelefone = (tel) => {
+    if (!tel) return "";
+    const numeros = tel.replace(/\D/g, '');
+    return numeros;
+  };
+
+  const abrirWhatsApp = (telefone) => {
+    const numero = formatarTelefone(telefone);
+    window.open(`https://wa.me/55${numero}`, '_blank');
+  };
+
   // Identificar equipe do líder
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail && e.ativa);
   const membrosEquipe = minhaEquipe ? minhaEquipe.membros : [];
