@@ -94,6 +94,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     .reduce((acc, n) => acc + parseFloat(n.valor_mensalidade.replace(/[^\d,]/g, "").replace(",", ".") || 0), 0);
 
   const ticketMedioAdesao = vendasAtivas > 0 ? (valorAdesaoTotal / vendasAtivas) : 0;
+  const mediaMensalVendida = vendasAtivas > 0 ? (valorMensalidadeTotal / vendasAtivas) : 0;
 
   // Ranking de vendedores
   const vendedoresStats = {};
