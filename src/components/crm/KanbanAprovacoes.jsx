@@ -19,8 +19,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [showModal, setShowModal] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState(null);
-  const [motivo, setMotivo] = useState("");
-  const [categoria, setCategoria] = useState("");
+  const [motivosReprova, setMotivosReprova] = useState([{ categoria: "", detalhe: "" }]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const queryClient = useQueryClient();
@@ -73,8 +72,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       queryClient.invalidateQueries({ queryKey: ["vendas"] });
       setShowModal(false);
       setSelectedDeal(null);
-      setMotivo("");
-      setCategoria("");
+      setMotivosReprova([{ categoria: "", detalhe: "" }]);
     },
   });
 
@@ -169,23 +167,33 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   }, [negociacoes, userEmail, updateMutation]);
 
   const handleReprovar = useCallback(() => {
-    if (!selectedDeal || !categoria || !motivo) {
-      alert("Preencha todos os campos");
+    if (!selectedDeal) {
       return;
     }
+
+    const motivosValidos = motivosReprova.filter(m => m.categoria && m.detalhe);
+    if (motivosValidos.length === 0) {
+      alert("Adicione pelo menos um motivo de reprova");
+      return;
+    }
+
+    const motivosFormatados = motivosValidos.map(m => ({
+      categoria: m.categoria,
+      detalhe: m.detalhe,
+      corrigido: false
+    }));
 
     updateMutation.mutate({
       id: selectedDeal.id,
       data: {
         status_aprovacao: "reprovado",
         etapa: "reprovado",
-        motivo_reprova_categoria: categoria,
-        motivo_reprova_detalhe: motivo,
+        motivos_reprova: motivosFormatados,
         analisado_por: userEmail,
         data_analise: new Date().toISOString(),
       }
     });
-  }, [selectedDeal, categoria, motivo, userEmail, updateMutation]);
+  }, [selectedDeal, motivosReprova, userEmail, updateMutation]);
 
   const handleCardClick = useCallback((deal) => {
     setSelectedDeal(deal);
@@ -197,7 +205,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       ? negociacoes
           .filter(n => 
             n.nome_cliente === selectedDeal.nome_cliente && 
-            n.motivo_reprova_categoria
+            (n.motivos_reprova?.length > 0 || n.motivo_reprova_categoria)
           )
           .sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise))
       : [],
@@ -289,9 +297,19 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                         <span>{getNomeVendedor(deal.vendedor_email)}</span>
                                         <span>{format(new Date(deal.data_conferencia), "dd/MM/yyyy")}</span>
                                       </div>
-                                      {deal.motivo_reprova_categoria && (
-                                        <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b">
-                                          <strong>{categoriesMotivo[deal.motivo_reprova_categoria]}:</strong> {deal.motivo_reprova_detalhe}
+                                      {(deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
+                                        <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
+                                          {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
+                                            deal.motivos_reprova.map((motivo, idx) => (
+                                              <div key={idx}>
+                                                <strong>{categoriesMotivo[motivo.categoria]}:</strong> {motivo.detalhe}
+                                              </div>
+                                            ))
+                                          ) : deal.motivo_reprova_categoria ? (
+                                            <div>
+                                              <strong>{categoriesMotivo[deal.motivo_reprova_categoria]}:</strong> {deal.motivo_reprova_detalhe}
+                                            </div>
+                                          ) : null}
                                         </div>
                                       )}
                                     </CardContent>
@@ -314,7 +332,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
       {/* Modal: Reprova */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Registrar Reprova</DialogTitle>
           </DialogHeader>
@@ -330,36 +348,89 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
-              <div>
-                <Label className="text-sm font-semibold mb-2 block">Motivo da Reprova *</Label>
-                <Select value={categoria} onValueChange={setCategoria}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="documentacao">Documentação</SelectItem>
-                    <SelectItem value="contrato">Contrato</SelectItem>
-                    <SelectItem value="vistoria_fotos">Vistoria - Fotos</SelectItem>
-                    <SelectItem value="vistoria_videos">Vistoria - Vídeos</SelectItem>
-                    <SelectItem value="preenchimento">Preenchimento</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-semibold">Motivos da Reprova</Label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setMotivosReprova([...motivosReprova, { categoria: "", detalhe: "" }])}
+                    className="h-8"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Adicionar Motivo
+                  </Button>
+                </div>
+
+                {motivosReprova.map((motivo, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3 bg-slate-50">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 space-y-3">
+                        <div>
+                          <Label className="text-xs font-semibold mb-1.5 block">Categoria *</Label>
+                          <Select 
+                            value={motivo.categoria} 
+                            onValueChange={(value) => {
+                              const novosMotivos = [...motivosReprova];
+                              novosMotivos[index].categoria = value;
+                              setMotivosReprova(novosMotivos);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="documentacao">Documentação</SelectItem>
+                              <SelectItem value="contrato">Contrato</SelectItem>
+                              <SelectItem value="vistoria_fotos">Vistoria - Fotos</SelectItem>
+                              <SelectItem value="vistoria_videos">Vistoria - Vídeos</SelectItem>
+                              <SelectItem value="preenchimento">Preenchimento</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <Label className="text-xs font-semibold mb-1.5 block">Especificar Detalhe *</Label>
+                          <Textarea
+                            value={motivo.detalhe}
+                            onChange={(e) => {
+                              const novosMotivos = [...motivosReprova];
+                              novosMotivos[index].detalhe = e.target.value;
+                              setMotivosReprova(novosMotivos);
+                            }}
+                            placeholder="Descreva o motivo específico..."
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+
+                      {motivosReprova.length > 1 && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => {
+                            const novosMotivos = motivosReprova.filter((_, i) => i !== index);
+                            setMotivosReprova(novosMotivos);
+                          }}
+                          className="flex-shrink-0"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div>
-                <Label className="text-sm font-semibold mb-2 block">Especificar Detalhe *</Label>
-                <Textarea
-                  value={motivo}
-                  onChange={(e) => setMotivo(e.target.value)}
-                  placeholder="Descreva o motivo específico da reprova..."
-                  rows={4}
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-2 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setMotivosReprova([{ categoria: "", detalhe: "" }]);
+                  }}
                   className="flex-1"
                 >
                   Cancelar
@@ -368,7 +439,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                   onClick={handleReprovar}
                   variant="destructive"
                   className="flex-1"
-                  disabled={!categoria || !motivo}
+                  disabled={motivosReprova.filter(m => m.categoria && m.detalhe).length === 0}
                 >
                   Reprovar
                 </Button>
@@ -603,17 +674,30 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                   <div className="space-y-3">
                     {historicoReprov.map((rep, index) => (
                       <div key={rep.id} className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <span className="text-xs text-red-600 font-semibold">
+                            {rep.data_analise ? format(new Date(rep.data_analise), "dd/MM/yyyy HH:mm") : "-"}
+                          </span>
+                        </div>
+                        {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
+                          <div className="space-y-2">
+                            {rep.motivos_reprova.map((motivo, idx) => (
+                              <div key={idx} className="bg-white/50 rounded p-2">
+                                <p className="text-xs font-semibold text-red-700">
+                                  {categoriesMotivo[motivo.categoria]}
+                                </p>
+                                <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : rep.motivo_reprova_categoria ? (
                           <div>
                             <p className="text-xs font-semibold text-red-700">
                               {categoriesMotivo[rep.motivo_reprova_categoria]}
                             </p>
                             <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
                           </div>
-                          <span className="text-xs text-red-600 flex-shrink-0">
-                            {format(new Date(rep.data_analise), "dd/MM/yyyy")}
-                          </span>
-                        </div>
+                        ) : null}
                       </div>
                     ))}
                   </div>
