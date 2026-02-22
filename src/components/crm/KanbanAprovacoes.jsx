@@ -355,7 +355,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                     type="button"
                     size="sm"
                     variant="outline"
-                    onClick={() => setMotivosReprova([...motivosReprova, { categoria: "", detalhe: "" }])}
+                    onClick={() => setMotivosReprova([{ categoria: "", detalhe: "" }, ...motivosReprova])}
                     className="h-8"
                   >
                     <Plus className="w-4 h-4 mr-1" />
