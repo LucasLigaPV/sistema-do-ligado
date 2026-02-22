@@ -183,6 +183,14 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       corrigido: false
     }));
 
+    // Adicionar ao histórico de reprovas
+    const historicoAtual = selectedDeal.historico_reprovas || [];
+    const novaReprova = {
+      data_analise: new Date().toISOString(),
+      analisado_por: userEmail,
+      motivos: motivosFormatados
+    };
+
     updateMutation.mutate({
       id: selectedDeal.id,
       data: {
@@ -191,6 +199,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         motivos_reprova: motivosFormatados,
         analisado_por: userEmail,
         data_analise: new Date().toISOString(),
+        historico_reprovas: [novaReprova, ...historicoAtual]
       }
     });
   }, [selectedDeal, motivosReprova, userEmail, updateMutation]);
@@ -201,15 +210,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   }, []);
 
   const historicoReprov = useMemo(() => 
-    selectedDeal 
-      ? negociacoes
-          .filter(n => 
-            n.nome_cliente === selectedDeal.nome_cliente && 
-            (n.motivos_reprova?.length > 0 || n.motivo_reprova_categoria)
-          )
-          .sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise))
-      : [],
-    [negociacoes, selectedDeal?.nome_cliente]
+    selectedDeal?.historico_reprovas || [],
+    [selectedDeal?.historico_reprovas]
   );
 
   return (
@@ -665,80 +667,55 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               </div>
 
               {/* Histórico de Reprovas */}
-              {historicoReprov.length > 0 && (() => {
-                // Agrupar reprovas por data_analise
-                const reprovasPorSessao = {};
-                historicoReprov.forEach(rep => {
-                  const dataKey = rep.data_analise || rep.created_date;
-                  if (!reprovasPorSessao[dataKey]) {
-                    reprovasPorSessao[dataKey] = [];
-                  }
-                  reprovasPorSessao[dataKey].push(rep);
-                });
-                
-                const sessoesOrdenadas = Object.entries(reprovasPorSessao).sort((a, b) => 
-                  new Date(b[0]) - new Date(a[0])
-                );
-
-                return (
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                      <XCircle className="w-5 h-5 text-red-600" />
-                      Histórico de Reprovas
-                    </h3>
-                    <div className="space-y-4">
-                      {sessoesOrdenadas.map(([dataAnalise, reprovas], sessaoIndex) => (
-                        <div key={dataAnalise} className="space-y-2">
-                          {/* Header da sessão */}
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="h-px flex-1 bg-slate-200" />
-                            <div className="flex items-center gap-2">
-                              {sessaoIndex === 0 && (
-                                <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                                  NOVO
-                                </span>
-                              )}
-                              <span className="text-xs text-slate-600 font-semibold">
-                                {format(new Date(dataAnalise), "dd/MM/yyyy 'às' HH:mm")}
+              {historicoReprov.length > 0 && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                    <XCircle className="w-5 h-5 text-red-600" />
+                    Histórico de Reprovas
+                  </h3>
+                  <div className="space-y-4">
+                    {historicoReprov.map((sessao, sessaoIndex) => (
+                      <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
+                        {/* Header da sessão */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="h-px flex-1 bg-slate-200" />
+                          <div className="flex items-center gap-2">
+                            {sessaoIndex === 0 && (
+                              <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                NOVO
                               </span>
-                            </div>
-                            <div className="h-px flex-1 bg-slate-200" />
+                            )}
+                            <span className="text-xs text-slate-600 font-semibold">
+                              {format(new Date(sessao.data_analise), "dd/MM/yyyy 'às' HH:mm")}
+                            </span>
                           </div>
-                          
-                          {/* Motivos desta sessão */}
-                          {reprovas.map((rep, repIndex) => (
-                            <div key={`${rep.id}-${repIndex}`} className={`rounded-lg p-3 space-y-2 border ${
-                              sessaoIndex === 0 
-                                ? "bg-red-100 border-red-300" 
-                                : "bg-red-50 border-red-200"
-                            }`}>
-                              {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
-                                <div className="space-y-2">
-                                  {rep.motivos_reprova.map((motivo, idx) => (
-                                    <div key={idx} className="bg-white/60 rounded p-2">
-                                      <p className="text-xs font-semibold text-red-700">
-                                        {categoriesMotivo[motivo.categoria]}
-                                      </p>
-                                      <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : rep.motivo_reprova_categoria ? (
-                                <div className="bg-white/60 rounded p-2">
-                                  <p className="text-xs font-semibold text-red-700">
-                                    {categoriesMotivo[rep.motivo_reprova_categoria]}
-                                  </p>
-                                  <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
-                                </div>
-                              ) : null}
-                            </div>
-                          ))}
+                          <div className="h-px flex-1 bg-slate-200" />
                         </div>
-                      ))}
-                    </div>
+                        
+                        {/* Motivos desta sessão */}
+                        <div className={`rounded-lg p-3 space-y-2 border ${
+                          sessaoIndex === 0 
+                            ? "bg-red-100 border-red-300" 
+                            : "bg-red-50 border-red-200"
+                        }`}>
+                          {sessao.motivos && sessao.motivos.length > 0 && (
+                            <div className="space-y-2">
+                              {sessao.motivos.map((motivo, idx) => (
+                                <div key={idx} className="bg-white/60 rounded p-2">
+                                  <p className="text-xs font-semibold text-red-700">
+                                    {categoriesMotivo[motivo.categoria]}
+                                  </p>
+                                  <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                );
-              })()}
+                </div>
+              )}
             </div>
           )}
         </SheetContent>

@@ -1511,28 +1511,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                  )}
 
                 {selectedDeal.etapa === "reprovado" && (() => {
-                  // Buscar histórico de reprovas
-                  const historicoReprov = negociacoes
-                    .filter(n => 
-                      n.nome_cliente === selectedDeal.nome_cliente && 
-                      (n.motivos_reprova?.length > 0 || n.motivo_reprova_categoria)
-                    )
-                    .sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise));
-
-                  // Agrupar reprovas por data_analise
-                  const reprovasPorSessao = {};
-                  historicoReprov.forEach(rep => {
-                    const dataKey = rep.data_analise || rep.created_date;
-                    if (!reprovasPorSessao[dataKey]) {
-                      reprovasPorSessao[dataKey] = [];
-                    }
-                    reprovasPorSessao[dataKey].push(rep);
-                  });
+                  const historicoReprov = selectedDeal.historico_reprovas || [];
                   
-                  const sessoesOrdenadas = Object.entries(reprovasPorSessao).sort((a, b) => 
-                    new Date(b[0]) - new Date(a[0])
-                  );
-
                   const categoriesMotivo = {
                     documentacao: "Documentação",
                     contrato: "Contrato",
@@ -1587,8 +1567,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                             Histórico de Reprovas
                           </h3>
                           <div className="space-y-4">
-                            {sessoesOrdenadas.map(([dataAnalise, reprovas], sessaoIndex) => (
-                              <div key={dataAnalise} className="space-y-2">
+                            {historicoReprov.map((sessao, sessaoIndex) => (
+                              <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
                                 {/* Header da sessão */}
                                 <div className="flex items-center gap-2 mb-2">
                                   <div className="h-px flex-1 bg-slate-200" />
@@ -1599,40 +1579,31 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                       </span>
                                     )}
                                     <span className="text-xs text-slate-600 font-semibold">
-                                      {format(new Date(dataAnalise), "dd/MM/yyyy 'às' HH:mm")}
+                                      {format(new Date(sessao.data_analise), "dd/MM/yyyy 'às' HH:mm")}
                                     </span>
                                   </div>
                                   <div className="h-px flex-1 bg-slate-200" />
                                 </div>
                                 
                                 {/* Motivos desta sessão */}
-                                {reprovas.map((rep, repIndex) => (
-                                  <div key={`${rep.id}-${repIndex}`} className={`rounded-lg p-3 space-y-2 border ${
-                                    sessaoIndex === 0 
-                                      ? "bg-red-100 border-red-300" 
-                                      : "bg-red-50 border-red-200"
-                                  }`}>
-                                    {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
-                                      <div className="space-y-2">
-                                        {rep.motivos_reprova.map((motivo, idx) => (
-                                          <div key={idx} className="bg-white/60 rounded p-2">
-                                            <p className="text-xs font-semibold text-red-700">
-                                              {categoriesMotivo[motivo.categoria]}
-                                            </p>
-                                            <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    ) : rep.motivo_reprova_categoria ? (
-                                      <div className="bg-white/60 rounded p-2">
-                                        <p className="text-xs font-semibold text-red-700">
-                                          {categoriesMotivo[rep.motivo_reprova_categoria]}
-                                        </p>
-                                        <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
-                                      </div>
-                                    ) : null}
-                                  </div>
-                                ))}
+                                <div className={`rounded-lg p-3 space-y-2 border ${
+                                  sessaoIndex === 0 
+                                    ? "bg-red-100 border-red-300" 
+                                    : "bg-red-50 border-red-200"
+                                }`}>
+                                  {sessao.motivos && sessao.motivos.length > 0 && (
+                                    <div className="space-y-2">
+                                      {sessao.motivos.map((motivo, idx) => (
+                                        <div key={idx} className="bg-white/60 rounded p-2">
+                                          <p className="text-xs font-semibold text-red-700">
+                                            {categoriesMotivo[motivo.categoria]}
+                                          </p>
+                                          <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
