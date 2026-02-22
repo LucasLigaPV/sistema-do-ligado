@@ -88,7 +88,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const negociacoesAnalise = useMemo(() => 
     negociacoes.filter(n => 
       n.informacoes_conferidas && 
-      ((n.etapa === "enviado_cadastro" && n.status_aprovacao !== "aprovado") || n.status_aprovacao === "aprovado")
+      (n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")
     ), 
     [negociacoes]
   );
