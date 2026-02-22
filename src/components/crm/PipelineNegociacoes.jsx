@@ -201,6 +201,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       corrigido: !motivosAtualizados[index].corrigido
     };
 
+    // Atualiza o estado local imediatamente
+    const dealAtualizado = {
+      ...selectedDeal,
+      motivos_reprova: motivosAtualizados
+    };
+    setSelectedDeal(dealAtualizado);
+    setEditedDeal(dealAtualizado);
+
+    // Atualiza o backend
     updateMutation.mutate({
       id: selectedDeal.id,
       data: {
