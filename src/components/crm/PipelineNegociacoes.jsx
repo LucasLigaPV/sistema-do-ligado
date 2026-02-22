@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake } from "lucide-react";
+import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake, History, ChevronDown, ChevronUp } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
@@ -36,6 +36,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [origemLogic, setOrigemLogic] = useState("e");
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
+  const [showHistorico, setShowHistorico] = useState(false);
   
   const [newDeal, setNewDeal] = useState({
     vendedor_email: userEmail,
@@ -1559,54 +1560,52 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         </div>
                       )}
 
-                      {/* Histórico de Reprovas */}
-                      {historicoReprov.length > 0 && (
+                      {/* Histórico de Reprovas (excluindo a atual) */}
+                      {historicoReprov.length > 1 && (
                         <div className="border-t pt-4">
-                          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                            <XCircle className="w-5 h-5 text-red-600" />
-                            Histórico de Reprovas
-                          </h3>
-                          <div className="space-y-4">
-                            {historicoReprov.map((sessao, sessaoIndex) => (
-                              <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
-                                {/* Header da sessão */}
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="h-px flex-1 bg-slate-200" />
-                                  <div className="flex items-center gap-2">
-                                    {sessaoIndex === 0 && (
-                                      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
-                                        NOVO
-                                      </span>
-                                    )}
-                                    <span className="text-xs text-slate-600 font-semibold">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowHistorico(!showHistorico)}
+                            className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 mb-3"
+                          >
+                            <History className="w-4 h-4" />
+                            <span className="text-xs">Exibir Outras Reprovas</span>
+                            {showHistorico ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                          </Button>
+                          
+                          {showHistorico && (
+                            <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+                              {historicoReprov.slice(1).map((sessao, sessaoIndex) => (
+                                <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
+                                  {/* Header da sessão */}
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <div className="h-px flex-1 bg-slate-200" />
+                                    <span className="text-xs text-slate-500 font-medium">
                                       {format(new Date(sessao.data_analise), "dd/MM/yyyy 'às' HH:mm")}
                                     </span>
+                                    <div className="h-px flex-1 bg-slate-200" />
                                   </div>
-                                  <div className="h-px flex-1 bg-slate-200" />
+                                  
+                                  {/* Motivos desta sessão */}
+                                  <div className="rounded-lg p-3 space-y-2 border bg-slate-50 border-slate-200">
+                                    {sessao.motivos && sessao.motivos.length > 0 && (
+                                      <div className="space-y-2">
+                                        {sessao.motivos.map((motivo, idx) => (
+                                          <div key={idx} className="bg-white rounded p-2">
+                                            <p className="text-xs font-semibold text-slate-700">
+                                              {categoriesMotivo[motivo.categoria]}
+                                            </p>
+                                            <p className="text-xs text-slate-600 mt-1">{motivo.detalhe}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                
-                                {/* Motivos desta sessão */}
-                                <div className={`rounded-lg p-3 space-y-2 border ${
-                                  sessaoIndex === 0 
-                                    ? "bg-red-100 border-red-300" 
-                                    : "bg-red-50 border-red-200"
-                                }`}>
-                                  {sessao.motivos && sessao.motivos.length > 0 && (
-                                    <div className="space-y-2">
-                                      {sessao.motivos.map((motivo, idx) => (
-                                        <div key={idx} className="bg-white/60 rounded p-2">
-                                          <p className="text-xs font-semibold text-red-700">
-                                            {categoriesMotivo[motivo.categoria]}
-                                          </p>
-                                          <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       )}
                       
