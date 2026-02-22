@@ -1510,24 +1510,47 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                    </div>
                  )}
 
-                {selectedDeal.etapa === "reprovado" && (
-                  <>
-                    {selectedDeal.motivos_reprova && selectedDeal.motivos_reprova.length > 0 && (
-                      <div className="border-t pt-4">
-                        <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                          <XCircle className="w-5 h-5 text-red-600" />
-                          Pendências a Corrigir
-                        </h3>
-                        <div className="space-y-2.5 mb-4">
-                          {selectedDeal.motivos_reprova.map((motivo, index) => {
-                            const categoriesMotivo = {
-                              documentacao: "Documentação",
-                              contrato: "Contrato",
-                              vistoria_fotos: "Vistoria - Fotos",
-                              vistoria_videos: "Vistoria - Vídeos",
-                              preenchimento: "Preenchimento",
-                            };
-                            return (
+                {selectedDeal.etapa === "reprovado" && (() => {
+                  // Buscar histórico de reprovas
+                  const historicoReprov = negociacoes
+                    .filter(n => 
+                      n.nome_cliente === selectedDeal.nome_cliente && 
+                      (n.motivos_reprova?.length > 0 || n.motivo_reprova_categoria)
+                    )
+                    .sort((a, b) => new Date(b.data_analise) - new Date(a.data_analise));
+
+                  // Agrupar reprovas por data_analise
+                  const reprovasPorSessao = {};
+                  historicoReprov.forEach(rep => {
+                    const dataKey = rep.data_analise || rep.created_date;
+                    if (!reprovasPorSessao[dataKey]) {
+                      reprovasPorSessao[dataKey] = [];
+                    }
+                    reprovasPorSessao[dataKey].push(rep);
+                  });
+                  
+                  const sessoesOrdenadas = Object.entries(reprovasPorSessao).sort((a, b) => 
+                    new Date(b[0]) - new Date(a[0])
+                  );
+
+                  const categoriesMotivo = {
+                    documentacao: "Documentação",
+                    contrato: "Contrato",
+                    vistoria_fotos: "Vistoria - Fotos",
+                    vistoria_videos: "Vistoria - Vídeos",
+                    preenchimento: "Preenchimento",
+                  };
+
+                  return (
+                    <>
+                      {selectedDeal.motivos_reprova && selectedDeal.motivos_reprova.length > 0 && (
+                        <div className="border-t pt-4">
+                          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                            <XCircle className="w-5 h-5 text-red-600" />
+                            Pendências a Corrigir
+                          </h3>
+                          <div className="space-y-2.5 mb-4">
+                            {selectedDeal.motivos_reprova.map((motivo, index) => (
                               <div 
                                 key={index}
                                 className={`flex items-start gap-3 p-3 rounded-lg transition-all border ${
@@ -1551,28 +1574,88 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 </div>
                                 {motivo.corrigido && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
                               </div>
-                            );
-                          })}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    
-                    <Button
-                      onClick={handleReprovaCorrigida}
-                      disabled={!todosMotivosCorrigidos(selectedDeal)}
-                      className={`w-full ${
-                        todosMotivosCorrigidos(selectedDeal)
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-slate-300 cursor-not-allowed"
-                      } text-white`}
-                    >
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      {todosMotivosCorrigidos(selectedDeal) 
-                        ? "Pendências Corrigidas - Enviar" 
-                        : "Marque Todas as Correções"}
-                    </Button>
-                  </>
-                )}
+                      )}
+
+                      {/* Histórico de Reprovas */}
+                      {historicoReprov.length > 0 && (
+                        <div className="border-t pt-4">
+                          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                            <XCircle className="w-5 h-5 text-red-600" />
+                            Histórico de Reprovas
+                          </h3>
+                          <div className="space-y-4">
+                            {sessoesOrdenadas.map(([dataAnalise, reprovas], sessaoIndex) => (
+                              <div key={dataAnalise} className="space-y-2">
+                                {/* Header da sessão */}
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="h-px flex-1 bg-slate-200" />
+                                  <div className="flex items-center gap-2">
+                                    {sessaoIndex === 0 && (
+                                      <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                        NOVO
+                                      </span>
+                                    )}
+                                    <span className="text-xs text-slate-600 font-semibold">
+                                      {format(new Date(dataAnalise), "dd/MM/yyyy 'às' HH:mm")}
+                                    </span>
+                                  </div>
+                                  <div className="h-px flex-1 bg-slate-200" />
+                                </div>
+                                
+                                {/* Motivos desta sessão */}
+                                {reprovas.map((rep, repIndex) => (
+                                  <div key={`${rep.id}-${repIndex}`} className={`rounded-lg p-3 space-y-2 border ${
+                                    sessaoIndex === 0 
+                                      ? "bg-red-100 border-red-300" 
+                                      : "bg-red-50 border-red-200"
+                                  }`}>
+                                    {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
+                                      <div className="space-y-2">
+                                        {rep.motivos_reprova.map((motivo, idx) => (
+                                          <div key={idx} className="bg-white/60 rounded p-2">
+                                            <p className="text-xs font-semibold text-red-700">
+                                              {categoriesMotivo[motivo.categoria]}
+                                            </p>
+                                            <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ) : rep.motivo_reprova_categoria ? (
+                                      <div className="bg-white/60 rounded p-2">
+                                        <p className="text-xs font-semibold text-red-700">
+                                          {categoriesMotivo[rep.motivo_reprova_categoria]}
+                                        </p>
+                                        <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Button
+                        onClick={handleReprovaCorrigida}
+                        disabled={!todosMotivosCorrigidos(selectedDeal)}
+                        className={`w-full ${
+                          todosMotivosCorrigidos(selectedDeal)
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-slate-300 cursor-not-allowed"
+                        } text-white`}
+                      >
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        {todosMotivosCorrigidos(selectedDeal) 
+                          ? "Pendências Corrigidas - Enviar" 
+                          : "Marque Todas as Correções"}
+                      </Button>
+                    </>
+                  );
+                })()}
 
                 {!isEtapaFinal(selectedDeal.etapa) && (
                   <Button

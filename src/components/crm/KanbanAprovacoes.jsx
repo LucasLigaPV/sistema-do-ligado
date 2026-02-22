@@ -665,44 +665,80 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               </div>
 
               {/* Histórico de Reprovas */}
-              {historicoReprov.length > 0 && (
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                    <XCircle className="w-5 h-5 text-red-600" />
-                    Histórico de Reprovas
-                  </h3>
-                  <div className="space-y-3">
-                    {historicoReprov.map((rep, index) => (
-                      <div key={rep.id} className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <span className="text-xs text-red-600 font-semibold">
-                            {rep.data_analise ? format(new Date(rep.data_analise), "dd/MM/yyyy HH:mm") : "-"}
-                          </span>
+              {historicoReprov.length > 0 && (() => {
+                // Agrupar reprovas por data_analise
+                const reprovasPorSessao = {};
+                historicoReprov.forEach(rep => {
+                  const dataKey = rep.data_analise || rep.created_date;
+                  if (!reprovasPorSessao[dataKey]) {
+                    reprovasPorSessao[dataKey] = [];
+                  }
+                  reprovasPorSessao[dataKey].push(rep);
+                });
+                
+                const sessoesOrdenadas = Object.entries(reprovasPorSessao).sort((a, b) => 
+                  new Date(b[0]) - new Date(a[0])
+                );
+
+                return (
+                  <div className="border-t pt-4">
+                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                      <XCircle className="w-5 h-5 text-red-600" />
+                      Histórico de Reprovas
+                    </h3>
+                    <div className="space-y-4">
+                      {sessoesOrdenadas.map(([dataAnalise, reprovas], sessaoIndex) => (
+                        <div key={dataAnalise} className="space-y-2">
+                          {/* Header da sessão */}
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <div className="flex items-center gap-2">
+                              {sessaoIndex === 0 && (
+                                <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                  NOVO
+                                </span>
+                              )}
+                              <span className="text-xs text-slate-600 font-semibold">
+                                {format(new Date(dataAnalise), "dd/MM/yyyy 'às' HH:mm")}
+                              </span>
+                            </div>
+                            <div className="h-px flex-1 bg-slate-200" />
+                          </div>
+                          
+                          {/* Motivos desta sessão */}
+                          {reprovas.map((rep, repIndex) => (
+                            <div key={`${rep.id}-${repIndex}`} className={`rounded-lg p-3 space-y-2 border ${
+                              sessaoIndex === 0 
+                                ? "bg-red-100 border-red-300" 
+                                : "bg-red-50 border-red-200"
+                            }`}>
+                              {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
+                                <div className="space-y-2">
+                                  {rep.motivos_reprova.map((motivo, idx) => (
+                                    <div key={idx} className="bg-white/60 rounded p-2">
+                                      <p className="text-xs font-semibold text-red-700">
+                                        {categoriesMotivo[motivo.categoria]}
+                                      </p>
+                                      <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : rep.motivo_reprova_categoria ? (
+                                <div className="bg-white/60 rounded p-2">
+                                  <p className="text-xs font-semibold text-red-700">
+                                    {categoriesMotivo[rep.motivo_reprova_categoria]}
+                                  </p>
+                                  <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
+                                </div>
+                              ) : null}
+                            </div>
+                          ))}
                         </div>
-                        {rep.motivos_reprova && rep.motivos_reprova.length > 0 ? (
-                          <div className="space-y-2">
-                            {rep.motivos_reprova.map((motivo, idx) => (
-                              <div key={idx} className="bg-white/50 rounded p-2">
-                                <p className="text-xs font-semibold text-red-700">
-                                  {categoriesMotivo[motivo.categoria]}
-                                </p>
-                                <p className="text-xs text-red-600 mt-1">{motivo.detalhe}</p>
-                              </div>
-                            ))}
-                          </div>
-                        ) : rep.motivo_reprova_categoria ? (
-                          <div>
-                            <p className="text-xs font-semibold text-red-700">
-                              {categoriesMotivo[rep.motivo_reprova_categoria]}
-                            </p>
-                            <p className="text-xs text-red-600 mt-1">{rep.motivo_reprova_detalhe}</p>
-                          </div>
-                        ) : null}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
         </SheetContent>
