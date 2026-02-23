@@ -125,7 +125,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const users = allUsers;
 
   const [consultorFilter, setConsultorFilter] = useState(
-    userFuncao === "master" ? [] : userFuncao === "lider" ? membrosEquipe : userRole === "admin" ? [] : [userEmail]
+    (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail]
   );
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
@@ -168,7 +168,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
       venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
       venda.telefone?.toLowerCase().includes(search.toLowerCase()) ||
       nomeVendedor?.toLowerCase().includes(search.toLowerCase());
-    const matchConsultor = userFuncao === "lider" 
+    const matchConsultor = (userFuncao === "lider" || userFuncao === "master")
       ? consultorFilter.length === 0 || consultorFilter.includes(venda.email_vendedor)
       : true;
     
@@ -252,7 +252,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${userFuncao === "lider" ? "lg:grid-cols-5" : "lg:grid-cols-4"} gap-4`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userFuncao === "lider" || userFuncao === "master") ? "lg:grid-cols-5" : "lg:grid-cols-4"} gap-4`}>
             <div className="lg:col-span-2">
               <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
               <div className="relative">
@@ -281,13 +281,13 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                 onChange={(e) => setDataFim(e.target.value)}
               />
             </div>
-            {userFuncao === "lider" && (
+            {(userFuncao === "lider" || userFuncao === "master") && (
               <FiltroVendedor
                 vendedoresSelecionados={consultorFilter}
-                todosVendedores={membrosEquipe}
+                todosVendedores={userFuncao === "master" ? users.map(u => u.email) : membrosEquipe}
                 onSelectionChange={setConsultorFilter}
                 userEmail={userEmail}
-                nomesPorEmail={minhaEquipe?.nomes_membros || {}}
+                nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.map(u => [u.email, u.nome_exibicao || u.full_name])) : (minhaEquipe?.nomes_membros || {})}
               />
             )}
           </div>
@@ -307,7 +307,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead>Data</TableHead>
-                {userFuncao === "lider" && <TableHead>Vendedor</TableHead>}
+                {(userFuncao === "lider" || userFuncao === "master") && <TableHead>Vendedor</TableHead>}
                 <TableHead>Cliente</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead>Plano</TableHead>
@@ -343,9 +343,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                         <TableCell className="text-slate-600">
                           {venda.data_venda ? format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR }) : "-"}
                         </TableCell>
-                        {userFuncao === "lider" && (
+                        {(userFuncao === "lider" || userFuncao === "master") && (
                           <TableCell className="font-medium">
-                            {venda.vendedor}
+                            {venda.vendedor || getNomeVendedor(venda.email_vendedor, users)}
                           </TableCell>
                         )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>

@@ -137,7 +137,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   }, [vendasFiltradas]);
 
   const rankingVendedores = useMemo(() => {
-    if (userFuncao !== "lider" && userRole !== "admin" && userRole !== "master") return [];
+    if (userFuncao !== "lider" && userFuncao !== "master" && userRole !== "admin") return [];
     
     const vendedoresMap = {};
     
@@ -372,8 +372,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         </Card>
       </div>
 
-      {/* Ranking de Vendedores - Para Líder e Admin */}
-      {(userFuncao === "lider" || userRole === "admin" || userRole === "master") && (
+      {/* Ranking de Vendedores - Para Líder, Master e Admin */}
+      {(userFuncao === "lider" || userFuncao === "master" || userRole === "admin") && (
         <Card className="border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -504,7 +504,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
       </div>
 
       {/* Insights Estratégicos */}
-      {(userFuncao === "lider" || userRole === "admin" || userRole === "master") && (
+      {(userFuncao === "lider" || userFuncao === "master" || userRole === "admin") && (
         <Card className="border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
