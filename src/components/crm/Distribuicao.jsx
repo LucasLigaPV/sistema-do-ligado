@@ -170,9 +170,11 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar vendedores e líderes pela funcao
-  // Remover usuários com função "master" da lista
-  const vendedoresLideres = users.filter(u => u.funcao === "vendedor" || u.funcao === "lider");
+  // Filtrar apenas vendedores e líderes, excluindo admin e master
+  const vendedoresLideres = users.filter(u => 
+    (u.funcao === "vendedor" || u.funcao === "lider") && 
+    u.role !== "admin"
+  );
 
   // Calcular taxa de conversão
   const calcularTaxaConversao = (email) => {
