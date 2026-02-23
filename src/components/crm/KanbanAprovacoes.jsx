@@ -667,6 +667,45 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
+              {/* Pendência Corrigida (exibe a reprova mais recente quando status é "corrigido") */}
+              {selectedDeal.status_aprovacao === "corrigido" && historicoReprov.length > 0 && historicoReprov[0] && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    Pendência Corrigida
+                  </h3>
+                  <div className="space-y-2">
+                    {/* Header da correção */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-px flex-1 bg-green-200" />
+                      <span className="text-xs text-green-700 font-semibold">
+                        Resolvido em {format(new Date(), "dd/MM/yyyy")}
+                      </span>
+                      <div className="h-px flex-1 bg-green-200" />
+                    </div>
+                    
+                    {/* Motivos corrigidos */}
+                    <div className="rounded-lg p-3 space-y-2 border bg-green-50 border-green-200">
+                      {historicoReprov[0].motivos && historicoReprov[0].motivos.length > 0 && (
+                        <div className="space-y-2">
+                          {historicoReprov[0].motivos.map((motivo, idx) => (
+                            <div key={idx} className="bg-white rounded p-2 flex items-start gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                              <div className="flex-1">
+                                <p className="text-xs font-semibold text-green-700">
+                                  {categoriesMotivo[motivo.categoria]}
+                                </p>
+                                <p className="text-xs text-green-600 mt-1">{motivo.detalhe}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Histórico de Reprovas (excluindo a atual) */}
               {historicoReprov.length > 1 && (
                 <div className="border-t pt-4">
