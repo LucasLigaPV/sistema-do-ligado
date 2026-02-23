@@ -8,11 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText, Upload, Wrench, FileSignature, CreditCard, Search, X, Plus, History, ChevronDown, ChevronUp } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
 
 export default function KanbanAprovacoes({ userEmail, userFuncao }) {
@@ -22,6 +23,10 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [motivosReprova, setMotivosReprova] = useState([{ categoria: "", detalhe: "" }]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
+  
+  // Filtro de data - padrão: mês vigente
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
 
   const queryClient = useQueryClient();
 
@@ -87,11 +92,25 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   }, [userMap]);
 
   const negociacoesAnalise = useMemo(() => 
-    negociacoes.filter(n => 
-      n.informacoes_conferidas && 
-      (n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")
-    ), 
-    [negociacoes]
+    negociacoes.filter(n => {
+      if (!n.informacoes_conferidas) return false;
+      if (!(n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")) return false;
+      
+      // Filtro de data baseado em data_conferencia
+      if (n.data_conferencia) {
+        const dataConferencia = new Date(n.data_conferencia);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        
+        if (dataConferencia < start || dataConferencia > end) {
+          return false;
+        }
+      }
+      
+      return true;
+    }), 
+    [negociacoes, startDate, endDate]
   );
 
   const negociacoesFiltradas = useMemo(() => {
@@ -219,24 +238,44 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     <div className="space-y-6">
       <PainelEstatisticasAprovacoes negociacoes={negociacoes} />
 
-      {/* Barra de Pesquisa */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Buscar por cliente, placa, telefone, email ou consultor..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
-        />
-        {searchTerm && (
-          <button
-            onClick={() => setSearchTerm("")}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+      {/* Filtros */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {/* Barra de Pesquisa */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Buscar por cliente, placa, telefone, email ou consultor..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Filtro de Data */}
+        <div className="flex gap-2 items-center">
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-40"
+          />
+          <span className="text-sm text-slate-500">até</span>
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-40"
+          />
+        </div>
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd} enableDefaultSensors={true}>
@@ -300,7 +339,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                         <span>{getNomeVendedor(deal.vendedor_email)}</span>
                                         <span>{format(new Date(deal.data_conferencia), "dd/MM/yyyy")}</span>
                                       </div>
-                                      {(deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
+                                      {deal.status_aprovacao !== "aprovado" && (deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
                                         <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
                                           {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
                                             deal.motivos_reprova.map((motivo, idx) => (
