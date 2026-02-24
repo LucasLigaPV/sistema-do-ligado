@@ -141,7 +141,7 @@ export default function Inicio() {
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Bem-vindo ao Sistema</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Bem-vindo ao Sistemato</h2>
               <p className="text-slate-500">Escolha uma opção abaixo para começar</p>
             </div>
 
