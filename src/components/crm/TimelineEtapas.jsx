@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, AlertCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function TimelineEtapas({ 
   etapas, 
@@ -10,6 +12,7 @@ export default function TimelineEtapas({
 }) {
   const etapasVisiveis = etapas;
   const currentIndex = etapasVisiveis.findIndex(e => e.id === etapaAtual);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, etapaId: null, etapaLabel: "" });
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-6 border border-slate-200 shadow-sm">
@@ -58,7 +61,11 @@ export default function TimelineEtapas({
                 className={`relative flex items-start gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
                   canClick ? 'cursor-pointer hover:bg-white' : (isLockedEtapa || isStuckInEnviado) ? 'opacity-60 cursor-not-allowed' : ''
                 } ${isCurrentEtapa ? 'bg-white shadow-sm' : ''}`}
-                onClick={() => canClick && onEtapaClick(etapa.id)}
+                onClick={() => {
+                  if (canClick && etapa.id !== etapaAtual) {
+                    setConfirmDialog({ open: true, etapaId: etapa.id, etapaLabel: etapa.label });
+                  }
+                }}
               >
                 {/* Bolinha indicadora */}
                 <div className="flex-shrink-0">
@@ -112,6 +119,40 @@ export default function TimelineEtapas({
           );
         })}
       </div>
+
+      {/* Dialog de Confirmação */}
+      <Dialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-amber-600" />
+              Confirmar Mudança de Etapa
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-slate-700">
+              Deseja realmente mudar para a etapa <span className="font-semibold">{confirmDialog.etapaLabel}</span>?
+            </p>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmDialog({ open: false, etapaId: null, etapaLabel: "" })}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="bg-[#EFC200] hover:bg-[#D4A900] text-black"
+              onClick={() => {
+                onEtapaClick(confirmDialog.etapaId);
+                setConfirmDialog({ open: false, etapaId: null, etapaLabel: "" });
+              }}
+            >
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
