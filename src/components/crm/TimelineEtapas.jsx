@@ -8,7 +8,7 @@ export default function TimelineEtapas({
   onEtapaClick, 
   isReadOnly 
 }) {
-  const etapasVisiveis = etapas.filter(e => e.id !== "reprovado" && e.id !== "venda_ativa");
+  const etapasVisiveis = etapas;
   const currentIndex = etapasVisiveis.findIndex(e => e.id === etapaAtual);
 
   return (
@@ -23,7 +23,8 @@ export default function TimelineEtapas({
           const isCurrentEtapa = etapaAtual === etapa.id;
           const isPassed = index < currentIndex;
           const isFuture = index > currentIndex;
-          const canClick = !isReadOnly;
+          const isLockedEtapa = etapa.id === "reprovado" || etapa.id === "venda_ativa" || etapa.id === "enviado_cadastro";
+          const canClick = !isReadOnly && !isLockedEtapa;
           
           return (
             <div key={etapa.id} className="relative">
@@ -54,7 +55,7 @@ export default function TimelineEtapas({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
                 className={`relative flex items-start gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
-                  canClick ? 'cursor-pointer hover:bg-white' : ''
+                  canClick ? 'cursor-pointer hover:bg-white' : isLockedEtapa ? 'opacity-60 cursor-not-allowed' : ''
                 } ${isCurrentEtapa ? 'bg-white shadow-sm' : ''}`}
                 onClick={() => canClick && onEtapaClick(etapa.id)}
               >
