@@ -30,7 +30,7 @@ export default function TimelineEtapas({
               {/* Linha conectora */}
               {index < etapasVisiveis.length - 1 && (
                 <div 
-                  className={`absolute left-[15px] top-8 w-0.5 ${
+                  className={`absolute left-4 top-8 w-0.5 ${
                     isPassed || isCurrentEtapa ? 'bg-gradient-to-b from-green-400 to-green-200' : 'bg-gradient-to-b from-slate-300 to-transparent'
                   }`} 
                   style={{ height: '40px' }} 
