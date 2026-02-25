@@ -150,24 +150,25 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       if (data.etapa === "venda_ativa") {
         const negociacao = negociacoes.find(n => n.id === id);
         if (negociacao) {
-          // Criar venda automaticamente
+          // Usar os dados mais recentes do 'data' (garantir origem atualizada)
+          const origem = data.origem || negociacao.origem || "lead";
           createVendaMutation.mutate({
-            vendedor: negociacao.vendedor_email,
-            email_vendedor: negociacao.vendedor_email,
+            vendedor: data.vendedor_email || negociacao.vendedor_email,
+            email_vendedor: data.vendedor_email || negociacao.vendedor_email,
             data_venda: new Date().toISOString().split('T')[0],
             etapa: "pagamento_ok",
-            cliente: negociacao.nome_cliente,
-            telefone: negociacao.telefone,
-            email: negociacao.email,
-            plano_vendido: negociacao.plano_interesse || "essencial",
-            placa: negociacao.placa || "",
-            modelo_veiculo: negociacao.modelo_veiculo || "",
-            valor_adesao: negociacao.valor_adesao || "",
-            valor_mensalidade: negociacao.valor_mensalidade || "",
+            cliente: data.nome_cliente || negociacao.nome_cliente,
+            telefone: data.telefone || negociacao.telefone,
+            email: data.email || negociacao.email,
+            plano_vendido: data.plano_interesse || negociacao.plano_interesse || "essencial",
+            placa: data.placa || negociacao.placa || "",
+            modelo_veiculo: data.modelo_veiculo || negociacao.modelo_veiculo || "",
+            valor_adesao: data.valor_adesao || negociacao.valor_adesao || "",
+            valor_mensalidade: data.valor_mensalidade || negociacao.valor_mensalidade || "",
             forma_pagamento: "pix",
-            canal_venda: negociacao.origem || "lead",
-            tem_indicacao: negociacao.origem === "indicacao" ? "sim" : "nao",
-            observacoes: negociacao.observacoes || "",
+            canal_venda: origem,
+            tem_indicacao: origem === "indicacao" ? "sim" : "nao",
+            observacoes: data.observacoes || negociacao.observacoes || "",
           });
         }
       }
