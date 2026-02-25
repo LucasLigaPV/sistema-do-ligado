@@ -1036,19 +1036,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   className="overflow-y-auto max-h-[90vh]"
                 >
-                  {/* Header Premium */}
-                  <div className="sticky top-0 z-10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white px-8 py-6 border-b border-slate-700">
+                  {/* Header Clean */}
+                  <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-slate-200">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-1">
                           <div className="w-1 h-8 bg-[#EFC200] rounded-full"></div>
-                          <h2 className="text-2xl font-bold tracking-tight">
+                          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                             {editedDeal.modelo_veiculo || "Modelo não informado"}
                           </h2>
                         </div>
-                        <p className="text-slate-300 text-sm pl-5">{editedDeal.nome_cliente}</p>
+                        <p className="text-slate-500 text-sm pl-5">{editedDeal.nome_cliente}</p>
                       </div>
-                      <Badge className="bg-white/10 text-white border-white/20 px-4 py-2">
+                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 font-medium">
                         {etapas.find(e => e.id === editedDeal.etapa)?.label}
                       </Badge>
                     </div>
