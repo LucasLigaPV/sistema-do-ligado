@@ -875,7 +875,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                         </div>
                                         {deal.telefone && (
                                           <div 
-                                            className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer hover:text-[#EFC200] transition-colors"
+                                            className="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer hover:text-[#EFC200] transition-colors"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               abrirWhatsApp(deal.telefone);
