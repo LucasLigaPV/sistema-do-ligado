@@ -16,10 +16,13 @@ export default function TimelineEtapas({
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-6 border border-slate-200 shadow-sm">
-      <h3 className="text-sm font-bold text-slate-800 mb-5 uppercase tracking-wider flex items-center gap-2">
+      <h3 className="text-sm font-bold text-slate-800 mb-2 uppercase tracking-wider flex items-center gap-2">
         <div className="w-1 h-5 bg-[#EFC200] rounded-full"></div>
         Etapas do Processo
       </h3>
+      {!isReadOnly && (
+        <p className="text-[10px] text-slate-400 mb-4 italic">Clique em uma etapa para mudar rapidamente</p>
+      )}
       <div className="relative">
         {etapasVisiveis.map((etapa, index) => {
           const IconComponent = etapa.icon;
