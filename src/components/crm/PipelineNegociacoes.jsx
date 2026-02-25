@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { motion, AnimatePresence } from "framer-motion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -1022,294 +1022,339 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         userFuncao={userFuncao}
       />
 
-      {/* Sheet: Detalhes da Negociação */}
-      <Sheet open={showDetails} onOpenChange={setShowDetails}>
-        <SheetContent side="right" className="w-full sm:w-[900px] sm:max-w-[900px] overflow-y-auto">
-          {selectedDeal && editedDeal && (() => {
-            const isReadOnly = isEtapaFinal(selectedDeal.etapa);
-            return (
-            <div className="space-y-6">
-              {/* Header com destaque */}
-              <div className="text-center border-b pb-4">
-                <h2 className="text-2xl font-bold text-slate-900">
-                  {editedDeal.modelo_veiculo || "Modelo não informado"}
-                </h2>
-                <p className="text-sm text-slate-500 mt-1">{editedDeal.nome_cliente}</p>
-              </div>
-
-              {/* Layout com 2 colunas */}
-              <div className="grid grid-cols-3 gap-6">
-                {/* Coluna Principal - Abas */}
-                <div className="col-span-2">
-                  {/* Navegação de Etapas */}
-                  <div className="flex items-center justify-between gap-3 pb-4 mb-4 border-b">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handlePreviousStage}
-                      disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
-                      className="h-10 px-4"
-                    >
-                      <ChevronLeft className="w-4 h-4 mr-1" />
-                      Anterior
-                    </Button>
-                    <div className="text-center flex-1">
-                      <Select
-                        value={editedDeal.etapa}
-                        onValueChange={(value) => {
-                          const newEtapa = value;
-
-                          if (newEtapa === "enviado_cadastro") {
-                            setConferenciaData({
-                              id: selectedDeal.id,
-                              etapa: newEtapa,
-                              ...editedDeal
-                            });
-                            setShowConferenciaModal(true);
-                          } else if (newEtapa === "vistoria_assinatura_pix") {
-                            setPendingSubetapa({ id: selectedDeal.id, etapa: newEtapa, currentSubetapa: editedDeal?.subetapas || [] });
-                            setSelectedSubetapa(editedDeal?.subetapas || []);
-                            setShowSubetapaModal(true);
-                          } else {
-                            updateMutation.mutate({
-                              id: selectedDeal.id,
-                              data: { ...editedDeal, etapa: newEtapa, subetapas: [] }
-                            });
-                            setEditedDeal({ ...editedDeal, etapa: newEtapa });
-                          }
-                        }}
-                        disabled={isEtapaFinal(selectedDeal.etapa)}
-                      >
-                        <SelectTrigger className="w-full max-w-xs mx-auto h-10">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {etapas.filter(e => e.id !== "reprovado" && e.id !== "venda_ativa").map((etapa) => (
-                            <SelectItem key={etapa.id} value={etapa.id}>
-                              {etapa.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+      {/* Dialog: Detalhes da Negociação */}
+      <AnimatePresence>
+        {showDetails && selectedDeal && editedDeal && (() => {
+          const isReadOnly = isEtapaFinal(selectedDeal.etapa);
+          return (
+            <Dialog open={showDetails} onOpenChange={setShowDetails}>
+              <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-white to-slate-50">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  className="overflow-y-auto max-h-[90vh]"
+                >
+                  {/* Header Premium */}
+                  <div className="sticky top-0 z-10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white px-8 py-6 border-b border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-1 h-8 bg-[#EFC200] rounded-full"></div>
+                          <h2 className="text-2xl font-bold tracking-tight">
+                            {editedDeal.modelo_veiculo || "Modelo não informado"}
+                          </h2>
+                        </div>
+                        <p className="text-slate-300 text-sm pl-5">{editedDeal.nome_cliente}</p>
+                      </div>
+                      <Badge className="bg-white/10 text-white border-white/20 px-4 py-2">
+                        {etapas.find(e => e.id === editedDeal.etapa)?.label}
+                      </Badge>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleAdvanceStage}
-                      disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
-                      className="h-10 px-4"
-                    >
-                      Avançar
-                      <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
                   </div>
 
-                  {/* Abas */}
-                  <Tabs defaultValue="informacoes" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-4">
-                      <TabsTrigger value="informacoes">Informações</TabsTrigger>
-                      <TabsTrigger value="negociacao">Negociação</TabsTrigger>
-                    </TabsList>
+                  <div className="p-8">
+                    {/* Layout com 2 colunas */}
+                    <div className="grid grid-cols-3 gap-8">
+                      {/* Coluna Principal - Abas */}
+                      <div className="col-span-2">
+                        {/* Navegação de Etapas - Premium */}
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                          className="flex items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-200"
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handlePreviousStage}
+                            disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
+                            className="h-11 px-5 font-medium hover:bg-slate-100 hover:border-slate-300 transition-all"
+                          >
+                            <ChevronLeft className="w-4 h-4 mr-1" />
+                            Anterior
+                          </Button>
+                          <div className="text-center flex-1">
+                            <Select
+                              value={editedDeal.etapa}
+                              onValueChange={(value) => {
+                                const newEtapa = value;
 
-                    {/* Aba 1: Informações */}
-                    <TabsContent value="informacoes" className="space-y-4">
-                      <div>
-                        <Label className="text-xs text-slate-500">Data de Entrada</Label>
-                        <Input
-                          value={format(new Date(editedDeal.data_entrada || selectedDeal.created_date), "dd/MM/yyyy")}
-                          disabled
-                          className="bg-slate-50"
-                        />
-                      </div>
-                      <div>
-                        <Label>Nome do Cliente</Label>
-                        <Input
-                          value={editedDeal.nome_cliente}
-                          onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
-                          maxLength={100}
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Telefone</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={editedDeal.telefone}
-                            onChange={(e) => {
-                              const numeros = e.target.value.replace(/\D/g, '');
-                              let formatado = numeros;
-                              if (numeros.length <= 11) {
-                                if (numeros.length > 2) {
-                                  formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                                if (newEtapa === "enviado_cadastro") {
+                                  setConferenciaData({
+                                    id: selectedDeal.id,
+                                    etapa: newEtapa,
+                                    ...editedDeal
+                                  });
+                                  setShowConferenciaModal(true);
+                                } else if (newEtapa === "vistoria_assinatura_pix") {
+                                  setPendingSubetapa({ id: selectedDeal.id, etapa: newEtapa, currentSubetapa: editedDeal?.subetapas || [] });
+                                  setSelectedSubetapa(editedDeal?.subetapas || []);
+                                  setShowSubetapaModal(true);
+                                } else {
+                                  updateMutation.mutate({
+                                    id: selectedDeal.id,
+                                    data: { ...editedDeal, etapa: newEtapa, subetapas: [] }
+                                  });
+                                  setEditedDeal({ ...editedDeal, etapa: newEtapa });
                                 }
-                                if (numeros.length > 7) {
-                                  formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
-                                }
-                                setEditedDeal({ ...editedDeal, telefone: formatado });
-                              }
-                            }}
-                            placeholder="(11) 00000-0000"
-                            maxLength={15}
-                            disabled={isReadOnly}
-                            className="flex-1"
-                          />
-                          {editedDeal.telefone && (
-                            <Button
-                              type="button"
-                              size="icon"
-                              onClick={() => abrirWhatsApp(editedDeal.telefone)}
-                              className="bg-emerald-500 hover:bg-emerald-600 text-white flex-shrink-0"
+                              }}
+                              disabled={isEtapaFinal(selectedDeal.etapa)}
                             >
-                              <Phone className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <Label>E-mail</Label>
-                        <Input
-                          value={editedDeal.email || ""}
-                          onChange={(e) => setEditedDeal({ ...editedDeal, email: e.target.value })}
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Placa</Label>
-                        <Input
-                          value={editedDeal.placa || ""}
-                          onChange={(e) => {
-                            const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                            let formatado = valor;
-                            if (valor.length > 3) {
-                              formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
-                            }
-                            setEditedDeal({ ...editedDeal, placa: formatado });
-                          }}
-                          placeholder="ABC-1D23"
-                          maxLength={8}
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Modelo do Veículo</Label>
-                        <Input
-                          value={editedDeal.modelo_veiculo || ""}
-                          onChange={(e) => setEditedDeal({ ...editedDeal, modelo_veiculo: e.target.value })}
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Origem</Label>
-                        <Select
-                          value={editedDeal.origem || ""}
-                          onValueChange={(value) => setEditedDeal({ ...editedDeal, origem: value })}
-                          disabled={isReadOnly || selectedDeal.origem === "lead"}
-                        >
-                          <SelectTrigger disabled={isReadOnly || selectedDeal.origem === "lead"}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="lead">Lead</SelectItem>
-                            <SelectItem value="indicacao">Indicação</SelectItem>
-                            <SelectItem value="organico">Orgânico</SelectItem>
-                            <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
-                            <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
-                            <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
-                            <SelectItem value="migracao">Migração</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {selectedDeal.origem === "lead" && (
-                          <p className="text-xs text-slate-500 mt-1">Campo travado - negociação distribuída como lead</p>
-                        )}
-                      </div>
-                    </TabsContent>
+                              <SelectTrigger className="w-full max-w-sm mx-auto h-11 border-slate-300 hover:border-slate-400 transition-all">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {etapas.filter(e => e.id !== "reprovado" && e.id !== "venda_ativa").map((etapa) => (
+                                  <SelectItem key={etapa.id} value={etapa.id}>
+                                    {etapa.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleAdvanceStage}
+                            disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
+                            className="h-11 px-5 font-medium hover:bg-slate-100 hover:border-slate-300 transition-all"
+                          >
+                            Avançar
+                            <ChevronRight className="w-4 h-4 ml-1" />
+                          </Button>
+                        </motion.div>
 
-                    {/* Aba 2: Negociação */}
-                    <TabsContent value="negociacao" className="space-y-4">
-                      <div>
-                        <Label>Plano</Label>
-                        <Select
-                          value={editedDeal.plano_interesse || ""}
-                          onValueChange={(value) => setEditedDeal({ ...editedDeal, plano_interesse: value })}
-                          disabled={isReadOnly}
-                        >
-                          <SelectTrigger disabled={isReadOnly}>
-                            <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="essencial">Essencial</SelectItem>
-                            <SelectItem value="principal">Principal</SelectItem>
-                            <SelectItem value="plano_van">Plano Van</SelectItem>
-                            <SelectItem value="plano_moto">Plano Moto</SelectItem>
-                            <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Valor da Mensalidade</Label>
-                        <Input
-                          value={editedDeal.valor_mensalidade || ""}
-                          onChange={(e) => {
-                            const numeros = e.target.value.replace(/\D/g, '');
-                            const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
-                            const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                            setEditedDeal({ ...editedDeal, valor_mensalidade: formatado });
-                          }}
-                          placeholder="R$ 0,00"
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Valor da Adesão</Label>
-                        <Input
-                          value={editedDeal.valor_adesao || ""}
-                          onChange={(e) => {
-                            const numeros = e.target.value.replace(/\D/g, '');
-                            const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
-                            const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                            setEditedDeal({ ...editedDeal, valor_adesao: formatado });
-                          }}
-                          placeholder="R$ 0,00"
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Data de Vencimento</Label>
-                        <Select
-                          value={editedDeal.data_vencimento?.toString() || ""}
-                          onValueChange={(value) => setEditedDeal({ ...editedDeal, data_vencimento: parseInt(value) })}
-                          disabled={isReadOnly}
-                        >
-                          <SelectTrigger disabled={isReadOnly}>
-                            <SelectValue placeholder="Selecione o dia..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="5">Dia 05</SelectItem>
-                            <SelectItem value="10">Dia 10</SelectItem>
-                            <SelectItem value="15">Dia 15</SelectItem>
-                            <SelectItem value="20">Dia 20</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Observações / Anotações</Label>
-                        <Textarea
-                          value={editedDeal.observacoes || ""}
-                          onChange={(e) => setEditedDeal({ ...editedDeal, observacoes: e.target.value })}
-                          placeholder="Anote informações úteis sobre esta negociação..."
-                          rows={3}
-                          disabled={isReadOnly}
-                        />
-                      </div>
-                      <div>
-                        <Label>Temperatura</Label>
-                        <Select 
-                          value={editedDeal.temperatura || ""} 
-                          onValueChange={(value) => setEditedDeal({ ...editedDeal, temperatura: value })}
-                          disabled={isReadOnly}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecionar...">
+                        {/* Abas Premium */}
+                        <Tabs defaultValue="informacoes" className="w-full">
+                          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-slate-100/80 p-1 rounded-lg">
+                            <TabsTrigger value="informacoes" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium">
+                              Informações
+                            </TabsTrigger>
+                            <TabsTrigger value="negociacao" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium">
+                              Negociação
+                            </TabsTrigger>
+                          </TabsList>
+
+                          {/* Aba 1: Informações */}
+                          <TabsContent value="informacoes" className="space-y-5 mt-0">
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.2 }}
+                              className="space-y-5"
+                            >
+                              <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-4 border border-slate-200">
+                                <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Data de Entrada</Label>
+                                <p className="text-lg font-semibold text-slate-900 mt-2">
+                                  {format(new Date(editedDeal.data_entrada || selectedDeal.created_date), "dd/MM/yyyy")}
+                                </p>
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Nome do Cliente</Label>
+                                <Input
+                                  value={editedDeal.nome_cliente}
+                                  onChange={(e) => setEditedDeal({ ...editedDeal, nome_cliente: e.target.value })}
+                                  maxLength={100}
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Telefone</Label>
+                                <div className="flex gap-2">
+                                  <Input
+                                    value={editedDeal.telefone}
+                                    onChange={(e) => {
+                                      const numeros = e.target.value.replace(/\D/g, '');
+                                      let formatado = numeros;
+                                      if (numeros.length <= 11) {
+                                        if (numeros.length > 2) {
+                                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                                        }
+                                        if (numeros.length > 7) {
+                                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+                                        }
+                                        setEditedDeal({ ...editedDeal, telefone: formatado });
+                                      }
+                                    }}
+                                    placeholder="(11) 00000-0000"
+                                    maxLength={15}
+                                    disabled={isReadOnly}
+                                    className="flex-1 h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                  />
+                                  {editedDeal.telefone && (
+                                    <Button
+                                      type="button"
+                                      size="icon"
+                                      onClick={() => abrirWhatsApp(editedDeal.telefone)}
+                                      className="bg-emerald-500 hover:bg-emerald-600 text-white flex-shrink-0 h-11 w-11 shadow-sm"
+                                    >
+                                      <Phone className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">E-mail</Label>
+                                <Input
+                                  value={editedDeal.email || ""}
+                                  onChange={(e) => setEditedDeal({ ...editedDeal, email: e.target.value })}
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Placa</Label>
+                                <Input
+                                  value={editedDeal.placa || ""}
+                                  onChange={(e) => {
+                                    const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                    let formatado = valor;
+                                    if (valor.length > 3) {
+                                      formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                                    }
+                                    setEditedDeal({ ...editedDeal, placa: formatado });
+                                  }}
+                                  placeholder="ABC-1D23"
+                                  maxLength={8}
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Modelo do Veículo</Label>
+                                <Input
+                                  value={editedDeal.modelo_veiculo || ""}
+                                  onChange={(e) => setEditedDeal({ ...editedDeal, modelo_veiculo: e.target.value })}
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Origem</Label>
+                                <Select
+                                  value={editedDeal.origem || ""}
+                                  onValueChange={(value) => setEditedDeal({ ...editedDeal, origem: value })}
+                                  disabled={isReadOnly || selectedDeal.origem === "lead"}
+                                >
+                                  <SelectTrigger disabled={isReadOnly || selectedDeal.origem === "lead"} className="h-11 border-slate-300">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="lead">Lead</SelectItem>
+                                    <SelectItem value="indicacao">Indicação</SelectItem>
+                                    <SelectItem value="organico">Orgânico</SelectItem>
+                                    <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
+                                    <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+                                    <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
+                                    <SelectItem value="migracao">Migração</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                {selectedDeal.origem === "lead" && (
+                                  <p className="text-xs text-slate-500 mt-2">Campo travado - negociação distribuída como lead</p>
+                                )}
+                              </div>
+                            </motion.div>
+                          </TabsContent>
+
+                          {/* Aba 2: Negociação */}
+                          <TabsContent value="negociacao" className="space-y-5 mt-0">
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.2 }}
+                              className="space-y-5"
+                            >
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Plano</Label>
+                                <Select
+                                  value={editedDeal.plano_interesse || ""}
+                                  onValueChange={(value) => setEditedDeal({ ...editedDeal, plano_interesse: value })}
+                                  disabled={isReadOnly}
+                                >
+                                  <SelectTrigger disabled={isReadOnly} className="h-11 border-slate-300">
+                                    <SelectValue placeholder="Selecione..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="essencial">Essencial</SelectItem>
+                                    <SelectItem value="principal">Principal</SelectItem>
+                                    <SelectItem value="plano_van">Plano Van</SelectItem>
+                                    <SelectItem value="plano_moto">Plano Moto</SelectItem>
+                                    <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Valor da Mensalidade</Label>
+                                <Input
+                                  value={editedDeal.valor_mensalidade || ""}
+                                  onChange={(e) => {
+                                    const numeros = e.target.value.replace(/\D/g, '');
+                                    const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
+                                    const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    setEditedDeal({ ...editedDeal, valor_mensalidade: formatado });
+                                  }}
+                                  placeholder="R$ 0,00"
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Valor da Adesão</Label>
+                                <Input
+                                  value={editedDeal.valor_adesao || ""}
+                                  onChange={(e) => {
+                                    const numeros = e.target.value.replace(/\D/g, '');
+                                    const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
+                                    const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    setEditedDeal({ ...editedDeal, valor_adesao: formatado });
+                                  }}
+                                  placeholder="R$ 0,00"
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Data de Vencimento</Label>
+                                <Select
+                                  value={editedDeal.data_vencimento?.toString() || ""}
+                                  onValueChange={(value) => setEditedDeal({ ...editedDeal, data_vencimento: parseInt(value) })}
+                                  disabled={isReadOnly}
+                                >
+                                  <SelectTrigger disabled={isReadOnly} className="h-11 border-slate-300">
+                                    <SelectValue placeholder="Selecione o dia..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="5">Dia 05</SelectItem>
+                                    <SelectItem value="10">Dia 10</SelectItem>
+                                    <SelectItem value="15">Dia 15</SelectItem>
+                                    <SelectItem value="20">Dia 20</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Observações / Anotações</Label>
+                                <Textarea
+                                  value={editedDeal.observacoes || ""}
+                                  onChange={(e) => setEditedDeal({ ...editedDeal, observacoes: e.target.value })}
+                                  placeholder="Anote informações úteis sobre esta negociação..."
+                                  rows={4}
+                                  disabled={isReadOnly}
+                                  className="border-slate-300 focus:border-slate-400 transition-all resize-none"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Temperatura</Label>
+                                <Select 
+                                  value={editedDeal.temperatura || ""} 
+                                  onValueChange={(value) => setEditedDeal({ ...editedDeal, temperatura: value })}
+                                  disabled={isReadOnly}
+                                >
+                                  <SelectTrigger className="h-11 border-slate-300">
+                                    <SelectValue placeholder="Selecionar...">
                               {editedDeal.temperatura === "quente" && (
                                 <span className="flex items-center gap-2">
                                   <Flame className="w-4 h-4 text-orange-500" />
@@ -1322,87 +1367,104 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   Frio
                                 </span>
                               )}
-                              {!editedDeal.temperatura && "Selecionar..."}
-                            </SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="quente">
-                              <span className="flex items-center gap-2">
-                                <Flame className="w-4 h-4 text-orange-500" />
-                                Quente
-                              </span>
-                            </SelectItem>
-                            <SelectItem value="frio">
-                              <span className="flex items-center gap-2">
-                                <Snowflake className="w-4 h-4 text-blue-400" />
-                                Frio
-                              </span>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {selectedDeal.etapa === "vistoria_assinatura_pix" && (
-                        <div className="space-y-2">
-                          <Label>Aguardando *</Label>
-                          <div className="space-y-2">
-                            {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
-                              <div key={sub} className="flex items-center gap-2">
-                                <Checkbox
-                                  id={`sub-${sub}`}
-                                  checked={(editedDeal.subetapas || []).includes(sub)}
-                                  onCheckedChange={(checked) => {
-                                    const newSubetapas = checked
-                                      ? [...(editedDeal.subetapas || []), sub]
-                                      : (editedDeal.subetapas || []).filter(s => s !== sub);
-                                    setEditedDeal({ ...editedDeal, subetapas: newSubetapas });
-                                  }}
-                                  disabled={isReadOnly}
-                                  className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
-                                />
-                                <label htmlFor={`sub-${sub}`} className="text-sm cursor-pointer flex-1">
-                                  {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
-                                  {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
-                                  {sub === "aguardando_pix" && "Aguardando Pix"}
-                                </label>
+                                      {!editedDeal.temperatura && "Selecionar..."}
+                                    </SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="quente">
+                                      <span className="flex items-center gap-2">
+                                        <Flame className="w-4 h-4 text-orange-500" />
+                                        Quente
+                                      </span>
+                                    </SelectItem>
+                                    <SelectItem value="frio">
+                                      <span className="flex items-center gap-2">
+                                        <Snowflake className="w-4 h-4 text-blue-400" />
+                                        Frio
+                                      </span>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </div>
-                            ))}
-                          </div>
-                          {(!editedDeal.subetapas || editedDeal.subetapas.length === 0) && (
-                            <div className="flex items-center gap-2 text-red-600 text-sm mt-2">
-                              <AlertCircle className="w-4 h-4" />
-                              <span>Selecione pelo menos uma opção</span>
+                              {selectedDeal.etapa === "vistoria_assinatura_pix" && (
+                                <div className="bg-amber-50/50 rounded-xl p-5 border-2 border-amber-200">
+                                  <Label className="text-sm font-semibold text-amber-900 mb-3 block flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    Aguardando *
+                                  </Label>
+                                  <div className="space-y-3">
+                                    {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
+                                      <div key={sub} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-amber-200 hover:border-amber-300 transition-colors">
+                                        <Checkbox
+                                          id={`sub-${sub}`}
+                                          checked={(editedDeal.subetapas || []).includes(sub)}
+                                          onCheckedChange={(checked) => {
+                                            const newSubetapas = checked
+                                              ? [...(editedDeal.subetapas || []), sub]
+                                              : (editedDeal.subetapas || []).filter(s => s !== sub);
+                                            setEditedDeal({ ...editedDeal, subetapas: newSubetapas });
+                                          }}
+                                          disabled={isReadOnly}
+                                          className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
+                                        />
+                                        <label htmlFor={`sub-${sub}`} className="text-sm font-medium cursor-pointer flex-1 text-slate-700">
+                                          {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
+                                          {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
+                                          {sub === "aguardando_pix" && "Aguardando Pix"}
+                                        </label>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  {(!editedDeal.subetapas || editedDeal.subetapas.length === 0) && (
+                                    <div className="flex items-center gap-2 text-red-600 text-sm mt-3 bg-red-50 p-2 rounded-lg">
+                                      <AlertCircle className="w-4 h-4" />
+                                      <span>Selecione pelo menos uma opção</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </motion.div>
+                          </TabsContent>
+                        </Tabs>
+                      </div>
+
+                      {/* Coluna Lateral - Info do Consultor */}
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="space-y-6"
+                      >
+                        <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-6 border border-slate-200 shadow-sm">
+                          <h3 className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider flex items-center gap-2">
+                            <div className="w-1 h-5 bg-[#EFC200] rounded-full"></div>
+                            Consultor Responsável
+                          </h3>
+                          <div className="space-y-4">
+                            <div>
+                              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nome</Label>
+                              <p className="text-base font-semibold text-slate-900 mt-2">
+                                {getNomeVendedor(selectedDeal.vendedor_email)}
+                              </p>
                             </div>
-                          )}
+                            <div className="pt-3 border-t border-slate-200">
+                              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">E-mail</Label>
+                              <p className="text-sm text-slate-600 mt-2 break-words">
+                                {selectedDeal.vendedor_email}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      )}
-                    </TabsContent>
-                  </Tabs>
-                </div>
-
-                {/* Coluna Lateral - Info do Consultor */}
-                <div className="space-y-4">
-                  <div className="bg-slate-50 rounded-lg p-4 border">
-                    <h3 className="text-sm font-semibold text-slate-700 mb-3">Consultor Responsável</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <Label className="text-xs text-slate-500">Nome</Label>
-                        <p className="text-sm font-medium text-slate-900 mt-1">
-                          {getNomeVendedor(selectedDeal.vendedor_email)}
-                        </p>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-slate-500">E-mail</Label>
-                        <p className="text-xs text-slate-600 mt-1 break-words">
-                          {selectedDeal.vendedor_email}
-                        </p>
-                      </div>
+                      </motion.div>
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Botões de Ação */}
-              <div className="flex flex-col gap-3 pt-4 border-t">
+                    {/* Botões de Ação */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="flex flex-col gap-4 pt-6 mt-6 border-t border-slate-200"
+                    >
                 {isEtapaFinal(selectedDeal.etapa) && (
                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
                      {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
@@ -1545,32 +1607,34 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   );
                 })()}
 
-                {!isEtapaFinal(selectedDeal.etapa) && (
-                  <Button
-                    onClick={handleUpdateDeal}
-                    disabled={selectedDeal.etapa === "vistoria_assinatura_pix" && (!editedDeal.subetapas || editedDeal.subetapas.length === 0)}
-                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Salvar Alterações
-                  </Button>
-                )}
+                      {!isEtapaFinal(selectedDeal.etapa) && (
+                        <Button
+                          onClick={handleUpdateDeal}
+                          disabled={selectedDeal.etapa === "vistoria_assinatura_pix" && (!editedDeal.subetapas || editedDeal.subetapas.length === 0)}
+                          className="w-full h-12 bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Salvar Alterações
+                        </Button>
+                      )}
 
-                {!isEtapaFinal(selectedDeal.etapa) && (
-                  <Button
-                    onClick={() => setShowLossModal(true)}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    <TrendingDown className="w-4 h-4 mr-2" />
-                    Marcar como Perda
-                  </Button>
-                )}
-                </div>
-                </div>
-                );
-                })()}
-                </SheetContent>
-                </Sheet>
+                      {!isEtapaFinal(selectedDeal.etapa) && (
+                        <Button
+                          onClick={() => setShowLossModal(true)}
+                          variant="destructive"
+                          className="w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all"
+                        >
+                          <TrendingDown className="w-4 h-4 mr-2" />
+                          Marcar como Perda
+                        </Button>
+                      )}
+                    </motion.div>
+                  </div>
+                </motion.div>
+              </DialogContent>
+            </Dialog>
+          );
+        })()}
+      </AnimatePresence>
 
       {/* Modal: Conferência de Informações */}
       <Dialog open={showConferenciaModal} onOpenChange={setShowConferenciaModal}>
