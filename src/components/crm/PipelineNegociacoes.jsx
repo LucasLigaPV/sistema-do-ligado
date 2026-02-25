@@ -206,13 +206,21 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       corrigido: !motivosAtualizados[index].corrigido
     };
 
-    // Atualiza apenas o estado local (não salva no backend)
+    // Atualiza o estado local imediatamente
     const dealAtualizado = {
       ...selectedDeal,
       motivos_reprova: motivosAtualizados
     };
     setSelectedDeal(dealAtualizado);
     setEditedDeal(dealAtualizado);
+
+    // Atualiza o backend
+    updateMutation.mutate({
+      id: selectedDeal.id,
+      data: {
+        motivos_reprova: motivosAtualizados,
+      },
+    });
   };
 
   const todosMotivosCorrigidos = (deal) => {
@@ -856,7 +864,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   {...provided.dragHandleProps}
                                  >
                                   <Card
-                                   className={`bg-white ${deal.status_aprovacao === "reprovado" ? "cursor-not-allowed" : "cursor-move"} hover:shadow-md ${
+                                   className={`bg-white ${deal.status_aprovacao === "reprovado" ? "cursor-pointer" : "cursor-move"} hover:shadow-md ${
                                      snapshot.isDragging ? "shadow-lg" : ""
                                    }`}
                                    onClick={() => handleCardClick(deal)}
