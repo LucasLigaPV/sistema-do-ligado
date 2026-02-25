@@ -18,6 +18,7 @@ import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Pre
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import ModalSubetapas from "./ModalSubetapas";
 import FormNovaNegociacao from "./FormNovaNegociacao";
+import TimelineEtapas from "./TimelineEtapas";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -1059,74 +1060,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <div className="grid grid-cols-3 gap-8">
                       {/* Coluna Principal - Abas */}
                       <div className="col-span-2">
-                        {/* Navegação de Etapas - Premium */}
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                          className="flex items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-200"
-                        >
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handlePreviousStage}
-                            disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === 0 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
-                            className="h-11 px-5 font-medium hover:bg-slate-100 hover:border-slate-300 transition-all"
-                          >
-                            <ChevronLeft className="w-4 h-4 mr-1" />
-                            Anterior
-                          </Button>
-                          <div className="text-center flex-1">
-                            <Select
-                              value={editedDeal.etapa}
-                              onValueChange={(value) => {
-                                const newEtapa = value;
-
-                                if (newEtapa === "enviado_cadastro") {
-                                  setConferenciaData({
-                                    id: selectedDeal.id,
-                                    etapa: newEtapa,
-                                    ...editedDeal
-                                  });
-                                  setShowConferenciaModal(true);
-                                } else if (newEtapa === "vistoria_assinatura_pix") {
-                                  setPendingSubetapa({ id: selectedDeal.id, etapa: newEtapa, currentSubetapa: editedDeal?.subetapas || [] });
-                                  setSelectedSubetapa(editedDeal?.subetapas || []);
-                                  setShowSubetapaModal(true);
-                                } else {
-                                  updateMutation.mutate({
-                                    id: selectedDeal.id,
-                                    data: { ...editedDeal, etapa: newEtapa, subetapas: [] }
-                                  });
-                                  setEditedDeal({ ...editedDeal, etapa: newEtapa });
-                                }
-                              }}
-                              disabled={isEtapaFinal(selectedDeal.etapa)}
-                            >
-                              <SelectTrigger className="w-full max-w-sm mx-auto h-11 border-slate-300 hover:border-slate-400 transition-all">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {etapas.filter(e => e.id !== "reprovado" && e.id !== "venda_ativa").map((etapa) => (
-                                  <SelectItem key={etapa.id} value={etapa.id}>
-                                    {etapa.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleAdvanceStage}
-                            disabled={etapas.findIndex(e => e.id === selectedDeal.etapa) === etapas.length - 1 || isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
-                            className="h-11 px-5 font-medium hover:bg-slate-100 hover:border-slate-300 transition-all"
-                          >
-                            Avançar
-                            <ChevronRight className="w-4 h-4 ml-1" />
-                          </Button>
-                        </motion.div>
-
                         {/* Abas Premium */}
                         <Tabs defaultValue="informacoes" className="w-full">
                           <TabsList className="grid w-full grid-cols-2 mb-6 h-14 bg-slate-100/80 p-1.5 rounded-lg">
@@ -1430,13 +1363,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         </Tabs>
                       </div>
 
-                      {/* Coluna Lateral - Info do Consultor */}
+                      {/* Coluna Lateral - Info do Consultor + Timeline */}
                       <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
                         className="space-y-6"
                       >
+                        {/* Info do Consultor */}
                         <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-6 border border-slate-200 shadow-sm">
                           <h3 className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider flex items-center gap-2">
                             <div className="w-1 h-5 bg-[#EFC200] rounded-full"></div>
@@ -1457,6 +1391,37 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                             </div>
                           </div>
                         </div>
+
+                        {/* Timeline de Etapas */}
+                        <TimelineEtapas
+                          etapas={etapas}
+                          etapaAtual={editedDeal.etapa}
+                          isReadOnly={isEtapaFinal(selectedDeal.etapa) || selectedDeal.etapa === "reprovado"}
+                          onEtapaClick={(novaEtapa) => {
+                            if (novaEtapa === "enviado_cadastro") {
+                              setConferenciaData({
+                                id: selectedDeal.id,
+                                etapa: novaEtapa,
+                                ...editedDeal
+                              });
+                              setShowConferenciaModal(true);
+                            } else if (novaEtapa === "vistoria_assinatura_pix") {
+                              setPendingSubetapa({ 
+                                id: selectedDeal.id, 
+                                etapa: novaEtapa, 
+                                currentSubetapa: editedDeal?.subetapas || [] 
+                              });
+                              setSelectedSubetapa(editedDeal?.subetapas || []);
+                              setShowSubetapaModal(true);
+                            } else {
+                              updateMutation.mutate({
+                                id: selectedDeal.id,
+                                data: { ...editedDeal, etapa: novaEtapa, subetapas: [] }
+                              });
+                              setEditedDeal({ ...editedDeal, etapa: novaEtapa });
+                            }
+                          }}
+                        />
                       </motion.div>
                     </div>
 
