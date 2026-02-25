@@ -390,11 +390,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       setSelectedSubetapa(deal?.subetapas || []);
       setShowSubetapaModal(true);
     } else {
-      updateMutation.mutate({
-        id: dealId,
-        data: { etapa: newEtapa, subetapas: [] }
-      });
-    }
+       updateMutation.mutate({
+         id: dealId,
+         data: { ...deal, etapa: newEtapa, subetapas: [] }
+       });
+     }
   };
 
   const handleConfirmSubetapa = () => {
