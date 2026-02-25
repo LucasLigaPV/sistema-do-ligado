@@ -29,8 +29,15 @@ export default function TimelineEtapas({
             <div key={etapa.id} className="relative">
               {/* Linha conectora */}
               {index < etapasVisiveis.length - 1 && (
-                <div 
-                  className={`absolute w-0.5 ${
+                <motion.div 
+                  initial={{ opacity: 0, scaleY: 0 }}
+                  animate={{ opacity: 1, scaleY: 1 }}
+                  transition={{ 
+                    delay: 0.5 + index * 0.05,
+                    duration: 0.3,
+                    ease: "easeOut"
+                  }}
+                  className={`absolute w-0.5 origin-top ${
                     isPassed || isCurrentEtapa ? 'bg-gradient-to-b from-green-400 to-green-200' : 'bg-gradient-to-b from-slate-300 to-transparent'
                   }`} 
                   style={{ 
