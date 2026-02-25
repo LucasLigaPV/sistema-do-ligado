@@ -14,12 +14,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake, History, ChevronDown, ChevronUp, DollarSign } from "lucide-react";
+import { Plus, Phone, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake, History, ChevronDown, ChevronUp, DollarSign } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import ModalSubetapas from "./ModalSubetapas";
 import FormNovaNegociacao from "./FormNovaNegociacao";
 import TimelineEtapas from "./TimelineEtapas";
 import DialogAlteracoesNaoSalvas from "./DialogAlteracoesNaoSalvas";
+import NavegacaoEtapas from "./NavegacaoEtapas";
+import DealCard from "./DealCard";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -153,16 +155,21 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           // Criar venda automaticamente
           createVendaMutation.mutate({
             vendedor: negociacao.vendedor_email,
+            email_vendedor: negociacao.vendedor_email,
             data_venda: new Date().toISOString().split('T')[0],
             etapa: "pagamento_ok",
             cliente: negociacao.nome_cliente,
             telefone: negociacao.telefone,
+            email: negociacao.email,
             plano_vendido: negociacao.plano_interesse || "essencial",
             placa: negociacao.placa || "",
+            modelo_veiculo: negociacao.modelo_veiculo || "",
             valor_adesao: negociacao.valor_adesao || "",
+            valor_mensalidade: negociacao.valor_mensalidade || "",
             forma_pagamento: "pix",
             canal_venda: canalVenda,
             tem_indicacao: canalVenda === "indicacao" ? "sim" : "nao",
+            observacoes: negociacao.observacoes || "",
           });
         }
       }
@@ -186,7 +193,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const handleReprovaCorrigida = () => {
     if (!selectedDeal) return;
 
-    // Usa os motivos do estado atual (editedDeal) que contém as marcações
     const motivosAtualizados = editedDeal.motivos_reprova?.map(m => ({
       ...m,
       corrigido: true
@@ -212,7 +218,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       corrigido: !motivosAtualizados[index].corrigido
     };
 
-    // Atualiza o estado local imediatamente
     const dealAtualizado = {
       ...selectedDeal,
       motivos_reprova: motivosAtualizados
@@ -220,7 +225,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setSelectedDeal(dealAtualizado);
     setEditedDeal(dealAtualizado);
 
-    // Atualiza o backend
     updateMutation.mutate({
       id: selectedDeal.id,
       data: {
@@ -323,13 +327,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   // Filtrar negociações por acesso
   let negociacoesVisiveis = negociacoes;
   if (userFuncao === "master") {
-    // Master vê TODAS as negociações
     negociacoesVisiveis = negociacoes;
   } else if (userFuncao === "lider") {
-    // Líder vê todas as negociações da sua equipe
     negociacoesVisiveis = negociacoes.filter(n => todosVendedoresEquipe.includes(n.vendedor_email));
   } else {
-    // Vendedor vê apenas suas próprias negociações
     negociacoesVisiveis = negociacoes.filter(n => n.vendedor_email === userEmail);
   }
 
@@ -341,7 +342,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return matchDate;
   });
 
-  // Aplicar filtro de vendedores (para líderes e master)
+  // Aplicar filtro de vendedores
   if ((userFuncao === "lider" || userFuncao === "master") && selectedVendedores.length > 0) {
     negociacoesVisiveis = negociacoesVisiveis.filter(n => selectedVendedores.includes(n.vendedor_email));
   }
@@ -372,33 +373,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const newEtapa = result.destination.droppableId;
     const deal = negociacoes.find(n => n.id === dealId);
 
-    // Bloquear movimento de vendedores para "venda_ativa" e "reprovado"
     if ((newEtapa === "venda_ativa" || newEtapa === "reprovado") && (userFuncao === "vendedor" || userFuncao === "lider")) {
       alert("Apenas a área de aprovações pode mover vendas para Venda Ativa ou Reprovado!");
       return;
     }
 
-    // Bloquear movimento se informações já foram conferidas
     if (deal?.informacoes_conferidas && deal?.etapa === "enviado_cadastro") {
       alert("Esta venda já foi conferida e está aguardando aprovação. Não pode ser movida.");
       return;
     }
 
-    // Se for movido para "enviado_cadastro", abrir modal de conferência
     if (newEtapa === "enviado_cadastro") {
-      setConferenciaData({
-        id: dealId,
-        etapa: newEtapa,
-        ...deal
-      });
+      setConferenciaData({ id: dealId, etapa: newEtapa, ...deal });
       setShowConferenciaModal(true);
     } else if (newEtapa === "vistoria_assinatura_pix") {
-      // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
       setPendingSubetapa({ id: dealId, etapa: newEtapa, currentSubetapa: deal?.subetapas || [] });
       setSelectedSubetapa(deal?.subetapas || []);
       setShowSubetapaModal(true);
     } else {
-      // Atualizar imediatamente
       updateMutation.mutate({
         id: dealId,
         data: { etapa: newEtapa, subetapas: [] }
@@ -419,7 +411,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       data: updatedData
     });
 
-    // Atualizar estado local imediatamente
     if (selectedDeal && selectedDeal.id === pendingSubetapa.id) {
       setSelectedDeal({ ...selectedDeal, ...updatedData });
       setEditedDeal({ ...editedDeal, ...updatedData });
@@ -446,7 +437,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       data: updatedData
     });
 
-    // Atualizar estado local imediatamente
     if (selectedDeal && selectedDeal.id === conferenciaData.id) {
       setSelectedDeal({ ...selectedDeal, ...updatedData });
       setEditedDeal({ ...editedDeal, ...updatedData });
@@ -455,8 +445,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setShowConferenciaModal(false);
     setConferenciaData(null);
   };
-
-
 
   const handleCreateDeal = (e) => {
     e.preventDefault();
@@ -480,28 +468,25 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (currentIndex < etapas.length - 1) {
       const nextEtapa = etapas[currentIndex + 1].id;
       
-      // Se for movido para "enviado_cadastro", abrir modal de conferência
       if (nextEtapa === "enviado_cadastro") {
         setConferenciaData({
           id: selectedDeal.id,
           etapa: nextEtapa,
-          ...selectedDeal
+          ...editedDeal
         });
         setShowConferenciaModal(true);
-        setShowDetails(false);
       } else if (nextEtapa === "vistoria_assinatura_pix") {
-        // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-        setPendingSubetapa({ id: selectedDeal.id, etapa: nextEtapa, currentSubetapa: selectedDeal?.subetapas || [] });
-        setSelectedSubetapa(selectedDeal?.subetapas || []);
+        setPendingSubetapa({ id: selectedDeal.id, etapa: nextEtapa, currentSubetapa: editedDeal?.subetapas || [] });
+        setSelectedSubetapa(editedDeal?.subetapas || []);
         setShowSubetapaModal(true);
-        setShowDetails(false);
       } else {
+        const updatedData = { ...editedDeal, etapa: nextEtapa, subetapas: [] };
         updateMutation.mutate({
           id: selectedDeal.id,
-          data: { etapa: nextEtapa, subetapas: [] }
+          data: updatedData
         });
-        setSelectedDeal({ ...selectedDeal, etapa: nextEtapa });
-        setEditedDeal({ ...editedDeal, etapa: nextEtapa });
+        setSelectedDeal({ ...selectedDeal, ...updatedData });
+        setEditedDeal(updatedData);
       }
     }
   };
@@ -512,41 +497,27 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (currentIndex > 0) {
       const prevEtapa = etapas[currentIndex - 1].id;
       
-      // Se for movido para "enviado_cadastro", abrir modal de conferência
       if (prevEtapa === "enviado_cadastro") {
         setConferenciaData({
           id: selectedDeal.id,
           etapa: prevEtapa,
-          ...selectedDeal
+          ...editedDeal
         });
         setShowConferenciaModal(true);
-        setShowDetails(false);
       } else if (prevEtapa === "vistoria_assinatura_pix") {
-        // Se for movido para vistoria/assinatura/pix, abrir modal de subetapa
-        setPendingSubetapa({ id: selectedDeal.id, etapa: prevEtapa, currentSubetapa: selectedDeal?.subetapas || [] });
-        setSelectedSubetapa(selectedDeal?.subetapas || []);
+        setPendingSubetapa({ id: selectedDeal.id, etapa: prevEtapa, currentSubetapa: editedDeal?.subetapas || [] });
+        setSelectedSubetapa(editedDeal?.subetapas || []);
         setShowSubetapaModal(true);
-        setShowDetails(false);
       } else {
+        const updatedData = { ...editedDeal, etapa: prevEtapa, subetapas: [] };
         updateMutation.mutate({
           id: selectedDeal.id,
-          data: { etapa: prevEtapa, subetapas: [] }
+          data: updatedData
         });
-        setSelectedDeal({ ...selectedDeal, etapa: prevEtapa });
-        setEditedDeal({ ...editedDeal, etapa: prevEtapa });
+        setSelectedDeal({ ...selectedDeal, ...updatedData });
+        setEditedDeal(updatedData);
       }
     }
-  };
-
-  const handleMarkAsSold = () => {
-    if (!selectedDeal) return;
-    updateMutation.mutate({
-      id: selectedDeal.id,
-      data: { etapa: "venda_ativa" }
-    });
-    setShowDetails(false);
-    setSelectedDeal(null);
-    setEditedDeal(null);
   };
 
   const handleMarkAsLoss = () => {
@@ -603,17 +574,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   const toggleVendedor = (email) => {
     setSelectedVendedores(prev => 
-      prev.includes(email) 
-        ? prev.filter(e => e !== email)
-        : [...prev, email]
+      prev.includes(email) ? prev.filter(e => e !== email) : [...prev, email]
     );
   };
 
   const toggleOrigem = (origem) => {
     setSelectedOrigens(prev => 
-      prev.includes(origem) 
-        ? prev.filter(o => o !== origem)
-        : [...prev, origem]
+      prev.includes(origem) ? prev.filter(o => o !== origem) : [...prev, origem]
     );
   };
 
@@ -627,18 +594,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     { value: "migracao", label: "Migração" }
   ];
 
-  const canShowSaleButton = selectedDeal && (
-    selectedDeal.etapa === "vistoria_assinatura_pix" ||
-    selectedDeal.etapa === "enviado_cadastro"
-  );
-
   const isEtapaFinal = (etapa) => {
     return ["enviado_cadastro", "reprovado", "venda_ativa"].includes(etapa);
-  };
-
-  const canAccessDeal = (deal) => {
-    // Ninguém pode editar etapas finais (apenas visualizar)
-    return true;
   };
 
   const handleCardClick = (deal) => {
@@ -704,12 +661,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold text-sm">Filtros</h4>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => setShowFilters(false)}
-                  >
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowFilters(false)}>
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
@@ -717,22 +669,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 <div className="space-y-2">
                   <Label className="text-xs">Período</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="text-xs"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="text-xs"
-                      />
-                    </div>
+                    <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="text-xs" />
+                    <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="text-xs" />
                   </div>
                 </div>
 
@@ -765,10 +703,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                               onCheckedChange={() => toggleOrigem(origem.value)}
                               className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
                             />
-                            <label
-                              htmlFor={`origem-${origem.value}`}
-                              className="text-sm cursor-pointer flex-1"
-                            >
+                            <label htmlFor={`origem-${origem.value}`} className="text-sm cursor-pointer flex-1">
                               {origem.label}
                             </label>
                           </div>
@@ -777,12 +712,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </Select>
                   </div>
                   {selectedOrigens.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedOrigens([])}
-                      className="w-full text-xs"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => setSelectedOrigens([])} className="w-full text-xs">
                       Limpar Seleção
                     </Button>
                   )}
@@ -808,10 +738,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                               onCheckedChange={() => toggleVendedor(vendedor.email)}
                               className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
                             />
-                            <label
-                              htmlFor={`vendedor-${vendedor.email}`}
-                              className="text-sm cursor-pointer flex-1"
-                            >
+                            <label htmlFor={`vendedor-${vendedor.email}`} className="text-sm cursor-pointer flex-1">
                               {vendedor.full_name || vendedor.email}
                             </label>
                           </div>
@@ -819,12 +746,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       </SelectContent>
                     </Select>
                     {selectedVendedores.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedVendedores([])}
-                        className="w-full text-xs"
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedVendedores([])} className="w-full text-xs">
                         Limpar Seleção
                       </Button>
                     )}
@@ -846,7 +768,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
       {/* Kanban Board */}
       <div className="flex-1 min-w-0">
-        {/* Barra de Pesquisa */}
         <div className="mb-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -858,12 +779,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               className="pl-10"
             />
             {searchQuery && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                onClick={() => setSearchQuery("")}
-              >
+              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setSearchQuery("")}>
                 <X className="w-4 h-4" />
               </Button>
             )}
@@ -880,24 +796,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               
               return (
                 <Droppable key={etapa.id} droppableId={etapa.id} isDropDisabled={isDropDisabled}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="w-72 sm:w-80 lg:w-96 flex-shrink-0"
-                    >
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} className="w-72 sm:w-80 lg:w-96 flex-shrink-0">
                       <Card className="bg-white shadow-sm flex flex-col border" style={{ height: 'calc(100vh - 120px)' }}>
                         <CardHeader className="pb-3 bg-slate-50/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <IconComponent className="w-4 h-4 text-slate-600" />
-                              <CardTitle className="text-sm font-semibold text-slate-700">
-                                {etapa.label}
-                              </CardTitle>
+                              <CardTitle className="text-sm font-semibold text-slate-700">{etapa.label}</CardTitle>
                             </div>
-                            <Badge variant="secondary" className="bg-white border">
-                              {dealsNaEtapa.length}
-                            </Badge>
+                            <Badge variant="secondary" className="bg-white border">{dealsNaEtapa.length}</Badge>
                           </div>
                         </CardHeader>
                         <CardContent className="space-y-2 flex-1 overflow-y-auto">
@@ -909,144 +817,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 isDragDisabled={deal.status_aprovacao === "reprovado" || deal.etapa === "enviado_cadastro"}
                               >
                                 {(provided, snapshot) => (
-                                 <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                 >
-                                  <Card
-                                   className={`bg-white ${deal.status_aprovacao === "reprovado" || deal.etapa === "enviado_cadastro" ? "cursor-pointer" : "cursor-move"} hover:shadow-md ${
-                                     snapshot.isDragging ? "shadow-lg" : ""
-                                   }`}
-                                   onClick={() => handleCardClick(deal)}
-                                  >
-                                      <CardContent className="p-4 space-y-2">
-                                        <div className="font-medium text-sm">
-                                          {deal.nome_cliente}
-                                        </div>
-                                        {deal.telefone && (
-                                          <div 
-                                            className="inline-flex items-center gap-2 text-sm text-slate-600 cursor-pointer hover:text-[#EFC200] transition-colors"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              abrirWhatsApp(deal.telefone);
-                                            }}
-                                          >
-                                            <Phone className="w-3.5 h-3.5" />
-                                            {deal.telefone}
-                                          </div>
-                                        )}
-                                        <div className="flex items-center justify-between gap-2">
-                                          {deal.origem && (
-                                            <Badge className={`text-xs border ${origensConfig[deal.origem]?.color || "bg-slate-50 text-slate-700 border-slate-200"}`}>
-                                              {origensConfig[deal.origem]?.label || deal.origem}
-                                            </Badge>
-                                          )}
-                                          {deal.temperatura && (
-                                            <div className="flex items-center gap-1">
-                                              {deal.temperatura === "quente" ? (
-                                                <>
-                                                  <Flame className="w-3.5 h-3.5 text-orange-500" />
-                                                  <span className="text-xs font-medium text-orange-600">Quente</span>
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <Snowflake className="w-3.5 h-3.5 text-blue-400" />
-                                                  <span className="text-xs font-medium text-blue-500">Frio</span>
-                                                </>
-                                              )}
-                                            </div>
-                                          )}
-                                        </div>
-                                        {(deal.modelo_veiculo || deal.placa) && (
-                                          <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
-                                            <Car className="w-4 h-4 flex-shrink-0" />
-                                            <span className="break-words line-clamp-2">
-                                              {deal.modelo_veiculo || deal.placa}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {deal.observacoes && (
-                                          <div className="text-xs text-slate-600 italic border-l-2 border-slate-300 pl-2 py-1 bg-slate-50 rounded">
-                                            {deal.observacoes.length > 80 ? `${deal.observacoes.substring(0, 80)}...` : deal.observacoes}
-                                          </div>
-                                        )}
-                                        {deal.subetapas && deal.etapa === "vistoria_assinatura_pix" && (
-                                          <div className="flex flex-wrap gap-1">
-                                            {deal.subetapas.map((subetapa) => (
-                                              <Badge key={subetapa} className="text-xs bg-blue-100 text-blue-800 border-blue-200">
-                                                {subetapa === "aguardando_vistoria" && "Vistoria"}
-                                                {subetapa === "aguardando_assinatura" && "Assinatura"}
-                                                {subetapa === "aguardando_pix" && "Pix"}
-                                              </Badge>
-                                            ))}
-                                          </div>
-                                        )}
-                                        {deal.valor_adesao && (
-                                            <div className="text-sm font-medium text-slate-700">
-                                              {deal.valor_adesao}
-                                            </div>
-                                          )}
-                                          <div className="flex items-center justify-between gap-2">
-                                            <div className="text-xs text-slate-500">
-                                              {deal.data_entrada 
-                                                ? format(new Date(deal.data_entrada), "dd/MM/yyyy")
-                                                : format(new Date(deal.created_date), "dd/MM/yyyy")}
-                                            </div>
-                                            {deal.status_aprovacao === "analisando" && (
-                                              <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs">
-                                                Em análise
-                                              </Badge>
-                                            )}
-                                          </div>
-                                          {deal.status_aprovacao === "reprovado" && (
-                                            <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
-                                              {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
-                                                deal.motivos_reprova.map((motivo, idx) => {
-                                                  const categoriesMotivo = {
-                                                    documentacao: "Documentação",
-                                                    contrato: "Contrato",
-                                                    vistoria_fotos: "Vistoria - Fotos",
-                                                    vistoria_videos: "Vistoria - Vídeos",
-                                                    preenchimento: "Preenchimento",
-                                                  };
-                                                  return (
-                                                    <div key={idx} className={motivo.corrigido ? "opacity-60 line-through" : ""}>
-                                                      <strong>{categoriesMotivo[motivo.categoria]}:</strong> {motivo.detalhe}
-                                                      {motivo.corrigido && " ✓"}
-                                                    </div>
-                                                  );
-                                                })
-                                              ) : (
-                                                <>
-                                                  {deal.motivo_reprova_categoria && (
-                                                    <div>
-                                                      <strong>Categoria:</strong> {
-                                                        deal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
-                                                        deal.motivo_reprova_categoria === "contrato" ? "Contrato" :
-                                                        deal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
-                                                        deal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
-                                                        deal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
-                                                        deal.motivo_reprova_categoria
-                                                      }
-                                                    </div>
-                                                  )}
-                                                  {deal.motivo_reprova_detalhe && (
-                                                    <div>
-                                                      <strong>Detalhe:</strong> {deal.motivo_reprova_detalhe}
-                                                    </div>
-                                                  )}
-                                                </>
-                                              )}
-                                            </div>
-                                          )}
-                                          {userFuncao === "lider" && (
-                                            <div className="text-xs text-slate-500 pt-1 border-t">
-                                              {getNomeVendedor(deal.vendedor_email)}
-                                            </div>
-                                          )}
-                                      </CardContent>
-                                    </Card>
+                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                   <DealCard
+                                     deal={deal}
+                                     onClick={() => handleCardClick(deal)}
+                                     origensConfig={origensConfig}
+                                     formatarTelefone={formatarTelefone}
+                                     userFuncao={userFuncao}
+                                     getNomeVendedor={getNomeVendedor}
+                                   />
                                   </div>
                                 )}
                               </Draggable>
@@ -1097,7 +876,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   className="overflow-y-auto max-h-[90vh]"
                 >
-                  {/* Header Clean */}
                   <div className="sticky top-0 z-10 bg-white px-8 py-6 border-b border-slate-200">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -1116,10 +894,18 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </div>
 
                   <div className="p-8">
-                    {/* Layout com 2 colunas */}
                     <div className="grid grid-cols-3 gap-8">
                       {/* Coluna Principal - Abas */}
                       <div className="col-span-2">
+                        {/* Navegação de Etapas */}
+                        <NavegacaoEtapas
+                          etapas={etapas}
+                          etapaAtual={editedDeal.etapa}
+                          onAvancar={handleAdvanceStage}
+                          onVoltar={handlePreviousStage}
+                          isEtapaFinal={isEtapaFinal(selectedDeal.etapa)}
+                        />
+
                         {/* Abas Premium */}
                         <Tabs defaultValue="informacoes" className="w-full">
                           <TabsList className="grid w-full grid-cols-2 mb-6 h-14 bg-slate-100/80 p-1.5 rounded-lg">
@@ -1135,12 +921,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
                           {/* Aba 1: Informações */}
                           <TabsContent value="informacoes" className="space-y-5 mt-0">
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.2 }}
-                              className="space-y-5"
-                            >
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-5">
                               <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-4 border border-slate-200">
                                 <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Data de Entrada</Label>
                                 <p className="text-lg font-semibold text-slate-900 mt-2">
@@ -1257,12 +1038,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
                           {/* Aba 2: Negociação */}
                           <TabsContent value="negociacao" className="space-y-5 mt-0">
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.2 }}
-                              className="space-y-5"
-                            >
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="space-y-5">
                               <div>
                                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Plano</Label>
                                 <Select
@@ -1384,13 +1160,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         </Tabs>
                       </div>
 
-                      {/* Coluna Lateral - Info do Consultor + Timeline */}
-                      <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="space-y-6"
-                      >
+                      {/* Coluna Lateral */}
+                      <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-6">
                         {/* Info do Consultor */}
                         <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-xl p-6 border border-slate-200 shadow-sm">
                           <h3 className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider flex items-center gap-2">
@@ -1494,31 +1265,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </div>
 
                     {/* Botões de Ação */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="flex flex-col gap-4 pt-6 mt-6 border-t border-slate-200"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col gap-4 pt-6 mt-6 border-t border-slate-200">
                 {isEtapaFinal(selectedDeal.etapa) && (
                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
                      {selectedDeal.etapa === "enviado_cadastro" && "⚠️ Esta venda está aguardando aprovação do time de aprovações. Visualização apenas."}
                      {selectedDeal.status_aprovacao === "reprovado" && (
                        <div className="space-y-2">
                          <p className="font-semibold">❌ Esta venda foi reprovada pelo time de aprovações.</p>
-                         {selectedDeal.motivo_reprova_categoria && (
-                           <p className="text-xs"><strong>Motivo:</strong> {
-                             selectedDeal.motivo_reprova_categoria === "documentacao" ? "Documentação" :
-                             selectedDeal.motivo_reprova_categoria === "contrato" ? "Contrato" :
-                             selectedDeal.motivo_reprova_categoria === "vistoria_fotos" ? "Vistoria - Fotos" :
-                             selectedDeal.motivo_reprova_categoria === "vistoria_videos" ? "Vistoria - Vídeos" :
-                             selectedDeal.motivo_reprova_categoria === "preenchimento" ? "Preenchimento" :
-                             selectedDeal.motivo_reprova_categoria
-                           }</p>
-                         )}
-                         {selectedDeal.motivo_reprova_detalhe && (
-                           <p className="text-xs"><strong>Detalhe:</strong> {selectedDeal.motivo_reprova_detalhe}</p>
-                         )}
                          <p className="text-xs mt-2 pt-2 border-t border-amber-300">Corrija os pontos acima e clique em "Reprova Corrigida" após as alterações.</p>
                        </div>
                      )}
@@ -1575,15 +1328,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         </div>
                       )}
 
-                      {/* Histórico de Reprovas (excluindo a atual) */}
+                      {/* Histórico de Reprovas */}
                       {historicoReprov.length > 1 && (
                         <div className="border-t pt-4">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowHistorico(!showHistorico)}
-                            className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 mb-3"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => setShowHistorico(!showHistorico)} className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 mb-3">
                             <History className="w-4 h-4" />
                             <span className="text-xs">Exibir Outras Reprovas</span>
                             {showHistorico ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -1593,7 +1341,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                             <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
                               {historicoReprov.slice(1).map((sessao, sessaoIndex) => (
                                 <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
-                                  {/* Header da sessão */}
                                   <div className="flex items-center gap-2 mb-2">
                                     <div className="h-px flex-1 bg-slate-200" />
                                     <span className="text-xs text-slate-500 font-medium">
@@ -1602,7 +1349,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                     <div className="h-px flex-1 bg-slate-200" />
                                   </div>
                                   
-                                  {/* Motivos desta sessão */}
                                   <div className="rounded-lg p-3 space-y-2 border bg-slate-50 border-slate-200">
                                     {sessao.motivos && sessao.motivos.length > 0 && (
                                       <div className="space-y-2">
@@ -1627,16 +1373,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       <Button
                         onClick={handleReprovaCorrigida}
                         disabled={!todosMotivosCorrigidos(selectedDeal)}
-                        className={`w-full ${
-                          todosMotivosCorrigidos(selectedDeal)
-                            ? "bg-green-600 hover:bg-green-700"
-                            : "bg-slate-300 cursor-not-allowed"
-                        } text-white`}
+                        className={`w-full ${todosMotivosCorrigidos(selectedDeal) ? "bg-green-600 hover:bg-green-700" : "bg-slate-300 cursor-not-allowed"} text-white`}
                       >
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        {todosMotivosCorrigidos(selectedDeal) 
-                          ? "Pendências Corrigidas - Enviar" 
-                          : "Marque Todas as Correções"}
+                        {todosMotivosCorrigidos(selectedDeal) ? "Pendências Corrigidas - Enviar" : "Marque Todas as Correções"}
                       </Button>
                     </>
                   );
@@ -1653,11 +1393,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       )}
 
                       {!isEtapaFinal(selectedDeal.etapa) && (
-                        <Button
-                          onClick={() => setShowLossModal(true)}
-                          variant="destructive"
-                          className="w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all"
-                        >
+                        <Button onClick={() => setShowLossModal(true)} variant="destructive" className="w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all">
                           <TrendingDown className="w-4 h-4 mr-2" />
                           Marcar como Perda
                         </Button>
@@ -1711,9 +1447,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         <div 
                           key={item.key} 
                           className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                            isChecked 
-                              ? "bg-green-50 border border-green-200" 
-                              : "bg-white border border-slate-200 hover:border-slate-300"
+                            isChecked ? "bg-green-50 border border-green-200" : "bg-white border border-slate-200 hover:border-slate-300"
                           }`}
                         >
                           <Checkbox
@@ -1739,10 +1473,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Nome do Cliente *</Label>
-                  <Input
-                    value={conferenciaData.nome_cliente || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, nome_cliente: e.target.value })}
-                  />
+                  <Input value={conferenciaData.nome_cliente || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, nome_cliente: e.target.value })} />
                 </div>
                 <div>
                   <Label>Telefone *</Label>
@@ -1752,12 +1483,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       const numeros = e.target.value.replace(/\D/g, '');
                       let formatado = numeros;
                       if (numeros.length <= 11) {
-                        if (numeros.length > 2) {
-                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
-                        }
-                        if (numeros.length > 7) {
-                          formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
-                        }
+                        if (numeros.length > 2) formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+                        if (numeros.length > 7) formatado = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
                         setConferenciaData({ ...conferenciaData, telefone: formatado });
                       }
                     }}
@@ -1767,11 +1494,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
                 <div>
                   <Label>Email</Label>
-                  <Input
-                    type="email"
-                    value={conferenciaData.email || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, email: e.target.value })}
-                  />
+                  <Input type="email" value={conferenciaData.email || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, email: e.target.value })} />
                 </div>
                 <div>
                   <Label>Placa</Label>
@@ -1780,9 +1503,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     onChange={(e) => {
                       const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
                       let formatado = valor;
-                      if (valor.length > 3) {
-                        formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
-                      }
+                      if (valor.length > 3) formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
                       setConferenciaData({ ...conferenciaData, placa: formatado });
                     }}
                     placeholder="ABC-1D23"
@@ -1791,18 +1512,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
                 <div>
                   <Label>Modelo do Veículo</Label>
-                  <Input
-                    value={conferenciaData.modelo_veiculo || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, modelo_veiculo: e.target.value })}
-                  />
+                  <Input value={conferenciaData.modelo_veiculo || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, modelo_veiculo: e.target.value })} />
                 </div>
                 <div>
                   <Label>Plano</Label>
-                  <select
-                    className="w-full px-3 py-2 border rounded-md"
-                    value={conferenciaData.plano_interesse || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, plano_interesse: e.target.value })}
-                  >
+                  <select className="w-full px-3 py-2 border rounded-md" value={conferenciaData.plano_interesse || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, plano_interesse: e.target.value })}>
                     <option value="">Selecione...</option>
                     <option value="essencial">Essencial</option>
                     <option value="principal">Principal</option>
@@ -1839,11 +1553,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
                 <div className="col-span-2">
                   <Label>Observações</Label>
-                  <Textarea
-                    value={conferenciaData.observacoes || ""}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })}
-                    rows={3}
-                  />
+                  <Textarea value={conferenciaData.observacoes || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })} rows={3} />
                 </div>
               </div>
 
@@ -1890,9 +1600,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-slate-700">
-              {accessDeniedReason}
-            </p>
+            <p className="text-sm text-slate-700">{accessDeniedReason}</p>
             <div className="flex gap-2 pt-4">
               <Button
                 onClick={() => {
@@ -1919,10 +1627,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           <div className="space-y-4">
             <div>
               <Label>Categoria do Motivo *</Label>
-              <Select
-                value={lossReason.categoria}
-                onValueChange={(value) => setLossReason({ ...lossReason, categoria: value, motivo: "" })}
-              >
+              <Select value={lossReason.categoria} onValueChange={(value) => setLossReason({ ...lossReason, categoria: value, motivo: "" })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione a categoria..." />
                 </SelectTrigger>
@@ -1941,18 +1646,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             {lossReason.categoria && (
               <div>
                 <Label>Motivo Específico *</Label>
-                <Select
-                  value={lossReason.motivo}
-                  onValueChange={(value) => setLossReason({ ...lossReason, motivo: value })}
-                >
+                <Select value={lossReason.motivo} onValueChange={(value) => setLossReason({ ...lossReason, motivo: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o motivo..." />
                   </SelectTrigger>
                   <SelectContent>
                     {motivosPerda[lossReason.categoria]?.map((motivo) => (
-                      <SelectItem key={motivo} value={motivo}>
-                        {motivo}
-                      </SelectItem>
+                      <SelectItem key={motivo} value={motivo}>{motivo}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1970,23 +1670,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setShowLossModal(false);
-                  setLossReason({ categoria: "", motivo: "", observacao: "" });
-                }}
-                className="flex-1"
-              >
+              <Button type="button" variant="outline" onClick={() => {
+                setShowLossModal(false);
+                setLossReason({ categoria: "", motivo: "", observacao: "" });
+              }} className="flex-1">
                 Cancelar
               </Button>
-              <Button
-                onClick={handleMarkAsLoss}
-                variant="destructive"
-                className="flex-1"
-                disabled={!lossReason.categoria || !lossReason.motivo}
-              >
+              <Button onClick={handleMarkAsLoss} variant="destructive" className="flex-1" disabled={!lossReason.categoria || !lossReason.motivo}>
                 Confirmar Perda
               </Button>
             </div>
