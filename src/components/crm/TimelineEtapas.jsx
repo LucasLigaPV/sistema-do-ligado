@@ -39,8 +39,8 @@ export default function TimelineEtapas({
               
               {/* Item da etapa */}
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
                 className={`relative flex items-center gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
                   canClick ? 'cursor-pointer hover:bg-white' : ''
