@@ -23,8 +23,9 @@ export default function TimelineEtapas({
           const isCurrentEtapa = etapaAtual === etapa.id;
           const isPassed = index < currentIndex;
           const isFuture = index > currentIndex;
-          const isLockedEtapa = etapa.id === "reprovado" || etapa.id === "venda_ativa" || etapa.id === "enviado_cadastro";
-          const canClick = !isReadOnly && !isLockedEtapa;
+          const isLockedEtapa = etapa.id === "reprovado" || etapa.id === "venda_ativa";
+          const isStuckInEnviado = etapaAtual === "enviado_cadastro" && etapa.id !== "enviado_cadastro";
+          const canClick = !isReadOnly && !isLockedEtapa && !isStuckInEnviado;
           
           return (
             <div key={etapa.id} className="relative">
@@ -55,7 +56,7 @@ export default function TimelineEtapas({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
                 className={`relative flex items-start gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
-                  canClick ? 'cursor-pointer hover:bg-white' : isLockedEtapa ? 'opacity-60 cursor-not-allowed' : ''
+                  canClick ? 'cursor-pointer hover:bg-white' : (isLockedEtapa || isStuckInEnviado) ? 'opacity-60 cursor-not-allowed' : ''
                 } ${isCurrentEtapa ? 'bg-white shadow-sm' : ''}`}
                 onClick={() => canClick && onEtapaClick(etapa.id)}
               >
