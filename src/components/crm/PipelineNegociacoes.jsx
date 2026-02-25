@@ -854,6 +854,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 key={deal.id}
                                 draggableId={deal.id}
                                 index={index}
+                                isDragDisabled={deal.status_aprovacao === "reprovado"}
                               >
                                 {(provided, snapshot) => (
                                  <div
@@ -862,10 +863,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   {...provided.dragHandleProps}
                                  >
                                   <Card
-                                    className={`bg-white cursor-move hover:shadow-md ${
-                                      snapshot.isDragging ? "shadow-lg" : ""
-                                    }`}
-                                    onClick={() => handleCardClick(deal)}
+                                   className={`bg-white ${deal.status_aprovacao === "reprovado" ? "cursor-not-allowed opacity-75" : "cursor-move"} hover:shadow-md ${
+                                     snapshot.isDragging ? "shadow-lg" : ""
+                                   }`}
+                                   onClick={() => handleCardClick(deal)}
                                   >
                                       <CardContent className="p-4 space-y-2">
                                         <div className="font-medium text-sm">
