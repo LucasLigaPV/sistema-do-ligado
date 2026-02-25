@@ -1129,11 +1129,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
                         {/* Abas Premium */}
                         <Tabs defaultValue="informacoes" className="w-full">
-                          <TabsList className="grid w-full grid-cols-2 mb-6 h-12 bg-slate-100/80 p-1 rounded-lg">
-                            <TabsTrigger value="informacoes" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium">
+                          <TabsList className="grid w-full grid-cols-2 mb-6 h-14 bg-slate-100/80 p-1.5 rounded-lg">
+                            <TabsTrigger value="informacoes" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium h-full flex items-center gap-2 data-[state=active]:text-slate-900 text-slate-600">
+                              <FileText className="w-4 h-4" />
                               Informações
                             </TabsTrigger>
-                            <TabsTrigger value="negociacao" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium">
+                            <TabsTrigger value="negociacao" className="rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm font-medium h-full flex items-center gap-2 data-[state=active]:text-slate-900 text-slate-600">
+                              <DollarSign className="w-4 h-4" />
                               Negociação
                             </TabsTrigger>
                           </TabsList>
