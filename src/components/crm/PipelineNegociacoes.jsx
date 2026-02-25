@@ -913,6 +913,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             {deal.placa}
                                           </div>
                                         )}
+                                        {deal.etapa === "em_negociacao" && deal.observacoes_negociacao && (
+                                          <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-200 italic">
+                                            {deal.observacoes_negociacao}
+                                          </div>
+                                        )}
                                         {deal.subetapas && deal.etapa === "vistoria_assinatura_pix" && (
                                           <div className="flex flex-wrap gap-1">
                                             {deal.subetapas.map((subetapa) => (
@@ -1304,6 +1309,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     disabled={isReadOnly}
                   />
                 </div>
+                {selectedDeal.etapa === "em_negociacao" && (
+                  <div className="col-span-2">
+                    <Label>Anotações da Negociação</Label>
+                    <Textarea
+                      value={editedDeal.observacoes_negociacao || ""}
+                      onChange={(e) => setEditedDeal({ ...editedDeal, observacoes_negociacao: e.target.value })}
+                      placeholder="Adicione suas anotações sobre esta negociação..."
+                      rows={3}
+                      disabled={isReadOnly}
+                      className="text-sm"
+                    />
+                  </div>
+                )}
                 {selectedDeal.etapa === "vistoria_assinatura_pix" && (
                   <div className="col-span-2 space-y-2">
                     <Label>Aguardando *</Label>
