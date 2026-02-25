@@ -150,8 +150,6 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       if (data.etapa === "venda_ativa") {
         const negociacao = negociacoes.find(n => n.id === id);
         if (negociacao) {
-          const canalVenda = negociacao.origem === "indicacao" ? "indicacao" : negociacao.origem === "organico" ? "troca_veiculo" : "lead";
-          
           // Criar venda automaticamente
           createVendaMutation.mutate({
             vendedor: negociacao.vendedor_email,
@@ -167,8 +165,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             valor_adesao: negociacao.valor_adesao || "",
             valor_mensalidade: negociacao.valor_mensalidade || "",
             forma_pagamento: "pix",
-            canal_venda: canalVenda,
-            tem_indicacao: canalVenda === "indicacao" ? "sim" : "nao",
+            canal_venda: negociacao.origem || "lead",
+            tem_indicacao: negociacao.origem === "indicacao" ? "sim" : "nao",
             observacoes: negociacao.observacoes || "",
           });
         }
