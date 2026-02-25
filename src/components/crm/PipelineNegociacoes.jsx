@@ -824,9 +824,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
             {etapas.map((etapa) => {
               const dealsNaEtapa = negociacoesVisiveis.filter(n => n.etapa === etapa.id);
               const IconComponent = etapa.icon;
+              const isDropDisabled = etapa.id === "reprovado" || etapa.id === "venda_ativa";
               
               return (
-                <Droppable key={etapa.id} droppableId={etapa.id}>
+                <Droppable key={etapa.id} droppableId={etapa.id} isDropDisabled={isDropDisabled}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -1066,7 +1067,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                        <SelectValue />
                      </SelectTrigger>
                      <SelectContent>
-                       {etapas.map((etapa) => (
+                       {etapas.filter(e => e.id !== "reprovado" && e.id !== "venda_ativa").map((etapa) => (
                          <SelectItem key={etapa.id} value={etapa.id}>
                            {etapa.label}
                          </SelectItem>
