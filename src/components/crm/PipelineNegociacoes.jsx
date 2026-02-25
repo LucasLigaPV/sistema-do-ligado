@@ -913,9 +913,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             {deal.placa}
                                           </div>
                                         )}
-                                        {deal.etapa === "em_negociacao" && deal.observacoes_negociacao && (
-                                          <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-200 italic">
-                                            {deal.observacoes_negociacao}
+                                        {deal.etapa === "em_negociacao" && (
+                                          <div 
+                                            className="mt-2"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <Textarea
+                                              value={deal.observacoes_negociacao || ""}
+                                              onChange={(e) => {
+                                                e.stopPropagation();
+                                                updateMutation.mutate({
+                                                  id: deal.id,
+                                                  data: { observacoes_negociacao: e.target.value }
+                                                });
+                                              }}
+                                              placeholder="Anotações..."
+                                              rows={2}
+                                              className="text-xs resize-none bg-slate-50 border-slate-200 focus:border-[#EFC200] focus:ring-[#EFC200]"
+                                            />
                                           </div>
                                         )}
                                         {deal.subetapas && deal.etapa === "vistoria_assinatura_pix" && (
