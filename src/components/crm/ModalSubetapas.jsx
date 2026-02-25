@@ -58,6 +58,14 @@ export default function ModalSubetapas({
               const isChecked = selectedSubetapa.includes(item.key);
               const colors = colorClasses[item.color];
               
+              const toggleSubetapa = () => {
+                setSelectedSubetapa(
+                  isChecked
+                    ? selectedSubetapa.filter(s => s !== item.key)
+                    : [...selectedSubetapa, item.key]
+                );
+              };
+
               return (
                 <div 
                   key={item.key} 
@@ -66,13 +74,7 @@ export default function ModalSubetapas({
                       ? `${colors.checked} shadow-lg scale-[1.02]` 
                       : `${colors.unchecked} hover:shadow-md`
                   }`}
-                  onClick={() => {
-                    setSelectedSubetapa(
-                      isChecked
-                        ? selectedSubetapa.filter(s => s !== item.key)
-                        : [...selectedSubetapa, item.key]
-                    );
-                  }}
+                  onClick={toggleSubetapa}
                 >
                   <Checkbox
                     id={`modal-${item.key}`}
@@ -83,14 +85,17 @@ export default function ModalSubetapas({
                         : selectedSubetapa.filter(s => s !== item.key)
                       );
                     }}
+                    onClick={(e) => e.stopPropagation()}
                     className={`data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] flex-shrink-0 ${isChecked ? "ring-2 ring-[#EFC200] ring-offset-2" : ""}`}
                   />
                   <div className={`w-12 h-12 rounded-xl ${colors.iconBg} flex items-center justify-center flex-shrink-0 transition-transform ${isChecked ? "scale-110" : ""}`}>
                     <IconComponent className={`w-6 h-6 ${colors.icon}`} />
                   </div>
-                  <label htmlFor={`modal-${item.key}`} className={`text-base font-semibold cursor-pointer flex-1 transition-colors ${isChecked ? "text-slate-900" : "text-slate-700"}`}>
-                    {item.label}
-                  </label>
+                  <div className="flex-1">
+                    <p className={`text-base font-semibold transition-colors ${isChecked ? "text-slate-900" : "text-slate-700"}`}>
+                      {item.label}
+                    </p>
+                  </div>
                   {isChecked && <CheckCircle2 className="w-6 h-6 text-[#EFC200] flex-shrink-0" />}
                 </div>
               );
