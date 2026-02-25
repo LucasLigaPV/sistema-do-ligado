@@ -19,6 +19,7 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import ModalSubetapas from "./ModalSubetapas";
 import FormNovaNegociacao from "./FormNovaNegociacao";
 import TimelineEtapas from "./TimelineEtapas";
+import DialogAlteracoesNaoSalvas from "./DialogAlteracoesNaoSalvas";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -42,6 +43,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] = useState(false);
   
   const [newDeal, setNewDeal] = useState({
     vendedor_email: userEmail,
@@ -645,6 +647,35 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setShowDetails(true);
   };
 
+  const hasUnsavedChanges = () => {
+    if (!selectedDeal || !editedDeal) return false;
+    return JSON.stringify(selectedDeal) !== JSON.stringify(editedDeal);
+  };
+
+  const handleCloseDetails = (open) => {
+    if (!open && hasUnsavedChanges()) {
+      setShowUnsavedChangesDialog(true);
+    } else {
+      setShowDetails(open);
+      if (!open) {
+        setSelectedDeal(null);
+        setEditedDeal(null);
+      }
+    }
+  };
+
+  const handleDiscardChanges = () => {
+    setShowUnsavedChangesDialog(false);
+    setShowDetails(false);
+    setSelectedDeal(null);
+    setEditedDeal(null);
+  };
+
+  const handleSaveAndClose = () => {
+    handleUpdateDeal();
+    setShowUnsavedChangesDialog(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -1043,12 +1074,21 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
         userFuncao={userFuncao}
       />
 
+      {/* Dialog: Alterações Não Salvas */}
+      <DialogAlteracoesNaoSalvas
+        open={showUnsavedChangesDialog}
+        onOpenChange={setShowUnsavedChangesDialog}
+        onDiscard={handleDiscardChanges}
+        onSave={handleSaveAndClose}
+        saveDisabled={selectedDeal?.etapa === "vistoria_assinatura_pix" && (!editedDeal?.subetapas || editedDeal.subetapas.length === 0)}
+      />
+
       {/* Dialog: Detalhes da Negociação */}
       <AnimatePresence>
         {showDetails && selectedDeal && editedDeal && (() => {
           const isReadOnly = isEtapaFinal(selectedDeal.etapa);
           return (
-            <Dialog open={showDetails} onOpenChange={setShowDetails}>
+            <Dialog open={showDetails} onOpenChange={handleCloseDetails}>
               <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-white to-slate-50">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
