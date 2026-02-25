@@ -1547,22 +1547,32 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   />
                 </div>
                 <div>
-                  <Label>Valor da Mensalidade</Label>
-                  <Input
-                    value={conferenciaData.valor_mensalidade || ""}
-                    onChange={(e) => {
-                      const numeros = e.target.value.replace(/\D/g, '');
-                      const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
-                      const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                      setConferenciaData({ ...conferenciaData, valor_mensalidade: formatado });
-                    }}
-                    placeholder="R$ 0,00"
-                  />
-                </div>
-                <div className="col-span-2">
-                  <Label>Observações</Label>
-                  <Textarea value={conferenciaData.observacoes || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })} rows={3} />
-                </div>
+                   <Label>Valor da Mensalidade</Label>
+                   <Input
+                     value={conferenciaData.valor_mensalidade || ""}
+                     onChange={(e) => {
+                       const numeros = e.target.value.replace(/\D/g, '');
+                       const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
+                       const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                       setConferenciaData({ ...conferenciaData, valor_mensalidade: formatado });
+                     }}
+                     placeholder="R$ 0,00"
+                   />
+                 </div>
+                 <div>
+                   <Label>Data de Vencimento</Label>
+                   <select className="w-full px-3 py-2 border rounded-md" value={conferenciaData.data_vencimento?.toString() || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, data_vencimento: parseInt(e.target.value) || null })}>
+                     <option value="">Selecione o dia...</option>
+                     <option value="5">Dia 05</option>
+                     <option value="10">Dia 10</option>
+                     <option value="15">Dia 15</option>
+                     <option value="20">Dia 20</option>
+                   </select>
+                 </div>
+                 <div className="col-span-2">
+                   <Label>Observações</Label>
+                   <Textarea value={conferenciaData.observacoes || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })} rows={3} />
+                 </div>
               </div>
 
               <div className="flex justify-center pt-4">
