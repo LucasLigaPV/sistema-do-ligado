@@ -909,10 +909,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             </div>
                                           )}
                                         </div>
-                                        {deal.placa && (
+                                        {(deal.modelo_veiculo || deal.placa) && (
                                           <div className="flex items-center gap-2 text-sm font-semibold text-[#EFC200]">
-                                            <Car className="w-4 h-4" />
-                                            {deal.placa}
+                                            <Car className="w-4 h-4 flex-shrink-0" />
+                                            <span className="break-words line-clamp-2">
+                                              {deal.modelo_veiculo || deal.placa}
+                                            </span>
                                           </div>
                                         )}
                                         {deal.observacoes && (
