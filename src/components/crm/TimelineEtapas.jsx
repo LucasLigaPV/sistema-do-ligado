@@ -30,10 +30,14 @@ export default function TimelineEtapas({
               {/* Linha conectora */}
               {index < etapasVisiveis.length - 1 && (
                 <div 
-                  className={`absolute left-4 top-8 w-0.5 ${
+                  className={`absolute w-0.5 ${
                     isPassed || isCurrentEtapa ? 'bg-gradient-to-b from-green-400 to-green-200' : 'bg-gradient-to-b from-slate-300 to-transparent'
                   }`} 
-                  style={{ height: '40px' }} 
+                  style={{ 
+                    left: 'calc(0.75rem + 16px)', 
+                    top: '2.5rem', 
+                    height: '40px' 
+                  }} 
                 />
               )}
               
@@ -48,7 +52,7 @@ export default function TimelineEtapas({
                 onClick={() => canClick && onEtapaClick(etapa.id)}
               >
                 {/* Bolinha indicadora */}
-                <div className="flex-shrink-0 mt-0.5">
+                <div className="flex-shrink-0">
                   {isCurrentEtapa ? (
                     <motion.div
                       animate={{
