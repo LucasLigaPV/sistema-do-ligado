@@ -1303,32 +1303,38 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   />
                 </div>
                 {selectedDeal.etapa === "vistoria_assinatura_pix" && (
-                   <div className="col-span-2 space-y-2">
-                     <Label>Aguardando</Label>
-                     <div className="space-y-2">
-                       {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
-                         <div key={sub} className="flex items-center gap-2">
-                           <Checkbox
-                             id={`sub-${sub}`}
-                             checked={(editedDeal.subetapas || []).includes(sub)}
-                             onCheckedChange={(checked) => {
-                               const newSubetapas = checked
-                                 ? [...(editedDeal.subetapas || []), sub]
-                                 : (editedDeal.subetapas || []).filter(s => s !== sub);
-                               setEditedDeal({ ...editedDeal, subetapas: newSubetapas });
-                             }}
-                             disabled={isReadOnly}
-                           />
-                           <label htmlFor={`sub-${sub}`} className="text-sm cursor-pointer flex-1">
-                             {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
-                             {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
-                             {sub === "aguardando_pix" && "Aguardando Pix"}
-                           </label>
-                         </div>
-                       ))}
-                     </div>
-                   </div>
-                 )}
+                  <div className="col-span-2 space-y-2">
+                    <Label>Aguardando *</Label>
+                    <div className="space-y-2">
+                      {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
+                        <div key={sub} className="flex items-center gap-2">
+                          <Checkbox
+                            id={`sub-${sub}`}
+                            checked={(editedDeal.subetapas || []).includes(sub)}
+                            onCheckedChange={(checked) => {
+                              const newSubetapas = checked
+                                ? [...(editedDeal.subetapas || []), sub]
+                                : (editedDeal.subetapas || []).filter(s => s !== sub);
+                              setEditedDeal({ ...editedDeal, subetapas: newSubetapas });
+                            }}
+                            disabled={isReadOnly}
+                          />
+                          <label htmlFor={`sub-${sub}`} className="text-sm cursor-pointer flex-1">
+                            {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
+                            {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
+                            {sub === "aguardando_pix" && "Aguardando Pix"}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    {(!editedDeal.subetapas || editedDeal.subetapas.length === 0) && (
+                      <div className="flex items-center gap-2 text-red-600 text-sm mt-2">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>Selecione pelo menos uma opção</span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 </div>
 
               {/* Botões de Ação */}
@@ -1478,7 +1484,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 {!isEtapaFinal(selectedDeal.etapa) && (
                   <Button
                     onClick={handleUpdateDeal}
-                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black"
+                    disabled={selectedDeal.etapa === "vistoria_assinatura_pix" && (!editedDeal.subetapas || editedDeal.subetapas.length === 0)}
+                    className="w-full bg-[#EFC200] hover:bg-[#D4A900] text-black disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Salvar Alterações
                   </Button>
