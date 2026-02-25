@@ -73,8 +73,8 @@ export default function Admin() {
       <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+      <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 h-screen overflow-hidden">
+        <div className="h-full px-4 py-8 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -235,12 +235,14 @@ export default function Admin() {
             )}
 
             {activeMenu === "crm-negociacoes" && (
-              <div>
-                <div className="mb-4">
+              <div className="h-full flex flex-col">
+                <div className="mb-4 flex-shrink-0">
                   <h2 className="text-2xl font-bold text-slate-900">Negociações</h2>
                   <p className="text-slate-500 text-sm">Acompanhe o pipeline de vendas</p>
                 </div>
-                <PipelineNegociacoes userEmail={user?.email} userFuncao={user?.funcao} />
+                <div className="flex-1 min-h-0">
+                  <PipelineNegociacoes userEmail={user?.email} userFuncao={user?.funcao} />
+                </div>
               </div>
             )}
 
