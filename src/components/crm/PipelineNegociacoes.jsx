@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake, History, ChevronDown, ChevronUp } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
+import ModalSubetapas from "./ModalSubetapas";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -1849,62 +1850,18 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       </Dialog>
 
       {/* Modal: Subetapa */}
-      <Dialog open={showSubetapaModal} onOpenChange={setShowSubetapaModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Aguardando</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-slate-600">
-              Selecione os status que a negociação está aguardando:
-            </p>
-            <div className="space-y-3">
-              {["aguardando_vistoria", "aguardando_assinatura", "aguardando_pix"].map((sub) => (
-                <div key={sub} className="flex items-center gap-3">
-                  <Checkbox
-                    id={`modal-${sub}`}
-                    checked={selectedSubetapa.includes(sub)}
-                    onCheckedChange={(checked) => {
-                      setSelectedSubetapa(checked
-                        ? [...selectedSubetapa, sub]
-                        : selectedSubetapa.filter(s => s !== sub)
-                      );
-                    }}
-                    className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200]"
-                  />
-                  <label htmlFor={`modal-${sub}`} className="text-sm cursor-pointer flex-1">
-                    {sub === "aguardando_vistoria" && "Aguardando Vistoria"}
-                    {sub === "aguardando_assinatura" && "Aguardando Assinatura"}
-                    {sub === "aguardando_pix" && "Aguardando Pix"}
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setShowSubetapaModal(false);
-                  setPendingSubetapa(null);
-                  setSelectedSubetapa([]);
-                }}
-                className="flex-1"
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleConfirmSubetapa}
-                className="flex-1 bg-[#EFC200] hover:bg-[#D4A900] text-black"
-                disabled={selectedSubetapa.length === 0}
-              >
-                Confirmar
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ModalSubetapas
+        open={showSubetapaModal}
+        onOpenChange={setShowSubetapaModal}
+        selectedSubetapa={selectedSubetapa}
+        setSelectedSubetapa={setSelectedSubetapa}
+        onConfirm={handleConfirmSubetapa}
+        onCancel={() => {
+          setShowSubetapaModal(false);
+          setPendingSubetapa(null);
+          setSelectedSubetapa([]);
+        }}
+      />
 
       {/* Modal: Acesso Negado */}
       <Dialog open={showAccessDeniedModal} onOpenChange={setShowAccessDeniedModal}>
