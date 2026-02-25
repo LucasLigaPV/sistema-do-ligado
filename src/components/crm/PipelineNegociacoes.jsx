@@ -408,10 +408,18 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
       return;
     }
 
+    const updatedData = { etapa: pendingSubetapa.etapa, subetapas: selectedSubetapa };
+    
     updateMutation.mutate({
       id: pendingSubetapa.id,
-      data: { etapa: pendingSubetapa.etapa, subetapas: selectedSubetapa }
+      data: updatedData
     });
+
+    // Atualizar estado local imediatamente
+    if (selectedDeal && selectedDeal.id === pendingSubetapa.id) {
+      setSelectedDeal({ ...selectedDeal, ...updatedData });
+      setEditedDeal({ ...editedDeal, ...updatedData });
+    }
 
     setShowSubetapaModal(false);
     setPendingSubetapa(null);
@@ -421,16 +429,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const handleConferirInformacoes = () => {
     if (!conferenciaData) return;
 
+    const updatedData = {
+      ...conferenciaData,
+      etapa: "enviado_cadastro",
+      informacoes_conferidas: true,
+      data_conferencia: new Date().toISOString(),
+      status_aprovacao: "aguardando"
+    };
+
     updateMutation.mutate({
       id: conferenciaData.id,
-      data: {
-        ...conferenciaData,
-        etapa: "enviado_cadastro",
-        informacoes_conferidas: true,
-        data_conferencia: new Date().toISOString(),
-        status_aprovacao: "aguardando"
-      }
+      data: updatedData
     });
+
+    // Atualizar estado local imediatamente
+    if (selectedDeal && selectedDeal.id === conferenciaData.id) {
+      setSelectedDeal({ ...selectedDeal, ...updatedData });
+      setEditedDeal({ ...editedDeal, ...updatedData });
+    }
 
     setShowConferenciaModal(false);
     setConferenciaData(null);
@@ -1416,11 +1432,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                               setSelectedSubetapa(editedDeal?.subetapas || []);
                               setShowSubetapaModal(true);
                             } else {
+                              const updatedData = { ...editedDeal, etapa: novaEtapa, subetapas: [] };
                               updateMutation.mutate({
                                 id: selectedDeal.id,
-                                data: { ...editedDeal, etapa: novaEtapa, subetapas: [] }
+                                data: updatedData
                               });
-                              setEditedDeal({ ...editedDeal, etapa: novaEtapa });
+                              setSelectedDeal({ ...selectedDeal, etapa: novaEtapa, subetapas: [] });
+                              setEditedDeal(updatedData);
                             }
                           }}
                         />
