@@ -42,13 +42,13 @@ export default function TimelineEtapas({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
-                className={`relative flex items-center gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
+                className={`relative flex items-start gap-3 py-2 px-3 rounded-lg mb-1 transition-all ${
                   canClick ? 'cursor-pointer hover:bg-white' : ''
                 } ${isCurrentEtapa ? 'bg-white shadow-sm' : ''}`}
                 onClick={() => canClick && onEtapaClick(etapa.id)}
               >
                 {/* Bolinha indicadora */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mt-0.5">
                   {isCurrentEtapa ? (
                     <motion.div
                       animate={{
@@ -80,7 +80,7 @@ export default function TimelineEtapas({
                 </div>
                 
                 {/* Texto da etapa */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 pt-1">
                   <p className={`text-xs font-semibold leading-tight ${
                     isCurrentEtapa ? 'text-green-700' : 
                     isPassed ? 'text-green-600' : 
