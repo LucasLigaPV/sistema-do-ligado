@@ -913,6 +913,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                             {deal.placa}
                                           </div>
                                         )}
+                                        {deal.observacoes && (
+                                          <div className="text-xs text-slate-600 italic border-l-2 border-slate-300 pl-2 py-1 bg-slate-50 rounded">
+                                            {deal.observacoes.length > 80 ? `${deal.observacoes.substring(0, 80)}...` : deal.observacoes}
+                                          </div>
+                                        )}
                                         {deal.subetapas && deal.etapa === "vistoria_assinatura_pix" && (
                                           <div className="flex flex-wrap gap-1">
                                             {deal.subetapas.map((subetapa) => (
@@ -1301,6 +1306,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     type="date"
                     value={editedDeal.data_entrada || format(new Date(selectedDeal.created_date), "yyyy-MM-dd")}
                     onChange={(e) => setEditedDeal({ ...editedDeal, data_entrada: e.target.value })}
+                    disabled={isReadOnly}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label>Observações / Anotações</Label>
+                  <Textarea
+                    value={editedDeal.observacoes || ""}
+                    onChange={(e) => setEditedDeal({ ...editedDeal, observacoes: e.target.value })}
+                    placeholder="Anote informações úteis sobre esta negociação..."
+                    rows={3}
                     disabled={isReadOnly}
                   />
                 </div>
