@@ -16,6 +16,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Plus, Phone, Mail, Car, Filter, X, Sparkles, MessageCircle, Search, Presentation, Calculator, Handshake, FileCheck, Send, CheckCircle, ChevronRight, ChevronLeft, TrendingUp, TrendingDown, AlertCircle, CheckCircle2, XCircle, FileText, Upload, Wrench, FileSignature, CreditCard, Flame, Snowflake, History, ChevronDown, ChevronUp } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import ModalSubetapas from "./ModalSubetapas";
+import FormNovaNegociacao from "./FormNovaNegociacao";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -38,6 +39,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const [newDeal, setNewDeal] = useState({
     vendedor_email: userEmail,
