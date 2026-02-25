@@ -887,9 +887,19 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         </div>
                         <p className="text-slate-500 text-sm pl-5">{editedDeal.nome_cliente}</p>
                       </div>
-                      <Badge className="bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 font-medium">
-                        {etapas.find(e => e.id === editedDeal.etapa)?.label}
-                      </Badge>
+                      <div className="flex items-center gap-3">
+                        <Badge className="bg-slate-100 text-slate-700 border-slate-200 px-4 py-2 font-medium">
+                          {etapas.find(e => e.id === editedDeal.etapa)?.label}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCloseDetails(false)}
+                          className="text-slate-400 hover:text-slate-600"
+                        >
+                          <X className="w-5 h-5" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
