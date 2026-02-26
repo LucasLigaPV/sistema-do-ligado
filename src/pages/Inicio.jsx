@@ -131,7 +131,7 @@ export default function Inicio() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
       <Sidebar user={user} activeMenu={activeMenu} onMenuChange={(menuId) => navigate(`/Admin?menu=${menuId}`)} />
-      <ModalCheckin userEmail={user?.email} />
+      {/* ModalCheckin desativado */}
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0">
