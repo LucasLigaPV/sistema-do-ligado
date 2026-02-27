@@ -257,7 +257,9 @@ export default function Distribuicao({ userFuncao }) {
     if (!l.data) return true;
     
     // Verificar se o lead é de hoje
-    const leadData = format(new Date(l.data), "yyyy-MM-dd");
+    const parsedLeadData = new Date(l.data);
+    if (isNaN(parsedLeadData)) return true;
+    const leadData = format(parsedLeadData, "yyyy-MM-dd");
     const hoje = format(new Date(), "yyyy-MM-dd");
     
     if (leadData !== hoje) return true; // Leads de outros dias sempre disponíveis
