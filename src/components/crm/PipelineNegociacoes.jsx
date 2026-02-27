@@ -1406,11 +1406,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       
                       <Button
                         onClick={handleReprovaCorrigida}
-                        disabled={!todosMotivosCorrigidos(selectedDeal)}
-                        className={`w-full ${todosMotivosCorrigidos(selectedDeal) ? "bg-green-600 hover:bg-green-700" : "bg-slate-300 cursor-not-allowed"} text-white`}
+                        disabled={!todosMotivosCorrigidos(selectedDeal) || vistoriaPendenteAnexo(selectedDeal)}
+                        className={`w-full ${todosMotivosCorrigidos(selectedDeal) && !vistoriaPendenteAnexo(selectedDeal) ? "bg-green-600 hover:bg-green-700" : "bg-slate-300 cursor-not-allowed"} text-white`}
                       >
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        {todosMotivosCorrigidos(selectedDeal) ? "Pendências Corrigidas - Enviar" : "Marque Todas as Correções"}
+                        {!todosMotivosCorrigidos(selectedDeal)
+                          ? "Marque Todas as Correções"
+                          : vistoriaPendenteAnexo(selectedDeal)
+                          ? "Anexe o arquivo de vistoria"
+                          : "Pendências Corrigidas - Enviar"}
                       </Button>
                     </>
                   );
