@@ -1034,7 +1034,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="lead">Lead</SelectItem>
+                                    {selectedDeal.origem === "lead" && (
+                                      <SelectItem value="lead">Lead</SelectItem>
+                                    )}
                                     <SelectItem value="indicacao">Indicação</SelectItem>
                                     <SelectItem value="organico">Orgânico</SelectItem>
                                     <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
