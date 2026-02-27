@@ -47,6 +47,9 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       
       // Se aprovado, cria registro na Venda
       if (data.status_aprovacao === "aprovado") {
+        if (!data.data_venda_ativa) {
+          data.data_venda_ativa = new Date().toISOString();
+        }
         const deal = negociacoes.find(n => n.id === id);
         if (deal) {
           await base44.entities.Venda.create({
