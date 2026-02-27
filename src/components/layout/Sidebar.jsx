@@ -598,7 +598,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
                 <Button
                   variant="ghost"
                   className="w-full justify-between gap-3 hover:bg-slate-100 mb-2"
-                  onClick={() => setShowCheckinModal(true)}
+                  onClick={() => onOpenCheckin && onOpenCheckin()}
                 >
                   <div className="flex items-center gap-3">
                     <Inbox className="w-5 h-5" />
