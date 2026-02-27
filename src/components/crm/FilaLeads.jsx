@@ -69,7 +69,10 @@ export default function FilaLeads() {
     const matchAdset = filterAdset === "todos" || lead.adset === filterAdset;
     const matchCampanha = filterCampanha === "todas" || lead.campanha === filterCampanha;
     const matchPagina = filterPagina === "todas" || lead.pagina === filterPagina;
-    return matchDate && matchSearch && matchPlataforma && matchPosicionamento && matchAd && matchAdset && matchCampanha && matchPagina;
+    const matchDistribuido = filterDistribuido === "todos" || 
+      (filterDistribuido === "nao_distribuido" && !lead.distribuido) ||
+      (filterDistribuido === "distribuido" && lead.distribuido);
+    return matchDate && matchSearch && matchPlataforma && matchPosicionamento && matchAd && matchAdset && matchCampanha && matchPagina && matchDistribuido;
   });
 
   const plataformas = [...new Set(leads.map((l) => l.plataforma).filter(Boolean))];
