@@ -1326,7 +1326,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                             <XCircle className="w-5 h-5 text-red-600" />
                             Pendências a Corrigir
                           </h3>
-                          <div className="space-y-2.5 mb-4">
+                          <AnexosReprova
+                            negociacao={selectedDeal}
+                            onUpdate={() => queryClient.invalidateQueries({ queryKey: ["negociacoes"] })}
+                            readOnly={false}
+                          />
+
+                          <div className="space-y-2.5 mb-4 mt-3">
                             {selectedDeal.motivos_reprova.map((motivo, index) => (
                               <div 
                                 key={index}
