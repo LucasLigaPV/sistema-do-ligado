@@ -937,6 +937,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Data de Entrada</Label>
                                 <p className="text-lg font-semibold text-slate-900 mt-2">
                                   {format(new Date(editedDeal.data_entrada || selectedDeal.created_date), "dd/MM/yyyy")}
+                                  {editedDeal.hora_entrada && (
+                                    <span className="text-sm font-normal text-slate-500 ml-2">· {editedDeal.hora_entrada}</span>
+                                  )}
                                 </p>
                               </div>
                               <div>
