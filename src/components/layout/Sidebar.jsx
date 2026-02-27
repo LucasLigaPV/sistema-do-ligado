@@ -350,12 +350,12 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
               className={`w-full gap-3 hover:bg-slate-100 ${
                 !isOpen ? "justify-center" : "justify-between"
               }`}
-              onClick={() => setShowCheckinModal(true)}
-            >
-              <div className="flex items-center gap-3">
-                <Inbox className="w-5 h-5 flex-shrink-0" />
-                {isOpen && <span>Receber Leads</span>}
-              </div>
+              onClick={() => onOpenCheckin && onOpenCheckin()}
+              >
+                <div className="flex items-center gap-3">
+                  <Inbox className="w-5 h-5 flex-shrink-0" />
+                  {isOpen && <span>Receber Leads</span>}
+                </div>
               {isOpen && (
                 <span className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center animate-pulse shadow-lg">
                   <span className="text-white text-xs font-bold">!</span>
