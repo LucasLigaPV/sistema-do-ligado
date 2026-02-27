@@ -240,6 +240,17 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return deal.motivos_reprova.every(m => m.corrigido);
   };
 
+  // Verifica se motivos de vistoria existem e se há anexo para eles
+  const vistoriaPendenteAnexo = (deal) => {
+    if (!deal?.motivos_reprova) return false;
+    const temVistoria = deal.motivos_reprova.some(
+      m => (m.categoria === "vistoria_fotos" || m.categoria === "vistoria_videos") && !m.corrigido
+    );
+    if (!temVistoria) return false;
+    const temAnexo = (deal.anexos_reprova || []).some(a => !a.expirado);
+    return !temAnexo;
+  };
+
   const etapas = [
     { id: "novo_lead", label: "Novo Lead", icon: Sparkles },
     { id: "abordagem", label: "Abordagem", icon: MessageCircle },
