@@ -249,6 +249,16 @@ export default function FilaLeads() {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={filterDistribuido} onValueChange={setFilterDistribuido}>
+                <SelectTrigger className="w-full md:w-[180px]">
+                  <SelectValue placeholder="Distribuição" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  <SelectItem value="nao_distribuido">Não Distribuídos</SelectItem>
+                  <SelectItem value="distribuido">Distribuídos</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
