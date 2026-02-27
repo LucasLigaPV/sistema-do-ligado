@@ -22,6 +22,7 @@ import TimelineEtapas from "./TimelineEtapas";
 import DialogAlteracoesNaoSalvas from "./DialogAlteracoesNaoSalvas";
 import NavegacaoEtapas from "./NavegacaoEtapas";
 import DealCard from "./DealCard";
+import AnexosReprova from "./AnexosReprova";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);

@@ -15,6 +15,7 @@ import { AlertCircle, Clock, Eye, XCircle, CheckCircle2, ThumbsUp, Car, FileText
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import PainelEstatisticasAprovacoes from "./PainelEstatisticasAprovacoes";
+import AnexosReprova from "./AnexosReprova";
 
 export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [showModal, setShowModal] = useState(false);
