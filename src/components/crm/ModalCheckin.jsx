@@ -25,7 +25,6 @@ export default function ModalCheckin({ userEmail, open, onOpenChange }) {
     mutationFn: (data) => base44.entities.Checkin.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkins"] });
-      setShowModal(false);
     },
   });
 
