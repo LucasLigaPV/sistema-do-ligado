@@ -671,6 +671,24 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
+              {/* Anexos de Reprova */}
+              {(negociacao => {
+                const anexos = selectedDeal?.anexos_reprova || [];
+                if (anexos.length === 0) return null;
+                return (
+                  <div className="border-t pt-4">
+                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                      Arquivos do Vendedor
+                    </h3>
+                    <AnexosReprova
+                      negociacao={selectedDeal}
+                      onUpdate={() => queryClient.invalidateQueries({ queryKey: ["negociacoes"] })}
+                      readOnly={true}
+                    />
+                  </div>
+                );
+              })()}
+
               {/* Checklist */}
               <div className="border-t pt-4">
                 <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
