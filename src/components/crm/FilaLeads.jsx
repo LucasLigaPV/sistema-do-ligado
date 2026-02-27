@@ -40,6 +40,7 @@ export default function FilaLeads() {
   const [filterAdset, setFilterAdset] = useState("todos");
   const [filterCampanha, setFilterCampanha] = useState("todas");
   const [filterPagina, setFilterPagina] = useState("todas");
+  const [filterDistribuido, setFilterDistribuido] = useState("nao_distribuido");
   const [selectedLead, setSelectedLead] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
