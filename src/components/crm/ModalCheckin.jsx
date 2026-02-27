@@ -67,6 +67,7 @@ export default function ModalCheckin({ userEmail, open, onOpenChange }) {
       dentro_prazo: dentroPrazo,
       dia_semana: diaSemana,
     });
+    if (onOpenChange) onOpenChange(false);
   };
 
   return (
