@@ -111,6 +111,7 @@ export default function FormNovaNegociacao({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="lead_pre_sistema">Lead (Pré-sistema)</SelectItem>
                   <SelectItem value="indicacao">Indicação</SelectItem>
                   <SelectItem value="organico">Orgânico</SelectItem>
                   <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
