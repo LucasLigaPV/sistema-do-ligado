@@ -282,9 +282,12 @@ export default function FilaLeads() {
                   {filteredLeads.map((lead) => (
                     <TableRow key={lead.id}>
                       <TableCell className="whitespace-nowrap">
-                        {lead.data
+                        <div>{lead.data
                           ? format(new Date(lead.data), "dd/MM/yyyy")
-                          : format(new Date(lead.created_date), "dd/MM/yyyy")}
+                          : format(new Date(lead.created_date), "dd/MM/yyyy")}</div>
+                        {lead.created_date && (
+                          <div className="text-xs text-slate-400">{format(new Date(lead.created_date), "HH:mm")}</div>
+                        )}
                       </TableCell>
                       <TableCell className="font-medium">{lead.nome}</TableCell>
                       <TableCell>
