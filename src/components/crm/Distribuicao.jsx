@@ -546,13 +546,14 @@ export default function Distribuicao({ userFuncao }) {
         plano_interesse: "",
         origem: "lead",
         data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
+        hora_entrada: lead.created_date ? format(new Date(lead.created_date), "HH:mm") : format(new Date(), "HH:mm"),
         plataforma: lead.plataforma || "",
         posicionamento: lead.posicionamento || "",
         ad: lead.ad || "",
         adset: lead.adset || "",
         campanha: lead.campanha || "",
         pagina: lead.pagina || "",
-        prioridade: true // Marca como prioridade para próxima distribuição automática
+        prioridade: true
       });
       
       // Marcar lead como distribuído
