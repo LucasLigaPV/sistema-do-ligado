@@ -32,7 +32,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
 
-export default function Sidebar({ user, activeMenu, onMenuChange }) {
+export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin }) {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [crmExpanded, setCrmExpanded] = useState(false);
