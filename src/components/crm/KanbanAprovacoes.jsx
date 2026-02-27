@@ -175,6 +175,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         etapa: "venda_ativa",
         aprovado_por: userEmail,
         data_aprovacao: new Date().toISOString(),
+        data_venda_ativa: new Date().toISOString(),
       };
     } else if (newStatus === "analisando") {
       updateData.data = {
@@ -602,6 +603,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                 etapa: "venda_ativa",
                                 aprovado_por: userEmail,
                                 data_aprovacao: new Date().toISOString(),
+                                data_venda_ativa: new Date().toISOString(),
                               }
                             });
                           } else if (newStatus === "analisando") {
