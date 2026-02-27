@@ -38,8 +38,6 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
   const [crmExpanded, setCrmExpanded] = useState(false);
   const [controleExpanded, setControleExpanded] = useState(false);
   const [aprovacoesExpanded, setAprovacoesExpanded] = useState(false);
-  const [showCheckinModal, setShowCheckinModal] = useState(false);
-
   const queryClient = useQueryClient();
 
   const { data: checkins = [] } = useQuery({
