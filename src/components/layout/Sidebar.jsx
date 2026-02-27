@@ -389,63 +389,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
           </Button>
         </div>
 
-        {/* Modal de Check-in */}
-        {showCheckinModal && (
-          <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                  Recepção de Leads
-                </h2>
-                <button
-                  onClick={() => setShowCheckinModal(false)}
-                  className="text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
 
-              <div className="text-center space-y-4">
-                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                  <p className="text-slate-600 text-lg">
-                    {format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: { localize: { month: (n) => ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][n] } } })}
-                  </p>
-                  <p className="text-4xl font-bold text-[#EFC200]">
-                    {format(new Date(), "HH:mm")}
-                  </p>
-                </div>
-                <p className="text-slate-600">
-                  Registre sua presença para receber leads hoje
-                </p>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-                <p className="font-medium mb-2">⏰ Horários Limite:</p>
-                <ul className="space-y-1 text-xs">
-                  <li>• Segunda a Sexta: <strong>{configs.find(c => c.tipo === "horario_limite_semana")?.valor || "10:31"}</strong></li>
-                  <li>• Sábado: <strong>{configs.find(c => c.tipo === "horario_limite_sabado")?.valor || "10:30"}</strong></li>
-                  <li>• Domingo: Sem distribuição</li>
-                </ul>
-              </div>
-
-              <Button
-                onClick={handleCheckin}
-                className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-lg"
-                disabled={createCheckinMutation.isPending}
-              >
-                {createCheckinMutation.isPending ? (
-                  "Registrando..."
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5 mr-2" />
-                    Pronto para receber Leads
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
       </motion.aside>
 
       {/* Mobile Sidebar */}
