@@ -70,8 +70,8 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
-      <ModalCheckin userEmail={user?.email} />
-      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+      <ModalCheckin userEmail={user?.email} open={checkinModalOpen} onOpenChange={setCheckinModalOpen} />
+      <Sidebar user={user} activeMenu={activeMenu} onMenuChange={setActiveMenu} onOpenCheckin={() => setCheckinModalOpen(true)} />
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64 pt-16 lg:pt-0 h-screen overflow-hidden">
