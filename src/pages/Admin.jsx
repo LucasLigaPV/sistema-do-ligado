@@ -40,6 +40,7 @@ export default function Admin() {
     return urlParams.get("menu") || "indicacoes";
   });
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [checkinModalOpen, setCheckinModalOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
