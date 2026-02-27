@@ -7,8 +7,7 @@ import { CheckCircle2, Clock, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-export default function ModalCheckin({ userEmail }) {
-  const [showModal, setShowModal] = useState(false);
+export default function ModalCheckin({ userEmail, open, onOpenChange }) {
   const queryClient = useQueryClient();
 
   const { data: checkins = [] } = useQuery({
