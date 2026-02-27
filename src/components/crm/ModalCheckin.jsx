@@ -71,7 +71,7 @@ export default function ModalCheckin({ userEmail, open, onOpenChange }) {
   };
 
   return (
-    <Dialog open={showModal} onOpenChange={setShowModal}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
