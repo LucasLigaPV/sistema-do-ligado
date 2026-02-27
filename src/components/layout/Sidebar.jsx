@@ -55,7 +55,6 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
     mutationFn: (data) => base44.entities.Checkin.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checkins"] });
-      setShowCheckinModal(false);
     },
   });
 
