@@ -58,6 +58,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     plano_interesse: "",
     origem: "indicacao",
     data_entrada: format(new Date(), "yyyy-MM-dd"),
+    hora_entrada: format(new Date(), "HH:mm"),
     valor_mensalidade: "",
     valor_adesao: "",
     plataforma: "",
