@@ -170,12 +170,21 @@ export default function Distribuicao({ userFuncao }) {
     },
   });
 
-  // Filtrar apenas vendedores e líderes, excluindo admin e master
-  // Exclui apenas quem tem role="admin" ou funcao="master"
+  // Coletar todos os emails que estão em equipes ativas (líderes + membros)
+  const emailsEmEquipes = React.useMemo(() => {
+    const emails = new Set();
+    equipes.filter(e => e.ativa !== false).forEach(e => {
+      if (e.lider_email) emails.add(e.lider_email);
+      (e.membros || []).forEach(m => emails.add(m));
+    });
+    return emails;
+  }, [equipes]);
+
+  // Filtrar apenas usuários que fazem parte de equipes ativas, excluindo admin
   const vendedoresLideres = users.filter(u => {
     if (u.role === "admin") return false;
     if (u.funcao === "master") return false;
-    return true;
+    return emailsEmEquipes.has(u.email);
   });
 
   // Calcular taxa de conversão
