@@ -171,11 +171,11 @@ export default function Distribuicao({ userFuncao }) {
   });
 
   // Filtrar apenas vendedores e líderes, excluindo admin e master
-  // Suporta tanto o campo "funcao" (fallback) quanto "role" (User entity)
+  // Exclui apenas quem tem role="admin" ou funcao="master"
   const vendedoresLideres = users.filter(u => {
-    const funcao = u.funcao || u.role;
-    return (funcao === "vendedor" || funcao === "lider" || funcao === "user") && 
-      u.role !== "admin";
+    if (u.role === "admin") return false;
+    if (u.funcao === "master") return false;
+    return true;
   });
 
   // Calcular taxa de conversão
