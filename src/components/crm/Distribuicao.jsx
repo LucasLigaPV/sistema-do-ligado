@@ -324,14 +324,37 @@ export default function Distribuicao({ userFuncao }) {
     const leadsEmbaralhados = shuffleArray(leadsNaoDistribuidos);
 
     if (isSabado) {
-      // Sábado: 5 leads por pessoa (randômico)
       const limite = parseInt(limiteLeadsSabado);
+      const totalNecessario = limite * vendedoresElegiveis.length;
+      const totalDisponivel = leadsEmbaralhados.length;
+
+      // Calcular quantos leads cada vendedor vai receber
+      let leadsParaCadaUm = limite;
+
+      if (totalDisponivel < totalNecessario) {
+        // Distribuição igualitária com o que tem
+        leadsParaCadaUm = Math.floor(totalDisponivel / vendedoresElegiveis.length);
+
+        if (leadsParaCadaUm === 0) {
+          alert(`Não há leads suficientes para distribuir. São necessários pelo menos ${vendedoresElegiveis.length} leads (1 por vendedor), mas há apenas ${totalDisponivel} disponíveis.`);
+          return;
+        }
+
+        const confirmado = window.confirm(
+          `Não há leads suficientes para distribuir ${limite} por vendedor.\n\n` +
+          `Total disponível: ${totalDisponivel} leads\n` +
+          `Vendedores elegíveis: ${vendedoresElegiveis.length}\n\n` +
+          `Deseja distribuir ${leadsParaCadaUm} lead(s) para cada vendedor?`
+        );
+
+        if (!confirmado) return;
+      }
+
       let leadsParaDistribuir = [...leadsEmbaralhados];
 
       vendedoresElegiveis.forEach(vendedor => {
-        const leadsVendedor = leadsParaDistribuir.slice(0, limite);
+        const leadsVendedor = leadsParaDistribuir.slice(0, leadsParaCadaUm);
         leadsVendedor.forEach(lead => {
-          // Criar negociação
           createNegociacaoMutation.mutate({
             vendedor_email: vendedor.email,
             etapa: "novo_lead",
@@ -352,14 +375,13 @@ export default function Distribuicao({ userFuncao }) {
             pagina: lead.pagina || ""
           });
           
-          // Marcar lead como distribuído
           updateLeadMutation.mutate({
             id: lead.id,
             data: { distribuido: true }
           });
         });
         
-        leadsParaDistribuir = leadsParaDistribuir.slice(limite);
+        leadsParaDistribuir = leadsParaDistribuir.slice(leadsParaCadaUm);
       });
     } else {
       // Segunda a sexta: distribuição proporcional à taxa de conversão (randômico)
