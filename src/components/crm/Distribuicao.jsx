@@ -770,7 +770,21 @@ export default function Distribuicao({ userFuncao }) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ["users"] });
+                    queryClient.invalidateQueries({ queryKey: ["equipes"] });
+                  }}
+                  className="gap-2 text-slate-600 border-slate-200 hover:bg-slate-50"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Atualizar
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
