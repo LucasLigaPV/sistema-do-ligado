@@ -778,6 +778,9 @@ export default function Distribuicao({ userFuncao }) {
                   onClick={() => {
                     queryClient.invalidateQueries({ queryKey: ["users"] });
                     queryClient.invalidateQueries({ queryKey: ["equipes"] });
+                    queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+                    queryClient.invalidateQueries({ queryKey: ["checkins"] });
+                    queryClient.invalidateQueries({ queryKey: ["leads"] });
                   }}
                   className="gap-2 text-slate-600 border-slate-200 hover:bg-slate-50"
                 >
