@@ -33,14 +33,24 @@ import { toZonedTime, format as formatTZ } from "date-fns-tz";
 
 const TZ = "America/Sao_Paulo";
 
+// Garante que a string seja tratada como UTC (adiciona Z se não tiver)
+const toUTC = (isoString) => {
+  if (!isoString) return null;
+  const s = isoString.trim();
+  // Se já tem offset ou Z, usa direto; senão assume UTC
+  return /[Z+\-]\d*$/.test(s) ? new Date(s) : new Date(s + "Z");
+};
+
 const formatBR = (isoString, fmt) => {
-  if (!isoString) return "-";
-  return formatTZ(toZonedTime(new Date(isoString), TZ), fmt, { timeZone: TZ });
+  const d = toUTC(isoString);
+  if (!d) return "-";
+  return formatTZ(toZonedTime(d, TZ), fmt, { timeZone: TZ });
 };
 
 const isTodayBR = (isoString) => {
-  if (!isoString) return false;
-  const zonedDate = toZonedTime(new Date(isoString), TZ);
+  const d = toUTC(isoString);
+  if (!d) return false;
+  const zonedDate = toZonedTime(d, TZ);
   const zonedNow = toZonedTime(new Date(), TZ);
   return formatTZ(zonedDate, "yyyy-MM-dd", { timeZone: TZ }) === formatTZ(zonedNow, "yyyy-MM-dd", { timeZone: TZ });
 };
