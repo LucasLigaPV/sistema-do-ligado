@@ -410,8 +410,9 @@ export default function FilaLeads() {
                   </label>
                   <p className="text-sm mt-1">
                     {selectedLead.data
-                      ? format(new Date(selectedLead.data), "dd/MM/yyyy")
-                      : format(new Date(selectedLead.created_date), "dd/MM/yyyy")}
+                      ? formatUTC(selectedLead.data + "T00:00:00Z", "dd/MM/yyyy")
+                      : formatUTC(selectedLead.created_date, "dd/MM/yyyy")}
+                    {selectedLead.created_date && ` às ${formatUTC(selectedLead.created_date, "HH:mm")}`}
                   </p>
                 </div>
                 <div>
