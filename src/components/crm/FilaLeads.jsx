@@ -51,7 +51,15 @@ export default function FilaLeads() {
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads"],
     queryFn: () => base44.entities.Lead.list("-created_date"),
+    refetchInterval: 15000,
   });
+
+  useEffect(() => {
+    const unsubscribe = base44.entities.Lead.subscribe((event) => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    });
+    return unsubscribe;
+  }, [queryClient]);
 
 
 
