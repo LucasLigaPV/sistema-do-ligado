@@ -401,9 +401,9 @@ export default function FilaLeads() {
                   </label>
                   <p className="text-sm mt-1">
                     {selectedLead.data
-                      ? formatUTC(selectedLead.data + "T00:00:00Z", "dd/MM/yyyy")
-                      : formatUTC(selectedLead.created_date, "dd/MM/yyyy")}
-                    {selectedLead.created_date && ` às ${formatUTC(selectedLead.created_date, "HH:mm")}`}
+                      ? formatBR(selectedLead.data, "dd/MM/yyyy")
+                      : formatBR(selectedLead.created_date, "dd/MM/yyyy")}
+                    {selectedLead.created_date && ` às ${formatBR(selectedLead.created_date, "HH:mm")}`}
                   </p>
                 </div>
                 <div>
