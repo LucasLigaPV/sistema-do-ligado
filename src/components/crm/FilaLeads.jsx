@@ -29,29 +29,20 @@ import {
 } from "@/components/ui/dialog";
 import { Search, Eye, Trash2 } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
+import { toZonedTime, format as formatTZ } from "date-fns-tz";
 
-// Formata data/hora UTC do banco exatamente como está, sem converter fuso
-const formatUTC = (isoString, fmt) => {
+const TZ = "America/Sao_Paulo";
+
+const formatBR = (isoString, fmt) => {
   if (!isoString) return "-";
-  const d = new Date(isoString);
-  const pad = (n) => String(n).padStart(2, "0");
-  const map = {
-    "dd": pad(d.getUTCDate()),
-    "MM": pad(d.getUTCMonth() + 1),
-    "yyyy": d.getUTCFullYear(),
-    "HH": pad(d.getUTCHours()),
-    "mm": pad(d.getUTCMinutes()),
-  };
-  return fmt.replace(/dd|MM|yyyy|HH|mm/g, (m) => map[m]);
+  return formatTZ(toZonedTime(new Date(isoString), TZ), fmt, { timeZone: TZ });
 };
 
-const isTodayUTC = (isoString) => {
+const isTodayBR = (isoString) => {
   if (!isoString) return false;
-  const d = new Date(isoString);
-  const now = new Date();
-  return d.getUTCFullYear() === now.getUTCFullYear() &&
-    d.getUTCMonth() === now.getUTCMonth() &&
-    d.getUTCDate() === now.getUTCDate();
+  const zonedDate = toZonedTime(new Date(isoString), TZ);
+  const zonedNow = toZonedTime(new Date(), TZ);
+  return formatTZ(zonedDate, "yyyy-MM-dd", { timeZone: TZ }) === formatTZ(zonedNow, "yyyy-MM-dd", { timeZone: TZ });
 };
 
 
