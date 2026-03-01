@@ -331,10 +331,10 @@ export default function FilaLeads() {
                     <TableRow key={lead.id}>
                       <TableCell className="whitespace-nowrap">
                         <div>{lead.data
-                          ? formatUTC(lead.data + "T00:00:00Z", "dd/MM/yyyy")
-                          : formatUTC(lead.created_date, "dd/MM/yyyy")}</div>
+                          ? formatBR(lead.data, "dd/MM/yyyy")
+                          : formatBR(lead.created_date, "dd/MM/yyyy")}</div>
                         {lead.created_date && (
-                          <div className="text-xs text-slate-400">{formatUTC(lead.created_date, "HH:mm")}</div>
+                          <div className="text-xs text-slate-400">{formatBR(lead.created_date, "HH:mm")}</div>
                         )}
                       </TableCell>
                       <TableCell className="font-medium">{lead.nome}</TableCell>
