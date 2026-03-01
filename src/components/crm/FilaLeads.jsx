@@ -28,7 +28,31 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Search, Eye, Trash2 } from "lucide-react";
-import { format, startOfMonth, endOfMonth, isToday } from "date-fns";
+import { format, startOfMonth, endOfMonth } from "date-fns";
+
+// Formata data/hora UTC do banco exatamente como está, sem converter fuso
+const formatUTC = (isoString, fmt) => {
+  if (!isoString) return "-";
+  const d = new Date(isoString);
+  const pad = (n) => String(n).padStart(2, "0");
+  const map = {
+    "dd": pad(d.getUTCDate()),
+    "MM": pad(d.getUTCMonth() + 1),
+    "yyyy": d.getUTCFullYear(),
+    "HH": pad(d.getUTCHours()),
+    "mm": pad(d.getUTCMinutes()),
+  };
+  return fmt.replace(/dd|MM|yyyy|HH|mm/g, (m) => map[m]);
+};
+
+const isTodayUTC = (isoString) => {
+  if (!isoString) return false;
+  const d = new Date(isoString);
+  const now = new Date();
+  return d.getUTCFullYear() === now.getUTCFullYear() &&
+    d.getUTCMonth() === now.getUTCMonth() &&
+    d.getUTCDate() === now.getUTCDate();
+};
 
 
 
