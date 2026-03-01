@@ -48,6 +48,17 @@ export default function FilaLeads() {
 
   const queryClient = useQueryClient();
 
+  const deleteLeadMutation = useMutation({
+    mutationFn: (id) => base44.entities.Lead.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["leads"] }),
+  });
+
+  const handleDelete = (lead) => {
+    if (window.confirm(`Excluir o lead "${lead.nome}"? Esta ação não pode ser desfeita.`)) {
+      deleteLeadMutation.mutate(lead.id);
+    }
+  };
+
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads"],
     queryFn: () => base44.entities.Lead.list("-created_date"),
