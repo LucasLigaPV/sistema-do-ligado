@@ -125,7 +125,7 @@ export default function FilaLeads() {
   const stats = {
     total: filteredLeads.length,
     novos: leads.filter((l) => {
-      return isTodayUTC(l.created_date || l.data);
+      return isTodayBR(l.created_date || l.data);
     }).length,
     naFila: filteredLeads.filter((l) => !l.distribuido).length,
   };
