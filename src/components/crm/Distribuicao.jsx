@@ -760,8 +760,31 @@ export default function Distribuicao({ userFuncao }) {
     setQuantidadeLeads(1);
   };
 
+  const turnoLabels = { "1_turno": "1º Turno", "2_turno": "2º Turno", "sabado": "Sábado" };
+
   return (
     <>
+    {/* Toast de confirmação */}
+    <AnimatePresence>
+      {toastInfo && (
+        <motion.div
+          initial={{ opacity: 0, y: 60, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 40, scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700"
+        >
+          <div className="w-8 h-8 rounded-full bg-[#EFC200] flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-4 h-4 text-black" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold leading-none">{turnoLabels[toastInfo.turno]} distribuído</p>
+            <p className="text-xs text-slate-400 mt-1">{toastInfo.totalLeads} leads enviados com sucesso</p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
     <div className="space-y-6">
       <Tabs defaultValue="dashboard">
         <TabsList className="bg-transparent p-0 gap-3 h-auto border-0">
