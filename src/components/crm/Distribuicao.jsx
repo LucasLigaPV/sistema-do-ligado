@@ -463,6 +463,28 @@ export default function Distribuicao({ userFuncao }) {
         
         leadsParaDistribuir = leadsParaDistribuir.slice(leadsParaCadaUm);
       });
+
+      // Registro histórico - sábado
+      const agora2 = new Date();
+      createHistoricoMutation.mutate({
+        data: format(agora2, "yyyy-MM-dd"),
+        hora: format(agora2, "HH:mm"),
+        tipo: "sabado",
+        total_leads: leadsParaCadaUm * vendedoresElegiveis.length,
+        realizado_por: "",
+        detalhes: vendedoresElegiveis.map(vendedor => {
+          const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
+          return {
+            vendedor_email: vendedor.email,
+            vendedor_nome: vendedor.full_name || vendedor.email,
+            leads_recebidos: leadsParaCadaUm,
+            percentual: 100,
+            fez_checkin: !!checkin,
+            checkin_hora: checkin?.hora || "",
+            checkin_no_prazo: checkin?.dentro_prazo || false
+          };
+        })
+      });
     } else {
       // Segunda a sexta: distribuição percentual por vendedor (fatia igual base + percentual individual)
       const n = vendedoresElegiveis.length;
