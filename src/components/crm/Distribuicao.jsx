@@ -484,7 +484,6 @@ export default function Distribuicao({ userFuncao }) {
       });
 
       // Registro histórico - sábado
-      const agora2 = new Date();
       createHistoricoMutation.mutate({
         data: hojeEmBrasilia(),
         hora: horaEmBrasilia(),
