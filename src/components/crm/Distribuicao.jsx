@@ -743,6 +743,7 @@ export default function Distribuicao({ userFuncao }) {
   };
 
   return (
+    <>
     <div className="space-y-6">
       <Tabs defaultValue="dashboard">
         <TabsList className="bg-transparent p-0 gap-3 h-auto border-0">
