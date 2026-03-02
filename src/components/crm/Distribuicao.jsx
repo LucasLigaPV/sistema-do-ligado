@@ -363,7 +363,7 @@ export default function Distribuicao({ userFuncao }) {
     if (horaAtual < horarioLimiteSemana) {
       // Mostrar leads que chegaram até o horário da manhã
       const leadCreatedDate = l.created_date ? new Date(l.created_date) : null;
-      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? format(leadCreatedDate, "HH:mm") : "00:00";
+      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? formatarHoraEmBrasilia(leadCreatedDate) : "00:00";
       return leadHora < horarioLimiteSemana;
     } else if (horaAtual < horarioLimiteTarde) {
       // Entre manhã e tarde: não mostrar nenhum lead de hoje ainda
@@ -371,7 +371,7 @@ export default function Distribuicao({ userFuncao }) {
     } else {
       // Após horário da tarde: mostrar leads que chegaram após horário da manhã
       const leadCreatedDate = l.created_date ? new Date(l.created_date) : null;
-      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? format(leadCreatedDate, "HH:mm") : "00:00";
+      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? formatarHoraEmBrasilia(leadCreatedDate) : "00:00";
       return leadHora >= horarioLimiteSemana;
     }
   });
