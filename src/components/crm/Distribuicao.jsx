@@ -219,6 +219,40 @@ export default function Distribuicao({ userFuncao }) {
     }
   };
 
+  const salvarTodosPercentuais = async () => {
+    setSavingPercentuais(true);
+    setSavedPercentuais(false);
+    const promises = vendedoresLideres.map(vendedor => {
+      const valor = percentuaisEdit[vendedor.email] !== undefined
+        ? percentuaisEdit[vendedor.email]
+        : getPercentualVendedor(vendedor.email);
+      return new Promise(resolve => { salvarPercentualVendedor(vendedor.email, valor); resolve(); });
+    });
+    await Promise.all(promises);
+    await new Promise(r => setTimeout(r, 800));
+    setSavingPercentuais(false);
+    setSavedPercentuais(true);
+    setTimeout(() => setSavedPercentuais(false), 3000);
+  };
+
+  const salvarTodosHorarios = async () => {
+    setSavingHorarios(true);
+    setSavedHorarios(false);
+    const campos = [
+      { tipo: "horario_limite_semana", valor: horariosSemana.limite || horarioLimiteSemana },
+      { tipo: "horario_distribuicao_1turno", valor: horariosSemana.dist1 || horarioDistribuicao1Turno },
+      { tipo: "horario_distribuicao_2turno", valor: horariosSemana.dist2 || horarioDistribuicao2Turno },
+      { tipo: "horario_limite_sabado", valor: horariosSabado.limite || horarioLimiteSabado },
+      { tipo: "horario_distribuicao_sabado", valor: horariosSabado.dist || horarioDistribuicaoSabado },
+      { tipo: "limite_leads_sabado", valor: String(horariosSabado.limite_leads || limiteLeadsSabado) },
+    ];
+    campos.forEach(({ tipo, valor }) => salvarConfiguracao(tipo, valor));
+    await new Promise(r => setTimeout(r, 800));
+    setSavingHorarios(false);
+    setSavedHorarios(true);
+    setTimeout(() => setSavedHorarios(false), 3000);
+  };
+
   // Verificar check-in de hoje
   const hoje = format(new Date(), "yyyy-MM-dd");
   const checkinsHoje = checkins.filter(c => c.data === hoje);
