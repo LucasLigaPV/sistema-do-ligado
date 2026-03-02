@@ -1745,5 +1745,72 @@ export default function Distribuicao({ userFuncao }) {
         </TabsContent>
       </Tabs>
     </div>
+
+      {/* Modal de Detalhes do Histórico */}
+      <Dialog open={!!historicoSelecionado} onOpenChange={() => setHistoricoSelecionado(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="w-5 h-5" />
+              Detalhes da Distribuição
+            </DialogTitle>
+            {historicoSelecionado && (
+              <p className="text-sm text-slate-500">
+                {historicoSelecionado.data ? new Date(historicoSelecionado.data + "T12:00:00").toLocaleDateString("pt-BR") : "-"} às {historicoSelecionado.hora} —{" "}
+                {{
+                  "1_turno": "1º Turno",
+                  "2_turno": "2º Turno",
+                  "sabado": "Sábado",
+                  "manual": "Manual"
+                }[historicoSelecionado.tipo] || historicoSelecionado.tipo}
+                {" "}· {historicoSelecionado.total_leads} leads no total
+              </p>
+            )}
+          </DialogHeader>
+          {historicoSelecionado && (
+            <div className="mt-2">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Vendedor</TableHead>
+                    <TableHead className="text-center">Leads</TableHead>
+                    <TableHead className="text-center">% Definido</TableHead>
+                    <TableHead>Check-in</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(historicoSelecionado.detalhes || []).map((d, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium text-slate-900">{d.vendedor_nome || d.vendedor_email}</TableCell>
+                      <TableCell className="text-center">
+                        <span className="font-bold text-slate-900">{d.leads_recebidos}</span>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className={`font-semibold ${d.percentual >= 100 ? "border-slate-300 text-slate-700" : "border-[#EFC200] text-[#D4A900]"}`}>
+                          {d.percentual}%
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {d.fez_checkin ? (
+                          <div className="flex items-center gap-2">
+                            {d.checkin_no_prazo ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-500" />
+                            )}
+                            <span className="text-sm text-slate-600">{d.checkin_hora}</span>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-sm">Sem check-in</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
   );
 }
