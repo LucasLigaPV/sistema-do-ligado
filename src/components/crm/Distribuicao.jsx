@@ -378,16 +378,16 @@ export default function Distribuicao({ userFuncao }) {
     distribuindoRef.current = true;
 
     try {
-    const agora = new Date();
-    // "e" em date-fns-tz: 1=dom, 2=seg, ..., 7=sab
-    const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
-    const isSabado = diaNum === 7;
-    const isDomingo = diaNum === 1;
+      const agora = new Date();
+      // "e" em date-fns-tz: 1=dom, 2=seg, ..., 7=sab
+      const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
+      const isSabado = diaNum === 7;
+      const isDomingo = diaNum === 1;
 
-    if (isDomingo) {
-      alert("Não há distribuição aos domingos!");
-      return;
-    }
+      if (isDomingo) {
+        alert("Não há distribuição aos domingos!");
+        return;
+      }
 
     // Determinar turno para animação
     const turnoAtual = turnoForcar || (isSabado ? "sabado" : horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno");
