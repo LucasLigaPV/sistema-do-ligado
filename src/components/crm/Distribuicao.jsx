@@ -1164,7 +1164,7 @@ export default function Distribuicao({ userFuncao }) {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Validação de Chegada (2º Turno) - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
+                    <CardTitle>Validação de Chegada (2º Turno) - {formatInTimeZone(new Date(), TZ, "dd/MM/yyyy")}</CardTitle>
                     <p className="text-sm text-slate-700 mt-1 font-medium">
                       {horaAtual < horarioDistribuicao2Turno ? (
                         <span className="text-slate-500 font-medium flex items-center gap-2">
