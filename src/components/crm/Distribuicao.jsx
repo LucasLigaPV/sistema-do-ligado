@@ -88,6 +88,18 @@ export default function Distribuicao({ userFuncao }) {
     queryFn: () => base44.entities.ValidacaoChegada.list(),
   });
 
+  const { data: historicos = [] } = useQuery({
+    queryKey: ["historico_distribuicao"],
+    queryFn: () => base44.entities.HistoricoDistribuicao.list("-created_date", 100),
+  });
+
+  const createHistoricoMutation = useMutation({
+    mutationFn: (data) => base44.entities.HistoricoDistribuicao.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["historico_distribuicao"] });
+    },
+  });
+
   // Construir lista de usuários a partir de outras entidades (fallback quando user.list falha)
   const users = React.useMemo(() => {
     if (usersAdmin.length > 0) return usersAdmin;
