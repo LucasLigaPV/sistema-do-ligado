@@ -1159,7 +1159,7 @@ export default function Distribuicao({ userFuncao }) {
           </Card>
 
           {/* Validação 2º Turno - Apenas Segunda a Sexta */}
-          {agora.getDay() !== 6 && agora.getDay() !== 0 && (
+          {!ehSabado && !ehDomingo && (
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
