@@ -571,11 +571,10 @@ export default function Distribuicao({ userFuncao }) {
       });
 
       // Registro histórico - seg-sex
-      const agora3 = new Date();
       const tipoTurno = horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno";
       createHistoricoMutation.mutate({
-        data: format(agora3, "yyyy-MM-dd"),
-        hora: format(agora3, "HH:mm"),
+        data: hojeEmBrasilia(),
+        hora: horaEmBrasilia(),
         tipo: tipoTurno,
         total_leads: Object.values(distribuicaoPorVendedor).reduce((sum, arr) => sum + arr.length, 0),
         realizado_por: "",
