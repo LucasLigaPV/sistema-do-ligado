@@ -1339,6 +1339,75 @@ export default function Distribuicao({ userFuncao }) {
           </Card>
         </TabsContent>
 
+        {/* Histórico de Distribuições */}
+        <TabsContent value="historico" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Histórico de Distribuições
+              </CardTitle>
+              <p className="text-sm text-slate-500">Registro de todos os envios de leads realizados.</p>
+            </CardHeader>
+            <CardContent>
+              {historicos.length === 0 ? (
+                <div className="text-center py-10 text-slate-400">
+                  Nenhuma distribuição registrada ainda
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Hora</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Total de Leads</TableHead>
+                      <TableHead>Vendedores</TableHead>
+                      <TableHead className="text-right">Detalhes</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {historicos.map(h => {
+                      const tipoLabel = {
+                        "1_turno": "1º Turno",
+                        "2_turno": "2º Turno",
+                        "sabado": "Sábado",
+                        "manual": "Manual"
+                      }[h.tipo] || h.tipo;
+                      return (
+                        <TableRow key={h.id}>
+                          <TableCell className="font-medium">
+                            {h.data ? new Date(h.data + "T12:00:00").toLocaleDateString("pt-BR") : "-"}
+                          </TableCell>
+                          <TableCell>{h.hora}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className={`font-medium ${h.tipo === "manual" ? "border-[#EFC200] text-[#D4A900]" : "border-slate-300 text-slate-700"}`}>
+                              {tipoLabel}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="font-semibold">{h.total_leads}</TableCell>
+                          <TableCell className="text-slate-500 text-sm">{h.detalhes?.length || 0} vendedor(es)</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setHistoricoSelecionado(h)}
+                              className="gap-1 text-slate-600 hover:text-slate-900"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Ver
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Configurações */}
         <TabsContent value="configuracoes" className="space-y-4">
 
