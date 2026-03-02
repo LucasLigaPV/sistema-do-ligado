@@ -803,49 +803,33 @@ export default function Distribuicao({ userFuncao }) {
                 {/* Botões Segunda a Sexta */}
                 {agora.getDay() !== 6 && agora.getDay() !== 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <button
-                      onClick={distribuirLeads}
+                    {/* Botão 1º Turno */}
+                    <DistribuirButton
+                      turno="1_turno"
+                      label="1º Turno"
+                      sublabel="Distribuir leads da manhã"
+                      horario={horarioDistribuicao1Turno}
+                      horaAtual={horaAtual}
                       disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicao1Turno}
-                      title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicao1Turno ? `Disponível a partir de ${horarioDistribuicao1Turno}` : ""}
-                      className="flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                          <PlayCircle className="w-5 h-5 text-slate-600" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-medium text-slate-900">1º Turno</div>
-                          <div className="text-xs text-slate-500">Distribuir leads da manhã</div>
-                        </div>
-                      </div>
-                      {horaAtual < horarioDistribuicao1Turno && (
-                        <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
-                          {horarioDistribuicao1Turno}
-                        </Badge>
-                      )}
-                    </button>
+                      distribuindo={distribuindoTurno === "1_turno"}
+                      confirmando={confirmacaoTurno === "1_turno"}
+                      jaDistribuido={turnoDistribuido["1_turno"]}
+                      onClick={() => distribuirLeads("1_turno")}
+                    />
 
-                    <button
-                      onClick={distribuirLeads}
+                    {/* Botão 2º Turno */}
+                    <DistribuirButton
+                      turno="2_turno"
+                      label="2º Turno"
+                      sublabel="Distribuir leads da tarde"
+                      horario={horarioDistribuicao2Turno}
+                      horaAtual={horaAtual}
                       disabled={leadsNaoDistribuidos.length === 0 || !isValidado2Turno || horaAtual < horarioDistribuicao2Turno}
-                      title={!isValidado2Turno ? "É necessário validar as chegadas do 2º turno primeiro" : horaAtual < horarioDistribuicao2Turno ? `Disponível a partir de ${horarioDistribuicao2Turno}` : ""}
-                      className="flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                          <PlayCircle className="w-5 h-5 text-slate-600" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-medium text-slate-900">2º Turno</div>
-                          <div className="text-xs text-slate-500">Distribuir leads da tarde</div>
-                        </div>
-                      </div>
-                      {horaAtual < horarioDistribuicao2Turno && (
-                        <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
-                          {horarioDistribuicao2Turno}
-                        </Badge>
-                      )}
-                    </button>
+                      distribuindo={distribuindoTurno === "2_turno"}
+                      confirmando={confirmacaoTurno === "2_turno"}
+                      jaDistribuido={turnoDistribuido["2_turno"]}
+                      onClick={() => distribuirLeads("2_turno")}
+                    />
                   </div>
                 )}
 
