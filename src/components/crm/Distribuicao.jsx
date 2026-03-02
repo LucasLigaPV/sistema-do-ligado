@@ -169,16 +169,10 @@ export default function Distribuicao({ userFuncao }) {
 
   const updateLeadMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Lead.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leads"] });
-    },
   });
 
   const createNegociacaoMutation = useMutation({
     mutationFn: (data) => base44.entities.Negociacao.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
-    },
   });
 
   const updateConfigMutation = useMutation({
