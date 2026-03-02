@@ -32,6 +32,10 @@ export default function Distribuicao({ userFuncao }) {
   const [horariosSabado, setHorariosSabado] = useState({});
   const [percentuaisEdit, setPercentuaisEdit] = useState({});
   const [historicoSelecionado, setHistoricoSelecionado] = useState(null);
+  const [distribuindoTurno, setDistribuindoTurno] = useState(null); // null | "1_turno" | "2_turno" | "sabado"
+  const [confirmacaoTurno, setConfirmacaoTurno] = useState(null); // null | "1_turno" | "2_turno" | "sabado"
+  const [turnoDistribuido, setTurnoDistribuido] = useState({}); // { "1_turno": true } etc.
+  const [toastInfo, setToastInfo] = useState(null); // { turno, totalLeads }
 
   const queryClient = useQueryClient();
 
