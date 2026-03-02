@@ -696,6 +696,24 @@ export default function Distribuicao({ userFuncao }) {
       });
     });
 
+    const agora2 = new Date();
+    createHistoricoMutation.mutate({
+      data: format(agora2, "yyyy-MM-dd"),
+      hora: format(agora2, "HH:mm"),
+      tipo: "manual",
+      total_leads: quantidade,
+      realizado_por: "",
+      detalhes: [{
+        vendedor_email: vendedorSelecionado,
+        vendedor_nome: getNomeUsuario(vendedorSelecionado),
+        leads_recebidos: quantidade,
+        percentual: getPercentualVendedor(vendedorSelecionado),
+        fez_checkin: !!checkinsHoje.find(c => c.usuario_email === vendedorSelecionado),
+        checkin_hora: checkinsHoje.find(c => c.usuario_email === vendedorSelecionado)?.hora || "",
+        checkin_no_prazo: checkinsHoje.find(c => c.usuario_email === vendedorSelecionado)?.dentro_prazo || false
+      }]
+    });
+
     alert(`${quantidade} lead(s) distribuído(s) com sucesso para ${getNomeUsuario(vendedorSelecionado)}!`);
     setVendedorSelecionado("");
     setQuantidadeLeads(1);
