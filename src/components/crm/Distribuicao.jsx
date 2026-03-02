@@ -379,7 +379,10 @@ export default function Distribuicao({ userFuncao }) {
   // Distribuir leads com animação premium
   const distribuirLeads = async (turnoForcar) => {
     const agora = new Date();
-    const diaSemana = parseInt(formatInTimeZone(agora, TZ, "i")) % 7; // 0=dom, 6=sab
+    // "e" em date-fns-tz: 1=dom, 2=seg, ..., 7=sab
+    const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
+    const isSabado = diaNum === 7;
+    const isDomingo = diaNum === 1;
     const isSabado = diaSemana === 6;
     const isDomingo = diaSemana === 0;
 
