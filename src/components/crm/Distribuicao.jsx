@@ -737,10 +737,9 @@ export default function Distribuicao({ userFuncao }) {
       });
     });
 
-    const agora2 = new Date();
     createHistoricoMutation.mutate({
-      data: format(agora2, "yyyy-MM-dd"),
-      hora: format(agora2, "HH:mm"),
+      data: hojeEmBrasilia(),
+      hora: horaEmBrasilia(),
       tipo: "manual",
       total_leads: quantidade,
       realizado_por: "",
