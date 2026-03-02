@@ -618,7 +618,13 @@ export default function Distribuicao({ userFuncao }) {
     setToastInfo({ turno: turnoAtual, totalLeads: leadsNaoDistribuidosFrescos.length });
     setTimeout(() => { setConfirmacaoTurno(null); }, 3500);
     setTimeout(() => { setToastInfo(null); }, 5000);
-    distribuindoRef.current = false;
+    } catch (err) {
+      console.error("Erro na distribuição:", err);
+      alert("Ocorreu um erro durante a distribuição. Tente novamente.");
+      setDistribuindoTurno(null);
+    } finally {
+      distribuindoRef.current = false;
+    }
   };
 
   const getNomeUsuario = (email) => {
