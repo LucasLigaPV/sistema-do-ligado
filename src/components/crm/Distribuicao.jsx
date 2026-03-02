@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, Clock, Settings, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send, LayoutDashboard, RefreshCw, Percent, BookOpen, Save, Loader2, History, Eye } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Settings, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send, LayoutDashboard, RefreshCw, Percent, BookOpen, Save, Loader2, History, Eye, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Distribuicao({ userFuncao }) {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
