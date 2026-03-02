@@ -830,7 +830,7 @@ export default function Distribuicao({ userFuncao }) {
             <CardContent>
               <div className="space-y-3">
                 {/* Botões Segunda a Sexta */}
-                {agora.getDay() !== 6 && agora.getDay() !== 0 && (
+                {!ehSabado && !ehDomingo && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {/* Botão 1º Turno */}
                     <DistribuirButton
