@@ -763,6 +763,11 @@ export default function Distribuicao({ userFuncao }) {
 
   const turnoLabels = { "1_turno": "1º Turno", "2_turno": "2º Turno", "sabado": "Sábado" };
 
+  // Dia da semana em Brasília (1=dom, 2=seg, ..., 7=sab)
+  const diaSemanaAtual = parseInt(formatInTimeZone(new Date(), TZ, "e"));
+  const ehSabado = diaSemanaAtual === 7;
+  const ehDomingo = diaSemanaAtual === 1;
+
   return (
     <>
     {/* Toast de confirmação */}
