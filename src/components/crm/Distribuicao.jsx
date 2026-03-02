@@ -599,8 +599,8 @@ export default function Distribuicao({ userFuncao }) {
     setTimeout(() => { setToastInfo(null); }, 5000);
     } catch (err) {
       console.error("Erro na distribuição:", err);
-      alert("Ocorreu um erro durante a distribuição. Tente novamente.");
       setDistribuindoTurno(null);
+      alert("Ocorreu um erro durante a distribuição. Tente novamente.\n\nErro: " + err.message);
     } finally {
       distribuindoRef.current = false;
     }
