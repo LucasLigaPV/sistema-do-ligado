@@ -373,14 +373,18 @@ export default function Distribuicao({ userFuncao }) {
 
   // Distribuir leads com animação premium
   const distribuirLeads = async (turnoForcar) => {
+    // Guard: evita duplo clique / reentrada
+    if (distribuindoRef.current) return;
+    distribuindoRef.current = true;
+
     const agora = new Date();
     // "e" em date-fns-tz: 1=dom, 2=seg, ..., 7=sab
     const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
     const isSabado = diaNum === 7;
     const isDomingo = diaNum === 1;
 
-
     if (isDomingo) {
+      distribuindoRef.current = false;
       alert("Não há distribuição aos domingos!");
       return;
     }
@@ -389,6 +393,10 @@ export default function Distribuicao({ userFuncao }) {
     const turnoAtual = turnoForcar || (isSabado ? "sabado" : horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno");
     setDistribuindoTurno(turnoAtual);
     await new Promise(r => setTimeout(r, 2200));
+
+    // Re-buscar leads frescos do servidor para evitar race condition com cache desatualizado
+    const leadsFrescos = await base44.entities.Lead.list();
+    const leadsNaoDistribuidosFrescos = leadsFrescos.filter(l => !l.distribuido);
 
     // Usar vendedores validados
     const vendedoresElegiveis = vendedoresLideres.filter(v => 
