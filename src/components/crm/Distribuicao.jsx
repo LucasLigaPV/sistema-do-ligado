@@ -484,8 +484,8 @@ export default function Distribuicao({ userFuncao }) {
       // Registro histórico - sábado
       const agora2 = new Date();
       createHistoricoMutation.mutate({
-        data: format(agora2, "yyyy-MM-dd"),
-        hora: format(agora2, "HH:mm"),
+        data: hojeEmBrasilia(),
+        hora: horaEmBrasilia(),
         tipo: "sabado",
         total_leads: leadsParaCadaUm * vendedoresElegiveis.length,
         realizado_por: "",
