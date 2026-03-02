@@ -377,7 +377,7 @@ export default function Distribuicao({ userFuncao }) {
       return;
     }
 
-    // Embaralhar leads para distribuição randômica
+    // Embaralhar array (Fisher-Yates) - usado para leads e para a fila de round-robin
     const shuffleArray = (array) => {
       const shuffled = [...array];
       for (let i = shuffled.length - 1; i > 0; i--) {
