@@ -888,7 +888,7 @@ export default function Distribuicao({ userFuncao }) {
                 )}
 
                 {/* Domingo - sem distribuição */}
-                {agora.getDay() === 0 && (
+                {ehDomingo && (
                   <div className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-500">
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
                       <XCircle className="w-5 h-5 text-slate-400" />
