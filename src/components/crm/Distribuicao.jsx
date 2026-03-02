@@ -871,7 +871,7 @@ export default function Distribuicao({ userFuncao }) {
                 )}
 
                 {/* Botão Sábado - apenas aos sábados */}
-                {agora.getDay() === 6 && (
+                {ehSabado && (
                   <DistribuirButton
                     turno="sabado"
                     label="Sábado"
