@@ -43,7 +43,7 @@ export default function Distribuicao({ userFuncao }) {
   const [confirmacaoTurno, setConfirmacaoTurno] = useState(null); // null | "1_turno" | "2_turno" | "sabado"
   const [turnoDistribuido, setTurnoDistribuido] = useState({}); // { "1_turno": true } etc.
   const [toastInfo, setToastInfo] = useState(null); // { turno, totalLeads }
-  const distribuindoRef = useRef(false); // guard para evitar duplo clique
+  const distribuindoRef = React.useRef(false); // guard para evitar duplo clique
 
   const queryClient = useQueryClient();
 
