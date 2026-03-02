@@ -927,7 +927,14 @@ export default function Distribuicao({ userFuncao }) {
                 <CardTitle className="text-sm font-medium text-slate-600">Leads na Fila</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-[#EFC200]">{leadsNaoDistribuidos.length}</div>
+                {distribuindoTurno ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+                    <span className="text-sm text-slate-400">Distribuindo...</span>
+                  </div>
+                ) : (
+                  <div className="text-3xl font-bold text-[#EFC200]">{leadsNaoDistribuidos.length}</div>
+                )}
               </CardContent>
             </Card>
 
