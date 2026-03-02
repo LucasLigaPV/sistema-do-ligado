@@ -1767,7 +1767,6 @@ export default function Distribuicao({ userFuncao }) {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
 
       {/* Modal de Detalhes do Histórico */}
       <Dialog open={!!historicoSelecionado} onOpenChange={() => setHistoricoSelecionado(null)}>
