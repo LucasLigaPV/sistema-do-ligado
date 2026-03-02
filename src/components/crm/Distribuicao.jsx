@@ -1836,5 +1836,6 @@ export default function Distribuicao({ userFuncao }) {
         </DialogContent>
       </Dialog>
     </div>
+    </>
   );
 }
