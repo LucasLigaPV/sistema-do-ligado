@@ -377,6 +377,7 @@ export default function Distribuicao({ userFuncao }) {
     if (distribuindoRef.current) return;
     distribuindoRef.current = true;
 
+    try {
     const agora = new Date();
     // "e" em date-fns-tz: 1=dom, 2=seg, ..., 7=sab
     const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
@@ -384,7 +385,6 @@ export default function Distribuicao({ userFuncao }) {
     const isDomingo = diaNum === 1;
 
     if (isDomingo) {
-      distribuindoRef.current = false;
       alert("Não há distribuição aos domingos!");
       return;
     }
