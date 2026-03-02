@@ -456,21 +456,44 @@ export default function Distribuicao({ userFuncao }) {
 
       // Fatia base igualitária para cada vendedor
       const fatiaBase = Math.floor(totalLeads / n);
-      // Sobras da divisão igualitária vão de volta à fila (não distribuídas)
-      const sobrasBase = totalLeads - fatiaBase * n;
-      // Usamos apenas fatiaBase * n leads (as sobrasBase ficam na fila)
+      // Usamos apenas fatiaBase * n leads (as sobras da divisão igualitária ficam na fila)
       const leadsParaUsar = leadsEmbaralhados.slice(0, fatiaBase * n);
 
-      // Para cada vendedor, aplica o percentual definido sobre a fatia base dele
+      // Vendedores com 100% recebem as sobras dos que têm % menor
+      const vendedores100 = vendedoresElegiveis.filter(v => getPercentualVendedor(v.email) >= 100);
+
+      // Coletar leads a distribuir para cada vendedor e acumular sobras
+      const distribuicaoPorVendedor = {};
+      vendedoresElegiveis.forEach(v => { distribuicaoPorVendedor[v.email] = []; });
+
+      let sobrasDasReducoes = [];
+
       let indice = 0;
       vendedoresElegiveis.forEach(vendedor => {
         const percentual = getPercentualVendedor(vendedor.email);
         const leadsDaFatia = leadsParaUsar.slice(indice, indice + fatiaBase);
         const quantidadeADistribuir = Math.floor(fatiaBase * percentual / 100);
-        const leadsVendedor = leadsDaFatia.slice(0, quantidadeADistribuir);
-        // Leads restantes da fatia (sobras do percentual < 100%) ficam na fila (não marcados como distribuído)
+        distribuicaoPorVendedor[vendedor.email] = leadsDaFatia.slice(0, quantidadeADistribuir);
+        // Sobras do percentual < 100% vão para redistribuição
+        const sobrasVendedor = leadsDaFatia.slice(quantidadeADistribuir);
+        sobrasDasReducoes = [...sobrasDasReducoes, ...sobrasVendedor];
+        indice += fatiaBase;
+      });
 
-        leadsVendedor.forEach(lead => {
+      // Redistribuir sobras via round-robin embaralhado entre vendedores com 100%
+      if (sobrasDasReducoes.length > 0 && vendedores100.length > 0) {
+        // Embaralhar a ordem dos vendedores 100% para evitar vantagem fixa
+        const vendedores100Embaralhados = shuffleArray([...vendedores100]);
+        sobrasDasReducoes.forEach((lead, i) => {
+          const vendedor = vendedores100Embaralhados[i % vendedores100Embaralhados.length];
+          distribuicaoPorVendedor[vendedor.email].push(lead);
+        });
+      }
+      // Se não há vendedores com 100%, as sobras ficam na fila (não são marcadas como distribuídas)
+
+      // Aplicar a distribuição final
+      vendedoresElegiveis.forEach(vendedor => {
+        distribuicaoPorVendedor[vendedor.email].forEach(lead => {
           createNegociacaoMutation.mutate({
             vendedor_email: vendedor.email,
             etapa: "novo_lead",
@@ -492,8 +515,6 @@ export default function Distribuicao({ userFuncao }) {
           });
           updateLeadMutation.mutate({ id: lead.id, data: { distribuido: true } });
         });
-
-        indice += fatiaBase;
       });
     }
 
