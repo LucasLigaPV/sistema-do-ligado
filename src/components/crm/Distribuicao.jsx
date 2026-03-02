@@ -662,6 +662,10 @@ export default function Distribuicao({ userFuncao }) {
             <Settings className="w-4 h-4" />
             Configurações
           </TabsTrigger>
+          <TabsTrigger value="regras" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
+            <BookOpen className="w-4 h-4" />
+            Regras
+          </TabsTrigger>
         </TabsList>
 
         {/* Dashboard */}
