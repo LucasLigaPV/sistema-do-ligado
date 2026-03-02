@@ -843,27 +843,19 @@ export default function Distribuicao({ userFuncao }) {
 
                 {/* Botão Sábado - apenas aos sábados */}
                 {agora.getDay() === 6 && (
-                  <button
-                    onClick={distribuirLeads}
+                  <DistribuirButton
+                    turno="sabado"
+                    label="Sábado"
+                    sublabel={`${limiteLeadsSabado} leads por vendedor`}
+                    horario={horarioDistribuicaoSabado}
+                    horaAtual={horaAtual}
                     disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
-                    title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
-                    className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                        <PlayCircle className="w-5 h-5 text-slate-600" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-slate-900">Sábado</div>
-                        <div className="text-xs text-slate-500">{limiteLeadsSabado} leads por vendedor</div>
-                      </div>
-                    </div>
-                    {horaAtual < horarioDistribuicaoSabado && (
-                      <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
-                        {horarioDistribuicaoSabado}
-                      </Badge>
-                    )}
-                  </button>
+                    distribuindo={distribuindoTurno === "sabado"}
+                    confirmando={confirmacaoTurno === "sabado"}
+                    jaDistribuido={turnoDistribuido["sabado"]}
+                    onClick={() => distribuirLeads("sabado")}
+                    fullWidth
+                  />
                 )}
 
                 {/* Domingo - sem distribuição */}
