@@ -735,6 +735,10 @@ export default function Distribuicao({ userFuncao }) {
             <Send className="w-4 h-4" />
             Distribuição Manual
           </TabsTrigger>
+          <TabsTrigger value="historico" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
+            <History className="w-4 h-4" />
+            Histórico
+          </TabsTrigger>
           <TabsTrigger value="configuracoes" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
             <Settings className="w-4 h-4" />
             Configurações
