@@ -22,6 +22,13 @@ export default function Distribuicao({ userFuncao }) {
   const [vendedoresValidados2Turno, setVendedoresValidados2Turno] = useState([]);
   const [vendedorSelecionado, setVendedorSelecionado] = useState("");
   const [quantidadeLeads, setQuantidadeLeads] = useState(1);
+  const [savingPercentuais, setSavingPercentuais] = useState(false);
+  const [savedPercentuais, setSavedPercentuais] = useState(false);
+  const [savingHorarios, setSavingHorarios] = useState(false);
+  const [savedHorarios, setSavedHorarios] = useState(false);
+  const [horariosSemana, setHorariosSemana] = useState({});
+  const [horariosSabado, setHorariosSabado] = useState({});
+  const [percentuaisEdit, setPercentuaisEdit] = useState({});
 
   const queryClient = useQueryClient();
 
