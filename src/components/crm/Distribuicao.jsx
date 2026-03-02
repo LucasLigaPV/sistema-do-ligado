@@ -1176,7 +1176,6 @@ export default function Distribuicao({ userFuncao }) {
 
                 <div className="border-t pt-4">
                   <h4 className="font-semibold mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5" />
                     Vendedores e Performance
                   </h4>
                   <Table>
