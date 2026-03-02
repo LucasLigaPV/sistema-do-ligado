@@ -862,7 +862,7 @@ export default function Distribuicao({ userFuncao }) {
                   </div>
                 )}
 
-                {!isValidado2Turno && agora.getDay() !== 6 && agora.getDay() !== 0 && (
+                {!isValidado2Turno && !ehSabado && !ehDomingo && (
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
                     <span>
                       Para distribuir leads do 2º turno, é necessário validar as chegadas do 2º turno
