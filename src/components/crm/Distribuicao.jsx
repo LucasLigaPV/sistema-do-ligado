@@ -12,7 +12,13 @@ import { CheckCircle2, XCircle, Clock, Settings, PlayCircle, Users, Calendar, Us
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import DistribuirButton from "./DistribuirButton";
 import { format, startOfMonth, endOfMonth } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { ptBR } from "date-fns/locale";
+
+const TZ = "America/Sao_Paulo";
+const hojeEmBrasilia = () => formatInTimeZone(new Date(), TZ, "yyyy-MM-dd");
+const horaEmBrasilia = () => formatInTimeZone(new Date(), TZ, "HH:mm");
+const formatarHoraEmBrasilia = (date) => formatInTimeZone(new Date(date), TZ, "HH:mm");
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Distribuicao({ userFuncao }) {
