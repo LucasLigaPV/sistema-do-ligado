@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, Clock, Settings, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send, LayoutDashboard, RefreshCw, Percent } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Settings, PlayCircle, Users, Calendar, UserCheck, UserX, Shield, Send, LayoutDashboard, RefreshCw, Percent, BookOpen, Save, Loader2 } from "lucide-react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
