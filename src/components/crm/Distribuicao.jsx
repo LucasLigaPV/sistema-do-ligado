@@ -335,41 +335,11 @@ export default function Distribuicao({ userFuncao }) {
   const horarioDistribuicao2Turno = getConfig("horario_distribuicao_2turno", "14:05");
   const horarioDistribuicaoSabado = getConfig("horario_distribuicao_sabado", "10:35");
 
-  // Leads não distribuídos - filtrar por período (manhã/tarde) em horário de Brasília
+  // Leads não distribuídos - sem filtro por horário de origem
   const agora = new Date();
   const horaAtual = horaEmBrasilia();
   
-  const leadsNaoDistribuidos = leads.filter(l => {
-    if (l.distribuido) return false;
-    
-    // Se não tem data, incluir
-    if (!l.data) return true;
-    
-    // Verificar se o lead é de hoje (em horário de Brasília)
-    const parsedLeadData = new Date(l.data);
-    if (isNaN(parsedLeadData)) return true;
-    const leadData = format(parsedLeadData, "yyyy-MM-dd");
-    const hoje = hojeEmBrasilia();
-    
-    if (leadData !== hoje) return true; // Leads de outros dias sempre disponíveis
-    
-    // Leads de hoje: verificar horário
-    // Se ainda não passou o horário da manhã, mostrar apenas leads da manhã
-    if (horaAtual < horarioLimiteSemana) {
-      // Mostrar leads que chegaram até o horário da manhã
-      const leadCreatedDate = l.created_date ? new Date(l.created_date) : null;
-      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? formatarHoraEmBrasilia(leadCreatedDate) : "00:00";
-      return leadHora < horarioLimiteSemana;
-    } else if (horaAtual < horarioLimiteTarde) {
-      // Entre manhã e tarde: não mostrar nenhum lead de hoje ainda
-      return false;
-    } else {
-      // Após horário da tarde: mostrar leads que chegaram após horário da manhã
-      const leadCreatedDate = l.created_date ? new Date(l.created_date) : null;
-      const leadHora = leadCreatedDate && !isNaN(leadCreatedDate) ? formatarHoraEmBrasilia(leadCreatedDate) : "00:00";
-      return leadHora >= horarioLimiteSemana;
-    }
-  });
+  const leadsNaoDistribuidos = leads.filter(l => !l.distribuido);
 
   // Distribuir leads com animação premium
   const distribuirLeads = async (turnoForcar) => {
