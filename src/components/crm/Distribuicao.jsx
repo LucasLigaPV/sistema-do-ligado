@@ -930,7 +930,6 @@ export default function Distribuicao({ userFuncao }) {
                     className="bg-slate-900 hover:bg-slate-800 text-white"
                     disabled={vendedoresValidados.length === 0 || createValidacaoMutation.isPending}
                   >
-                    <Shield className="w-4 h-4 mr-2" />
                     {isValidado && !modoEdicao ? "Validado" : "Validar Chegadas"}
                   </Button>
                 </div>
