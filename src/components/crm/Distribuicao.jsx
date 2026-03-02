@@ -369,8 +369,8 @@ export default function Distribuicao({ userFuncao }) {
     }
   });
 
-  // Distribuir leads
-  const distribuirLeads = () => {
+  // Distribuir leads com animação premium
+  const distribuirLeads = async (turnoForcar) => {
     const agora = new Date();
     const diaSemana = agora.getDay();
     const isSabado = diaSemana === 6;
