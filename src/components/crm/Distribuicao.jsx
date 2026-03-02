@@ -532,6 +532,30 @@ export default function Distribuicao({ userFuncao }) {
       });
     }
 
+    // Salvar histórico
+    const agora2 = new Date();
+    const tipoDistribuicao = isSabado ? "sabado" : (horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno");
+    const detalhesHistorico = vendedoresElegiveis.map(vendedor => {
+      const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
+      return {
+        vendedor_email: vendedor.email,
+        vendedor_nome: vendedor.full_name || vendedor.email,
+        leads_recebidos: isSabado ? leadsParaCadaUm : (distribuicaoPorVendedor?.[vendedor.email]?.length || 0),
+        percentual: isSabado ? 100 : getPercentualVendedor(vendedor.email),
+        fez_checkin: !!checkin,
+        checkin_hora: checkin?.hora || "",
+        checkin_no_prazo: checkin?.dentro_prazo || false
+      };
+    });
+    createHistoricoMutation.mutate({
+      data: format(agora2, "yyyy-MM-dd"),
+      hora: format(agora2, "HH:mm"),
+      tipo: tipoDistribuicao,
+      total_leads: isSabado ? leadsParaCadaUm * vendedoresElegiveis.length : leadsEmbaralhados.slice(0, Math.floor(leadsEmbaralhados.length / vendedoresElegiveis.length) * vendedoresElegiveis.length).length,
+      realizado_por: "",
+      detalhes: detalhesHistorico
+    });
+
     alert("Leads distribuídos com sucesso!");
   };
 
