@@ -1219,6 +1219,73 @@ export default function Distribuicao({ userFuncao }) {
 
         {/* Configurações */}
         <TabsContent value="configuracoes" className="space-y-4">
+
+          {/* Percentuais de Distribuição por Vendedor */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Percent className="w-5 h-5" />
+                Percentual de Distribuição por Vendedor
+              </CardTitle>
+              <p className="text-sm text-slate-500">
+                Define qual percentual da fatia de leads de cada vendedor será efetivamente distribuído. Leads fora do percentual retornam à fila.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Vendedor/Líder</TableHead>
+                    <TableHead className="w-48">% de Distribuição</TableHead>
+                    <TableHead className="text-slate-500 text-xs font-normal">Leads retornam à fila se &lt; 100%</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vendedoresLideres.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center text-slate-400 py-8">
+                        Nenhum vendedor/líder cadastrado em equipes ativas
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    vendedoresLideres.map(vendedor => {
+                      const percentual = getPercentualVendedor(vendedor.email);
+                      return (
+                        <TableRow key={vendedor.email}>
+                          <TableCell className="font-medium text-slate-900">
+                            {vendedor.full_name || vendedor.email}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Input
+                                type="number"
+                                min="0"
+                                max="100"
+                                defaultValue={percentual}
+                                onBlur={(e) => salvarPercentualVendedor(vendedor.email, e.target.value)}
+                                className="w-24 text-center"
+                              />
+                              <span className="text-slate-500 text-sm">%</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {percentual < 100 ? (
+                              <span className="text-xs text-[#D4A900] font-medium">
+                                {100 - percentual}% retorna à fila
+                              </span>
+                            ) : (
+                              <span className="text-xs text-slate-400">Distribuição completa</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
           {/* Regras Segunda a Sexta */}
           <Card>
             <CardHeader>
