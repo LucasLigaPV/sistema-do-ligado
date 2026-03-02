@@ -1260,13 +1260,30 @@ export default function Distribuicao({ userFuncao }) {
           {/* Percentuais de Distribuição por Vendedor */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Percent className="w-5 h-5" />
-                Percentual de Distribuição por Vendedor
-              </CardTitle>
-              <p className="text-sm text-slate-500">
-                Define qual percentual da fatia de leads de cada vendedor será efetivamente distribuído. Leads fora do percentual retornam à fila.
-              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Percent className="w-5 h-5" />
+                    Percentual de Distribuição por Vendedor
+                  </CardTitle>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Define qual percentual da fatia de leads de cada vendedor será efetivamente distribuído. Leads fora do percentual retornam à fila.
+                  </p>
+                </div>
+                <Button
+                  onClick={salvarTodosPercentuais}
+                  disabled={savingPercentuais}
+                  className={savedPercentuais ? "bg-green-600 hover:bg-green-700 text-white" : "bg-slate-900 hover:bg-slate-800 text-white"}
+                >
+                  {savingPercentuais ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</>
+                  ) : savedPercentuais ? (
+                    <><CheckCircle2 className="w-4 h-4 mr-2" />Salvo!</>
+                  ) : (
+                    <><Save className="w-4 h-4 mr-2" />Salvar</>
+                  )}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -1286,7 +1303,9 @@ export default function Distribuicao({ userFuncao }) {
                     </TableRow>
                   ) : (
                     vendedoresLideres.map(vendedor => {
-                      const percentual = getPercentualVendedor(vendedor.email);
+                      const percentualAtual = percentuaisEdit[vendedor.email] !== undefined
+                        ? percentuaisEdit[vendedor.email]
+                        : getPercentualVendedor(vendedor.email);
                       return (
                         <TableRow key={vendedor.email}>
                           <TableCell className="font-medium text-slate-900">
@@ -1298,17 +1317,17 @@ export default function Distribuicao({ userFuncao }) {
                                 type="number"
                                 min="0"
                                 max="100"
-                                defaultValue={percentual}
-                                onBlur={(e) => salvarPercentualVendedor(vendedor.email, e.target.value)}
+                                value={percentualAtual}
+                                onChange={(e) => setPercentuaisEdit(prev => ({ ...prev, [vendedor.email]: parseFloat(e.target.value) || 0 }))}
                                 className="w-24 text-center"
                               />
                               <span className="text-slate-500 text-sm">%</span>
                             </div>
                           </TableCell>
                           <TableCell>
-                            {percentual < 100 ? (
+                            {percentualAtual < 100 ? (
                               <span className="text-xs text-[#D4A900] font-medium">
-                                {100 - percentual}% retorna à fila
+                                {100 - percentualAtual}% retorna à fila
                               </span>
                             ) : (
                               <span className="text-xs text-slate-400">Distribuição completa</span>
@@ -1323,103 +1342,250 @@ export default function Distribuicao({ userFuncao }) {
             </CardContent>
           </Card>
 
-          {/* Regras Segunda a Sexta */}
+          {/* Horários */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Regras de Segunda a Sexta
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Horários de Distribuição
+                </CardTitle>
+                <Button
+                  onClick={salvarTodosHorarios}
+                  disabled={savingHorarios}
+                  className={savedHorarios ? "bg-green-600 hover:bg-green-700 text-white" : "bg-slate-900 hover:bg-slate-800 text-white"}
+                >
+                  {savingHorarios ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</>
+                  ) : savedHorarios ? (
+                    <><CheckCircle2 className="w-4 h-4 mr-2" />Salvo!</>
+                  ) : (
+                    <><Save className="w-4 h-4 mr-2" />Salvar</>
+                  )}
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-semibold">Horário Limite</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioLimiteSemana}
-                    onBlur={(e) => salvarConfiguracao("horario_limite_semana", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário que qualifica ou desqualifica um vendedor para receber leads de acordo com o horário do seu check-in
-                  </p>
+            <CardContent className="space-y-6">
+              <div>
+                <p className="text-sm font-semibold text-slate-700 mb-3">Segunda a Sexta</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Horário Limite Check-in</Label>
+                    <Input
+                      type="time"
+                      value={horariosSemana.limite !== undefined ? horariosSemana.limite : horarioLimiteSemana}
+                      onChange={(e) => setHorariosSemana(prev => ({ ...prev, limite: e.target.value }))}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Até quando o check-in qualifica o vendedor para receber leads
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Distribuição 1º Turno</Label>
+                    <Input
+                      type="time"
+                      value={horariosSemana.dist1 !== undefined ? horariosSemana.dist1 : horarioDistribuicao1Turno}
+                      onChange={(e) => setHorariosSemana(prev => ({ ...prev, dist1: e.target.value }))}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Horário que libera o botão de distribuição da manhã
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Distribuição 2º Turno</Label>
+                    <Input
+                      type="time"
+                      value={horariosSemana.dist2 !== undefined ? horariosSemana.dist2 : horarioDistribuicao2Turno}
+                      onChange={(e) => setHorariosSemana(prev => ({ ...prev, dist2: e.target.value }))}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Horário que libera o botão de distribuição da tarde
+                    </p>
+                  </div>
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label className="font-semibold">Horário Distribuição 1º Turno</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioDistribuicao1Turno}
-                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_1turno", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário que libera o botão de distribuir leads do 1º turno no dashboard
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="font-semibold">Horário Distribuição 2º Turno</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioDistribuicao2Turno}
-                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_2turno", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário que libera o botão de distribuir leads do 2º turno no dashboard
-                  </p>
+              <div className="border-t pt-4">
+                <p className="text-sm font-semibold text-slate-700 mb-3">Sábado</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Horário Limite Check-in</Label>
+                    <Input
+                      type="time"
+                      value={horariosSabado.limite !== undefined ? horariosSabado.limite : horarioLimiteSabado}
+                      onChange={(e) => setHorariosSabado(prev => ({ ...prev, limite: e.target.value }))}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Até quando o check-in qualifica o vendedor para receber leads
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Horário Distribuição</Label>
+                    <Input
+                      type="time"
+                      value={horariosSabado.dist !== undefined ? horariosSabado.dist : horarioDistribuicaoSabado}
+                      onChange={(e) => setHorariosSabado(prev => ({ ...prev, dist: e.target.value }))}
+                    />
+                    <p className="text-xs text-slate-500">
+                      Horário que libera o botão de distribuição do sábado
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Limite de Leads por Vendedor</Label>
+                    <Input
+                      type="number"
+                      value={horariosSabado.limite_leads !== undefined ? horariosSabado.limite_leads : limiteLeadsSabado}
+                      onChange={(e) => setHorariosSabado(prev => ({ ...prev, limite_leads: e.target.value }))}
+                      min="1"
+                      max="20"
+                    />
+                    <p className="text-xs text-slate-500">
+                      Quantidade fixa de leads por vendedor aos sábados
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
 
-          {/* Regras Sábado */}
+        {/* Regras */}
+        <TabsContent value="regras" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Regras de Sábado
+                <BookOpen className="w-5 h-5" />
+                Como funciona a distribuição de leads
               </CardTitle>
+              <p className="text-sm text-slate-500">Descrição completa de todas as regras que o sistema segue ao distribuir leads.</p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-semibold">Horário Limite</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioLimiteSabado}
-                    onBlur={(e) => salvarConfiguracao("horario_limite_sabado", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário que qualifica ou desqualifica um vendedor para receber leads de acordo com o horário do seu check-in
-                  </p>
-                </div>
+            <CardContent className="space-y-6">
 
+              {/* Pré-requisitos */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-slate-800 text-sm uppercase tracking-wide">1. Pré-requisitos para distribuição</h3>
                 <div className="space-y-2">
-                  <Label className="font-semibold">Horário Distribuição Sábado</Label>
-                  <Input
-                    type="time"
-                    defaultValue={horarioDistribuicaoSabado}
-                    onBlur={(e) => salvarConfiguracao("horario_distribuicao_sabado", e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Horário que libera o botão de distribuir leads do sábado no dashboard
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="font-semibold">Limite de Leads</Label>
-                  <Input
-                    type="number"
-                    defaultValue={limiteLeadsSabado}
-                    onBlur={(e) => salvarConfiguracao("limite_leads_sabado", e.target.value)}
-                    min="1"
-                    max="20"
-                  />
-                  <p className="text-xs text-slate-500">
-                    Quantidade exata de leads distribuídos para cada vendedor aos sábados, ignorando taxa de conversão
-                  </p>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <CheckCircle2 className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Validação de chegada obrigatória</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Antes de distribuir, um líder ou administrador precisa validar quais vendedores estão presentes. Apenas os vendedores validados recebem leads.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <CheckCircle2 className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Horário liberado</p>
+                      <p className="text-xs text-slate-500 mt-0.5">O botão de distribuição só é habilitado após o horário configurado (atualmente: 1º turno às <strong>{horarioDistribuicao1Turno}</strong>, 2º turno às <strong>{horarioDistribuicao2Turno}</strong>, sábado às <strong>{horarioDistribuicaoSabado}</strong>).</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <CheckCircle2 className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Leads disponíveis na fila</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Só é possível distribuir se houver leads não distribuídos aguardando na fila.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div className="border-t" />
+
+              {/* Qualificação check-in */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-slate-800 text-sm uppercase tracking-wide">2. Qualificação pelo check-in</h3>
+                <div className="space-y-2">
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Clock className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Horário limite de check-in (seg–sex)</p>
+                      <p className="text-xs text-slate-500 mt-0.5">O vendedor precisa fazer check-in até <strong>{horarioLimiteSemana}</strong>. Quem fizer dentro do prazo é marcado como "no prazo" e fica elegível para validação. Quem fizer após esse horário é marcado como "fora do prazo".</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Clock className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Horário limite de check-in (sábado)</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Aos sábados o horário limite é <strong>{horarioLimiteSabado}</strong>. A lógica é a mesma dos dias úteis.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t" />
+
+              {/* Distribuição seg-sex */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-slate-800 text-sm uppercase tracking-wide">3. Distribuição de segunda a sexta</h3>
+                <div className="space-y-2">
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Users className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Divisão igualitária base</p>
+                      <p className="text-xs text-slate-500 mt-0.5">O total de leads disponíveis é dividido em fatias iguais entre todos os vendedores validados. Sobras da divisão (leads que não cabem igualmente) ficam na fila para a próxima distribuição.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Percent className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Aplicação do percentual individual</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Dentro da fatia de cada vendedor, o sistema distribui apenas o percentual configurado. Por exemplo: se a fatia é de 10 leads e o percentual é 80%, o vendedor recebe 8 leads — os 2 restantes voltam à fila.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Shield className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Leads que ficam na fila</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Leads não distribuídos (por sobra da divisão ou pelo percentual &lt; 100%) permanecem na fila e serão distribuídos na próxima vez que o botão for acionado.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <PlayCircle className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Dois turnos por dia</p>
+                      <p className="text-xs text-slate-500 mt-0.5">O sistema tem 1º turno (manhã) e 2º turno (tarde). Cada turno exige uma validação de chegada própria. Leads são separados por horário de chegada: os do período da manhã ficam disponíveis no 1º turno e os do período da tarde no 2º turno.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t" />
+
+              {/* Distribuição sábado */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-slate-800 text-sm uppercase tracking-wide">4. Distribuição de sábado</h3>
+                <div className="space-y-2">
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <Calendar className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Limite fixo por vendedor</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Aos sábados, cada vendedor recebe exatamente <strong>{limiteLeadsSabado} leads</strong> (independente de percentual). Se não houver leads suficientes, o sistema divide igualmente o que estiver disponível.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <XCircle className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">Sem distribuição aos domingos</p>
+                      <p className="text-xs text-slate-500 mt-0.5">O sistema bloqueia qualquer distribuição aos domingos.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t" />
+
+              {/* Distribuição manual */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-slate-800 text-sm uppercase tracking-wide">5. Distribuição manual</h3>
+                <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <Send className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">Envio avulso para um vendedor específico</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Na aba "Distribuição Manual", é possível enviar qualquer quantidade de leads para um vendedor específico a qualquer momento, sem restrição de horário ou validação de chegada.</p>
+                  </div>
+                </div>
+              </div>
+
             </CardContent>
           </Card>
         </TabsContent>
