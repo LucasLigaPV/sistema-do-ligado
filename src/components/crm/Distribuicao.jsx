@@ -381,6 +381,11 @@ export default function Distribuicao({ userFuncao }) {
       return;
     }
 
+    // Determinar turno para animação
+    const turnoAtual = turnoForcar || (isSabado ? "sabado" : horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno");
+    setDistribuindoTurno(turnoAtual);
+    await new Promise(r => setTimeout(r, 2200));
+
     // Usar vendedores validados
     const vendedoresElegiveis = vendedoresLideres.filter(v => 
       vendedoresValidados.includes(v.email)
