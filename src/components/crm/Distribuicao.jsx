@@ -1017,7 +1017,7 @@ export default function Distribuicao({ userFuncao }) {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Validação de Chegada {agora.getDay() === 6 ? "(Sábado)" : "(1º Turno)"} - {format(new Date(), "dd/MM/yyyy")}</CardTitle>
+                  <CardTitle>Validação de Chegada {ehSabado ? "(Sábado)" : "(1º Turno)"} - {formatInTimeZone(new Date(), TZ, "dd/MM/yyyy")}</CardTitle>
                   <p className="text-sm text-slate-700 mt-1 font-medium">
                     {isValidado ? (
                       <span className="flex items-center gap-2 text-slate-700 font-medium">
