@@ -1556,8 +1556,8 @@ export default function Distribuicao({ userFuncao }) {
                   <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
                     <Shield className="w-5 h-5 text-slate-400 mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-slate-800">Leads que ficam na fila</p>
-                      <p className="text-xs text-slate-500 mt-0.5">Leads não distribuídos (por sobra da divisão ou pelo percentual &lt; 100%) permanecem na fila e serão distribuídos na próxima vez que o botão for acionado.</p>
+                      <p className="text-sm font-medium text-slate-800">Redistribuição das sobras entre vendedores com 100%</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Os leads que "sobraram" por percentual &lt; 100% são redistribuídos via round-robin entre os vendedores com 100% de distribuição. A ordem do round-robin é embaralhada a cada distribuição para não dar vantagem a ninguém. Se não houver nenhum vendedor com 100%, as sobras permanecem na fila.</p>
                     </div>
                   </div>
                   <div className="flex gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
