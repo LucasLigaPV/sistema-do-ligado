@@ -404,11 +404,15 @@ export default function Distribuicao({ userFuncao }) {
     );
 
     if (vendedoresElegiveis.length === 0) {
+      distribuindoRef.current = false;
+      setDistribuindoTurno(null);
       alert("Nenhum vendedor/líder fez check-in dentro do prazo hoje!");
       return;
     }
 
-    if (leadsNaoDistribuidos.length === 0) {
+    if (leadsNaoDistribuidosFrescos.length === 0) {
+      distribuindoRef.current = false;
+      setDistribuindoTurno(null);
       alert("Não há leads para distribuir!");
       return;
     }
@@ -423,7 +427,7 @@ export default function Distribuicao({ userFuncao }) {
       return shuffled;
     };
 
-    const leadsEmbaralhados = shuffleArray(leadsNaoDistribuidos);
+    const leadsEmbaralhados = shuffleArray(leadsNaoDistribuidosFrescos);
 
     if (isSabado) {
       const limite = parseInt(limiteLeadsSabado);
