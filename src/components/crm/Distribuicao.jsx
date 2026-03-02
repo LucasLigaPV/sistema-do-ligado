@@ -457,6 +457,7 @@ export default function Distribuicao({ userFuncao }) {
       }
 
       let leadsParaDistribuir = [...leadsEmbaralhados];
+      const updatePromises = [];
 
       vendedoresElegiveis.forEach(vendedor => {
         const leadsVendedor = leadsParaDistribuir.slice(0, leadsParaCadaUm);
@@ -480,15 +481,13 @@ export default function Distribuicao({ userFuncao }) {
             campanha: lead.campanha || "",
             pagina: lead.pagina || ""
           });
-          
-          updateLeadMutation.mutate({
-            id: lead.id,
-            data: { distribuido: true }
-          });
+          updatePromises.push(base44.entities.Lead.update(lead.id, { distribuido: true }));
         });
         
         leadsParaDistribuir = leadsParaDistribuir.slice(leadsParaCadaUm);
       });
+
+      await Promise.all(updatePromises);
 
       // Registro histórico - sábado
       createHistoricoMutation.mutate({
