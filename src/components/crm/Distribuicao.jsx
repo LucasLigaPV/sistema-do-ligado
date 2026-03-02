@@ -900,7 +900,7 @@ export default function Distribuicao({ userFuncao }) {
                   </div>
                 )}
 
-                {!isValidado && agora.getDay() !== 0 && (
+                {!isValidado && !ehDomingo && (
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
                     <span>
                       É necessário validar as chegadas primeiro na aba "Validação de Chegada"
