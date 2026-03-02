@@ -1348,10 +1348,10 @@ export default function Distribuicao({ userFuncao }) {
                           <TableCell>
                             {percentualAtual < 100 ? (
                               <span className="text-xs text-[#D4A900] font-medium">
-                                {100 - percentualAtual}% retorna à fila
+                                {100 - percentualAtual}% vai para vendedores com 100%
                               </span>
                             ) : (
-                              <span className="text-xs text-slate-400">Distribuição completa</span>
+                              <span className="text-xs text-slate-400">Recebe sobras dos demais</span>
                             )}
                           </TableCell>
                         </TableRow>
