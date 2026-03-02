@@ -404,14 +404,12 @@ export default function Distribuicao({ userFuncao }) {
     );
 
     if (vendedoresElegiveis.length === 0) {
-      distribuindoRef.current = false;
       setDistribuindoTurno(null);
       alert("Nenhum vendedor/líder fez check-in dentro do prazo hoje!");
       return;
     }
 
     if (leadsNaoDistribuidosFrescos.length === 0) {
-      distribuindoRef.current = false;
       setDistribuindoTurno(null);
       alert("Não há leads para distribuir!");
       return;
