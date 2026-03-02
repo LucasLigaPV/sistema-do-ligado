@@ -558,7 +558,7 @@ export default function Distribuicao({ userFuncao }) {
             plano_interesse: "",
             origem: "lead",
             data_entrada: lead.data || format(new Date(), "yyyy-MM-dd"),
-            hora_entrada: lead.created_date ? format(new Date(lead.created_date), "HH:mm") : format(new Date(), "HH:mm"),
+            hora_entrada: lead.created_date ? formatarHoraEmBrasilia(lead.created_date) : horaEmBrasilia(),
             plataforma: lead.plataforma || "",
             posicionamento: lead.posicionamento || "",
             ad: lead.ad || "",
