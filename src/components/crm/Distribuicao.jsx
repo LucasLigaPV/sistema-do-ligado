@@ -491,8 +491,7 @@ export default function Distribuicao({ userFuncao }) {
 
       // Fatia base igualitária para cada vendedor
       const fatiaBase = Math.floor(totalLeads / n);
-      // Usamos apenas fatiaBase * n leads (as sobras da divisão igualitária ficam na fila)
-      const leadsParaUsar = leadsEmbaralhados.slice(0, fatiaBase * n);
+      const sobrasDaDivisao = leadsEmbaralhados.slice(fatiaBase * n); // Sobras da divisão igualitária
 
       // Vendedores com 100% recebem as sobras dos que têm % menor
       const vendedores100 = vendedoresElegiveis.filter(v => getPercentualVendedor(v.email) >= 100);
@@ -506,7 +505,7 @@ export default function Distribuicao({ userFuncao }) {
       let indice = 0;
       vendedoresElegiveis.forEach(vendedor => {
         const percentual = getPercentualVendedor(vendedor.email);
-        const leadsDaFatia = leadsParaUsar.slice(indice, indice + fatiaBase);
+        const leadsDaFatia = leadsEmbaralhados.slice(indice, indice + fatiaBase);
         const quantidadeADistribuir = Math.floor(fatiaBase * percentual / 100);
         distribuicaoPorVendedor[vendedor.email] = leadsDaFatia.slice(0, quantidadeADistribuir);
         // Sobras do percentual < 100% vão para redistribuição
@@ -515,11 +514,14 @@ export default function Distribuicao({ userFuncao }) {
         indice += fatiaBase;
       });
 
-      // Redistribuir sobras via round-robin embaralhado entre vendedores com 100%
-      if (sobrasDasReducoes.length > 0 && vendedores100.length > 0) {
+      // Combinar todas as sobras (percentual + divisão igualitária)
+      const todasAsSobras = [...sobrasDasReducoes, ...sobrasDaDivisao];
+
+      // Redistribuir TODAS as sobras via round-robin embaralhado entre vendedores com 100%
+      if (todasAsSobras.length > 0 && vendedores100.length > 0) {
         // Embaralhar a ordem dos vendedores 100% para evitar vantagem fixa
         const vendedores100Embaralhados = shuffleArray([...vendedores100]);
-        sobrasDasReducoes.forEach((lead, i) => {
+        todasAsSobras.forEach((lead, i) => {
           const vendedor = vendedores100Embaralhados[i % vendedores100Embaralhados.length];
           distribuicaoPorVendedor[vendedor.email].push(lead);
         });
