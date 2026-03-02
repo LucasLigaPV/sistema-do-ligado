@@ -457,12 +457,13 @@ export default function Distribuicao({ userFuncao }) {
       }
 
       let leadsParaDistribuir = [...leadsEmbaralhados];
-      const updatePromises = [];
+      const negociacoesParaCriar = [];
+      const leadsParaMarcar = [];
 
       vendedoresElegiveis.forEach(vendedor => {
         const leadsVendedor = leadsParaDistribuir.slice(0, leadsParaCadaUm);
         leadsVendedor.forEach(lead => {
-          createNegociacaoMutation.mutate({
+          negociacoesParaCriar.push({
             vendedor_email: vendedor.email,
             etapa: "novo_lead",
             nome_cliente: lead.nome,
@@ -481,13 +482,17 @@ export default function Distribuicao({ userFuncao }) {
             campanha: lead.campanha || "",
             pagina: lead.pagina || ""
           });
-          updatePromises.push(base44.entities.Lead.update(lead.id, { distribuido: true }));
+          leadsParaMarcar.push(lead.id);
         });
         
         leadsParaDistribuir = leadsParaDistribuir.slice(leadsParaCadaUm);
       });
 
-      await Promise.all(updatePromises);
+      // Bulk create negociações + marcar leads em paralelo (muito menos requests)
+      await Promise.all([
+        base44.entities.Negociacao.bulkCreate(negociacoesParaCriar),
+        ...leadsParaMarcar.map(id => base44.entities.Lead.update(id, { distribuido: true }))
+      ]);
 
       // Registro histórico - sábado
       createHistoricoMutation.mutate({
