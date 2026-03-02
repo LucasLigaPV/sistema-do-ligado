@@ -605,15 +605,17 @@ export default function Distribuicao({ userFuncao }) {
 
 
 
+    // Invalidar cache dos leads após todas as atualizações
+    await queryClient.invalidateQueries({ queryKey: ["leads"] });
+    await queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+
     setDistribuindoTurno(null);
     setConfirmacaoTurno(turnoAtual);
     setTurnoDistribuido(prev => ({ ...prev, [turnoAtual]: true }));
-    const totalLeadsDistribuidos = isSabado
-      ? (leadsNaoDistribuidos.length > 0 ? Math.min(parseInt(limiteLeadsSabado), Math.floor(leadsNaoDistribuidos.length / Math.max(vendedoresLideres.filter(v => vendedoresValidados.includes(v.email)).length, 1))) * vendedoresLideres.filter(v => vendedoresValidados.includes(v.email)).length : 0)
-      : leadsNaoDistribuidos.length;
-    setToastInfo({ turno: turnoAtual, totalLeads: leadsNaoDistribuidos.length });
+    setToastInfo({ turno: turnoAtual, totalLeads: leadsNaoDistribuidosFrescos.length });
     setTimeout(() => { setConfirmacaoTurno(null); }, 3000);
     setTimeout(() => { setToastInfo(null); }, 4500);
+    distribuindoRef.current = false;
   };
 
   const getNomeUsuario = (email) => {
