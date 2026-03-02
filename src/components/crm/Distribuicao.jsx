@@ -383,8 +383,7 @@ export default function Distribuicao({ userFuncao }) {
     const diaNum = parseInt(formatInTimeZone(agora, TZ, "e"));
     const isSabado = diaNum === 7;
     const isDomingo = diaNum === 1;
-    const isSabado = diaSemana === 6;
-    const isDomingo = diaSemana === 0;
+
 
     if (isDomingo) {
       alert("Não há distribuição aos domingos!");
