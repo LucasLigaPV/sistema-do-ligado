@@ -1288,7 +1288,7 @@ export default function Distribuicao({ userFuncao }) {
                     Percentual de Distribuição por Vendedor
                   </CardTitle>
                   <p className="text-sm text-slate-500 mt-1">
-                    Define qual percentual da fatia de leads de cada vendedor será efetivamente distribuído. Leads fora do percentual retornam à fila.
+                    Define qual percentual da fatia de leads de cada vendedor será efetivamente distribuído. Sobras de vendedores com % &lt; 100% são redistribuídas para vendedores com 100% via round-robin.
                   </p>
                 </div>
                 <Button
