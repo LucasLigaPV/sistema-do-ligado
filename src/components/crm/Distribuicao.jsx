@@ -409,42 +409,26 @@ export default function Distribuicao({ userFuncao }) {
         leadsParaDistribuir = leadsParaDistribuir.slice(leadsParaCadaUm);
       });
     } else {
-      // Segunda a sexta: distribuição proporcional à taxa de conversão (randômico)
-      const vendedoresComTaxa = vendedoresElegiveis
-        .map(v => ({
-          ...v,
-          taxaConversao: parseFloat(calcularTaxaConversao(v.email))
-        }));
+      // Segunda a sexta: distribuição percentual por vendedor (fatia igual base + percentual individual)
+      const n = vendedoresElegiveis.length;
+      const totalLeads = leadsEmbaralhados.length;
 
-      // Calcular soma total das taxas
-      const somaTaxas = vendedoresComTaxa.reduce((sum, v) => sum + v.taxaConversao, 0);
+      // Fatia base igualitária para cada vendedor
+      const fatiaBase = Math.floor(totalLeads / n);
+      // Sobras da divisão igualitária vão de volta à fila (não distribuídas)
+      const sobrasBase = totalLeads - fatiaBase * n;
+      // Usamos apenas fatiaBase * n leads (as sobrasBase ficam na fila)
+      const leadsParaUsar = leadsEmbaralhados.slice(0, fatiaBase * n);
 
-      // Se todas taxas são 0, distribuir igualmente
-      const distribuicaoIgual = somaTaxas === 0;
+      // Para cada vendedor, aplica o percentual definido sobre a fatia base dele
+      let indice = 0;
+      vendedoresElegiveis.forEach(vendedor => {
+        const percentual = getPercentualVendedor(vendedor.email);
+        const leadsDaFatia = leadsParaUsar.slice(indice, indice + fatiaBase);
+        const quantidadeADistribuir = Math.floor(fatiaBase * percentual / 100);
+        const leadsVendedor = leadsDaFatia.slice(0, quantidadeADistribuir);
+        // Leads restantes da fatia (sobras do percentual < 100%) ficam na fila (não marcados como distribuído)
 
-      // Calcular quantos leads cada vendedor deve receber
-      const leadsDistribuicao = vendedoresComTaxa.map(v => {
-        const proporcao = distribuicaoIgual 
-          ? 1 / vendedoresComTaxa.length 
-          : v.taxaConversao / somaTaxas;
-        const quantidade = Math.floor(leadsEmbaralhados.length * proporcao);
-        return { ...v, quantidadeLeads: quantidade };
-      });
-
-      // Distribuir leads restantes para quem tem maior taxa
-      const totalDistribuido = leadsDistribuicao.reduce((sum, v) => sum + v.quantidadeLeads, 0);
-      const leadsRestantes = leadsEmbaralhados.length - totalDistribuido;
-      
-      const vendedoresOrdenados = [...leadsDistribuicao].sort((a, b) => b.taxaConversao - a.taxaConversao);
-      for (let i = 0; i < leadsRestantes; i++) {
-        vendedoresOrdenados[i % vendedoresOrdenados.length].quantidadeLeads++;
-      }
-
-      // Distribuir leads
-      let indiceLeadAtual = 0;
-      leadsDistribuicao.forEach(vendedor => {
-        const leadsVendedor = leadsEmbaralhados.slice(indiceLeadAtual, indiceLeadAtual + vendedor.quantidadeLeads);
-        
         leadsVendedor.forEach(lead => {
           createNegociacaoMutation.mutate({
             vendedor_email: vendedor.email,
@@ -465,14 +449,10 @@ export default function Distribuicao({ userFuncao }) {
             campanha: lead.campanha || "",
             pagina: lead.pagina || ""
           });
-          
-          updateLeadMutation.mutate({
-            id: lead.id,
-            data: { distribuido: true }
-          });
+          updateLeadMutation.mutate({ id: lead.id, data: { distribuido: true } });
         });
 
-        indiceLeadAtual += vendedor.quantidadeLeads;
+        indice += fatiaBase;
       });
     }
 
