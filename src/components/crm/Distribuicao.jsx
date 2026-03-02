@@ -350,11 +350,11 @@ export default function Distribuicao({ userFuncao }) {
     // Se não tem data, incluir
     if (!l.data) return true;
     
-    // Verificar se o lead é de hoje
+    // Verificar se o lead é de hoje (em horário de Brasília)
     const parsedLeadData = new Date(l.data);
     if (isNaN(parsedLeadData)) return true;
     const leadData = format(parsedLeadData, "yyyy-MM-dd");
-    const hoje = format(new Date(), "yyyy-MM-dd");
+    const hoje = hojeEmBrasilia();
     
     if (leadData !== hoje) return true; // Leads de outros dias sempre disponíveis
     
