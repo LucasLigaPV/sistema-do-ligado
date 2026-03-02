@@ -589,7 +589,15 @@ export default function Distribuicao({ userFuncao }) {
 
 
 
-    alert("Leads distribuídos com sucesso!");
+    setDistribuindoTurno(null);
+    setConfirmacaoTurno(turnoAtual);
+    setTurnoDistribuido(prev => ({ ...prev, [turnoAtual]: true }));
+    const totalLeadsDistribuidos = isSabado
+      ? (leadsNaoDistribuidos.length > 0 ? Math.min(parseInt(limiteLeadsSabado), Math.floor(leadsNaoDistribuidos.length / Math.max(vendedoresLideres.filter(v => vendedoresValidados.includes(v.email)).length, 1))) * vendedoresLideres.filter(v => vendedoresValidados.includes(v.email)).length : 0)
+      : leadsNaoDistribuidos.length;
+    setToastInfo({ turno: turnoAtual, totalLeads: leadsNaoDistribuidos.length });
+    setTimeout(() => { setConfirmacaoTurno(null); }, 3000);
+    setTimeout(() => { setToastInfo(null); }, 4500);
   };
 
   const getNomeUsuario = (email) => {
