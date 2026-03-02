@@ -279,8 +279,8 @@ export default function Distribuicao({ userFuncao }) {
     setTimeout(() => setSavedHorarios(false), 3000);
   };
 
-  // Verificar check-in de hoje
-  const hoje = format(new Date(), "yyyy-MM-dd");
+  // Verificar check-in de hoje (sempre em horário de Brasília)
+  const hoje = hojeEmBrasilia();
   const checkinsHoje = checkins.filter(c => c.data === hoje);
   
   // Verificar se há validação hoje
