@@ -749,46 +749,52 @@ export default function Distribuicao({ userFuncao }) {
 
                 {!isValidado2Turno && agora.getDay() !== 6 && agora.getDay() !== 0 && (
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
-                    <Shield className="w-4 h-4 text-slate-500" />
                     <span>
                       Para distribuir leads do 2º turno, é necessário validar as chegadas do 2º turno
                     </span>
                   </div>
                 )}
 
-                {/* Divisor */}
-                <div className="relative py-2">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200"></div>
-                  </div>
-                </div>
-
-                {/* Botão Sábado */}
-                <button
-                  onClick={distribuirLeads}
-                  disabled={agora.getDay() !== 6 || leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
-                  title={agora.getDay() !== 6 ? "Disponível apenas aos sábados" : !isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                      <PlayCircle className="w-5 h-5 text-slate-600" />
+                {/* Botão Sábado - apenas aos sábados */}
+                {agora.getDay() === 6 && (
+                  <button
+                    onClick={distribuirLeads}
+                    disabled={leadsNaoDistribuidos.length === 0 || !isValidado || horaAtual < horarioDistribuicaoSabado}
+                    title={!isValidado ? "É necessário validar as chegadas primeiro" : horaAtual < horarioDistribuicaoSabado ? `Disponível a partir de ${horarioDistribuicaoSabado}` : ""}
+                    className="w-full flex items-center justify-between px-4 py-3 bg-white border-2 border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 disabled:hover:bg-white transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                        <PlayCircle className="w-5 h-5 text-slate-600" />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-medium text-slate-900">Sábado</div>
+                        <div className="text-xs text-slate-500">{limiteLeadsSabado} leads por vendedor</div>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <div className="font-medium text-slate-900">Sábado</div>
-                      <div className="text-xs text-slate-500">{limiteLeadsSabado} leads por vendedor</div>
+                    {horaAtual < horarioDistribuicaoSabado && (
+                      <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
+                        {horarioDistribuicaoSabado}
+                      </Badge>
+                    )}
+                  </button>
+                )}
+
+                {/* Domingo - sem distribuição */}
+                {agora.getDay() === 0 && (
+                  <div className="w-full flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-500">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                      <XCircle className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-slate-600">Sem distribuição hoje</div>
+                      <div className="text-xs text-slate-400">Não há distribuição aos domingos</div>
                     </div>
                   </div>
-                  {agora.getDay() === 6 && horaAtual < horarioDistribuicaoSabado && (
-                    <Badge variant="outline" className="ml-2 text-xs border-slate-300 text-slate-600">
-                      {horarioDistribuicaoSabado}
-                    </Badge>
-                  )}
-                </button>
+                )}
 
-                {!isValidado && (
+                {!isValidado && agora.getDay() !== 0 && (
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 flex items-center gap-2 text-slate-700 text-sm">
-                    <Shield className="w-4 h-4 text-slate-500" />
                     <span>
                       É necessário validar as chegadas primeiro na aba "Validação de Chegada"
                     </span>
