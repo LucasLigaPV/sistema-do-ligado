@@ -552,9 +552,31 @@ export default function Distribuicao({ userFuncao }) {
           updateLeadMutation.mutate({ id: lead.id, data: { distribuido: true } });
         });
       });
+
+      // Registro histórico - seg-sex
+      const agora3 = new Date();
+      const tipoTurno = horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno";
+      createHistoricoMutation.mutate({
+        data: format(agora3, "yyyy-MM-dd"),
+        hora: format(agora3, "HH:mm"),
+        tipo: tipoTurno,
+        total_leads: Object.values(distribuicaoPorVendedor).reduce((sum, arr) => sum + arr.length, 0),
+        realizado_por: "",
+        detalhes: vendedoresElegiveis.map(vendedor => {
+          const checkin = checkinsHoje.find(c => c.usuario_email === vendedor.email);
+          return {
+            vendedor_email: vendedor.email,
+            vendedor_nome: vendedor.full_name || vendedor.email,
+            leads_recebidos: distribuicaoPorVendedor[vendedor.email]?.length || 0,
+            percentual: getPercentualVendedor(vendedor.email),
+            fez_checkin: !!checkin,
+            checkin_hora: checkin?.hora || "",
+            checkin_no_prazo: checkin?.dentro_prazo || false
+          };
+        })
+      });
     }
 
-    // Salvar histórico (já calculado dentro dos blocos isSabado/else acima)
 
 
     alert("Leads distribuídos com sucesso!");
