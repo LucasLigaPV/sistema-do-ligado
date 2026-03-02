@@ -767,14 +767,13 @@ export default function Distribuicao({ userFuncao }) {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Taxa de Conversão por Vendedor</CardTitle>
+                <CardTitle>Vendedores e Percentuais</CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
                     queryClient.invalidateQueries({ queryKey: ["users"] });
                     queryClient.invalidateQueries({ queryKey: ["equipes"] });
-                    queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
                     queryClient.invalidateQueries({ queryKey: ["checkins"] });
                     queryClient.invalidateQueries({ queryKey: ["leads"] });
                   }}
@@ -790,17 +789,13 @@ export default function Distribuicao({ userFuncao }) {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Vendedor/Líder</TableHead>
-                    <TableHead>Taxa de Conversão</TableHead>
-                    <TableHead>Negociações</TableHead>
-                    <TableHead>Vendas Ativas</TableHead>
+                    <TableHead>% Distribuição</TableHead>
                     <TableHead>Check-in Hoje</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {vendedoresLideres.map(vendedor => {
-                    const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === vendedor.email);
-                    const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
-                    const taxaConversao = calcularTaxaConversao(vendedor.email);
+                    const percentual = getPercentualVendedor(vendedor.email);
                     const checkinHoje = checkinsHoje.find(c => c.usuario_email === vendedor.email);
 
                     return (
@@ -809,12 +804,10 @@ export default function Distribuicao({ userFuncao }) {
                           {vendedor.full_name || vendedor.email}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-semibold">
-                            {taxaConversao}%
+                          <Badge variant="outline" className={`font-semibold ${percentual === 100 ? "border-slate-300 text-slate-700" : "border-[#EFC200] text-[#D4A900]"}`}>
+                            {percentual}%
                           </Badge>
                         </TableCell>
-                        <TableCell>{negociacoesVendedor.length}</TableCell>
-                        <TableCell>{vendasVendedor.length}</TableCell>
                         <TableCell>
                           {checkinHoje ? (
                             <div className="flex items-center gap-2">
