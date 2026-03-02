@@ -37,8 +37,15 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [selectedSubetapa, setSelectedSubetapa] = useState([]);
   const [showConferenciaModal, setShowConferenciaModal] = useState(false);
   const [conferenciaData, setConferenciaData] = useState(null);
-  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  // Filtro de data padrão: 30 dias para trás e 1 dia para frente
+  const hoje = new Date();
+  const dataInicio = new Date(hoje);
+  dataInicio.setDate(dataInicio.getDate() - 30);
+  const dataFim = new Date(hoje);
+  dataFim.setDate(dataFim.getDate() + 1);
+  
+  const [startDate, setStartDate] = useState(format(dataInicio, "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState(format(dataFim, "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
   const [selectedOrigens, setSelectedOrigens] = useState([]);
   const [origemLogic, setOrigemLogic] = useState("e");
