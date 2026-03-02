@@ -605,16 +605,19 @@ export default function Distribuicao({ userFuncao }) {
 
 
 
-    // Invalidar cache dos leads após todas as atualizações
-    await queryClient.invalidateQueries({ queryKey: ["leads"] });
-    await queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+    // Invalidar cache dos leads após todas as atualizações e aguardar para garantir UI atualizada
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["leads"] }),
+      queryClient.invalidateQueries({ queryKey: ["negociacoes"] }),
+      queryClient.invalidateQueries({ queryKey: ["historico_distribuicao"] }),
+    ]);
 
     setDistribuindoTurno(null);
     setConfirmacaoTurno(turnoAtual);
     setTurnoDistribuido(prev => ({ ...prev, [turnoAtual]: true }));
     setToastInfo({ turno: turnoAtual, totalLeads: leadsNaoDistribuidosFrescos.length });
-    setTimeout(() => { setConfirmacaoTurno(null); }, 3000);
-    setTimeout(() => { setToastInfo(null); }, 4500);
+    setTimeout(() => { setConfirmacaoTurno(null); }, 3500);
+    setTimeout(() => { setToastInfo(null); }, 5000);
     distribuindoRef.current = false;
   };
 
