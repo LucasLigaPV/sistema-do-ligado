@@ -557,10 +557,11 @@ export default function Distribuicao({ userFuncao }) {
       // Se não há vendedores com 100%, as sobras ficam na fila (não são marcadas como distribuídas)
 
       // Aplicar a distribuição final
-      const updatePromisesSemanais = [];
+      const negociacoesSemanais = [];
+      const leadsSemanaisParaMarcar = [];
       vendedoresElegiveis.forEach(vendedor => {
         distribuicaoPorVendedor[vendedor.email].forEach(lead => {
-          createNegociacaoMutation.mutate({
+          negociacoesSemanais.push({
             vendedor_email: vendedor.email,
             etapa: "novo_lead",
             nome_cliente: lead.nome,
@@ -579,11 +580,14 @@ export default function Distribuicao({ userFuncao }) {
             campanha: lead.campanha || "",
             pagina: lead.pagina || ""
           });
-          updatePromisesSemanais.push(base44.entities.Lead.update(lead.id, { distribuido: true }));
+          leadsSemanaisParaMarcar.push(lead.id);
         });
       });
 
-      await Promise.all(updatePromisesSemanais);
+      await Promise.all([
+        base44.entities.Negociacao.bulkCreate(negociacoesSemanais),
+        ...leadsSemanaisParaMarcar.map(id => base44.entities.Lead.update(id, { distribuido: true }))
+      ]);
 
       // Registro histórico - seg-sex
       const tipoTurno = horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno";
