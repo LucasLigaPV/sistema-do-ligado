@@ -195,13 +195,21 @@ export default function Distribuicao({ userFuncao }) {
     return emailsEmEquipes.has(u.email);
   });
 
-  // Calcular taxa de conversão
-  const calcularTaxaConversao = (email) => {
-    const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === email);
-    const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
-    
-    if (negociacoesVendedor.length === 0) return 0;
-    return ((vendasVendedor.length / negociacoesVendedor.length) * 100).toFixed(1);
+  // Obter percentual de distribuição de um vendedor salvo nas configurações
+  const getPercentualVendedor = (email) => {
+    const config = configuracoes.find(c => c.tipo === `percentual_${email}`);
+    return config ? parseFloat(config.valor) : 100;
+  };
+
+  const salvarPercentualVendedor = (email, valor) => {
+    const tipo = `percentual_${email}`;
+    const configExistente = configuracoes.find(c => c.tipo === tipo);
+    const valorSalvo = Math.min(100, Math.max(0, parseFloat(valor) || 0));
+    if (configExistente) {
+      updateConfigMutation.mutate({ id: configExistente.id, data: { valor: String(valorSalvo) } });
+    } else {
+      createConfigMutation.mutate({ tipo, valor: String(valorSalvo) });
+    }
   };
 
   // Verificar check-in de hoje
