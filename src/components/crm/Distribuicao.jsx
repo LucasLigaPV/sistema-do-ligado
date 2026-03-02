@@ -30,6 +30,7 @@ export default function Distribuicao({ userFuncao }) {
   const [horariosSemana, setHorariosSemana] = useState({});
   const [horariosSabado, setHorariosSabado] = useState({});
   const [percentuaisEdit, setPercentuaisEdit] = useState({});
+  const [historicoSelecionado, setHistoricoSelecionado] = useState(null);
 
   const queryClient = useQueryClient();
 
