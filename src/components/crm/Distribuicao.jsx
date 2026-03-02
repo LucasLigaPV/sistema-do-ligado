@@ -552,6 +552,7 @@ export default function Distribuicao({ userFuncao }) {
       // Se não há vendedores com 100%, as sobras ficam na fila (não são marcadas como distribuídas)
 
       // Aplicar a distribuição final
+      const updatePromisesSemanais = [];
       vendedoresElegiveis.forEach(vendedor => {
         distribuicaoPorVendedor[vendedor.email].forEach(lead => {
           createNegociacaoMutation.mutate({
@@ -573,9 +574,11 @@ export default function Distribuicao({ userFuncao }) {
             campanha: lead.campanha || "",
             pagina: lead.pagina || ""
           });
-          updateLeadMutation.mutate({ id: lead.id, data: { distribuido: true } });
+          updatePromisesSemanais.push(base44.entities.Lead.update(lead.id, { distribuido: true }));
         });
       });
+
+      await Promise.all(updatePromisesSemanais);
 
       // Registro histórico - seg-sex
       const tipoTurno = horaAtual < horarioDistribuicao2Turno ? "1_turno" : "2_turno";
