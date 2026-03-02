@@ -626,26 +626,23 @@ export default function Distribuicao({ userFuncao }) {
 
   const validarChegadas = async () => {
     const user = await base44.auth.me();
-    const agora = new Date();
     
     if (validacaoHoje) {
-      // Atualizar validação existente
       updateValidacaoMutation.mutate({
         id: validacaoHoje.id,
         data: {
           vendedores_validados: vendedoresValidados,
           validado_por: user.email,
-          hora_validacao: format(agora, "HH:mm"),
+          hora_validacao: horaEmBrasilia(),
           turno: "1"
         }
       });
     } else {
-      // Criar nova validação
       createValidacaoMutation.mutate({
         data: hoje,
         validado_por: user.email,
         vendedores_validados: vendedoresValidados,
-        hora_validacao: format(agora, "HH:mm"),
+        hora_validacao: horaEmBrasilia(),
         turno: "1"
       });
     }
@@ -653,26 +650,23 @@ export default function Distribuicao({ userFuncao }) {
 
   const validarChegadas2Turno = async () => {
     const user = await base44.auth.me();
-    const agora = new Date();
     
     if (validacao2TurnoHoje) {
-      // Atualizar validação existente do 2º turno
       updateValidacaoMutation.mutate({
         id: validacao2TurnoHoje.id,
         data: {
           vendedores_validados: vendedoresValidados2Turno,
           validado_por: user.email,
-          hora_validacao: format(agora, "HH:mm"),
+          hora_validacao: horaEmBrasilia(),
           turno: "2"
         }
       });
     } else {
-      // Criar nova validação do 2º turno
       createValidacaoMutation.mutate({
         data: hoje,
         validado_por: user.email,
         vendedores_validados: vendedoresValidados2Turno,
-        hora_validacao: format(agora, "HH:mm"),
+        hora_validacao: horaEmBrasilia(),
         turno: "2"
       });
     }
