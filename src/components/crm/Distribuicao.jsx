@@ -340,9 +340,9 @@ export default function Distribuicao({ userFuncao }) {
   const horarioDistribuicao2Turno = getConfig("horario_distribuicao_2turno", "14:05");
   const horarioDistribuicaoSabado = getConfig("horario_distribuicao_sabado", "10:35");
 
-  // Leads não distribuídos - filtrar por período (manhã/tarde)
+  // Leads não distribuídos - filtrar por período (manhã/tarde) em horário de Brasília
   const agora = new Date();
-  const horaAtual = format(agora, "HH:mm");
+  const horaAtual = horaEmBrasilia();
   
   const leadsNaoDistribuidos = leads.filter(l => {
     if (l.distribuido) return false;
