@@ -1182,17 +1182,12 @@ export default function Distribuicao({ userFuncao }) {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Vendedor</TableHead>
-                        <TableHead>Taxa Conversão</TableHead>
-                        <TableHead>Negociações</TableHead>
-                        <TableHead>Vendas</TableHead>
+                        <TableHead>% Distribuição</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {vendedoresLideres.map(vendedor => {
-                        const negociacoesVendedor = negociacoes.filter(n => n.vendedor_email === vendedor.email);
-                        const vendasVendedor = negociacoesVendedor.filter(n => n.etapa === "venda_ativa");
-                        const taxaConversao = calcularTaxaConversao(vendedor.email);
-
+                        const percentual = getPercentualVendedor(vendedor.email);
                         return (
                           <TableRow key={vendedor.email}>
                             <TableCell className="font-medium">
@@ -1200,11 +1195,9 @@ export default function Distribuicao({ userFuncao }) {
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline" className="font-semibold">
-                                {taxaConversao}%
+                                {percentual}%
                               </Badge>
                             </TableCell>
-                            <TableCell>{negociacoesVendedor.length}</TableCell>
-                            <TableCell>{vendasVendedor.length}</TableCell>
                           </TableRow>
                         );
                       })}
