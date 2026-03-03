@@ -339,7 +339,7 @@ export default function Distribuicao({ userFuncao }) {
   const agora = new Date();
   const horaAtual = horaEmBrasilia();
   
-  const leadsNaoDistribuidos = leads.filter(l => !l.distribuido);
+  const leadsNaoDistribuidos = leads.filter(l => !l.distribuido && !l.status_arquivamento);
 
   // Distribuir leads com animação premium
   const distribuirLeads = async (turnoForcar) => {
