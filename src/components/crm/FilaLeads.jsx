@@ -153,44 +153,48 @@ export default function FilaLeads() {
             <Eye className="w-4 h-4" />
           </Button>
           {showArchiveActions ? (
-            <TooltipProvider delayDuration={200}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleArquivar(lead, "invalido")}
-                    className="text-orange-500 hover:text-orange-700 hover:bg-orange-50"
-                  >
-                    <AlertTriangle className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-xl px-3 py-2 text-xs font-medium rounded-lg animate-in fade-in-0 zoom-in-95">
-                  <div className="flex items-center gap-1.5">
-                    <AlertTriangle className="w-3 h-3 text-orange-400 shrink-0" />
-                    Modelo ou Número Incompleto
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleArquivar(lead, "limpeza")}
-                    className="text-slate-500 hover:text-slate-700 hover:bg-slate-100"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-xl px-3 py-2 text-xs font-medium rounded-lg animate-in fade-in-0 zoom-in-95">
-                  <div className="flex items-center gap-1.5">
-                    <Trash2 className="w-3 h-3 text-slate-400 shrink-0" />
-                    Leads Duplicados origem multi-step
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <>
+              <TooltipProvider delayDuration={200} disableHoverableContent>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleArquivar(lead, "invalido")}
+                      className="text-orange-500 hover:text-orange-700 hover:bg-orange-50"
+                    >
+                      <AlertTriangle className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-xl px-3 py-2 text-xs font-medium rounded-lg animate-in fade-in-0 zoom-in-95">
+                    <div className="flex items-center gap-1.5">
+                      <AlertTriangle className="w-3 h-3 text-orange-400 shrink-0" />
+                      Modelo ou Número Incompleto
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={200} disableHoverableContent>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleArquivar(lead, "limpeza")}
+                      className="text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="bg-slate-900 text-white border-0 shadow-xl px-3 py-2 text-xs font-medium rounded-lg animate-in fade-in-0 zoom-in-95">
+                    <div className="flex items-center gap-1.5">
+                      <Trash2 className="w-3 h-3 text-slate-400 shrink-0" />
+                      Leads Duplicados origem multi-step
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </>
           ) : (
             <Button
               variant="ghost"
