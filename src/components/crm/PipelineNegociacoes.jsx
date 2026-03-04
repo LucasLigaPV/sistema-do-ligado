@@ -586,7 +586,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   };
 
   const vendedoresDisponiveis = userFuncao === "master"
-    ? users.filter(u => u.role !== "admin" && u.funcao !== "master").map(u => ({ email: u.email, full_name: u.full_name || u.email }))
+    ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => ({ email: u.email, full_name: u.full_name || u.nome_exibicao || u.email }))
     : todosVendedoresEquipe.map(email => {
         const user = users.find(u => u.email === email);
         return user || { email: email, full_name: email };
