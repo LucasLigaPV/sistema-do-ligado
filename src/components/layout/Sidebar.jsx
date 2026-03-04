@@ -120,7 +120,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
       icon: Users, 
       hasSubmenu: true,
       submenus: [
-        ...(user?.funcao === "master" ? [{ id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" }] : []),
+        ...(user?.funcao === "master" || user?.funcao === "lider" ? [{ id: "crm-leads", label: "Fila de Leads", icon: Users, description: "Kanban" }] : []),
         { id: "crm-negociacoes", label: "CRM", icon: Handshake },
         { id: "crm-perdas", label: "Perdas", icon: TrendingDown },
         ...(user?.funcao === "lider" || user?.funcao === "master" ? [{ id: "crm-distribuicao", label: "Distribuição", icon: TrendingUp }] : []),
