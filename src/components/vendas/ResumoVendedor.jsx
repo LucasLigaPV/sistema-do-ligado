@@ -65,14 +65,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      const res = await base44.functions.invoke('listarUsuarios', {});
-      return res.data?.usuarios || [];
-    },
-    enabled: userFuncao === "lider" || userFuncao === "master",
-  });
+  const { usuarios: users } = useUsuarios();
 
   // Para master: todos (exceto admin e master); para lider: membros da equipe
   const vendedoresDisponiveis = userFuncao === "master"

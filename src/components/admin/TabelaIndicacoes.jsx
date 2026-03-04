@@ -79,13 +79,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
     queryFn: () => base44.entities.Equipe.filter({ ativa: true })
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: async () => {
-      const res = await base44.functions.invoke('listarUsuarios', {});
-      return res.data?.usuarios || [];
-    },
-  });
+  const { usuarios: users } = useUsuarios();
 
   // Obter equipe do líder
   const minhaEquipe = equipes.find((e) => e.lider_email === userEmail);
