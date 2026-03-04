@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useUsuarios } from "../shared/useUsuarios";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -163,8 +164,9 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   const motivosOrdenados = Object.values(motivosPerda).sort((a, b) => b.quantidade - a.quantidade);
 
   const getNomeUsuario = (email) => {
-    const user = users.find(u => u.email === email);
-    return user?.full_name || email;
+    if (!email) return "-";
+    const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+    return user?.nome_exibicao || user?.full_name || email;
   };
 
   const getCategoriaLabel = (categoria) => {

@@ -110,16 +110,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
-  const { data: allUsers = [] } = useQuery({
-    queryKey: ["all_users"],
-    queryFn: async () => {
-      const res = await base44.functions.invoke('listarUsuarios', {});
-      return res.data?.usuarios || [];
-    },
-    enabled: userFuncao === "master" || userFuncao === "lider" || userRole === "admin",
-  });
-
-  const users = allUsers;
+  const { usuarios: users } = useUsuarios();
 
   const [consultorFilter, setConsultorFilter] = useState(
     (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail]
