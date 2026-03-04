@@ -10,6 +10,7 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 export default function DashboardCRM({ userEmail, userFuncao }) {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  const [selectedVendedor, setSelectedVendedor] = useState("todos");
 
   const { data: negociacoes = [] } = useQuery({
     queryKey: ["negociacoes"],

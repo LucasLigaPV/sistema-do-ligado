@@ -58,7 +58,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   const { data: equipes = [] } = useQuery({
     queryKey: ["equipes"],
     queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
-    enabled: userFuncao === "lider",
+    enabled: userFuncao === "lider" || userFuncao === "master",
   });
 
   // Obter equipe do líder
@@ -66,21 +66,15 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
 
   const { data: users = [] } = useQuery({
-    queryKey: ["users", membrosEquipe],
-    queryFn: async () => {
-      if (!membrosEquipe.length) return [];
-      try {
-        const usuarioPromises = membrosEquipe.map(email =>
-          base44.entities.User.filter({ email }).then(result => result[0] || null)
-        );
-        const results = await Promise.all(usuarioPromises);
-        return results.filter(Boolean);
-      } catch {
-        return [];
-      }
-    },
-    enabled: userFuncao === "lider" && membrosEquipe.length > 0,
+    queryKey: ["users"],
+    queryFn: () => base44.entities.User.list(),
+    enabled: userFuncao === "lider" || userFuncao === "master",
   });
+
+  // Para master: todos os consultores/líderes; para lider: membros da equipe
+  const vendedoresDisponiveis = userFuncao === "master"
+    ? users.filter(u => u.funcao === "vendedor" || u.funcao === "lider")
+    : users.filter(u => membrosEquipe.includes(u.email));
 
   const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
 
