@@ -284,10 +284,10 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
             {(userFuncao === "lider" || userFuncao === "master") && (
               <FiltroVendedor
                 vendedoresSelecionados={consultorFilter}
-                todosVendedores={userFuncao === "master" ? users.filter(u => u.role !== "admin" && u.funcao !== "master").map(u => u.email) : membrosEquipe}
+                todosVendedores={userFuncao === "master" ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email) : membrosEquipe}
                 onSelectionChange={setConsultorFilter}
                 userEmail={userEmail}
-                nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.filter(u => u.role !== "admin" && u.funcao !== "master").map(u => [u.email, u.full_name || u.nome_exibicao || u.email.split("@")[0]])) : (minhaEquipe?.nomes_membros || {})}
+                nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]])) : (minhaEquipe?.nomes_membros || {})}
               />
             )}
           </div>
