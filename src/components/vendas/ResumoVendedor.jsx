@@ -286,25 +286,22 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-slate-900">Resumo</h2>
 
-      {userFuncao === "lider" && (
+      {(userFuncao === "lider" || userFuncao === "master") && (
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
             <Label className="text-sm text-slate-600 mb-3 block">Selecione o Vendedor</Label>
             <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
               <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Selecione um vendedor">
-                  {users.find(u => u.email === vendedorSelecionado)?.nome_exibicao || users.find(u => u.email === vendedorSelecionado)?.full_name || vendedorSelecionado}
+                  {vendedoresDisponiveis.find(u => u.email === vendedorSelecionado)?.full_name || vendedorSelecionado}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {membrosEquipe.map((email) => {
-                   const user = users.find(u => u.email === email);
-                   return (
-                     <SelectItem key={email} value={email}>
-                       {user?.nome_exibicao || user?.full_name || email} {email === userEmail ? "(Você)" : ""}
-                     </SelectItem>
-                   );
-                 })}
+                {vendedoresDisponiveis.map((u) => (
+                  <SelectItem key={u.email} value={u.email}>
+                    {u.full_name || u.email} {u.email === userEmail ? "(Você)" : ""}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </CardContent>
