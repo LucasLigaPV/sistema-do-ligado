@@ -309,7 +309,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
             </div>
             {(userRole === "admin" || userFuncao === "lider" || userFuncao === "master") && (
               (userFuncao === "lider" || userFuncao === "master") ? (
-                <FiltroVendedor
+               <FiltroVendedor
                   vendedoresSelecionados={consultorFilter}
                   todosVendedores={membrosEquipe}
                   onSelectionChange={setConsultorFilter}
