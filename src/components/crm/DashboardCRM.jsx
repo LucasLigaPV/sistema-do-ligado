@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TrendingUp, TrendingDown, Users, DollarSign, Target, AlertTriangle, Award, BarChart3 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
 export default function DashboardCRM({ userEmail, userFuncao }) {
@@ -32,24 +34,19 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Equipe.list(),
   });
 
-  // Filtrar por período e permissões
+  // Filtrar por vendedor selecionado (master/lider)
   const negociacoesFiltradas = negociacoes.filter(n => {
     const dataEntrada = new Date(n.data_entrada || n.created_date);
     const dentroIntervalo = (!startDate || dataEntrada >= new Date(startDate)) &&
                            (!endDate || dataEntrada <= new Date(endDate + "T23:59:59"));
     
-    if (userFuncao === "master") {
-      // Master vê tudo
-      return dentroIntervalo;
-    }
-    if (userFuncao === "lider") {
-      const equipe = equipes.find(e => e.lider_email === userEmail);
-      // Líder vê suas próprias vendas + vendas dos membros da equipe
-      return dentroIntervalo && (n.vendedor_email === userEmail || equipe?.membros?.includes(n.vendedor_email));
-    }
-    if (userFuncao === "vendedor") {
-      return dentroIntervalo && n.vendedor_email === userEmail;
-    }
+    const equipe = equipes.find(e => e.lider_email === userEmail);
+    const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
+    const passaVendedor = selectedVendedor !== "todos" ? n.vendedor_email === selectedVendedor : true;
+    
+    if (userFuncao === "master") return dentroIntervalo && passaVendedor;
+    if (userFuncao === "lider") return dentroIntervalo && membrosFiltro.includes(n.vendedor_email) && passaVendedor;
+    if (userFuncao === "vendedor") return dentroIntervalo && n.vendedor_email === userEmail;
     return dentroIntervalo;
   });
 
@@ -57,21 +54,24 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     const dataPerda = new Date(p.data_perda);
     const dentroIntervalo = (!startDate || dataPerda >= new Date(startDate)) &&
                            (!endDate || dataPerda <= new Date(endDate + "T23:59:59"));
+    const equipe = equipes.find(e => e.lider_email === userEmail);
+    const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
+    const passaVendedor = selectedVendedor !== "todos" ? p.vendedor_email === selectedVendedor : true;
     
-    if (userFuncao === "master") {
-      // Master vê tudo
-      return dentroIntervalo;
-    }
-    if (userFuncao === "lider") {
-      const equipe = equipes.find(e => e.lider_email === userEmail);
-      // Líder vê suas próprias perdas + perdas dos membros da equipe
-      return dentroIntervalo && (p.vendedor_email === userEmail || equipe?.membros?.includes(p.vendedor_email));
-    }
-    if (userFuncao === "vendedor") {
-      return dentroIntervalo && p.vendedor_email === userEmail;
-    }
+    if (userFuncao === "master") return dentroIntervalo && passaVendedor;
+    if (userFuncao === "lider") return dentroIntervalo && membrosFiltro.includes(p.vendedor_email) && passaVendedor;
+    if (userFuncao === "vendedor") return dentroIntervalo && p.vendedor_email === userEmail;
     return dentroIntervalo;
   });
+
+  // Vendedores disponíveis para filtro
+  const vendedoresParaFiltro = (userFuncao === "master" || userFuncao === "lider")
+    ? users.filter(u => {
+        if (userFuncao === "master") return u.funcao === "vendedor" || u.funcao === "lider";
+        const equipe = equipes.find(e => e.lider_email === userEmail);
+        return u.email === userEmail || equipe?.membros?.includes(u.email);
+      })
+    : [];
 
   // Etapas do pipeline
   const etapas = [
