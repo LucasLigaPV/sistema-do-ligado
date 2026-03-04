@@ -187,7 +187,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
       {/* Filtros de Período */}
       <Card className="border-slate-200">
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-end gap-4">
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium text-slate-700">Período:</label>
               <input
@@ -204,6 +204,24 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
                 className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
               />
             </div>
+            {vendedoresParaFiltro.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-medium text-slate-700">Vendedor:</Label>
+                <Select value={selectedVendedor} onValueChange={setSelectedVendedor}>
+                  <SelectTrigger className="w-48 h-9">
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    {vendedoresParaFiltro.map(u => (
+                      <SelectItem key={u.email} value={u.email}>
+                        {u.full_name || u.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
