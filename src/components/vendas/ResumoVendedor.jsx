@@ -71,9 +71,9 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
     enabled: userFuncao === "lider" || userFuncao === "master",
   });
 
-  // Para master: todos os consultores/líderes; para lider: membros da equipe
+  // Para master: todos (exceto admin e master); para lider: membros da equipe
   const vendedoresDisponiveis = userFuncao === "master"
-    ? users.filter(u => u.funcao === "vendedor" || u.funcao === "lider")
+    ? users.filter(u => u.role !== "admin" && u.funcao !== "master")
     : users.filter(u => membrosEquipe.includes(u.email));
 
   const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
