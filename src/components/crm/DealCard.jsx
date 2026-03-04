@@ -137,7 +137,7 @@ export default function DealCard({
             )}
           </div>
         )}
-        {userFuncao === "lider" && (
+        {(userFuncao === "lider" || userFuncao === "master") && (
           <div className="text-xs text-slate-500 pt-1 border-t">
             {getNomeVendedor(deal.vendedor_email)}
           </div>
