@@ -70,7 +70,7 @@ export default function Inicio() {
       iconColor: "text-blue-600",
       link: "/Admin?menu=indicacoes"
     },
-    ...(user?.funcao === "master" ? [{
+    ...((user?.funcao === "master" || user?.funcao === "lider") ? [{
       title: "Fila de Leads",
       description: "Visualize e gerencie a fila de leads",
       icon: ListChecks,

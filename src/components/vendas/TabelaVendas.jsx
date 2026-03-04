@@ -377,7 +377,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
                             >
                               <Eye className="w-4 h-4 text-slate-500" />
                             </Button>
-                            {(userRole === "admin" || userFuncao === "lider" || venda.email_vendedor === userEmail) && (
+                            {(userRole === "admin" || userFuncao === "master" || userFuncao === "lider" || venda.email_vendedor === userEmail) && (
                               <Button
                                 variant="ghost"
                                 size="icon"

@@ -307,8 +307,8 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                 </SelectContent>
               </Select>
             </div>
-            {(userRole === "admin" || userFuncao === "lider") && (
-              userFuncao === "lider" ? (
+            {(userRole === "admin" || userFuncao === "lider" || userFuncao === "master") && (
+              (userFuncao === "lider" || userFuncao === "master") ? (
                 <FiltroVendedor
                   vendedoresSelecionados={consultorFilter}
                   todosVendedores={membrosEquipe}
@@ -458,7 +458,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                           </Select>
                         </TableCell>
                         <TableCell>
-                          {userRole === "admin" ?
+                          {(userRole === "admin" || userFuncao === "master") ?
                         <div className="flex items-center gap-2">
                               {uploadingId === ind.id ?
                           <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" /> :
@@ -528,7 +528,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
 
                               <Eye className="w-4 h-4 text-slate-500" />
                             </Button>
-                            {userRole === "admin" &&
+                            {(userRole === "admin" || userFuncao === "master") &&
                           <Button
                             variant="ghost"
                             size="icon"
