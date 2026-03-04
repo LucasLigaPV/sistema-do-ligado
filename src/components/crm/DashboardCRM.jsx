@@ -24,10 +24,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Perda.list(),
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
-  });
+  const { usuarios: users } = useUsuarios();
 
   const { data: equipes = [] } = useQuery({
     queryKey: ["equipes"],

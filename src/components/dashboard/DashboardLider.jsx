@@ -19,10 +19,7 @@ export default function DashboardLider({ userEmail }) {
     queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
   });
 
-  const { data: users = [] } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
-  });
+  const { usuarios: users } = useUsuarios();
 
   // Obter equipe do líder
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
