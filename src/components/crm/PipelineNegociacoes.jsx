@@ -91,7 +91,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: async () => {
+      const res = await base44.functions.invoke('listarUsuarios', {});
+      return res.data?.usuarios || [];
+    },
   });
 
   // Real-time subscription para Negociacao

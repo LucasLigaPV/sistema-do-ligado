@@ -112,14 +112,10 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const { data: allUsers = [] } = useQuery({
     queryKey: ["all_users"],
     queryFn: async () => {
-      try {
-        const usersList = await base44.entities.User.list();
-        return usersList;
-      } catch (error) {
-        console.error("Erro ao buscar usuários:", error);
-        return [];
-      }
+      const res = await base44.functions.invoke('listarUsuarios', {});
+      return res.data?.usuarios || [];
     },
+    enabled: userFuncao === "master" || userFuncao === "lider" || userRole === "admin",
   });
 
   const users = allUsers;
