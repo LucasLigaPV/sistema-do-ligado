@@ -366,7 +366,7 @@ export default function Distribuicao({ userFuncao }) {
 
     // Re-buscar leads frescos do servidor para evitar race condition com cache desatualizado
     const leadsFrescos = await base44.entities.Lead.list();
-    const leadsNaoDistribuidosFrescos = leadsFrescos.filter(l => !l.distribuido && !l.status_arquivamento);
+    const leadsNaoDistribuidosFrescos = leadsFrescos.filter(l => !l.distribuido && !l.status_arquivamento && l.status_arquivamento !== "invalido" && l.status_arquivamento !== "limpeza");
 
     // Usar vendedores validados
     const vendedoresElegiveis = vendedoresLideres.filter(v => 
