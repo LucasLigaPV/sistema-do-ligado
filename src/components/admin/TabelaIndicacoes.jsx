@@ -47,6 +47,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import FiltroVendedor from "../shared/FiltroVendedor";
+import { useUsuarios } from "../shared/useUsuarios";
 
 const statusConfig = {
   pendente: { label: "Pendente", color: "bg-[#FFF9E6] text-[#D4A900] border border-[#EFC200]", icon: Clock },
