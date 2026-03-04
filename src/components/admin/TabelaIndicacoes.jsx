@@ -311,10 +311,10 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
               (userFuncao === "lider" || userFuncao === "master") ? (
                <FiltroVendedor
                   vendedoresSelecionados={consultorFilter}
-                  todosVendedores={membrosEquipe}
+                  todosVendedores={userFuncao === "master" ? users.filter(u => u.funcao === "vendedor" || u.funcao === "lider").map(u => u.email) : membrosEquipe}
                   onSelectionChange={setConsultorFilter}
                   userEmail={userEmail}
-                  nomesPorEmail={minhaEquipe?.nomes_membros || {}}
+                  nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.map(u => [u.email, u.full_name])) : (minhaEquipe?.nomes_membros || {})}
                 />
               ) : (
                 <div>
