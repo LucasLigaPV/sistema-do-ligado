@@ -380,7 +380,9 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
                       R$ {vendedor.valorAdesao.toFixed(2).replace(".", ",")}
                     </TableCell>
                     <TableCell className="text-right text-slate-900">
-                      R$ {vendedor.valorMensalidade.toFixed(2).replace(".", ",")}
+                     {vendedor.vendas > 0
+                       ? `R$ ${(vendedor.valorMensalidade / vendedor.vendas).toFixed(2).replace(".", ",")}`
+                       : "-"}
                     </TableCell>
                   </TableRow>
                 ))
