@@ -338,7 +338,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
                 <TableHead className="text-center text-slate-700">Perdas</TableHead>
                 <TableHead className="text-center text-slate-700">Taxa Conv.</TableHead>
                 <TableHead className="text-right text-slate-700">Valor Adesão</TableHead>
-                <TableHead className="text-right text-slate-700">Mensalidade</TableHead>
+                <TableHead className="text-right text-slate-700">Média Mensal</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
