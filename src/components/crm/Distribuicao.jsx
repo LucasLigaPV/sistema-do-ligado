@@ -372,9 +372,12 @@ export default function Distribuicao({ userFuncao }) {
       l.status_arquivamento !== "limpeza"
     );
 
-    // Usar vendedores validados
+    // Usar vendedores validados conforme o turno
+    const listValidadosParaTurno = turnoAtual === "2_turno"
+      ? vendedoresValidados2Turno
+      : vendedoresValidados;
     const vendedoresElegiveis = vendedoresLideres.filter(v => 
-      vendedoresValidados.includes(v.email)
+      listValidadosParaTurno.includes(v.email)
     );
 
     if (vendedoresElegiveis.length === 0) {
