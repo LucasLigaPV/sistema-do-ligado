@@ -1651,7 +1651,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <FieldError campo="valor_adesao" />
                   </div>
                   <div>
-                    <Label className={erros.valor_mensalidade ? "text-red-600" : ""}>Valor da Mensalidade * <span className="text-xs font-normal text-slate-400">(mín. R$ 50,00)</span></Label>
+                    <Label className={erros.valor_mensalidade ? "text-red-600" : ""}>Valor da Mensalidade *</Label>
                     <Input
                       value={conferenciaData.valor_mensalidade || ""}
                       onChange={(e) => {
