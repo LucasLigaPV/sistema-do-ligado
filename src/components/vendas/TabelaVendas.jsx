@@ -34,6 +34,7 @@ import {
   Download,
   UserPlus,
   TrendingUp,
+  X,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
