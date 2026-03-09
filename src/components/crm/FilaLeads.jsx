@@ -475,6 +475,24 @@ export default function FilaLeads() {
 
         {/* Leads Inválidos */}
         <TabsContent value="invalidos" className="space-y-4 mt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Total de Inválidos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{leadsInvalidos.length}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Com Filtros Aplicados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-[#EFC200]">{filteredInvalidos.length}</div>
+              </CardContent>
+            </Card>
+          </div>
           <Card>
             <CardContent className="pt-6">
               <div className="flex flex-col gap-4">
