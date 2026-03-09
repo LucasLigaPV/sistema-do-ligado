@@ -223,33 +223,58 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     <div className="space-y-6">
       {/* Filtros de Período */}
       <Card className="border-slate-200">
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-slate-700">Período:</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
-              />
-              <span className="text-slate-500">até</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
-              />
+        <CardHeader>
+          <CardTitle className="text-slate-900">Filtros</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-slate-700">Período:</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
+                />
+                <span className="text-slate-500">até</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
+                />
+              </div>
+              {vendedoresParaFiltro.length > 0 && (
+                <FiltroVendedor
+                  vendedoresSelecionados={selectedVendedores}
+                  todosVendedores={vendedoresParaFiltro.map(u => u.email)}
+                  onSelectionChange={setSelectedVendedores}
+                  userEmail={userEmail}
+                  nomesPorEmail={Object.fromEntries(vendedoresParaFiltro.map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]]))}
+                />
+              )}
             </div>
-            {vendedoresParaFiltro.length > 0 && (
-              <FiltroVendedor
-                vendedoresSelecionados={selectedVendedores}
-                todosVendedores={vendedoresParaFiltro.map(u => u.email)}
-                onSelectionChange={setSelectedVendedores}
-                userEmail={userEmail}
-                nomesPorEmail={Object.fromEntries(vendedoresParaFiltro.map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]]))}
-              />
-            )}
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  // Filtros já são aplicados automaticamente via estado
+                }}
+                className="h-9 px-4 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors"
+              >
+                Buscar
+              </button>
+              <button
+                onClick={() => {
+                  setStartDate(format(startOfMonth(new Date()), "yyyy-MM-dd"));
+                  setEndDate(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+                  setSelectedVendedores([]);
+                }}
+                className="h-9 px-4 rounded-md border border-slate-300 bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors"
+              >
+                Limpar Filtro
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
