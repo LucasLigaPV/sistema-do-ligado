@@ -69,7 +69,7 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
                 <div>
                   <p className="font-semibold text-slate-900">{vendedor.nome}</p>
                   <p className="text-xs text-slate-600 mt-1">
-                    {vendedor.ativas} ativas • {vendedor.perdidas} perdidas
+                    {vendedor.recebidas} recebidas • {vendedor.emNegociacao} em negociação • {vendedor.perdidas} perdidas
                   </p>
                 </div>
               </div>
