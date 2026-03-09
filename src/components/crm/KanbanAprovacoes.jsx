@@ -557,218 +557,209 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
       {/* Sheet: Detalhes da Negociação */}
       <Sheet open={showDetails} onOpenChange={setShowDetails}>
-        <SheetContent side="right" className="w-full sm:w-[600px] sm:max-w-[600px] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Detalhes da Negociação</SheetTitle>
-          </SheetHeader>
+        <SheetContent side="right" className="w-full sm:w-[620px] sm:max-w-[620px] overflow-y-auto p-0 bg-gradient-to-br from-white to-slate-50">
+          {/* Header premium */}
           {selectedDeal && (
-            <div className="space-y-6 mt-6">
-              {/* Informações Básicas */}
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-xs font-semibold text-slate-500">Cliente</Label>
-                  <p className="text-sm font-medium text-slate-900">{selectedDeal.nome_cliente}</p>
+            <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1">
+                    <div className="w-1 h-7 bg-[#EFC200] rounded-full flex-shrink-0" />
+                    <h2 className="text-xl font-bold text-slate-900 truncate">
+                      {selectedDeal.modelo_veiculo || selectedDeal.nome_cliente}
+                    </h2>
+                  </div>
+                  <p className="text-sm text-slate-500 pl-4">{selectedDeal.nome_cliente}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-xs font-semibold text-slate-500">Telefone</Label>
-                    <p className="text-sm text-slate-900">{selectedDeal.telefone}</p>
-                  </div>
-                  <div>
-                    <Label className="text-xs font-semibold text-slate-500">Email</Label>
-                    <p className="text-sm text-slate-900">{selectedDeal.email || "-"}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-xs font-semibold text-slate-500">Placa</Label>
-                    <p className="text-sm font-semibold text-[#EFC200]">{selectedDeal.placa || "-"}</p>
-                  </div>
-                  <div>
-                    <Label className="text-xs font-semibold text-slate-500">Modelo</Label>
-                    <p className="text-sm text-slate-900">{selectedDeal.modelo_veiculo || "-"}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Informações da Negociação */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold text-slate-900 mb-3">Informações da Negociação</h3>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Plano</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.plano_interesse || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Origem</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.origem || "-"}</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Valor Adesão</Label>
-                      <p className="text-sm font-medium text-slate-900">{selectedDeal.valor_adesao || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Valor Mensalidade</Label>
-                      <p className="text-sm font-medium text-slate-900">{selectedDeal.valor_mensalidade || "-"}</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Data de Entrada</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.data_entrada ? format(new Date(selectedDeal.data_entrada), "dd/MM/yyyy") : "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Etapa</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.etapa || "-"}</p>
-                    </div>
-                  </div>
-                  {selectedDeal.observacoes && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Observações</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.observacoes}</p>
-                    </div>
-                  )}
-                  {selectedDeal.origem === "troca_veiculo" && selectedDeal.placa_veiculo_antigo && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Placa do Veículo Antigo</Label>
-                      <p className="text-sm font-semibold text-[#EFC200]">{selectedDeal.placa_veiculo_antigo}</p>
-                    </div>
-                  )}
-                  {selectedDeal.beneficio_adicional === "sim" && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Benefício Adicional</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.beneficio_adicional_opcao || "Sim"}</p>
-                    </div>
-                  )}
-                  {selectedDeal.beneficio_adicional !== "sim" && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Benefício Adicional</Label>
-                      <p className="text-sm text-slate-500">Não</p>
-                    </div>
-                  )}
-                  {selectedDeal.desconto === "sim" && selectedDeal.desconto_opcao && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Desconto</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.desconto_opcao}</p>
-                    </div>
-                  )}
-                  {selectedDeal.desconto !== "sim" && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Desconto</Label>
-                      <p className="text-sm text-slate-500">Não</p>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {selectedDeal.placa && (
+                    <div className="bg-[#EFC200]/10 border border-[#EFC200]/40 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                      <Car className="w-3.5 h-3.5 text-[#EFC200]" />
+                      <span className="text-sm font-bold text-slate-800 tracking-wider">{selectedDeal.placa}</span>
                     </div>
                   )}
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Informações de Análise */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold text-slate-900 mb-3">Análise e Aprovação</h3>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500 mb-2 block">Alterar Status</Label>
-                      <Select
-                        value={selectedDeal.status_aprovacao || "aguardando"}
-                        onValueChange={(newStatus) => {
-                          if (newStatus === "reprovado") {
-                            setShowDetails(false);
-                            setSelectedDeal(selectedDeal);
-                            setShowModal(true);
-                          } else if (newStatus === "corrigido") {
-                            updateMutation.mutate({
-                              id: selectedDeal.id,
-                              data: {
-                                status_aprovacao: "corrigido",
-                                etapa: "enviado_cadastro",
-                                informacoes_conferidas: false,
-                              }
-                            });
-                          } else if (newStatus === "aprovado") {
-                            updateMutation.mutate({
-                              id: selectedDeal.id,
-                              data: {
-                                status_aprovacao: "aprovado",
-                                etapa: "venda_ativa",
-                                aprovado_por: userEmail,
-                                data_aprovacao: new Date().toISOString(),
-                                data_venda_ativa: new Date().toISOString(),
-                              }
-                            });
-                          } else if (newStatus === "analisando") {
-                            updateMutation.mutate({
-                              id: selectedDeal.id,
-                              data: {
-                                status_aprovacao: "analisando",
-                                analisado_por: userEmail,
-                                data_analise: new Date().toISOString(),
-                              }
-                            });
-                          } else {
-                            updateMutation.mutate({
-                              id: selectedDeal.id,
-                              data: { status_aprovacao: newStatus }
-                            });
-                          }
+          {selectedDeal && (
+            <div className="px-6 py-6 space-y-6">
+
+              {/* Cards de destaque */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Plano</p>
+                  <p className="text-sm font-bold text-slate-900 capitalize">{selectedDeal.plano_interesse?.replace("_", " ") || "-"}</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Mensalidade</p>
+                  <p className="text-sm font-bold text-slate-900">{selectedDeal.valor_mensalidade || "-"}</p>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Vencimento</p>
+                  <p className="text-sm font-bold text-slate-900">{selectedDeal.data_vencimento ? `Dia ${selectedDeal.data_vencimento}` : "-"}</p>
+                </div>
+              </div>
+
+              {/* Badges: Origem + Desconto + Benefício */}
+              <div className="flex flex-wrap gap-2">
+                {selectedDeal.origem && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                    {selectedDeal.origem.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                  </span>
+                )}
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${selectedDeal.desconto === "sim" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${selectedDeal.desconto === "sim" ? "bg-emerald-500" : "bg-slate-300"}`} />
+                  {selectedDeal.desconto === "sim" ? `Desconto ${selectedDeal.desconto_opcao || ""}` : "Sem Desconto"}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${selectedDeal.beneficio_adicional === "sim" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${selectedDeal.beneficio_adicional === "sim" ? "bg-amber-400" : "bg-slate-300"}`} />
+                  {selectedDeal.beneficio_adicional === "sim" ? (selectedDeal.beneficio_adicional_opcao || "Benefício Adicional") : "Sem Benefício"}
+                </span>
+                {selectedDeal.origem === "troca_veiculo" && selectedDeal.placa_veiculo_antigo && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EFC200]/10 text-slate-700 text-xs font-semibold border border-[#EFC200]/30">
+                    <Car className="w-3 h-3 text-[#EFC200]" />
+                    Ant. {selectedDeal.placa_veiculo_antigo}
+                  </span>
+                )}
+              </div>
+
+              {/* Info do cliente */}
+              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Cliente</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Telefone</p>
+                    <p className="text-sm text-slate-900">{selectedDeal.telefone || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">E-mail</p>
+                    <p className="text-sm text-slate-900 break-all">{selectedDeal.email || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Adesão</p>
+                    <p className="text-sm text-slate-900">{selectedDeal.valor_adesao || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Entrada</p>
+                    <p className="text-sm text-slate-900">{selectedDeal.data_entrada ? format(new Date(selectedDeal.data_entrada), "dd/MM/yyyy") : "-"}</p>
+                  </div>
+                </div>
+                {selectedDeal.observacoes && (
+                  <div className="pt-3 border-t border-slate-100">
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Observações</p>
+                    <p className="text-sm text-slate-600 leading-relaxed">{selectedDeal.observacoes}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Análise e Aprovação */}
+              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Análise e Aprovação</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-semibold text-slate-500 mb-1.5 block">Alterar Status</Label>
+                    <Select
+                      value={selectedDeal.status_aprovacao || "aguardando"}
+                      onValueChange={(newStatus) => {
+                        if (newStatus === "reprovado") {
                           setShowDetails(false);
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="aguardando">Aguardando Análise</SelectItem>
-                          <SelectItem value="analisando">Analisando</SelectItem>
-                          <SelectItem value="reprovado">Reprovado</SelectItem>
-                          <SelectItem value="corrigido">Corrigidos</SelectItem>
-                          <SelectItem value="aprovado">Aprovados</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Consultor</Label>
-                      <p className="text-sm text-slate-900">{getNomeVendedor(selectedDeal.vendedor_email) || "-"}</p>
-                    </div>
+                          setSelectedDeal(selectedDeal);
+                          setShowModal(true);
+                        } else if (newStatus === "corrigido") {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: {
+                              status_aprovacao: "corrigido",
+                              etapa: "enviado_cadastro",
+                              informacoes_conferidas: false,
+                            }
+                          });
+                        } else if (newStatus === "aprovado") {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: {
+                              status_aprovacao: "aprovado",
+                              etapa: "venda_ativa",
+                              aprovado_por: userEmail,
+                              data_aprovacao: new Date().toISOString(),
+                              data_venda_ativa: new Date().toISOString(),
+                            }
+                          });
+                        } else if (newStatus === "analisando") {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: {
+                              status_aprovacao: "analisando",
+                              analisado_por: userEmail,
+                              data_analise: new Date().toISOString(),
+                            }
+                          });
+                        } else {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: { status_aprovacao: newStatus }
+                          });
+                        }
+                        setShowDetails(false);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="aguardando">Aguardando Análise</SelectItem>
+                        <SelectItem value="analisando">Analisando</SelectItem>
+                        <SelectItem value="reprovado">Reprovado</SelectItem>
+                        <SelectItem value="corrigido">Corrigidos</SelectItem>
+                        <SelectItem value="aprovado">Aprovados</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  {selectedDeal.analisado_por && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Analisado Por</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.analisado_por}</p>
-                    </div>
-                  )}
-                  {selectedDeal.data_analise && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Data de Análise</Label>
-                      <p className="text-sm text-slate-900">{format(new Date(selectedDeal.data_analise), "dd/MM/yyyy HH:mm")}</p>
-                    </div>
-                  )}
-                  {selectedDeal.aprovado_por && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Aprovado Por</Label>
-                      <p className="text-sm text-slate-900">{selectedDeal.aprovado_por}</p>
-                    </div>
-                  )}
-                  {selectedDeal.data_aprovacao && (
-                    <div>
-                      <Label className="text-xs font-semibold text-slate-500">Data de Aprovação</Label>
-                      <p className="text-sm text-slate-900">{format(new Date(selectedDeal.data_aprovacao), "dd/MM/yyyy HH:mm")}</p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Consultor</p>
+                    <p className="text-sm font-medium text-slate-900">{getNomeVendedor(selectedDeal.vendedor_email) || "-"}</p>
+                  </div>
                 </div>
+                {(selectedDeal.analisado_por || selectedDeal.data_analise || selectedDeal.aprovado_por || selectedDeal.data_aprovacao) && (
+                  <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                    {selectedDeal.analisado_por && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Analisado Por</p>
+                        <p className="text-xs text-slate-700">{selectedDeal.analisado_por}</p>
+                      </div>
+                    )}
+                    {selectedDeal.data_analise && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Data da Análise</p>
+                        <p className="text-xs text-slate-700">{format(new Date(selectedDeal.data_analise), "dd/MM/yyyy HH:mm")}</p>
+                      </div>
+                    )}
+                    {selectedDeal.aprovado_por && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Aprovado Por</p>
+                        <p className="text-xs text-slate-700">{selectedDeal.aprovado_por}</p>
+                      </div>
+                    )}
+                    {selectedDeal.data_aprovacao && (
+                      <div>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Data de Aprovação</p>
+                        <p className="text-xs text-slate-700">{format(new Date(selectedDeal.data_aprovacao), "dd/MM/yyyy HH:mm")}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Anexos de Reprova */}
-              {(negociacao => {
+              {(() => {
                 const anexos = selectedDeal?.anexos_reprova || [];
                 if (anexos.length === 0) return null;
                 return (
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                      Arquivos do Vendedor
-                    </h3>
+                  <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Arquivos do Vendedor</h3>
                     <AnexosReprova
                       negociacao={selectedDeal}
                       onUpdate={() => queryClient.invalidateQueries({ queryKey: ["negociacoes"] })}
