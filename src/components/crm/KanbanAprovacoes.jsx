@@ -770,12 +770,9 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               })()}
 
               {/* Checklist */}
-              <div className="border-t pt-4">
-                <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-[#EFC200]" />
-                  Checklist do Consultor
-                </h3>
-                <div className="space-y-2.5">
+              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Checklist do Consultor</h3>
+                <div className="space-y-2">
                   {[
                     { key: "cadastro_preenchido_power", label: "Cadastro Preenchido na Power", icon: FileText },
                     { key: "documentacoes_enviadas_power", label: "Documentações Enviadas", icon: Upload },
@@ -786,110 +783,65 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                     const IconComponent = item.icon;
                     const isChecked = selectedDeal[item.key] || false;
                     return (
-                      <div 
-                        key={item.key} 
-                        className={`flex items-center gap-3 p-3 rounded-lg ${
-                          isChecked 
-                            ? "bg-green-50 border border-green-200" 
-                            : "bg-slate-50 border border-slate-200"
-                        }`}
-                      >
-                        <Checkbox
-                          checked={isChecked}
-                          disabled
-                          className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
-                        />
-                        <IconComponent className={`w-4 h-4 flex-shrink-0 ${isChecked ? "text-green-600" : "text-slate-400"}`} />
-                        <span className={`text-sm flex-1 font-medium ${isChecked ? "text-green-700" : "text-slate-700"}`}>
-                          {item.label}
-                        </span>
-                        {isChecked && <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />}
+                      <div key={item.key} className={`flex items-center gap-3 p-2.5 rounded-lg border ${isChecked ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"}`}>
+                        <Checkbox checked={isChecked} disabled className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" />
+                        <IconComponent className={`w-3.5 h-3.5 flex-shrink-0 ${isChecked ? "text-green-600" : "text-slate-400"}`} />
+                        <span className={`text-xs flex-1 font-medium ${isChecked ? "text-green-700" : "text-slate-600"}`}>{item.label}</span>
+                        {isChecked && <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />}
                       </div>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Pendência Corrigida (exibe a reprova mais recente quando status é "corrigido") */}
+              {/* Pendência Corrigida */}
               {selectedDeal.status_aprovacao === "corrigido" && historicoReprov.length > 0 && historicoReprov[0] && (
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                  <h3 className="text-xs font-bold text-green-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
                     Pendência Corrigida
                   </h3>
                   <div className="space-y-2">
-                    {/* Header da correção */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="h-px flex-1 bg-green-200" />
-                      <span className="text-xs text-green-700 font-semibold">
-                        Resolvido em {format(new Date(), "dd/MM/yyyy")}
-                      </span>
-                      <div className="h-px flex-1 bg-green-200" />
-                    </div>
-                    
-                    {/* Motivos corrigidos */}
-                    <div className="rounded-lg p-3 space-y-2 border bg-green-50 border-green-200">
-                      {historicoReprov[0].motivos && historicoReprov[0].motivos.length > 0 && (
-                        <div className="space-y-2">
-                          {historicoReprov[0].motivos.map((motivo, idx) => (
-                            <div key={idx} className="bg-white rounded p-2 flex items-start gap-2">
-                              <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <div className="flex-1">
-                                <p className="text-xs font-semibold text-green-700">
-                                  {categoriesMotivo[motivo.categoria]}
-                                </p>
-                                <p className="text-xs text-green-600 mt-1">{motivo.detalhe}</p>
-                              </div>
-                            </div>
-                          ))}
+                    {historicoReprov[0].motivos?.map((motivo, idx) => (
+                      <div key={idx} className="bg-white rounded-lg p-2.5 flex items-start gap-2 border border-green-100">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-green-700">{categoriesMotivo[motivo.categoria]}</p>
+                          <p className="text-xs text-green-600 mt-0.5">{motivo.detalhe}</p>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* Histórico de Reprovas (excluindo a atual) */}
+              {/* Histórico de Reprovas */}
               {historicoReprov.length > 1 && (
-                <div className="border-t pt-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                  <button
                     onClick={() => setShowHistorico(!showHistorico)}
-                    className="w-full flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 mb-3"
+                    className="w-full flex items-center justify-between px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors"
                   >
-                    <History className="w-4 h-4" />
-                    <span className="text-xs">Exibir Outras Reprovas</span>
-                    {showHistorico ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                  </Button>
-                  
+                    <div className="flex items-center gap-2">
+                      <History className="w-4 h-4 text-slate-400" />
+                      <span className="text-xs font-semibold uppercase tracking-wider">Histórico de Reprovas</span>
+                    </div>
+                    {showHistorico ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                  </button>
                   {showHistorico && (
-                    <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+                    <div className="px-4 pb-4 space-y-3 max-h-80 overflow-y-auto border-t border-slate-100">
                       {historicoReprov.slice(1).map((sessao, sessaoIndex) => (
-                        <div key={`${sessao.data_analise}-${sessaoIndex}`} className="space-y-2">
-                          {/* Header da sessão */}
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="h-px flex-1 bg-slate-200" />
-                            <span className="text-xs text-slate-500 font-medium">
-                              {format(new Date(sessao.data_analise), "dd/MM/yyyy 'às' HH:mm")}
-                            </span>
-                            <div className="h-px flex-1 bg-slate-200" />
-                          </div>
-                          
-                          {/* Motivos desta sessão */}
-                          <div className="rounded-lg p-3 space-y-2 border bg-slate-50 border-slate-200">
-                            {sessao.motivos && sessao.motivos.length > 0 && (
-                              <div className="space-y-2">
-                                {sessao.motivos.map((motivo, idx) => (
-                                  <div key={idx} className="bg-white rounded p-2">
-                                    <p className="text-xs font-semibold text-slate-700">
-                                      {categoriesMotivo[motivo.categoria]}
-                                    </p>
-                                    <p className="text-xs text-slate-600 mt-1">{motivo.detalhe}</p>
-                                  </div>
-                                ))}
+                        <div key={`${sessao.data_analise}-${sessaoIndex}`} className="pt-3">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                            {format(new Date(sessao.data_analise), "dd/MM/yyyy 'às' HH:mm")}
+                          </p>
+                          <div className="space-y-1.5">
+                            {sessao.motivos?.map((motivo, idx) => (
+                              <div key={idx} className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                                <p className="text-xs font-semibold text-slate-700">{categoriesMotivo[motivo.categoria]}</p>
+                                <p className="text-xs text-slate-500 mt-0.5">{motivo.detalhe}</p>
                               </div>
-                            )}
+                            ))}
                           </div>
                         </div>
                       ))}
@@ -897,6 +849,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                   )}
                 </div>
               )}
+
+              <div className="pb-4" />
             </div>
           )}
         </SheetContent>
