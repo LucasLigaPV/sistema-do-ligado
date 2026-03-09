@@ -402,6 +402,25 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           <span>{format(new Date(deal.data_conferencia), "dd/MM HH:mm")}</span>
                                         </div>
                                       </div>
+                                      {etapa.id === "aguardando" && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            updateMutation.mutate({
+                                              id: deal.id,
+                                              data: {
+                                                status_aprovacao: "analisando",
+                                                analisado_por: userEmail,
+                                                data_analise: new Date().toISOString(),
+                                              }
+                                            });
+                                          }}
+                                          className="w-full mt-1 py-1.5 text-xs font-semibold rounded-lg bg-[#EFC200]/10 hover:bg-[#EFC200]/20 text-[#D4A900] border border-[#EFC200]/30 hover:border-[#EFC200]/60 transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                          <Eye className="w-3.5 h-3.5" />
+                                          Analisar
+                                        </button>
+                                      )}
                                       {deal.status_aprovacao !== "aprovado" && (deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
                                         <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
                                           {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
