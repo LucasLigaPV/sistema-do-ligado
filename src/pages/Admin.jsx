@@ -168,11 +168,11 @@ export default function Admin() {
                   </TabsList>
 
                   <TabsContent value="registrar">
-                    <TabelaVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
+                    <TabelaVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} filtrosCompartilhados={filtrosVendas} onFiltrosChange={setFiltrosVendas} />
                   </TabsContent>
 
                   <TabsContent value="resumo">
-                    <ResumoVendedor userEmail={user?.email} userFuncao={user?.funcao} />
+                    <ResumoVendedor userEmail={user?.email} userFuncao={user?.funcao} filtrosCompartilhados={filtrosVendas} onFiltrosChange={setFiltrosVendas} />
                   </TabsContent>
 
                   <TabsContent value="fechamentos">
@@ -180,7 +180,7 @@ export default function Admin() {
                   </TabsContent>
 
                   <TabsContent value="dashboard">
-                    <DashboardVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} />
+                    <DashboardVendas userEmail={user?.email} userRole={user?.role} userFuncao={user?.funcao} filtrosCompartilhados={filtrosVendas} onFiltrosChange={setFiltrosVendas} />
                   </TabsContent>
                 </Tabs>
               </div>
