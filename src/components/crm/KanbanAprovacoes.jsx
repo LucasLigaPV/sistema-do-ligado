@@ -557,7 +557,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
       {/* Sheet: Detalhes da Negociação */}
       <Sheet open={showDetails} onOpenChange={setShowDetails}>
-        <SheetContent side="right" className="w-full sm:w-[620px] sm:max-w-[620px] overflow-y-auto p-0 bg-gradient-to-br from-white to-slate-50">
+        <SheetContent side="right" className="w-full sm:w-[620px] sm:max-w-[620px] overflow-y-auto p-0 bg-gradient-to-br from-white to-slate-50 [&>button]:hidden">
           {/* Header premium */}
           {selectedDeal && (
             <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-5">
