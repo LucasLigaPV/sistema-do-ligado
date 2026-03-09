@@ -37,20 +37,42 @@ const formatarValor = (valor) => {
   });
 };
 
-export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
+export default function DashboardVendas({ userEmail, userRole, userFuncao, filtrosCompartilhados, onFiltrosChange }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
   
-  const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
-  const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
-  const [consultorFilter, setConsultorFilter] = useState([]);
+  const [dataInicio, setDataInicio] = useState(filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0]);
+  const [dataFim, setDataFim] = useState(filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0]);
+  const [consultorFilter, setConsultorFilter] = useState(filtrosCompartilhados?.consultorFilter ?? []);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [filtrosAtivos, setFiltrosAtivos] = useState({
-    dataInicio: inicioMes.toISOString().split('T')[0],
-    dataFim: fimMes.toISOString().split('T')[0],
-    consultorFilter: [],
+    dataInicio: filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0],
+    dataFim: filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0],
+    consultorFilter: filtrosCompartilhados?.consultorFilter ?? [],
   });
+
+  const prevFiltrosRef = React.useRef(filtrosCompartilhados);
+  React.useEffect(() => {
+    const prev = prevFiltrosRef.current;
+    if (!filtrosCompartilhados) return;
+    const changed =
+      JSON.stringify(filtrosCompartilhados.consultorFilter) !== JSON.stringify(prev?.consultorFilter) ||
+      filtrosCompartilhados.dataInicio !== prev?.dataInicio ||
+      filtrosCompartilhados.dataFim !== prev?.dataFim;
+    if (changed) {
+      setConsultorFilter(filtrosCompartilhados.consultorFilter ?? []);
+      setDataInicio(filtrosCompartilhados.dataInicio ?? inicioMes.toISOString().split('T')[0]);
+      setDataFim(filtrosCompartilhados.dataFim ?? fimMes.toISOString().split('T')[0]);
+      setFiltrosAtivos({
+        consultorFilter: filtrosCompartilhados.consultorFilter ?? [],
+        dataInicio: filtrosCompartilhados.dataInicio ?? inicioMes.toISOString().split('T')[0],
+        dataFim: filtrosCompartilhados.dataFim ?? fimMes.toISOString().split('T')[0],
+      });
+      setBuscaAtiva(true);
+      prevFiltrosRef.current = filtrosCompartilhados;
+    }
+  }, [filtrosCompartilhados]);
 
   const { data: allVendas = [], isLoading } = useQuery({
     queryKey: ["vendas"],
