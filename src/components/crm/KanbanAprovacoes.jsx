@@ -30,6 +30,25 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
 
   const queryClient = useQueryClient();
+  const prevAguardandoIds = useRef(null);
+
+  // Som de notificação via Web Audio API
+  const playNotificationSound = useCallback(() => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.3);
+      osc.start(ctx.currentTime + i * 0.15);
+      osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+    });
+  }, []);
 
   const { data: negociacoes = [] } = useQuery({
     queryKey: ["negociacoes"],
