@@ -123,16 +123,19 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
            (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
   });
 
-  const totalLeads = negociacoesFiltradas.filter(n => n.origem === "lead").length;
-  const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead").length;
+  // Filtrar negociações válidas (excluir leads inválidos)
+  const negociacoesValidas = negociacoesFiltradas.filter(n => n.status_arquivamento !== "invalido");
+
+  const totalLeads = negociacoesValidas.filter(n => n.origem === "lead").length;
+  const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead" && n.status_arquivamento !== "invalido").length;
   const taxaConvLead = totalLeads > 0 ? ((vendasLead / totalLeads) * 100).toFixed(1) : "0.0";
 
-  const totalIndicacoes = negociacoesFiltradas.filter(n => n.origem === "indicacao").length;
-  const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao").length;
+  const totalIndicacoes = negociacoesValidas.filter(n => n.origem === "indicacao").length;
+  const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao" && n.status_arquivamento !== "invalido").length;
   const taxaConvIndicacao = totalIndicacoes > 0 ? ((vendasIndicacao / totalIndicacoes) * 100).toFixed(1) : "0.0";
 
-  const totalOutrosCanais = negociacoesFiltradas.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
-  const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
+  const totalOutrosCanais = negociacoesValidas.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
+  const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem) && n.status_arquivamento !== "invalido").length;
   const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(1) : "0.0";
 
   // Ranking de vendedores
