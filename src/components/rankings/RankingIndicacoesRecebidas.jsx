@@ -11,14 +11,18 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
 
   negociacoesIndicacao.forEach(neg => {
     const email = neg.vendedor_email;
-    if (!ranking[email]) ranking[email] = { ativas: 0, perdidas: 0, total: 0 };
-    ranking[email].ativas++;
+    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0, total: 0 };
+    ranking[email].recebidas++;
     ranking[email].total++;
+    // Contar como "em negociação" se não for venda ativa e não for perda
+    if (neg.etapa !== "venda_ativa") {
+      ranking[email].emNegociacao++;
+    }
   });
 
   perdasIndicacao.forEach(perda => {
     const email = perda.vendedor_email;
-    if (!ranking[email]) ranking[email] = { ativas: 0, perdidas: 0, total: 0 };
+    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0, total: 0 };
     ranking[email].perdidas++;
     ranking[email].total++;
   });
