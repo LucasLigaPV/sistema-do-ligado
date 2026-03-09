@@ -139,11 +139,6 @@ export default function DashboardAprovacoes() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Aprovações - Dashboard</h2>
-        <p className="text-slate-600">Insights e análise de performance de aprovações</p>
-      </div>
-
       {/* Filtro de Data */}
       <Card className="border-0 bg-white">
         <CardHeader className="pb-3 border-b">
