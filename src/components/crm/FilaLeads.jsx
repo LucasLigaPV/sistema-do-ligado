@@ -56,6 +56,28 @@ export default function FilaLeads() {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
 
+  // Filtros para Leads Inválidos
+  const [searchInvalidos, setSearchInvalidos] = useState("");
+  const [startDateInvalidos, setStartDateInvalidos] = useState("");
+  const [endDateInvalidos, setEndDateInvalidos] = useState("");
+  const [filterPlataformaInvalidos, setFilterPlataformaInvalidos] = useState("todas");
+  const [filterCampanhaInvalidos, setFilterCampanhaInvalidos] = useState("todas");
+  const [filterAdsetInvalidos, setFilterAdsetInvalidos] = useState("todos");
+  const [filterAdInvalidos, setFilterAdInvalidos] = useState("todos");
+  const [filterPosicionamentoInvalidos, setFilterPosicionamentoInvalidos] = useState("todos");
+  const [filterPaginaInvalidos, setFilterPaginaInvalidos] = useState("todas");
+
+  // Filtros para Limpeza
+  const [searchLimpeza, setSearchLimpeza] = useState("");
+  const [startDateLimpeza, setStartDateLimpeza] = useState("");
+  const [endDateLimpeza, setEndDateLimpeza] = useState("");
+  const [filterPlataformaLimpeza, setFilterPlataformaLimpeza] = useState("todas");
+  const [filterCampanhaLimpeza, setFilterCampanhaLimpeza] = useState("todas");
+  const [filterAdsetLimpeza, setFilterAdsetLimpeza] = useState("todos");
+  const [filterAdLimpeza, setFilterAdLimpeza] = useState("todos");
+  const [filterPosicionamentoLimpeza, setFilterPosicionamentoLimpeza] = useState("todos");
+  const [filterPaginaLimpeza, setFilterPaginaLimpeza] = useState("todas");
+
   const queryClient = useQueryClient();
 
   const updateLeadMutation = useMutation({
@@ -124,6 +146,56 @@ export default function FilaLeads() {
   const adsets = [...new Set(leadsAtivos.map((l) => l.adset).filter(Boolean))];
   const campanhas = [...new Set(leadsAtivos.map((l) => l.campanha).filter(Boolean))];
   const paginas = [...new Set(leadsAtivos.map((l) => l.pagina).filter(Boolean))];
+
+  // Valores únicos para filtros de invalidos
+  const plataformasInvalidos = [...new Set(leadsInvalidos.map((l) => l.plataforma).filter(Boolean))];
+  const posicionamentosInvalidos = [...new Set(leadsInvalidos.map((l) => l.posicionamento).filter(Boolean))];
+  const adsInvalidos = [...new Set(leadsInvalidos.map((l) => l.ad).filter(Boolean))];
+  const adsetsInvalidos = [...new Set(leadsInvalidos.map((l) => l.adset).filter(Boolean))];
+  const campanhasInvalidos = [...new Set(leadsInvalidos.map((l) => l.campanha).filter(Boolean))];
+  const paginasInvalidos = [...new Set(leadsInvalidos.map((l) => l.pagina).filter(Boolean))];
+
+  const filteredInvalidos = leadsInvalidos.filter((lead) => {
+    const leadDate = lead.data ? new Date(lead.data) : new Date(lead.created_date);
+    const matchDate = (!startDateInvalidos || leadDate >= new Date(startDateInvalidos)) &&
+                      (!endDateInvalidos || leadDate <= new Date(endDateInvalidos + "T23:59:59"));
+    const matchSearch = !searchInvalidos ||
+      lead.nome?.toLowerCase().includes(searchInvalidos.toLowerCase()) ||
+      lead.email?.toLowerCase().includes(searchInvalidos.toLowerCase()) ||
+      lead.telefone?.includes(searchInvalidos);
+    return matchDate && matchSearch &&
+      (filterPlataformaInvalidos === "todas" || lead.plataforma === filterPlataformaInvalidos) &&
+      (filterCampanhaInvalidos === "todas" || lead.campanha === filterCampanhaInvalidos) &&
+      (filterAdsetInvalidos === "todos" || lead.adset === filterAdsetInvalidos) &&
+      (filterAdInvalidos === "todos" || lead.ad === filterAdInvalidos) &&
+      (filterPosicionamentoInvalidos === "todos" || lead.posicionamento === filterPosicionamentoInvalidos) &&
+      (filterPaginaInvalidos === "todas" || lead.pagina === filterPaginaInvalidos);
+  });
+
+  // Valores únicos para filtros de limpeza
+  const plataformasLimpeza = [...new Set(leadsLimpeza.map((l) => l.plataforma).filter(Boolean))];
+  const posicionamentosLimpeza = [...new Set(leadsLimpeza.map((l) => l.posicionamento).filter(Boolean))];
+  const adsLimpeza = [...new Set(leadsLimpeza.map((l) => l.ad).filter(Boolean))];
+  const adsetsLimpeza = [...new Set(leadsLimpeza.map((l) => l.adset).filter(Boolean))];
+  const campanhasLimpeza = [...new Set(leadsLimpeza.map((l) => l.campanha).filter(Boolean))];
+  const paginasLimpeza = [...new Set(leadsLimpeza.map((l) => l.pagina).filter(Boolean))];
+
+  const filteredLimpeza = leadsLimpeza.filter((lead) => {
+    const leadDate = lead.data ? new Date(lead.data) : new Date(lead.created_date);
+    const matchDate = (!startDateLimpeza || leadDate >= new Date(startDateLimpeza)) &&
+                      (!endDateLimpeza || leadDate <= new Date(endDateLimpeza + "T23:59:59"));
+    const matchSearch = !searchLimpeza ||
+      lead.nome?.toLowerCase().includes(searchLimpeza.toLowerCase()) ||
+      lead.email?.toLowerCase().includes(searchLimpeza.toLowerCase()) ||
+      lead.telefone?.includes(searchLimpeza);
+    return matchDate && matchSearch &&
+      (filterPlataformaLimpeza === "todas" || lead.plataforma === filterPlataformaLimpeza) &&
+      (filterCampanhaLimpeza === "todas" || lead.campanha === filterCampanhaLimpeza) &&
+      (filterAdsetLimpeza === "todos" || lead.adset === filterAdsetLimpeza) &&
+      (filterAdLimpeza === "todos" || lead.ad === filterAdLimpeza) &&
+      (filterPosicionamentoLimpeza === "todos" || lead.posicionamento === filterPosicionamentoLimpeza) &&
+      (filterPaginaLimpeza === "todas" || lead.pagina === filterPaginaLimpeza);
+  });
 
   const stats = {
     total: filteredLeads.length,
@@ -402,7 +474,74 @@ export default function FilaLeads() {
         </TabsContent>
 
         {/* Leads Inválidos */}
-        <TabsContent value="invalidos" className="mt-4">
+        <TabsContent value="invalidos" className="space-y-4 mt-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex gap-2">
+                    <div>
+                      <label className="text-xs text-slate-600 mb-1 block">Data Inicial</label>
+                      <Input type="date" value={startDateInvalidos} onChange={(e) => setStartDateInvalidos(e.target.value)} className="w-full md:w-[160px]" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-600 mb-1 block">Data Final</label>
+                      <Input type="date" value={endDateInvalidos} onChange={(e) => setEndDateInvalidos(e.target.value)} className="w-full md:w-[160px]" />
+                    </div>
+                  </div>
+                  <div className="flex-1 relative">
+                    <label className="text-xs text-slate-600 mb-1 block">Buscar</label>
+                    <Search className="absolute left-3 top-[34px] transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Input placeholder="Nome, email ou telefone..." value={searchInvalidos} onChange={(e) => setSearchInvalidos(e.target.value)} className="pl-10" />
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 flex-wrap">
+                  <Select value={filterPlataformaInvalidos} onValueChange={setFilterPlataformaInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Plataforma" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas Plataformas</SelectItem>
+                      {plataformasInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterCampanhaInvalidos} onValueChange={setFilterCampanhaInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Campanha" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas Campanhas</SelectItem>
+                      {campanhasInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterAdsetInvalidos} onValueChange={setFilterAdsetInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Conjunto de Anúncios" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Conjuntos</SelectItem>
+                      {adsetsInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterAdInvalidos} onValueChange={setFilterAdInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Anúncio" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Anúncios</SelectItem>
+                      {adsInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterPosicionamentoInvalidos} onValueChange={setFilterPosicionamentoInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Posicionamento" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos Posicionamentos</SelectItem>
+                      {posicionamentosInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterPaginaInvalidos} onValueChange={setFilterPaginaInvalidos}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Página" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas as Páginas</SelectItem>
+                      {paginasInvalidos.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -412,13 +551,80 @@ export default function FilaLeads() {
               <p className="text-sm text-slate-500">Leads marcados como inválidos. Podem ser restaurados à fila principal.</p>
             </CardHeader>
             <CardContent>
-              <ArchivedTable items={leadsInvalidos} emptyText="Nenhum lead inválido registrado" />
+              <ArchivedTable items={filteredInvalidos} emptyText="Nenhum lead inválido encontrado" />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Limpeza */}
-        <TabsContent value="limpeza" className="mt-4">
+        <TabsContent value="limpeza" className="space-y-4 mt-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex gap-2">
+                    <div>
+                      <label className="text-xs text-slate-600 mb-1 block">Data Inicial</label>
+                      <Input type="date" value={startDateLimpeza} onChange={(e) => setStartDateLimpeza(e.target.value)} className="w-full md:w-[160px]" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-600 mb-1 block">Data Final</label>
+                      <Input type="date" value={endDateLimpeza} onChange={(e) => setEndDateLimpeza(e.target.value)} className="w-full md:w-[160px]" />
+                    </div>
+                  </div>
+                  <div className="flex-1 relative">
+                    <label className="text-xs text-slate-600 mb-1 block">Buscar</label>
+                    <Search className="absolute left-3 top-[34px] transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Input placeholder="Nome, email ou telefone..." value={searchLimpeza} onChange={(e) => setSearchLimpeza(e.target.value)} className="pl-10" />
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4 flex-wrap">
+                  <Select value={filterPlataformaLimpeza} onValueChange={setFilterPlataformaLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Plataforma" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas Plataformas</SelectItem>
+                      {plataformasLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterCampanhaLimpeza} onValueChange={setFilterCampanhaLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Campanha" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas Campanhas</SelectItem>
+                      {campanhasLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterAdsetLimpeza} onValueChange={setFilterAdsetLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Conjunto de Anúncios" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Conjuntos</SelectItem>
+                      {adsetsLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterAdLimpeza} onValueChange={setFilterAdLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Anúncio" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Anúncios</SelectItem>
+                      {adsLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterPosicionamentoLimpeza} onValueChange={setFilterPosicionamentoLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Posicionamento" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos Posicionamentos</SelectItem>
+                      {posicionamentosLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={filterPaginaLimpeza} onValueChange={setFilterPaginaLimpeza}>
+                    <SelectTrigger className="w-full md:w-[180px]"><SelectValue placeholder="Página" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas as Páginas</SelectItem>
+                      {paginasLimpeza.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -428,7 +634,7 @@ export default function FilaLeads() {
               <p className="text-sm text-slate-500">Leads removidos da fila. Podem ser restaurados à fila principal.</p>
             </CardHeader>
             <CardContent>
-              <ArchivedTable items={leadsLimpeza} emptyText="Nenhum lead na limpeza" />
+              <ArchivedTable items={filteredLimpeza} emptyText="Nenhum lead encontrado na limpeza" />
             </CardContent>
           </Card>
         </TabsContent>
