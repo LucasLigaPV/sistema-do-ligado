@@ -32,26 +32,22 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const queryClient = useQueryClient();
   const prevAguardandoIds = useRef(null);
 
-  // Som de notificação via Web Audio API
+  // Som de notificação via Web Audio API (estilo WhatsApp Web)
   const playNotificationSound = useCallback(() => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // Sequência de alerta mais chamativa: notas agudas com repetição
     const sequence = [
-      { freq: 880, start: 0, duration: 0.12 },
-      { freq: 1046.5, start: 0.13, duration: 0.12 },
-      { freq: 1318.5, start: 0.26, duration: 0.18 },
-      { freq: 1046.5, start: 0.5, duration: 0.12 },
-      { freq: 1318.5, start: 0.63, duration: 0.25 },
+      { freq: 440, start: 0, duration: 0.18 },
+      { freq: 554, start: 0.2, duration: 0.35 },
     ];
     sequence.forEach(({ freq, start, duration }) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.type = "square";
+      osc.type = "sine";
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0.0, ctx.currentTime + start);
-      gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + start + 0.01);
+      gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + start + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
       osc.start(ctx.currentTime + start);
       osc.stop(ctx.currentTime + start + duration);
