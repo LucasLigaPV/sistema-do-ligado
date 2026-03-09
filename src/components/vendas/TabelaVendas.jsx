@@ -84,7 +84,7 @@ const getNomeVendedor = (email, users) => {
   return email;
 };
 
-export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
+export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosCompartilhados, onFiltrosChange }) {
   const hoje = new Date();
   const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
