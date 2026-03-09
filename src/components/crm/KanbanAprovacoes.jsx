@@ -856,8 +856,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               <div className="pb-4" />
             </div>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
