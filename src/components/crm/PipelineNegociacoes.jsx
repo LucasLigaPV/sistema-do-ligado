@@ -1610,14 +1610,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <FieldError campo="placa" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Label className={erros.modelo_veiculo ? "text-red-600" : ""}>Modelo do Veículo *</Label>
-                      <span className="text-xs text-slate-400">Cole o modelo completo aqui</span>
-                    </div>
+                    <Label className={erros.modelo_veiculo ? "text-red-600" : ""}>Modelo do Veículo *</Label>
                     <Input
                       value={conferenciaData.modelo_veiculo || ""}
                       onChange={(e) => setConferenciaData({ ...conferenciaData, modelo_veiculo: e.target.value })}
-                      className={erros.modelo_veiculo ? "border-red-400 focus:border-red-500" : ""}
+                      placeholder="Ex: FIAT ARGO 1.0 2023"
+                      className={`mt-1 ${erros.modelo_veiculo ? "border-red-400 focus:border-red-500" : ""}`}
                     />
                     <FieldError campo="modelo_veiculo" />
                   </div>
