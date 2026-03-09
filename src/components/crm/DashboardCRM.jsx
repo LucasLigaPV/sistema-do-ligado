@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Users, DollarSign, Target, AlertTriangle, Award, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, DollarSign, Target, AlertTriangle, Award, BarChart3, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import FiltroVendedor from "../shared/FiltroVendedor";
 
@@ -101,6 +102,38 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
 
   const ticketMedioAdesao = vendasAtivas > 0 ? (valorAdesaoTotal / vendasAtivas) : 0;
   const mediaMensalVendida = vendasAtivas > 0 ? (valorMensalidadeTotal / vendasAtivas) : 0;
+
+  // Conversão por canal (usando data_venda_ativa no período)
+  const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "troca_titularidade", "troca_veiculo", "segundo_veiculo", "migracao"];
+
+  const negociacoesRoleFiltered = negociacoes.filter(n => {
+    const equipe = equipes.find(e => e.lider_email === userEmail);
+    const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
+    const passaVendedor = selectedVendedores.length > 0 ? selectedVendedores.includes(n.vendedor_email) : true;
+    if (userFuncao === "master") return passaVendedor;
+    if (userFuncao === "lider") return membrosFiltro.includes(n.vendedor_email) && passaVendedor;
+    if (userFuncao === "vendedor") return n.vendedor_email === userEmail;
+    return passaVendedor;
+  });
+
+  const vendasAtivasPorAtivacao = negociacoesRoleFiltered.filter(n => {
+    if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
+    const dataAtivacao = new Date(n.data_venda_ativa);
+    return (!startDate || dataAtivacao >= new Date(startDate)) &&
+           (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
+  });
+
+  const totalLeads = negociacoesFiltradas.filter(n => n.origem === "lead").length;
+  const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead").length;
+  const taxaConvLead = totalLeads > 0 ? ((vendasLead / totalLeads) * 100).toFixed(1) : "0.0";
+
+  const totalIndicacoes = negociacoesFiltradas.filter(n => n.origem === "indicacao").length;
+  const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao").length;
+  const taxaConvIndicacao = totalIndicacoes > 0 ? ((vendasIndicacao / totalIndicacoes) * 100).toFixed(1) : "0.0";
+
+  const totalOutrosCanais = negociacoesFiltradas.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
+  const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
+  const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(1) : "0.0";
 
   // Ranking de vendedores
   const vendedoresStats = {};
@@ -216,7 +249,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
       </Card>
 
       {/* Métricas Principais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
@@ -246,34 +279,56 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
         <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4" />
-              Taxa de Perda
+              <TrendingUp className="w-4 h-4" />
+              Conv. Leads
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-700">{taxaPerda}%</div>
-            <p className="text-xs text-slate-500 mt-1">{totalPerdas} leads perdidos</p>
+            <div className="text-3xl font-bold text-slate-900">{taxaConvLead}%</div>
+            <p className="text-xs text-slate-500 mt-1">{vendasLead} de {totalLeads} leads</p>
           </CardContent>
         </Card>
 
         <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
-              <DollarSign className="w-4 h-4" />
-              Ticket Médio
+              <TrendingUp className="w-4 h-4" />
+              Conv. Indicações
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-900">
-              R$ {ticketMedioAdesao.toFixed(0)}
-            </div>
-            <p className="text-xs text-slate-500 mt-1">Adesão média</p>
+            <div className="text-3xl font-bold text-slate-900">{taxaConvIndicacao}%</div>
+            <p className="text-xs text-slate-500 mt-1">{vendasIndicacao} de {totalIndicacoes} indicações</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Conv. Outros Canais
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-3 h-3 text-slate-400 cursor-help ml-0.5" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-[220px]">
+                    <p className="text-xs font-medium mb-1">Canais incluídos:</p>
+                    <p className="text-xs leading-relaxed">Orgânico, Lead Pré-Sistema, Troca de Titularidade, Troca de Veículo, Segundo Veículo, Migração</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{taxaConvOutros}%</div>
+            <p className="text-xs text-slate-500 mt-1">{vendasOutrosCanais} de {totalOutrosCanais} outros</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Valores Financeiros */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-slate-900">
@@ -287,6 +342,23 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
             </div>
             <p className="text-sm text-slate-600 mt-2">
               De {vendasAtivas} vendas ativas no período
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-slate-900">
+              <DollarSign className="w-5 h-5" />
+              Ticket Médio Adesão
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold text-slate-900">
+              R$ {ticketMedioAdesao.toFixed(2).replace(".", ",")}
+            </div>
+            <p className="text-sm text-slate-600 mt-2">
+              Média de adesão por venda ativa
             </p>
           </CardContent>
         </Card>
@@ -379,6 +451,22 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
               )}
             </TableBody>
           </Table>
+        </CardContent>
+      </Card>
+
+      {/* Taxa de Perda */}
+      <Card className="border-slate-200">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-slate-900">
+            <AlertTriangle className="w-5 h-5" />
+            Taxa de Perda
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-baseline gap-3">
+            <div className="text-4xl font-bold text-slate-700">{taxaPerda}%</div>
+            <p className="text-sm text-slate-500">{totalPerdas} leads perdidos no período</p>
+          </div>
         </CardContent>
       </Card>
 
