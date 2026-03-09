@@ -203,22 +203,13 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
               />
             </div>
             {vendedoresParaFiltro.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium text-slate-700">Vendedor:</Label>
-                <Select value={selectedVendedor} onValueChange={setSelectedVendedor}>
-                  <SelectTrigger className="w-48 h-9">
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todos">Todos</SelectItem>
-                    {vendedoresParaFiltro.map(u => (
-                      <SelectItem key={u.email} value={u.email}>
-                        {u.full_name || u.email}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <FiltroVendedor
+                vendedoresSelecionados={selectedVendedores}
+                todosVendedores={vendedoresParaFiltro.map(u => u.email)}
+                onSelectionChange={setSelectedVendedores}
+                userEmail={userEmail}
+                nomesPorEmail={Object.fromEntries(vendedoresParaFiltro.map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]]))}
+              />
             )}
           </div>
         </CardContent>
