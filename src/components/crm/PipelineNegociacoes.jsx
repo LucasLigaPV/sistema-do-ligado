@@ -38,6 +38,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [selectedSubetapa, setSelectedSubetapa] = useState([]);
   const [showConferenciaModal, setShowConferenciaModal] = useState(false);
   const [conferenciaData, setConferenciaData] = useState(null);
+  const [tentouEnviarConferencia, setTentouEnviarConferencia] = useState(false);
   // Filtro de data padrão: 30 dias para trás e 1 dia para frente
   const hoje = new Date();
   const dataInicio = new Date(hoje);
