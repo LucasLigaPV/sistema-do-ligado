@@ -55,6 +55,9 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     queryFn: () => base44.entities.User.list(),
   });
 
+  // Label para o FiltroVendedor (necessita do campo Label)
+
+
   const { data: equipes = [] } = useQuery({
     queryKey: ["equipes"],
     queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
