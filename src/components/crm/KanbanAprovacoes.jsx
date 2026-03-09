@@ -24,9 +24,9 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
   
-  // Filtro de data - padrão: mês vigente
-  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  // Filtro de data - padrão: 7 dias atrás até 1 dia à frente
+  const [startDate, setStartDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() - 7); return format(d, "yyyy-MM-dd"); });
+  const [endDate, setEndDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 1); return format(d, "yyyy-MM-dd"); });
 
   const queryClient = useQueryClient();
   const prevAguardandoIds = useRef(null);
