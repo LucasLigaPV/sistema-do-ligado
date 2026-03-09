@@ -39,7 +39,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     
     const equipe = equipes.find(e => e.lider_email === userEmail);
     const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
-    const passaVendedor = selectedVendedor !== "todos" ? n.vendedor_email === selectedVendedor : true;
+    const passaVendedor = selectedVendedores.length > 0 ? selectedVendedores.includes(n.vendedor_email) : true;
     
     if (userFuncao === "master") return dentroIntervalo && passaVendedor;
     if (userFuncao === "lider") return dentroIntervalo && membrosFiltro.includes(n.vendedor_email) && passaVendedor;
