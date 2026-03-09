@@ -464,6 +464,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
     if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
     if (data.origem === "troca_veiculo" && (!data.placa_veiculo_antigo || data.placa_veiculo_antigo.replace(/[^A-Z0-9]/g, '').length < 7)) erros.placa_veiculo_antigo = "Preencha a placa do veículo antigo";
+    if (!data.beneficio_adicional) erros.beneficio_adicional = "Selecione uma opção";
+    if (data.beneficio_adicional === "sim" && !data.beneficio_adicional_opcao) erros.beneficio_adicional_opcao = "Selecione o benefício";
+    if (!data.desconto) erros.desconto = "Selecione uma opção";
+    if (data.desconto === "sim" && !data.desconto_opcao) erros.desconto_opcao = "Selecione o desconto";
     return erros;
   };
 
