@@ -107,8 +107,15 @@ export default function DashboardAprovacoes() {
       performanceData[vendedor].aprovados++;
     } else if (n.status_aprovacao === "reprovado") {
       performanceData[vendedor].reprovados++;
-      const motivo = n.motivo_reprova_categoria || "não especificado";
-      performanceData[vendedor].motivos[motivo] = (performanceData[vendedor].motivos[motivo] || 0) + 1;
+      const motivosList = n.motivos_reprova && n.motivos_reprova.length > 0
+        ? n.motivos_reprova
+        : n.motivo_reprova_categoria
+          ? [{ categoria: n.motivo_reprova_categoria }]
+          : [];
+      motivosList.forEach(({ categoria }) => {
+        const cat = categoria || "não especificado";
+        performanceData[vendedor].motivos[cat] = (performanceData[vendedor].motivos[cat] || 0) + 1;
+      });
     } else if (n.status_aprovacao === "corrigido") {
       performanceData[vendedor].corrigidos++;
     }
