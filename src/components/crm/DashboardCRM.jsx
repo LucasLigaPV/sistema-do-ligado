@@ -12,7 +12,7 @@ import FiltroVendedor from "../shared/FiltroVendedor";
 export default function DashboardCRM({ userEmail, userFuncao }) {
   const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
   const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
-  const [selectedVendedor, setSelectedVendedor] = useState("todos");
+  const [selectedVendedores, setSelectedVendedores] = useState([]);
 
   const { data: negociacoes = [] } = useQuery({
     queryKey: ["negociacoes"],
