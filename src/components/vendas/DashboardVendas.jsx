@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TrendingUp, DollarSign, Package, Trophy, Target, Award, Users, Calendar, CreditCard, Percent, AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import FiltroVendedor from "../shared/FiltroVendedor";
 
 const CORES_CANAIS = {
   lead: "#3b82f6",
