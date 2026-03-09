@@ -113,20 +113,45 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
 
   const { usuarios: users } = useUsuarios();
 
+  const defaultConsultor = (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail];
   const [consultorFilter, setConsultorFilter] = useState(
-    (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail]
+    filtrosCompartilhados?.consultorFilter ?? defaultConsultor
   );
-  const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
-  const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
+  const [dataInicio, setDataInicio] = useState(filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0]);
+  const [dataFim, setDataFim] = useState(filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [filtrosAtivos, setFiltrosAtivos] = useState({
     search: "",
-    consultorFilter: (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail],
-    dataInicio: inicioMes.toISOString().split('T')[0],
-    dataFim: fimMes.toISOString().split('T')[0],
+    consultorFilter: filtrosCompartilhados?.consultorFilter ?? defaultConsultor,
+    dataInicio: filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0],
+    dataFim: filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0],
   });
+
+  // Sincronizar com filtros compartilhados quando mudarem externamente
+  const prevFiltrosRef = React.useRef(filtrosCompartilhados);
+  React.useEffect(() => {
+    const prev = prevFiltrosRef.current;
+    if (!filtrosCompartilhados) return;
+    const changed =
+      JSON.stringify(filtrosCompartilhados.consultorFilter) !== JSON.stringify(prev?.consultorFilter) ||
+      filtrosCompartilhados.dataInicio !== prev?.dataInicio ||
+      filtrosCompartilhados.dataFim !== prev?.dataFim;
+    if (changed) {
+      setConsultorFilter(filtrosCompartilhados.consultorFilter ?? defaultConsultor);
+      setDataInicio(filtrosCompartilhados.dataInicio ?? inicioMes.toISOString().split('T')[0]);
+      setDataFim(filtrosCompartilhados.dataFim ?? fimMes.toISOString().split('T')[0]);
+      setFiltrosAtivos(prev => ({
+        ...prev,
+        consultorFilter: filtrosCompartilhados.consultorFilter ?? defaultConsultor,
+        dataInicio: filtrosCompartilhados.dataInicio ?? inicioMes.toISOString().split('T')[0],
+        dataFim: filtrosCompartilhados.dataFim ?? fimMes.toISOString().split('T')[0],
+      }));
+      setBuscaAtiva(true);
+      prevFiltrosRef.current = filtrosCompartilhados;
+    }
+  }, [filtrosCompartilhados]);
 
   const vendas = userFuncao === "master" || userRole === "admin" 
     ? allVendas 
