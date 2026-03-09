@@ -102,6 +102,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao, filtr
   const handleBuscar = () => {
     setFiltrosAtivos({ dataInicio, dataFim, consultorFilter });
     setBuscaAtiva(true);
+    prevFiltrosRef.current = { consultorFilter, dataInicio, dataFim };
+    onFiltrosChange?.({ consultorFilter, dataInicio, dataFim });
   };
 
   const handleLimpar = () => {
@@ -112,6 +114,8 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao, filtr
     setConsultorFilter([]);
     setFiltrosAtivos({ dataInicio: defaultInicio, dataFim: defaultFim, consultorFilter: [] });
     setBuscaAtiva(false);
+    prevFiltrosRef.current = { consultorFilter: [], dataInicio: defaultInicio, dataFim: defaultFim };
+    onFiltrosChange?.({ consultorFilter: [], dataInicio: defaultInicio, dataFim: defaultFim });
   };
 
   const vendasFiltradas = useMemo(() => {
