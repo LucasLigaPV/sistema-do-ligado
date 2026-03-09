@@ -77,23 +77,38 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
     ? allVendas.filter((v) => membrosEquipe.includes(v.email_vendedor || v.vendedor))
     : allVendas.filter(v => v.email_vendedor === userEmail || v.vendedor === userEmail);
 
+  const handleBuscar = () => {
+    setFiltrosAtivos({ dataInicio, dataFim, consultorFilter });
+    setBuscaAtiva(true);
+  };
+
+  const handleLimpar = () => {
+    const defaultInicio = inicioMes.toISOString().split('T')[0];
+    const defaultFim = fimMes.toISOString().split('T')[0];
+    setDataInicio(defaultInicio);
+    setDataFim(defaultFim);
+    setConsultorFilter([]);
+    setFiltrosAtivos({ dataInicio: defaultInicio, dataFim: defaultFim, consultorFilter: [] });
+    setBuscaAtiva(false);
+  };
+
   const vendasFiltradas = useMemo(() => {
     return vendas.filter((venda) => {
-      if (dataInicio && venda.data_venda) {
+      if (filtrosAtivos.dataInicio && venda.data_venda) {
         const dataVenda = new Date(venda.data_venda);
-        const inicio = new Date(dataInicio);
+        const inicio = new Date(filtrosAtivos.dataInicio);
         if (dataVenda < inicio) return false;
       }
-      if (dataFim && venda.data_venda) {
+      if (filtrosAtivos.dataFim && venda.data_venda) {
         const dataVenda = new Date(venda.data_venda);
-        const fim = new Date(dataFim);
+        const fim = new Date(filtrosAtivos.dataFim);
         fim.setHours(23, 59, 59, 999);
         if (dataVenda > fim) return false;
       }
-      if (consultorFilter.length > 0 && !consultorFilter.includes(venda.email_vendedor)) return false;
+      if (filtrosAtivos.consultorFilter.length > 0 && !filtrosAtivos.consultorFilter.includes(venda.email_vendedor)) return false;
       return true;
     });
-  }, [vendas, dataInicio, dataFim, consultorFilter]);
+  }, [vendas, filtrosAtivos]);
 
   // Estatísticas do mês atual
   const vendasMesAtual = useMemo(() => {
