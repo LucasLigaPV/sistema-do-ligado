@@ -45,6 +45,12 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   const [dataInicio, setDataInicio] = useState(inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [consultorFilter, setConsultorFilter] = useState([]);
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
+  const [filtrosAtivos, setFiltrosAtivos] = useState({
+    dataInicio: inicioMes.toISOString().split('T')[0],
+    dataFim: fimMes.toISOString().split('T')[0],
+    consultorFilter: [],
+  });
 
   const { data: allVendas = [], isLoading } = useQuery({
     queryKey: ["vendas"],
