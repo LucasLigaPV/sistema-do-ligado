@@ -41,6 +41,16 @@ export default function Admin() {
   });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checkinModalOpen, setCheckinModalOpen] = useState(false);
+  const [filtrosVendas, setFiltrosVendas] = useState(() => {
+    const hoje = new Date();
+    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    return {
+      consultorFilter: [],
+      dataInicio: inicioMes.toISOString().split('T')[0],
+      dataFim: fimMes.toISOString().split('T')[0],
+    };
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
