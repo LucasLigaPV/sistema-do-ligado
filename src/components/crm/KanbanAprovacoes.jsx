@@ -55,6 +55,21 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Negociacao.list(),
   });
 
+  // Detectar novas vendas enviadas para aprovação e tocar som
+  useEffect(() => {
+    const aguardandoIds = negociacoes
+      .filter(n => n.informacoes_conferidas && n.status_aprovacao === "aguardando")
+      .map(n => n.id);
+
+    if (prevAguardandoIds.current !== null) {
+      const novas = aguardandoIds.filter(id => !prevAguardandoIds.current.includes(id));
+      if (novas.length > 0) {
+        playNotificationSound();
+      }
+    }
+    prevAguardandoIds.current = aguardandoIds;
+  }, [negociacoes, playNotificationSound]);
+
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
