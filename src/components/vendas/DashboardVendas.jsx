@@ -251,25 +251,34 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <Card className="border-slate-200">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-slate-700">Período:</label>
-              <input
+      <Card className="border-0 shadow-md">
+        <CardContent className="p-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userFuncao === "lider" || userFuncao === "master" || userRole === "admin") ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4`}>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
+              <Input
                 type="date"
                 value={dataInicio}
                 onChange={(e) => setDataInicio(e.target.value)}
-                className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
               />
-              <span className="text-slate-500">até</span>
-              <input
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
+              <Input
                 type="date"
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
-                className="h-9 rounded-md border border-slate-300 bg-white px-3 py-1 text-sm"
               />
             </div>
+            {(userFuncao === "lider" || userFuncao === "master" || userRole === "admin") && (
+              <FiltroVendedor
+                vendedoresSelecionados={consultorFilter}
+                todosVendedores={userFuncao === "master" || userRole === "admin" ? usuarios.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email) : membrosEquipe}
+                onSelectionChange={setConsultorFilter}
+                userEmail={userEmail}
+                nomesPorEmail={userFuncao === "master" || userRole === "admin" ? Object.fromEntries(usuarios.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]])) : (minhaEquipe?.nomes_membros || {})}
+              />
+            )}
           </div>
         </CardContent>
       </Card>
