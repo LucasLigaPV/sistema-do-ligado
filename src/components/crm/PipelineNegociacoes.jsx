@@ -1536,14 +1536,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                           onClick={() => setConferenciaData({ ...conferenciaData, [item.key]: !isChecked })}
                         >
                           <Checkbox
-                            id={`conf-${item.key}`}
                             checked={isChecked}
-                            onCheckedChange={(checked) => setConferenciaData({ ...conferenciaData, [item.key]: checked })}
                             onClick={(e) => e.stopPropagation()}
+                            onCheckedChange={(checked) => setConferenciaData({ ...conferenciaData, [item.key]: checked })}
                             className={`data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] flex-shrink-0 ${isChecked ? "ring-2 ring-[#EFC200]" : ""}`}
                           />
                           <IconComponent className={`w-4 h-4 flex-shrink-0 ${isChecked ? "text-green-600" : showChecklistError ? "text-red-400" : "text-slate-400"}`} />
-                          <label htmlFor={`conf-${item.key}`} className={`text-sm cursor-pointer flex-1 font-medium ${isChecked ? "text-green-700" : showChecklistError ? "text-red-600" : "text-slate-700"}`}>
+                          <span className={`text-sm flex-1 font-medium ${isChecked ? "text-green-700" : showChecklistError ? "text-red-600" : "text-slate-700"}`}>
                             {item.label}
                           </label>
                           {isChecked && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
