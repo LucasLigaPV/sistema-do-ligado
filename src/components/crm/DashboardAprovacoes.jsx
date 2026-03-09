@@ -10,8 +10,12 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import { TrendingUp, TrendingDown, AlertCircle, CheckCircle2, Clock, Eye, XCircle } from "lucide-react";
 
 export default function DashboardAprovacoes() {
-  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), "yyyy-MM-dd"));
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), "yyyy-MM-dd"));
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() - 7); return format(d, "yyyy-MM-dd");
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() + 1); return format(d, "yyyy-MM-dd");
+  });
 
   const { data: negociacoes = [] } = useQuery({
     queryKey: ["negociacoes"],
