@@ -1543,8 +1543,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                           />
                           <IconComponent className={`w-4 h-4 flex-shrink-0 ${isChecked ? "text-green-600" : showChecklistError ? "text-red-400" : "text-slate-400"}`} />
                           <span className={`text-sm flex-1 font-medium ${isChecked ? "text-green-700" : showChecklistError ? "text-red-600" : "text-slate-700"}`}>
-                            {item.label}
-                          </label>
+                             {item.label}
+                           </span>
                           {isChecked && <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />}
                           {showChecklistError && <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />}
                         </div>
