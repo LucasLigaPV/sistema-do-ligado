@@ -440,8 +440,38 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     setSelectedSubetapa([]);
   };
 
+  const parseCurrencyValue = (str) => {
+    if (!str) return 0;
+    const nums = str.replace(/\D/g, '');
+    return (parseInt(nums) || 0) / 100;
+  };
+
+  const validarConferencia = (data) => {
+    if (!data) return {};
+    const erros = {};
+    const nome = (data.nome_cliente || "").trim();
+    if (!nome || nome.split(/\s+/).filter(Boolean).length < 2) erros.nome_cliente = "Preencha o nome completo";
+    const tel = (data.telefone || "").replace(/\D/g, '');
+    if (tel.length < 11) erros.telefone = "Número incompleto";
+    const emailVal = (data.email || "").trim();
+    if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) erros.email = "E-mail inválido";
+    if (!data.placa || data.placa.replace(/[^A-Z0-9]/g, '').length < 7) erros.placa = "Preencha a placa completa";
+    if (!data.modelo_veiculo || !data.modelo_veiculo.trim()) erros.modelo_veiculo = "Preencha o modelo";
+    if (!data.plano_interesse) erros.plano_interesse = "Selecione o plano";
+    const adesao = parseCurrencyValue(data.valor_adesao);
+    if (adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
+    const mensalidade = parseCurrencyValue(data.valor_mensalidade);
+    if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
+    if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
+    return erros;
+  };
+
   const handleConferirInformacoes = () => {
     if (!conferenciaData) return;
+    setTentouEnviarConferencia(true);
+    const erros = validarConferencia(conferenciaData);
+    const checklistCompleto = conferenciaData.cadastro_preenchido_power && conferenciaData.documentacoes_enviadas_power && conferenciaData.vistoria_realizada && conferenciaData.contrato_assinado && conferenciaData.pagamento_realizado;
+    if (Object.keys(erros).length > 0 || !checklistCompleto) return;
 
     const updatedData = {
       ...conferenciaData,
@@ -463,6 +493,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
     setShowConferenciaModal(false);
     setConferenciaData(null);
+    setTentouEnviarConferencia(false);
   };
 
   const handleCreateDeal = (e) => {
