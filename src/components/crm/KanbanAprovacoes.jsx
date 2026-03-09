@@ -376,7 +376,10 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                       )}
                                       <div className="flex justify-between text-xs text-slate-500 pt-1 border-t">
                                         <span>{getNomeVendedor(deal.vendedor_email)}</span>
-                                        <span>{format(new Date(deal.data_conferencia), "dd/MM/yyyy")}</span>
+                                        <div className="flex items-center gap-1">
+                                          <Clock className="w-3 h-3" />
+                                          <span>{format(new Date(deal.data_conferencia), "dd/MM HH:mm")}</span>
+                                        </div>
                                       </div>
                                       {deal.status_aprovacao !== "aprovado" && (deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
                                         <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
