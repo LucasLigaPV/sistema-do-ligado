@@ -302,6 +302,18 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
               />
             )}
           </div>
+          <div className="mt-4 flex gap-2">
+            <Button onClick={handleBuscar} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold border-0">
+              <Search className="w-4 h-4" />
+              Buscar
+            </Button>
+            {buscaAtiva && (
+              <Button variant="outline" onClick={handleLimpar} className="gap-2">
+                <X className="w-4 h-4" />
+                Limpar Filtros
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
