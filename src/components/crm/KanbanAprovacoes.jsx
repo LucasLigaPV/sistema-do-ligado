@@ -575,7 +575,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
       {/* Dialog: Detalhes da Negociação */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-white to-slate-50">
+        <DialogContent className="w-[95vw] max-w-3xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-white to-slate-50">
           {/* Header premium */}
           {selectedDeal && (
             <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-5">
