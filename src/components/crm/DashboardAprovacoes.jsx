@@ -57,21 +57,26 @@ export default function DashboardAprovacoes() {
   const totalAvaliadas = reprovados + corrigidos + aprovados;
   const taxaAprovacao = totalAvaliadas > 0 ? ((aprovados / totalAvaliadas) * 100).toFixed(1) : 0;
 
-  // Motivos de reprova com detalhes
-  const reprovacoes = negociacoesAnalise.filter(n => n.status_aprovacao === "reprovado");
+  // Motivos de reprova com detalhes — usando histórico_reprovas e motivos_reprova
+  const reprovacoes = negociacoesAnalise.filter(n => n.status_aprovacao === "reprovado" || (n.historico_reprovas && n.historico_reprovas.length > 0));
   const motivosData = {};
   const motivosDetalhes = {};
 
   reprovacoes.forEach(r => {
-    const categoria = r.motivo_reprova_categoria || "não especificado";
-    const detalhe = r.motivo_reprova_detalhe || "Sem detalhe";
-    
-    motivosData[categoria] = (motivosData[categoria] || 0) + 1;
-    
-    if (!motivosDetalhes[categoria]) {
-      motivosDetalhes[categoria] = {};
-    }
-    motivosDetalhes[categoria][detalhe] = (motivosDetalhes[categoria][detalhe] || 0) + 1;
+    // Usa o array motivos_reprova (novo) ou fallback para campos legados
+    const motivosList = r.motivos_reprova && r.motivos_reprova.length > 0
+      ? r.motivos_reprova
+      : r.motivo_reprova_categoria
+        ? [{ categoria: r.motivo_reprova_categoria, detalhe: r.motivo_reprova_detalhe || "Sem detalhe" }]
+        : [];
+
+    motivosList.forEach(({ categoria, detalhe }) => {
+      const cat = categoria || "não especificado";
+      const det = detalhe || "Sem detalhe";
+      motivosData[cat] = (motivosData[cat] || 0) + 1;
+      if (!motivosDetalhes[cat]) motivosDetalhes[cat] = {};
+      motivosDetalhes[cat][det] = (motivosDetalhes[cat][det] || 0) + 1;
+    });
   });
 
   const categoriasMotivo = {
