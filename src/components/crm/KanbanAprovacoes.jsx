@@ -55,6 +55,23 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Negociacao.list(),
   });
 
+  // Subscrição em tempo real para novas movimentações
+  useEffect(() => {
+    const unsubscribe = base44.entities.Negociacao.subscribe((event) => {
+      queryClient.setQueryData(["negociacoes"], (old = []) => {
+        if (event.type === "create") {
+          return [...old, event.data];
+        } else if (event.type === "update") {
+          return old.map(n => n.id === event.id ? event.data : n);
+        } else if (event.type === "delete") {
+          return old.filter(n => n.id !== event.id);
+        }
+        return old;
+      });
+    });
+    return unsubscribe;
+  }, [queryClient]);
+
   // Detectar novas vendas enviadas para aprovação e tocar som
   useEffect(() => {
     const aguardandoIds = negociacoes
