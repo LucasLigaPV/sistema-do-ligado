@@ -555,9 +555,9 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         </DialogContent>
       </Dialog>
 
-      {/* Sheet: Detalhes da Negociação */}
-      <Sheet open={showDetails} onOpenChange={setShowDetails}>
-        <SheetContent side="right" className="w-full sm:w-[620px] sm:max-w-[620px] overflow-y-auto p-0 bg-gradient-to-br from-white to-slate-50 [&>button]:hidden">
+      {/* Dialog: Detalhes da Negociação */}
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-white to-slate-50">
           {/* Header premium */}
           {selectedDeal && (
             <div className="sticky top-0 z-10 bg-white border-b border-slate-200 px-6 py-5">
@@ -578,13 +578,16 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                       <span className="text-sm font-bold text-slate-800 tracking-wider">{selectedDeal.placa}</span>
                     </div>
                   )}
+                  <button onClick={() => setShowDetails(false)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
           )}
 
           {selectedDeal && (
-            <div className="px-6 py-6 space-y-6">
+            <div className="px-6 py-6 space-y-6 overflow-y-auto max-h-[calc(90vh-90px)]">
 
               {/* Cards de destaque */}
               <div className="grid grid-cols-3 gap-3">
