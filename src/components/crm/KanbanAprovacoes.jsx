@@ -35,18 +35,26 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   // Som de notificação via Web Audio API
   const playNotificationSound = useCallback(() => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
-    notes.forEach((freq, i) => {
+    // Sequência de alerta mais chamativa: notas agudas com repetição
+    const sequence = [
+      { freq: 880, start: 0, duration: 0.12 },
+      { freq: 1046.5, start: 0.13, duration: 0.12 },
+      { freq: 1318.5, start: 0.26, duration: 0.18 },
+      { freq: 1046.5, start: 0.5, duration: 0.12 },
+      { freq: 1318.5, start: 0.63, duration: 0.25 },
+    ];
+    sequence.forEach(({ freq, start, duration }) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.type = "sine";
+      osc.type = "square";
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.3);
-      osc.start(ctx.currentTime + i * 0.15);
-      osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+      gain.gain.setValueAtTime(0.0, ctx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + duration);
     });
   }, []);
 
