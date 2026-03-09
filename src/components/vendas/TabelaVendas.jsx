@@ -119,6 +119,13 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
   const [dataFim, setDataFim] = useState(fimMes.toISOString().split('T')[0]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
+  const [filtrosAtivos, setFiltrosAtivos] = useState({
+    search: "",
+    consultorFilter: (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail],
+    dataInicio: inicioMes.toISOString().split('T')[0],
+    dataFim: fimMes.toISOString().split('T')[0],
+  });
 
   const vendas = userFuncao === "master" || userRole === "admin" 
     ? allVendas 
