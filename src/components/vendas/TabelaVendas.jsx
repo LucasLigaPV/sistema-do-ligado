@@ -156,25 +156,43 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vendas"] }),
   });
 
+  const handleBuscar = () => {
+    setFiltrosAtivos({ search, consultorFilter, dataInicio, dataFim });
+    setBuscaAtiva(true);
+  };
+
+  const handleLimpar = () => {
+    const defaultConsultor = (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail];
+    const defaultInicio = inicioMes.toISOString().split('T')[0];
+    const defaultFim = fimMes.toISOString().split('T')[0];
+    setSearch("");
+    setConsultorFilter(defaultConsultor);
+    setDataInicio(defaultInicio);
+    setDataFim(defaultFim);
+    setFiltrosAtivos({ search: "", consultorFilter: defaultConsultor, dataInicio: defaultInicio, dataFim: defaultFim });
+    setBuscaAtiva(false);
+  };
+
   const filteredVendas = vendas.filter((venda) => {
     const nomeVendedor = getNomeVendedor(venda.email_vendedor, users);
+    const s = filtrosAtivos.search;
     const matchSearch =
-      venda.cliente?.toLowerCase().includes(search.toLowerCase()) ||
-      venda.placa?.toLowerCase().includes(search.toLowerCase()) ||
-      venda.telefone?.toLowerCase().includes(search.toLowerCase()) ||
-      nomeVendedor?.toLowerCase().includes(search.toLowerCase());
+      venda.cliente?.toLowerCase().includes(s.toLowerCase()) ||
+      venda.placa?.toLowerCase().includes(s.toLowerCase()) ||
+      venda.telefone?.toLowerCase().includes(s.toLowerCase()) ||
+      nomeVendedor?.toLowerCase().includes(s.toLowerCase());
     const matchConsultor = (userFuncao === "lider" || userFuncao === "master")
-      ? consultorFilter.length === 0 || consultorFilter.includes(venda.email_vendedor)
+      ? filtrosAtivos.consultorFilter.length === 0 || filtrosAtivos.consultorFilter.includes(venda.email_vendedor)
       : true;
     
-    if (dataInicio && venda.data_venda) {
+    if (filtrosAtivos.dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
-      const inicio = new Date(dataInicio);
+      const inicio = new Date(filtrosAtivos.dataInicio);
       if (dataVenda < inicio) return false;
     }
-    if (dataFim && venda.data_venda) {
+    if (filtrosAtivos.dataFim && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
-      const fim = new Date(dataFim);
+      const fim = new Date(filtrosAtivos.dataFim);
       fim.setHours(23, 59, 59, 999);
       if (dataVenda > fim) return false;
     }
