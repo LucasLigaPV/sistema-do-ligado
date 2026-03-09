@@ -1660,7 +1660,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       value={conferenciaData.valor_mensalidade || ""}
                       onChange={(e) => {
                         const numeros = e.target.value.replace(/\D/g, '');
-                        const valor = Math.min((parseInt(numeros) || 0) / 100, 9999);
+                        const valor = Math.min((parseInt(numeros) || 0) / 100, 1000);
                         const formatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                         setConferenciaData({ ...conferenciaData, valor_mensalidade: formatado });
                       }}
