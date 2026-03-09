@@ -1686,6 +1686,103 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </div>
                 </div>
 
+                {/* Campos condicionais e adicionais */}
+                <div className="space-y-4 border border-slate-200 rounded-lg p-4 bg-slate-50">
+                  <h4 className="font-semibold text-sm text-slate-800">Informações Adicionais</h4>
+
+                  {/* Placa do Veículo Antigo - só aparece se origem for troca_veiculo */}
+                  {conferenciaData.origem === "troca_veiculo" && (
+                    <div>
+                      <Label className={erros.placa_veiculo_antigo ? "text-red-600" : ""}>Placa do Veículo Antigo *</Label>
+                      <Input
+                        value={conferenciaData.placa_veiculo_antigo || ""}
+                        onChange={(e) => {
+                          const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                          let formatado = valor;
+                          if (valor.length > 3) formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                          setConferenciaData({ ...conferenciaData, placa_veiculo_antigo: formatado });
+                        }}
+                        placeholder="ABC-1D23"
+                        maxLength={8}
+                        className={erros.placa_veiculo_antigo ? "border-red-400 focus:border-red-500" : ""}
+                      />
+                      {erros.placa_veiculo_antigo && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <XCircle className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
+                          <span className="text-xs text-red-500 font-medium">{erros.placa_veiculo_antigo}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Benefício Adicional */}
+                  <div className="space-y-2">
+                    <Label>Benefício Adicional *</Label>
+                    <div className="flex gap-3">
+                      {["sim", "nao"].map((op) => (
+                        <button
+                          key={op}
+                          type="button"
+                          onClick={() => setConferenciaData({ ...conferenciaData, beneficio_adicional: op, beneficio_adicional_opcao: op === "nao" ? "" : conferenciaData.beneficio_adicional_opcao })}
+                          className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${
+                            conferenciaData.beneficio_adicional === op
+                              ? "bg-[#EFC200] border-[#EFC200] text-black"
+                              : "bg-white border-slate-300 text-slate-700 hover:border-slate-400"
+                          }`}
+                        >
+                          {op === "sim" ? "Sim" : "Não"}
+                        </button>
+                      ))}
+                    </div>
+                    {conferenciaData.beneficio_adicional === "sim" && (
+                      <select
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+                        value={conferenciaData.beneficio_adicional_opcao || ""}
+                        onChange={(e) => setConferenciaData({ ...conferenciaData, beneficio_adicional_opcao: e.target.value })}
+                      >
+                        <option value="">Selecione o benefício...</option>
+                        <option value="Carro reserva: +15 dias">Carro reserva: +15 dias</option>
+                        <option value="Carro reserva: +30 dias">Carro reserva: +30 dias</option>
+                        <option value="Vidro lateral, vidro traseiro, para-brisa, retrovisores externos, lanternas e faróis: 75% do Prejuízo ou Troca">Vidro lateral, vidro traseiro, para-brisa, retrovisores externos, lanternas e faróis: 75% do Prejuízo ou Troca</option>
+                        <option value="R$30.000,00 de terceiros">R$30.000,00 de terceiros</option>
+                      </select>
+                    )}
+                  </div>
+
+                  {/* Desconto */}
+                  <div className="space-y-2">
+                    <Label>Desconto *</Label>
+                    <div className="flex gap-3">
+                      {["sim", "nao"].map((op) => (
+                        <button
+                          key={op}
+                          type="button"
+                          onClick={() => setConferenciaData({ ...conferenciaData, desconto: op, desconto_opcao: op === "nao" ? "" : conferenciaData.desconto_opcao })}
+                          className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${
+                            conferenciaData.desconto === op
+                              ? "bg-[#EFC200] border-[#EFC200] text-black"
+                              : "bg-white border-slate-300 text-slate-700 hover:border-slate-400"
+                          }`}
+                        >
+                          {op === "sim" ? "Sim" : "Não"}
+                        </button>
+                      ))}
+                    </div>
+                    {conferenciaData.desconto === "sim" && (
+                      <select
+                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+                        value={conferenciaData.desconto_opcao || ""}
+                        onChange={(e) => setConferenciaData({ ...conferenciaData, desconto_opcao: e.target.value })}
+                      >
+                        <option value="">Selecione o desconto...</option>
+                        <option value="5%">5%</option>
+                        <option value="10%">10%</option>
+                        <option value="15%">15%</option>
+                      </select>
+                    )}
+                  </div>
+                </div>
+
                 {tentouEnviarConferencia && (Object.keys(erros).length > 0 || !checklistCompleto) && (
                   <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
                     <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
