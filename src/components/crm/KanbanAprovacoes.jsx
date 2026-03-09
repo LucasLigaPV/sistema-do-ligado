@@ -122,6 +122,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
             valor_mensalidade: deal.valor_mensalidade || "",
             forma_pagamento: "pix",
             canal_venda: deal.origem || "lead",
+            tem_indicacao: (deal.origem === "indicacao" || deal.origem === "troca_titularidade") ? "sim" : "nao",
             plataforma: deal.plataforma || "",
             posicionamento: deal.posicionamento || "",
             ad: deal.ad || "",
