@@ -49,6 +49,9 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   });
 
   const perdasFiltradas = perdas.filter(p => {
+    // Excluir perdas com categoria "lead_invalido"
+    if (p.categoria_motivo === "lead_invalido") return false;
+
     const dataPerda = new Date(p.data_perda);
     const dentroIntervalo = (!startDate || dataPerda >= new Date(startDate)) &&
                            (!endDate || dataPerda <= new Date(endDate + "T23:59:59"));
