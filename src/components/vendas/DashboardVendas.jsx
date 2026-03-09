@@ -83,9 +83,10 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao }) {
         fim.setHours(23, 59, 59, 999);
         if (dataVenda > fim) return false;
       }
+      if (consultorFilter.length > 0 && !consultorFilter.includes(venda.email_vendedor)) return false;
       return true;
     });
-  }, [vendas, dataInicio, dataFim]);
+  }, [vendas, dataInicio, dataFim, consultorFilter]);
 
   // Estatísticas do mês atual
   const vendasMesAtual = useMemo(() => {
