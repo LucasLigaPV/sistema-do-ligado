@@ -463,6 +463,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     const mensalidade = parseCurrencyValue(data.valor_mensalidade);
     if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
     if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
+    if (data.origem === "troca_veiculo" && (!data.placa_veiculo_antigo || data.placa_veiculo_antigo.replace(/[^A-Z0-9]/g, '').length < 7)) erros.placa_veiculo_antigo = "Preencha a placa do veículo antigo";
     return erros;
   };
 

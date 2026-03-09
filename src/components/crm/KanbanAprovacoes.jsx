@@ -631,6 +631,36 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                       <p className="text-sm text-slate-900">{selectedDeal.observacoes}</p>
                     </div>
                   )}
+                  {selectedDeal.origem === "troca_veiculo" && selectedDeal.placa_veiculo_antigo && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Placa do Veículo Antigo</Label>
+                      <p className="text-sm font-semibold text-[#EFC200]">{selectedDeal.placa_veiculo_antigo}</p>
+                    </div>
+                  )}
+                  {selectedDeal.beneficio_adicional === "sim" && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Benefício Adicional</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.beneficio_adicional_opcao || "Sim"}</p>
+                    </div>
+                  )}
+                  {selectedDeal.beneficio_adicional !== "sim" && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Benefício Adicional</Label>
+                      <p className="text-sm text-slate-500">Não</p>
+                    </div>
+                  )}
+                  {selectedDeal.desconto === "sim" && selectedDeal.desconto_opcao && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Desconto</Label>
+                      <p className="text-sm text-slate-900">{selectedDeal.desconto_opcao}</p>
+                    </div>
+                  )}
+                  {selectedDeal.desconto !== "sim" && (
+                    <div>
+                      <Label className="text-xs font-semibold text-slate-500">Desconto</Label>
+                      <p className="text-sm text-slate-500">Não</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
