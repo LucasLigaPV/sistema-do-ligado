@@ -1684,15 +1684,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </select>
                     <FieldError campo="data_vencimento" />
                   </div>
-                  <div className="col-span-2">
-                    <Label>Observações</Label>
-                    <Textarea value={conferenciaData.observacoes || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })} rows={3} />
-                  </div>
                 </div>
 
-                {/* Campos condicionais e adicionais */}
-                <div className="space-y-4 border border-slate-200 rounded-lg p-4 bg-slate-50">
-                  <h4 className="font-semibold text-sm text-slate-800">Informações Adicionais</h4>
+                {/* Informações Adicionais */}
+                <div className={`space-y-4 rounded-lg p-4 border ${(erros.beneficio_adicional || erros.beneficio_adicional_opcao || erros.desconto || erros.desconto_opcao || erros.placa_veiculo_antigo) ? "border-red-300 bg-red-50/50" : "border-slate-200 bg-slate-50"}`}>
+                  <h4 className={`font-semibold text-sm ${(erros.beneficio_adicional || erros.beneficio_adicional_opcao || erros.desconto || erros.desconto_opcao || erros.placa_veiculo_antigo) ? "text-red-700 flex items-center gap-2" : "text-slate-800"}`}>
+                    Informações Adicionais
+                    {(erros.beneficio_adicional || erros.beneficio_adicional_opcao || erros.desconto || erros.desconto_opcao || erros.placa_veiculo_antigo) && <XCircle className="w-4 h-4 text-red-500" />}
+                  </h4>
 
                   {/* Placa do Veículo Antigo - só aparece se origem for troca_veiculo */}
                   {conferenciaData.origem === "troca_veiculo" && (
@@ -1710,18 +1709,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         maxLength={8}
                         className={erros.placa_veiculo_antigo ? "border-red-400 focus:border-red-500" : ""}
                       />
-                      {erros.placa_veiculo_antigo && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <XCircle className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
-                          <span className="text-xs text-red-500 font-medium">{erros.placa_veiculo_antigo}</span>
-                        </div>
-                      )}
+                      <FieldError campo="placa_veiculo_antigo" />
                     </div>
                   )}
 
                   {/* Benefício Adicional */}
-                  <div className="space-y-2">
-                    <Label>Benefício Adicional *</Label>
+                  <div className={`space-y-2 rounded-lg p-3 border ${(erros.beneficio_adicional || erros.beneficio_adicional_opcao) ? "border-red-300 bg-red-50" : "border-transparent"}`}>
+                    <Label className={erros.beneficio_adicional || erros.beneficio_adicional_opcao ? "text-red-600" : ""}>
+                      Benefício Adicional *
+                      {(erros.beneficio_adicional || erros.beneficio_adicional_opcao) && <span className="ml-2 text-xs font-normal text-red-500">{erros.beneficio_adicional || erros.beneficio_adicional_opcao}</span>}
+                    </Label>
                     <div className="flex gap-3">
                       {["sim", "nao"].map((op) => (
                         <button
@@ -1731,6 +1728,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                           className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${
                             conferenciaData.beneficio_adicional === op
                               ? "bg-[#EFC200] border-[#EFC200] text-black"
+                              : (erros.beneficio_adicional && !conferenciaData.beneficio_adicional)
+                              ? "bg-white border-red-300 text-red-600 hover:border-red-400"
                               : "bg-white border-slate-300 text-slate-700 hover:border-slate-400"
                           }`}
                         >
@@ -1740,7 +1739,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </div>
                     {conferenciaData.beneficio_adicional === "sim" && (
                       <select
-                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+                        className={`w-full px-3 py-2 border rounded-md text-sm ${erros.beneficio_adicional_opcao ? "border-red-400" : "border-slate-300"}`}
                         value={conferenciaData.beneficio_adicional_opcao || ""}
                         onChange={(e) => setConferenciaData({ ...conferenciaData, beneficio_adicional_opcao: e.target.value })}
                       >
@@ -1754,8 +1753,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   </div>
 
                   {/* Desconto */}
-                  <div className="space-y-2">
-                    <Label>Desconto *</Label>
+                  <div className={`space-y-2 rounded-lg p-3 border ${(erros.desconto || erros.desconto_opcao) ? "border-red-300 bg-red-50" : "border-transparent"}`}>
+                    <Label className={erros.desconto || erros.desconto_opcao ? "text-red-600" : ""}>
+                      Desconto *
+                      {(erros.desconto || erros.desconto_opcao) && <span className="ml-2 text-xs font-normal text-red-500">{erros.desconto || erros.desconto_opcao}</span>}
+                    </Label>
                     <div className="flex gap-3">
                       {["sim", "nao"].map((op) => (
                         <button
@@ -1765,6 +1767,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                           className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium transition-all ${
                             conferenciaData.desconto === op
                               ? "bg-[#EFC200] border-[#EFC200] text-black"
+                              : (erros.desconto && !conferenciaData.desconto)
+                              ? "bg-white border-red-300 text-red-600 hover:border-red-400"
                               : "bg-white border-slate-300 text-slate-700 hover:border-slate-400"
                           }`}
                         >
@@ -1774,7 +1778,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     </div>
                     {conferenciaData.desconto === "sim" && (
                       <select
-                        className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+                        className={`w-full px-3 py-2 border rounded-md text-sm ${erros.desconto_opcao ? "border-red-400" : "border-slate-300"}`}
                         value={conferenciaData.desconto_opcao || ""}
                         onChange={(e) => setConferenciaData({ ...conferenciaData, desconto_opcao: e.target.value })}
                       >
@@ -1784,6 +1788,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                         <option value="15%">15%</option>
                       </select>
                     )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <Label>Observações</Label>
+                    <Textarea value={conferenciaData.observacoes || ""} onChange={(e) => setConferenciaData({ ...conferenciaData, observacoes: e.target.value })} rows={3} />
                   </div>
                 </div>
 
