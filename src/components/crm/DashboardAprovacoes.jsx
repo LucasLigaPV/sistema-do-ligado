@@ -277,28 +277,34 @@ export default function DashboardAprovacoes() {
         <CardHeader className="pb-3 border-b">
           <CardTitle className="text-sm font-semibold">Status da Fila</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4">
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={[{ 
-              name: "Vendas", 
-              aguardando, 
-              analisando, 
-              reprovado: reprovados,
-              corrigido: corrigidos,
-              aprovado: aprovados 
-            }]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="name" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="aguardando" fill="#94a3b8" />
-              <Bar dataKey="analisando" fill="#64748b" />
-              <Bar dataKey="reprovado" fill="#dc2626" />
-              <Bar dataKey="corrigido" fill="#f59e0b" />
-              <Bar dataKey="aprovado" fill="#059669" />
-            </BarChart>
-          </ResponsiveContainer>
+        <CardContent className="pt-5 space-y-4">
+          {[
+            { label: "Aguardando Análise", value: aguardando, color: "bg-slate-300", textColor: "text-slate-500" },
+            { label: "Analisando", value: analisando, color: "bg-slate-500", textColor: "text-slate-600" },
+            { label: "Reprovado", value: reprovados, color: "bg-red-400", textColor: "text-red-500" },
+            { label: "Corrigido", value: corrigidos, color: "bg-[#EFC200]", textColor: "text-yellow-600" },
+            { label: "Aprovado", value: aprovados, color: "bg-emerald-500", textColor: "text-emerald-600" },
+          ].map((item) => {
+            const total = aguardando + analisando + reprovados + corrigidos + aprovados;
+            const pct = total > 0 ? Math.round((item.value / total) * 100) : 0;
+            return (
+              <div key={item.label}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-medium text-slate-600">{item.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-semibold ${item.textColor}`}>{item.value}</span>
+                    <span className="text-xs text-slate-400">{pct}%</span>
+                  </div>
+                </div>
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${item.color}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
 
