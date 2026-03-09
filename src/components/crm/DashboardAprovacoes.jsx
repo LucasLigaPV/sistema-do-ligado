@@ -23,12 +23,19 @@ export default function DashboardAprovacoes() {
     queryFn: () => base44.entities.User.list(),
   });
 
-  // Filtrar negociações em análise no período
+  // Filtrar negociações que passaram pelo fluxo de aprovação no período
   const negociacoesAnalise = negociacoes.filter(n => {
+    if (!n.informacoes_conferidas) return false;
+    const passouPorAprovacao = (
+      n.etapa === "enviado_cadastro" ||
+      n.status_aprovacao === "reprovado" ||
+      n.status_aprovacao === "corrigido" ||
+      n.status_aprovacao === "aprovado" ||
+      n.status_aprovacao === "analisando"
+    );
+    if (!passouPorAprovacao) return false;
     const dataConf = n.data_conferencia ? new Date(n.data_conferencia) : new Date(n.created_date);
     return (
-      n.informacoes_conferidas &&
-      n.etapa === "enviado_cadastro" &&
       dataConf >= new Date(startDate) &&
       dataConf <= new Date(endDate + "T23:59:59")
     );
