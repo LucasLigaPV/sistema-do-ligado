@@ -183,20 +183,25 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
   });
 
   const handleBuscar = () => {
-    setFiltrosAtivos({ search, consultorFilter, dataInicio, dataFim });
+    const novosFiltros = { search, consultorFilter, dataInicio, dataFim };
+    setFiltrosAtivos(novosFiltros);
     setBuscaAtiva(true);
+    prevFiltrosRef.current = { consultorFilter, dataInicio, dataFim };
+    onFiltrosChange?.({ consultorFilter, dataInicio, dataFim });
   };
 
   const handleLimpar = () => {
-    const defaultConsultor = (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail];
+    const dc = (userFuncao === "master" || userFuncao === "lider") ? [] : userRole === "admin" ? [] : [userEmail];
     const defaultInicio = inicioMes.toISOString().split('T')[0];
     const defaultFim = fimMes.toISOString().split('T')[0];
     setSearch("");
-    setConsultorFilter(defaultConsultor);
+    setConsultorFilter(dc);
     setDataInicio(defaultInicio);
     setDataFim(defaultFim);
-    setFiltrosAtivos({ search: "", consultorFilter: defaultConsultor, dataInicio: defaultInicio, dataFim: defaultFim });
+    setFiltrosAtivos({ search: "", consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim });
     setBuscaAtiva(false);
+    prevFiltrosRef.current = { consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim };
+    onFiltrosChange?.({ consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim });
   };
 
   const filteredVendas = vendas.filter((venda) => {
