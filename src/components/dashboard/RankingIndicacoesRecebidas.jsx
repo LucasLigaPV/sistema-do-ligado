@@ -109,7 +109,7 @@ export default function RankingIndicacoesRecebidas() {
                         {vendedor.nome}
                       </p>
                       <div className="flex gap-3 mt-1 text-xs text-slate-600">
-                        <span>{vendedor.ativas} ativas</span>
+                        <span>{vendedor.ativas} recebidas</span>
                         <span>•</span>
                         <span>{vendedor.perdidas} perdidas</span>
                       </div>
