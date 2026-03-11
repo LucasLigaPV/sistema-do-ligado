@@ -41,7 +41,15 @@ const formatarValor = (valor) => {
 };
 
 export default function ResumoVendedor({ userEmail, userFuncao }) {
-  const [vendedorSelecionado, setVendedorSelecionado] = React.useState(userEmail);
+  const [vendedorSelecionado, setVendedorSelecionado] = React.useState(() => {
+    const saved = localStorage.getItem('vendas_vendedor_selecionado');
+    return saved || userEmail;
+  });
+
+  const handleVendedorChange = (novoVendedor) => {
+    setVendedorSelecionado(novoVendedor);
+    localStorage.setItem('vendas_vendedor_selecionado', novoVendedor);
+  };
 
   const { data: todasVendas = [], isLoading } = useQuery({
     queryKey: ["vendas"],
@@ -312,7 +320,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
         <Card className="border-0 shadow-md">
           <CardContent className="p-4">
             <Label className="text-sm text-slate-600 mb-3 block">Selecione o Vendedor</Label>
-            <Select value={vendedorSelecionado} onValueChange={setVendedorSelecionado}>
+            <Select value={vendedorSelecionado} onValueChange={handleVendedorChange}>
               <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Selecione um vendedor">
                   {(() => { const u = vendedoresDisponiveis.find(u => u.email === vendedorSelecionado); return u?.nome_exibicao || u?.full_name || vendedorSelecionado; })()}
