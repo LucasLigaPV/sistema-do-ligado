@@ -248,6 +248,50 @@ export default function Perdas({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-4">
+      {/* Stats Panel */}
+      <Card className="border shadow-sm">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Total de Perdas</p>
+                <p className="text-4xl font-bold text-slate-900">{perdasVisiveis.length}</p>
+              </div>
+              <div className="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center">
+                <X className="w-7 h-7 text-red-600" />
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Financeiro</p>
+                <p className="text-4xl font-bold text-red-600">
+                  {perdasVisiveis.filter(p => p.categoria_motivo === 'financeiro').length}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Timing</p>
+                <p className="text-4xl font-bold text-yellow-600">
+                  {perdasVisiveis.filter(p => p.categoria_motivo === 'timing').length}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Outras Categorias</p>
+                <p className="text-4xl font-bold text-slate-600">
+                  {perdasVisiveis.filter(p => !['financeiro', 'timing'].includes(p.categoria_motivo)).length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Filtros */}
       <Card className="border-0 shadow-md">
         <CardContent className="p-4">
