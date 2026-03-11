@@ -9,8 +9,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Search, RotateCcw, LayoutList, LayoutGrid, Phone, Mail, Car, Calendar, DollarSign, User, Download } from "lucide-react";
+import { Search, RotateCcw, LayoutList, LayoutGrid, Phone, Mail, Car, Calendar, DollarSign, User, Download, Filter, X } from "lucide-react";
 import { format } from "date-fns";
+import FiltroVendedor from "../shared/FiltroVendedor";
+import FiltroOrigem from "../shared/FiltroOrigem";
+import FiltroCategoriaPerdas from "../shared/FiltroCategoriaPerdas";
+import { useUsuarios } from "../shared/useUsuarios";
 
 const exportarCSV = (perdas, users) => {
   const getNomeVendedor = (email) => {
@@ -88,6 +92,10 @@ export default function Perdas({ userEmail, userFuncao }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPerda, setSelectedPerda] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [vendedorFilter, setVendedorFilter] = useState([]);
+  const [origemFilter, setOrigemFilter] = useState([]);
+  const [categoriaFilter, setCategoriaFilter] = useState([]);
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -105,6 +113,8 @@ export default function Perdas({ userEmail, userFuncao }) {
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
   });
+
+  const { usuarios: allUsers } = useUsuarios();
 
   const createNegociacaoMutation = useMutation({
     mutationFn: (data) => base44.entities.Negociacao.create(data),
@@ -154,13 +164,25 @@ export default function Perdas({ userEmail, userFuncao }) {
     perdasVisiveis = perdas.filter(p => p.vendedor_email === userEmail);
   }
 
-  // Aplicar busca
+  // Aplicar filtros
   if (searchTerm) {
     perdasVisiveis = perdasVisiveis.filter(p =>
       p.nome_cliente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.telefone?.includes(searchTerm) ||
       p.placa?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  }
+
+  if (vendedorFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => vendedorFilter.includes(p.vendedor_email));
+  }
+
+  if (origemFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => origemFilter.includes(p.origem));
+  }
+
+  if (categoriaFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => categoriaFilter.includes(p.categoria_motivo));
   }
 
   const handleRestore = (perda) => {
@@ -204,6 +226,18 @@ export default function Perdas({ userEmail, userFuncao }) {
     return acc;
   }, {});
 
+  const handleBuscar = () => {
+    setBuscaAtiva(true);
+  };
+
+  const handleLimpar = () => {
+    setSearchTerm("");
+    setVendedorFilter([]);
+    setOrigemFilter([]);
+    setCategoriaFilter([]);
+    setBuscaAtiva(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -214,43 +248,94 @@ export default function Perdas({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-4">
-      {/* Header com controles */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-          <Input
-            placeholder="Buscar por nome, telefone ou placa..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => exportarCSV(perdasVisiveis, users)}
-            disabled={perdasVisiveis.length === 0}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Exportar CSV
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "default" : "outline"}
-            size="icon"
-            onClick={() => setViewMode("list")}
-            className={viewMode === "list" ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""}
-          >
-            <LayoutList className="w-5 h-5" />
-          </Button>
-          <Button
-            variant={viewMode === "kanban" ? "default" : "outline"}
-            size="icon"
-            onClick={() => setViewMode("kanban")}
-            className={viewMode === "kanban" ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""}
-          >
-            <LayoutGrid className="w-5 h-5" />
-          </Button>
-        </div>
+      {/* Filtros */}
+      <Card className="border-0 shadow-md">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="w-5 h-5 text-slate-600" />
+            <h3 className="font-semibold text-slate-900">Filtros</h3>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    placeholder="Nome, telefone, placa..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <FiltroOrigem
+                origensSelecionadas={origemFilter}
+                onSelectionChange={setOrigemFilter}
+              />
+              <FiltroCategoriaPerdas
+                categoriasSelecionadas={categoriaFilter}
+                onSelectionChange={setCategoriaFilter}
+              />
+              {(userFuncao === "lider" || userFuncao === "master") && (
+                <FiltroVendedor
+                  vendedoresSelecionados={vendedorFilter}
+                  todosVendedores={userFuncao === "master" 
+                    ? allUsers.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email)
+                    : todosVendedoresEquipe
+                  }
+                  onSelectionChange={setVendedorFilter}
+                  userEmail={userEmail}
+                  nomesPorEmail={userFuncao === "master"
+                    ? Object.fromEntries(allUsers.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]]))
+                    : (minhaEquipe?.nomes_membros || {})
+                  }
+                />
+              )}
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button onClick={handleBuscar} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold border-0">
+              <Search className="w-4 h-4" />
+              Buscar
+            </Button>
+            {buscaAtiva && (
+              <Button variant="outline" onClick={handleLimpar} className="gap-2">
+                <X className="w-4 h-4" />
+                Limpar Filtros
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => exportarCSV(perdasVisiveis, users)}
+              disabled={perdasVisiveis.length === 0}
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Exportar CSV
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Header com controles de visualização */}
+      <div className="flex items-center justify-end gap-2">
+        <Button
+          variant={viewMode === "list" ? "default" : "outline"}
+          size="icon"
+          onClick={() => setViewMode("list")}
+          className={viewMode === "list" ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""}
+        >
+          <LayoutList className="w-5 h-5" />
+        </Button>
+        <Button
+          variant={viewMode === "kanban" ? "default" : "outline"}
+          size="icon"
+          onClick={() => setViewMode("kanban")}
+          className={viewMode === "kanban" ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""}
+        >
+          <LayoutGrid className="w-5 h-5" />
+        </Button>
       </div>
 
       {/* Visualização em Lista */}
@@ -269,7 +354,7 @@ export default function Perdas({ userEmail, userFuncao }) {
                   <TableRow>
                     <TableHead>Cliente</TableHead>
                     <TableHead>Telefone</TableHead>
-                    <TableHead>Placa</TableHead>
+                    <TableHead>Origem</TableHead>
                     <TableHead>Categoria</TableHead>
                     <TableHead>Motivo</TableHead>
                     <TableHead>Data da Perda</TableHead>
@@ -289,7 +374,11 @@ export default function Perdas({ userEmail, userFuncao }) {
                       <TableRow key={perda.id}>
                         <TableCell className="font-medium">{perda.nome_cliente}</TableCell>
                         <TableCell>{perda.telefone}</TableCell>
-                        <TableCell>{perda.placa || "-"}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {perda.origem ? perda.origem.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) : "-"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Badge className={categoriasCores[perda.categoria_motivo]}>
                             {categoriasLabels[perda.categoria_motivo]}
