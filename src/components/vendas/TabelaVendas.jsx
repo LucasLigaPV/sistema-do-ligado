@@ -399,7 +399,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                         </TableCell>
                         {(userFuncao === "lider" || userFuncao === "master") && (
                           <TableCell className="font-medium">
-                            {venda.vendedor || getNomeVendedor(venda.email_vendedor, users)}
+                            {getNomeVendedor(venda.email_vendedor, users)}
                           </TableCell>
                         )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
