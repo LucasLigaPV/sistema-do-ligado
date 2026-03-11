@@ -48,44 +48,42 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
     .slice(0, 10);
 
   const getMedalIcon = (index) => {
-    if (index === 0) return <Trophy className="w-5 h-5 text-slate-700" />;
-    if (index === 1) return <Award className="w-5 h-5 text-slate-500" />;
-    if (index === 2) return <Medal className="w-5 h-5 text-slate-400" />;
-    return <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">{index + 1}</div>;
+    if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
+    if (index === 1) return <div className="w-6 h-6 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs">2</div>;
+    if (index === 2) return <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs">3</div>;
+    return <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">{index + 1}</div>;
   };
 
   return (
-    <Card className="border-slate-200">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-slate-600" />
-          % de Conversão de Lead
+    <Card className="border-slate-200 shadow-sm h-full flex flex-col">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <TrendingUp className="w-4 h-4 text-slate-600" />
+          <span>% Conversão</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="flex-1 pt-2">
+        <div className="space-y-2">
           {rankingArray.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">Nenhum dado encontrado</p>
-          ) : rankingArray.map((vendedor, index) => (
+            <p className="text-slate-500 text-center py-6 text-sm">Nenhum dado</p>
+          ) : rankingArray.slice(0, 5).map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className={`flex items-center justify-between p-4 rounded-lg border ${
-                index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200'
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.03 }}
+              className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+                index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
               }`}
             >
-              <div className="flex items-center gap-4 flex-1">
+              <div className="flex items-center gap-2.5 flex-1 min-w-0">
                 {getMedalIcon(index)}
-                <div>
-                  <p className="font-semibold text-slate-900">{vendedor.nome}</p>
-                  <p className="text-xs text-slate-600 mt-1">
-                    {vendedor.vendas} vendas / {vendedor.leads} leads
-                  </p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
+                  <p className="text-[10px] text-slate-500">{vendedor.vendas}/{vendedor.leads} leads</p>
                 </div>
               </div>
-              <div className="text-2xl font-bold text-slate-900">{vendedor.conversao.toFixed(1)}%</div>
+              <div className="text-xl font-bold text-[#EFC200]">{vendedor.conversao.toFixed(1)}%</div>
             </motion.div>
           ))}
         </div>
