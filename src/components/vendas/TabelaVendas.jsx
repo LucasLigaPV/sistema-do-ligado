@@ -363,7 +363,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                 <TableHead>Data</TableHead>
                 {(userFuncao === "lider" || userFuncao === "master") && <TableHead>Vendedor</TableHead>}
                 <TableHead>Cliente</TableHead>
-                <TableHead>Telefone</TableHead>
+                <TableHead>Origem</TableHead>
                 <TableHead>Plano</TableHead>
                 <TableHead>Placa</TableHead>
                 <TableHead>Adesão</TableHead>
@@ -403,7 +403,11 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                           </TableCell>
                         )}
                         <TableCell className="font-medium">{venda.cliente}</TableCell>
-                        <TableCell>{venda.telefone}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {canalLabels[venda.canal_venda] || venda.canal_venda}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Badge variant="outline">{planoLabels[venda.plano_vendido] || venda.plano_vendido}</Badge>
                         </TableCell>
