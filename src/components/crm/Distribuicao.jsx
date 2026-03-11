@@ -106,6 +106,11 @@ export default function Distribuicao({ userFuncao }) {
     queryFn: () => base44.entities.HistoricoDistribuicao.list("-created_date", 100),
   });
 
+  const { data: perdas = [] } = useQuery({
+    queryKey: ["perdas"],
+    queryFn: () => base44.entities.Perda.list(),
+  });
+
   const createHistoricoMutation = useMutation({
     mutationFn: (data) => base44.entities.HistoricoDistribuicao.create(data),
     onSuccess: () => {
@@ -820,6 +825,10 @@ export default function Distribuicao({ userFuncao }) {
           <TabsTrigger value="configuracoes" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
             <Settings className="w-4 h-4" />
             Configurações
+          </TabsTrigger>
+          <TabsTrigger value="individual" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
+            <Users className="w-4 h-4" />
+            Individual
           </TabsTrigger>
           <TabsTrigger value="regras" className="gap-2 data-[state=active]:bg-[#EFC200] data-[state=active]:text-black data-[state=active]:shadow-sm rounded-lg border border-slate-200 data-[state=active]:border-[#EFC200] px-5 py-2.5 bg-white hover:bg-slate-50 transition-all">
             <BookOpen className="w-4 h-4" />
@@ -1660,6 +1669,104 @@ export default function Distribuicao({ userFuncao }) {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Individual */}
+        <TabsContent value="individual" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Resumo Individual de Leads</CardTitle>
+              <p className="text-sm text-slate-500">
+                Visualize o total de leads distribuídos para cada consultor, quantidade em negociação, perdidos e validações por turno.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Consultor</TableHead>
+                    <TableHead className="text-center">Total Leads</TableHead>
+                    <TableHead className="text-center">Em Negociação</TableHead>
+                    <TableHead className="text-center">Perdidos</TableHead>
+                    <TableHead className="text-center">Validações 1º Turno</TableHead>
+                    <TableHead className="text-center">Validações 2º Turno</TableHead>
+                    <TableHead>Última Distribuição</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vendedoresLideres.map(vendedor => {
+                    // Total de leads distribuídos para este vendedor
+                    const totalLeads = historicos.reduce((acc, h) => {
+                      const detalhe = h.detalhes?.find(d => d.vendedor_email === vendedor.email);
+                      return acc + (detalhe?.leads_recebidos || 0);
+                    }, 0);
+
+                    // Negociações ativas deste vendedor
+                    const negociacoesAtivas = negociacoes.filter(n => n.vendedor_email === vendedor.email).length;
+
+                    // Perdas deste vendedor
+                    const perdasVendedor = perdas.filter(p => p.vendedor_email === vendedor.email).length;
+
+                    // Validações 1º turno
+                    const validacoes1Turno = validacoes.filter(v => 
+                      v.turno === "1" && v.vendedores_validados?.includes(vendedor.email)
+                    ).length;
+
+                    // Validações 2º turno
+                    const validacoes2Turno = validacoes.filter(v => 
+                      v.turno === "2" && v.vendedores_validados?.includes(vendedor.email)
+                    ).length;
+
+                    // Última distribuição
+                    const ultimaDistribuicao = historicos.find(h => 
+                      h.detalhes?.some(d => d.vendedor_email === vendedor.email)
+                    );
+
+                    return (
+                      <TableRow key={vendedor.email}>
+                        <TableCell className="font-semibold text-slate-900">
+                          {vendedor.full_name || vendedor.email}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="border-slate-300 text-slate-700 font-bold">
+                            {totalLeads}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="border-blue-300 text-blue-700 font-semibold">
+                            {negociacoesAtivas}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="outline" className="border-red-300 text-red-700 font-semibold">
+                            {perdasVendedor}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-sm font-medium text-slate-700">{validacoes1Turno}</span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="text-sm font-medium text-slate-700">{validacoes2Turno}</span>
+                        </TableCell>
+                        <TableCell>
+                          {ultimaDistribuicao ? (
+                            <div className="text-sm text-slate-600">
+                              <div className="font-medium">
+                                {ultimaDistribuicao.data ? new Date(ultimaDistribuicao.data + "T12:00:00").toLocaleDateString("pt-BR") : "-"}
+                              </div>
+                              <div className="text-xs text-slate-500">{ultimaDistribuicao.hora}</div>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-slate-400">-</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
