@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Check, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
+import { ChevronDown, Search, X, AlertCircle } from "lucide-react";
 
 const categorias = [
   { label: "Financeiro", value: "financeiro" },
@@ -14,100 +12,142 @@ const categorias = [
   { label: "Lead Inválido", value: "lead_invalido" },
 ];
 
-export default function FiltroCategoriaPerdas({ categoriasSelecionadas = [], onSelectionChange }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const dropdownRef = useRef(null);
+export default function FiltroCategoriaPerdas({ 
+  categoriasSelecionadas = [], 
+  onSelectionChange,
+  label = "Categoria da Perda"
+}) {
+  const [open, setOpen] = useState(false);
+  const [busca, setBusca] = useState("");
+  const ref = useRef(null);
 
+  const allSelected = categoriasSelecionadas.length === 0;
+
+  const categoriasFiltradas = categorias.filter(cat =>
+    cat.label.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  // Fecha ao clicar fora
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+        setBusca("");
       }
-    };
+    }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleCategoria = (categoria) => {
-    if (categoriasSelecionadas.includes(categoria)) {
-      onSelectionChange(categoriasSelecionadas.filter((c) => c !== categoria));
-    } else {
-      onSelectionChange([...categoriasSelecionadas, categoria]);
-    }
-  };
-
-  const toggleAll = () => {
-    if (categoriasSelecionadas.length === categorias.length) {
-      onSelectionChange([]);
-    } else {
-      onSelectionChange(categorias.map((c) => c.value));
-    }
-  };
-
-  const filteredCategorias = categorias.filter((cat) =>
-    cat.label.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const getLabel = () => {
-    if (categoriasSelecionadas.length === 0) return "Todas as categorias";
-    if (categoriasSelecionadas.length === categorias.length) return "Todas as categorias";
+  const getLabelTexto = () => {
+    if (allSelected) return "Todas as categorias";
     if (categoriasSelecionadas.length === 1) {
-      const cat = categorias.find((c) => c.value === categoriasSelecionadas[0]);
+      const cat = categorias.find(c => c.value === categoriasSelecionadas[0]);
       return cat?.label || "1 categoria";
     }
-    return `${categoriasSelecionadas.length} categorias`;
+    return `${categoriasSelecionadas.length} selecionadas`;
   };
 
   return (
-    <div ref={dropdownRef} className="relative">
-      <Label className="text-sm text-slate-600 mb-2 block">Categoria da Perda</Label>
-      <Button
+    <div ref={ref} className="relative">
+      <Label className="text-sm text-slate-600 mb-2 block">{label}</Label>
+
+      {/* Trigger */}
+      <button
         type="button"
-        variant="outline"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full justify-between text-left font-normal"
+        onClick={() => { setOpen(!open); setBusca(""); }}
+        className={`w-full h-9 flex items-center justify-between gap-2 px-3 rounded-md border bg-white text-sm transition-all
+          ${open 
+            ? "border-slate-400 ring-2 ring-slate-100 shadow-sm" 
+            : "border-slate-200 hover:border-slate-300 shadow-sm"
+          }`}
       >
-        <span className="truncate">{getLabel()}</span>
-        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-      </Button>
-      
-      {isOpen && (
-        <div className="absolute z-50 mt-2 w-full rounded-md border bg-white shadow-lg">
-          <div className="p-2 border-b">
-            <Input
-              placeholder="Buscar categoria..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-9"
-            />
-          </div>
-          <div className="max-h-64 overflow-y-auto p-2">
-            <div
-              className="flex items-center space-x-2 rounded-sm px-2 py-1.5 cursor-pointer hover:bg-slate-100"
-              onClick={toggleAll}
+        <div className="flex items-center gap-2 min-w-0">
+          <AlertCircle className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+          <span className={`truncate ${allSelected ? "text-slate-500" : "text-slate-800 font-medium"}`}>
+            {getLabelTexto()}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {!allSelected && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onSelectionChange([]); }}
+              className="p-0.5 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
             >
-              <div className={`h-4 w-4 border rounded flex items-center justify-center ${
-                categoriasSelecionadas.length === categorias.length ? "bg-[#EFC200] border-[#EFC200]" : "border-slate-300"
-              }`}>
-                {categoriasSelecionadas.length === categorias.length && <Check className="h-3 w-3 text-black" />}
-              </div>
-              <span className="text-sm font-medium">Selecionar todas</span>
+              <X className="w-3 h-3" />
+            </button>
+          )}
+          <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+
+      {/* Dropdown */}
+      {open && (
+        <div className="absolute z-50 top-full mt-1 w-full min-w-[220px] bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden">
+          {/* Busca */}
+          <div className="p-2 border-b border-slate-100">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Buscar categoria..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                autoFocus
+                className="w-full pl-8 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-slate-400 focus:bg-white transition-colors"
+              />
             </div>
-            {filteredCategorias.map((cat) => (
-              <div
-                key={cat.value}
-                className="flex items-center space-x-2 rounded-sm px-2 py-1.5 cursor-pointer hover:bg-slate-100"
-                onClick={() => toggleCategoria(cat.value)}
-              >
-                <div className={`h-4 w-4 border rounded flex items-center justify-center ${
-                  categoriasSelecionadas.includes(cat.value) ? "bg-[#EFC200] border-[#EFC200]" : "border-slate-300"
-                }`}>
-                  {categoriasSelecionadas.includes(cat.value) && <Check className="h-3 w-3 text-black" />}
-                </div>
-                <span className="text-sm">{cat.label}</span>
+          </div>
+
+          {/* Opção "Todas" */}
+          <div className="p-1.5 border-b border-slate-100">
+            <button
+              type="button"
+              onClick={() => onSelectionChange([])}
+              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors
+                ${allSelected ? "bg-[#EFC200]/10 text-slate-800" : "text-slate-600 hover:bg-slate-50"}`}
+            >
+              <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors flex-shrink-0
+                ${allSelected ? "bg-[#EFC200] border-[#D4A900]" : "border-slate-300"}`}>
+                {allSelected && <span className="text-[10px] font-bold text-white">✓</span>}
               </div>
-            ))}
+              Todas as categorias
+            </button>
+          </div>
+
+          {/* Lista de categorias */}
+          <div className="max-h-48 overflow-y-auto p-1.5 space-y-0.5">
+            {categoriasFiltradas.length === 0 ? (
+              <p className="text-xs text-slate-400 text-center py-3">Nenhum resultado</p>
+            ) : (
+              categoriasFiltradas.map((cat) => {
+                const isChecked = categoriasSelecionadas.includes(cat.value);
+
+                return (
+                  <button
+                    key={cat.value}
+                    type="button"
+                    onClick={() => {
+                      if (isChecked) {
+                        onSelectionChange(categoriasSelecionadas.filter(c => c !== cat.value));
+                      } else {
+                        onSelectionChange([...categoriasSelecionadas, cat.value]);
+                      }
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm transition-colors text-left
+                      ${isChecked ? "bg-[#EFC200]/10" : "hover:bg-slate-50"}`}
+                  >
+                    <div className={`w-4 h-4 rounded flex items-center justify-center border transition-colors flex-shrink-0
+                      ${isChecked ? "bg-[#EFC200] border-[#D4A900]" : "border-slate-300"}`}>
+                      {isChecked && <span className="text-[10px] font-bold text-white">✓</span>}
+                    </div>
+                    <span className={`truncate ${isChecked ? "font-medium text-slate-800" : "text-slate-600"}`}>
+                      {cat.label}
+                    </span>
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
       )}
