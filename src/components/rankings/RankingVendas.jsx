@@ -42,48 +42,104 @@ export default function RankingVendas({ vendas, users }) {
     return <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">{index + 1}</div>;
   };
 
+  const top3 = rankingArray.slice(0, 3);
+  const demais = rankingArray.slice(3);
+
   return (
-    <Card className="border-slate-200 shadow-sm overflow-hidden bg-gradient-to-br from-white to-slate-50/30">
-      <CardHeader className="pb-3 border-b border-slate-100">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <div className="p-2 rounded-lg bg-[#FFF9E6]">
-            <Trophy className="w-4 h-4 text-[#EFC200]" />
-          </div>
-          <span className="text-slate-900">Ranking Geral de Vendas</span>
+    <Card className="border-slate-200 shadow-sm overflow-hidden">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <Trophy className="w-4 h-4 text-slate-600" />
+          <span>Ranking Geral de Vendas</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {rankingArray.slice(0, 6).map((vendedor, index) => (
-            <motion.div
-              key={vendedor.email}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-              className={`relative p-3 rounded-lg border transition-all ${
-                index === 0 ? 'bg-gradient-to-br from-[#FFF9E6] to-[#FFFAED] border-[#EFC200]/30 shadow-sm' :
-                'bg-white border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
-                  {getMedalIcon(index)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
-                  <div className="flex gap-1.5 mt-1.5 flex-wrap">
-                    {vendedor.essencial > 0 && <Badge variant="outline" className="text-[10px] h-5 px-1.5">Ess: {vendedor.essencial}</Badge>}
-                    {vendedor.principal > 0 && <Badge variant="outline" className="text-[10px] h-5 px-1.5">Princ: {vendedor.principal}</Badge>}
-                    {vendedor.plano_van > 0 && <Badge variant="outline" className="text-[10px] h-5 px-1.5">Van: {vendedor.plano_van}</Badge>}
-                    {vendedor.plano_moto > 0 && <Badge variant="outline" className="text-[10px] h-5 px-1.5">Moto: {vendedor.plano_moto}</Badge>}
-                    {vendedor.plano_caminhao > 0 && <Badge variant="outline" className="text-[10px] h-5 px-1.5">Cam: {vendedor.plano_caminhao}</Badge>}
+      <CardContent className="p-4 space-y-4">
+        {/* Pódio Top 3 */}
+        {top3.length > 0 && (
+          <div className="flex items-end justify-center gap-2 px-4">
+            {/* 2º Lugar */}
+            {top3[1] && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="flex-1 max-w-[120px]"
+              >
+                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-3 text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-slate-300 flex items-center justify-center">
+                    <span className="text-lg font-bold text-slate-700">2</span>
                   </div>
+                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[1].nome}</p>
+                  <div className="text-2xl font-bold text-slate-900">{top3[1].total}</div>
                 </div>
-                <div className="text-2xl font-bold text-slate-900 flex-shrink-0">{vendedor.total}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                <div className="h-16 bg-slate-200/50 border-t-2 border-slate-300 rounded-b-lg" />
+              </motion.div>
+            )}
+
+            {/* 1º Lugar */}
+            {top3[0] && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0 }}
+                className="flex-1 max-w-[120px]"
+              >
+                <div className="bg-gradient-to-br from-[#FFF9E6] to-[#FFFAED] border-2 border-[#EFC200] rounded-t-lg p-3 text-center shadow-sm">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[#EFC200] flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-slate-900" />
+                  </div>
+                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[0].nome}</p>
+                  <div className="text-2xl font-bold text-slate-900">{top3[0].total}</div>
+                </div>
+                <div className="h-24 bg-[#EFC200]/20 border-t-2 border-[#EFC200] rounded-b-lg" />
+              </motion.div>
+            )}
+
+            {/* 3º Lugar */}
+            {top3[2] && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex-1 max-w-[120px]"
+              >
+                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-3 text-center">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-slate-200 flex items-center justify-center">
+                    <span className="text-lg font-bold text-slate-600">3</span>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[2].nome}</p>
+                  <div className="text-2xl font-bold text-slate-900">{top3[2].total}</div>
+                </div>
+                <div className="h-12 bg-slate-100/50 border-t-2 border-slate-200 rounded-b-lg" />
+              </motion.div>
+            )}
+          </div>
+        )}
+
+        {/* Demais posições */}
+        {demais.length > 0 && (
+          <div className="space-y-1.5 pt-2 border-t border-slate-100">
+            {demais.map((vendedor, index) => (
+              <motion.div
+                key={vendedor.email}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + index * 0.03 }}
+                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                  {index + 4}
+                </div>
+                <p className="font-medium text-sm text-slate-900 flex-1 truncate">{vendedor.nome}</p>
+                <div className="text-lg font-bold text-slate-900">{vendedor.total}</div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {rankingArray.length === 0 && (
+          <p className="text-slate-500 text-center py-6 text-sm">Nenhuma venda registrada</p>
+        )}
       </CardContent>
     </Card>
   );
