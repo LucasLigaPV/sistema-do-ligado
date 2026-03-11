@@ -82,6 +82,11 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
 
   const { usuarios: users } = useUsuarios();
 
+  const getNomeVendedor = (email) => {
+    const user = users.find(u => u.email === email);
+    return user?.nome_exibicao || user?.full_name || email;
+  };
+
   // Obter equipe do líder
   const minhaEquipe = equipes.find((e) => e.lider_email === userEmail);
   const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
