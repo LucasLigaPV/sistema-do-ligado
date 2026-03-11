@@ -155,10 +155,16 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       if (!n.informacoes_conferidas) return false;
       if (!(n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")) return false;
       
-      // Filtro de data: usa data_conferencia para "aguardando" e data_analise para demais
-      const dataParaFiltrar = n.status_aprovacao === "aguardando" 
-        ? n.data_conferencia 
-        : n.data_analise || n.data_conferencia;
+      // Filtro de data: aguardando usa data_conferencia, analisando+ usa data_analise, aprovado usa data_aprovacao
+      let dataParaFiltrar;
+      if (n.status_aprovacao === "aguardando") {
+        dataParaFiltrar = n.data_conferencia;
+      } else if (n.status_aprovacao === "aprovado") {
+        dataParaFiltrar = n.data_aprovacao || n.data_analise || n.data_conferencia;
+      } else {
+        // analisando, reprovado, corrigido
+        dataParaFiltrar = n.data_analise || n.data_conferencia;
+      }
       
       if (dataParaFiltrar) {
         const data = new Date(dataParaFiltrar);
@@ -406,6 +412,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           <span>
                                             {deal.status_aprovacao === "aguardando" && deal.data_conferencia
                                               ? format(new Date(deal.data_conferencia), "dd/MM HH:mm")
+                                              : deal.status_aprovacao === "aprovado" && deal.data_aprovacao
+                                              ? format(new Date(deal.data_aprovacao), "dd/MM HH:mm")
                                               : deal.data_analise
                                               ? format(new Date(deal.data_analise), "dd/MM HH:mm")
                                               : deal.data_conferencia

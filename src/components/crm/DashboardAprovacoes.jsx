@@ -35,10 +35,22 @@ export default function DashboardAprovacoes() {
       n.status_aprovacao === "analisando"
     );
     if (!passouPorAprovacao) return false;
-    const dataConf = n.data_conferencia ? new Date(n.data_conferencia) : new Date(n.created_date);
+    
+    // Determinar data para filtro: aguardando usa data_conferencia, analisando+ usa data_analise, aprovado usa data_aprovacao
+    let dataParaFiltrar;
+    if (n.status_aprovacao === "aguardando") {
+      dataParaFiltrar = n.data_conferencia;
+    } else if (n.status_aprovacao === "aprovado") {
+      dataParaFiltrar = n.data_aprovacao || n.data_analise || n.data_conferencia;
+    } else {
+      // analisando, reprovado, corrigido
+      dataParaFiltrar = n.data_analise || n.data_conferencia;
+    }
+    
+    const data = dataParaFiltrar ? new Date(dataParaFiltrar) : new Date(n.created_date);
     return (
-      dataConf >= new Date(startDate) &&
-      dataConf <= new Date(endDate + "T23:59:59")
+      data >= new Date(startDate) &&
+      data <= new Date(endDate + "T23:59:59")
     );
   });
 
