@@ -420,7 +420,12 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                         className="border-b hover:bg-slate-50/50 transition-colors"
                       >
                         <TableCell className="text-slate-600">
-                          {venda.data_venda ? format(new Date(venda.data_venda), "dd/MM/yyyy", { locale: ptBR }) : "-"}
+                          {venda.created_date ? (
+                            <div>
+                              <div className="font-medium">{format(new Date(venda.created_date), "dd/MM/yyyy", { locale: ptBR })}</div>
+                              <div className="text-xs text-slate-500">{format(new Date(venda.created_date), "HH:mm", { locale: ptBR })}</div>
+                            </div>
+                          ) : "-"}
                         </TableCell>
                         {(userFuncao === "lider" || userFuncao === "master") && (
                           <TableCell className="font-medium">
