@@ -228,34 +228,55 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-slate-500">Total</p>
-            <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600">Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{stats.total}</div>
+            <p className="text-xs text-slate-500 mt-1">Indicações registradas</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-[#EFC200]">Pendentes</p>
-            <p className="text-2xl font-bold text-[#EFC200]">{stats.pendentes}</p>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Pendentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{stats.pendentes}</div>
+            <p className="text-xs text-slate-500 mt-1">Aguardando análise</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-[#D4A900]">Aprovadas</p>
-            <p className="text-2xl font-bold text-[#D4A900]">{stats.aprovadas}</p>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4" />
+              Aprovadas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{stats.aprovadas}</div>
+            <p className="text-xs text-slate-500 mt-1">Aprovadas para pagamento</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-4">
-            <p className="text-sm text-emerald-600">Pagas</p>
-            <p className="text-2xl font-bold text-emerald-600">{stats.pagas}</p>
+        <Card className="border-slate-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              Pagas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900">{stats.pagas}</div>
+            <p className="text-xs text-slate-500 mt-1">Pagamentos realizados</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="border-0 shadow-md">
+      <Card className="border-slate-200 shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-5 h-5 text-slate-600" />
@@ -375,7 +396,7 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
       </Card>
 
       {/* Table */}
-      <Card className="border-0 shadow-md overflow-hidden">
+      <Card className="border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
