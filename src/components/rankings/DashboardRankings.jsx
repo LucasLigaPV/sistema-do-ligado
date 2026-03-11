@@ -116,11 +116,12 @@ export default function DashboardRankings() {
         </motion.div>
 
         {/* Vendas Lead e Indicação Empilhados */}
-        <div className="lg:col-span-4 space-y-4">
+        <div className="lg:col-span-4 flex flex-col gap-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
+            className="flex-1"
           >
             <RankingVendasLead vendas={vendasFiltradas} users={users} />
           </motion.div>
@@ -129,6 +130,7 @@ export default function DashboardRankings() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.35 }}
+            className="flex-1"
           >
             <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
           </motion.div>
