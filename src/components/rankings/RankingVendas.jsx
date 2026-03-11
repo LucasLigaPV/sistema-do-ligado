@@ -53,26 +53,26 @@ export default function RankingVendas({ vendas, users }) {
           <span>Ranking Geral de Vendas</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-3 space-y-3">
         {/* Pódio Top 3 */}
         {top3.length > 0 && (
-          <div className="flex items-end justify-center gap-2 px-4">
+          <div className="flex items-end justify-center gap-1.5 px-2">
             {/* 2º Lugar */}
             {top3[1] && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="flex-1 max-w-[120px]"
+                className="flex-1 max-w-[100px]"
               >
-                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-3 text-center">
-                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-slate-300 flex items-center justify-center">
-                    <span className="text-lg font-bold text-slate-700">2</span>
+                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-2 text-center">
+                  <div className="w-8 h-8 mx-auto mb-1.5 rounded-full bg-slate-300 flex items-center justify-center">
+                    <span className="text-sm font-bold text-slate-700">2</span>
                   </div>
-                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[1].nome}</p>
-                  <div className="text-2xl font-bold text-slate-900">{top3[1].total}</div>
+                  <p className="text-[10px] font-semibold text-slate-900 truncate mb-1">{top3[1].nome}</p>
+                  <div className="text-xl font-bold text-slate-900">{top3[1].total}</div>
                 </div>
-                <div className="h-16 bg-slate-200/50 border-t-2 border-slate-300 rounded-b-lg" />
+                <div className="h-12 bg-slate-200/50 border-t-2 border-slate-300 rounded-b-lg" />
               </motion.div>
             )}
 
@@ -82,16 +82,16 @@ export default function RankingVendas({ vendas, users }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0 }}
-                className="flex-1 max-w-[120px]"
+                className="flex-1 max-w-[100px]"
               >
-                <div className="bg-gradient-to-br from-[#FFF9E6] to-[#FFFAED] border-2 border-[#EFC200] rounded-t-lg p-3 text-center shadow-sm">
-                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[#EFC200] flex items-center justify-center">
-                    <Trophy className="w-5 h-5 text-slate-900" />
+                <div className="bg-gradient-to-br from-[#FFF9E6] to-[#FFFAED] border-2 border-[#EFC200] rounded-t-lg p-2 text-center shadow-sm">
+                  <div className="w-8 h-8 mx-auto mb-1.5 rounded-full bg-[#EFC200] flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-slate-900" />
                   </div>
-                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[0].nome}</p>
-                  <div className="text-2xl font-bold text-slate-900">{top3[0].total}</div>
+                  <p className="text-[10px] font-semibold text-slate-900 truncate mb-1">{top3[0].nome}</p>
+                  <div className="text-xl font-bold text-slate-900">{top3[0].total}</div>
                 </div>
-                <div className="h-24 bg-[#EFC200]/20 border-t-2 border-[#EFC200] rounded-b-lg" />
+                <div className="h-20 bg-[#EFC200]/20 border-t-2 border-[#EFC200] rounded-b-lg" />
               </motion.div>
             )}
 
@@ -101,16 +101,16 @@ export default function RankingVendas({ vendas, users }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex-1 max-w-[120px]"
+                className="flex-1 max-w-[100px]"
               >
-                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-3 text-center">
-                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-slate-200 flex items-center justify-center">
-                    <span className="text-lg font-bold text-slate-600">3</span>
+                <div className="bg-slate-50 border border-slate-200 rounded-t-lg p-2 text-center">
+                  <div className="w-8 h-8 mx-auto mb-1.5 rounded-full bg-slate-200 flex items-center justify-center">
+                    <span className="text-sm font-bold text-slate-600">3</span>
                   </div>
-                  <p className="text-xs font-semibold text-slate-900 truncate mb-1">{top3[2].nome}</p>
-                  <div className="text-2xl font-bold text-slate-900">{top3[2].total}</div>
+                  <p className="text-[10px] font-semibold text-slate-900 truncate mb-1">{top3[2].nome}</p>
+                  <div className="text-xl font-bold text-slate-900">{top3[2].total}</div>
                 </div>
-                <div className="h-12 bg-slate-100/50 border-t-2 border-slate-200 rounded-b-lg" />
+                <div className="h-8 bg-slate-100/50 border-t-2 border-slate-200 rounded-b-lg" />
               </motion.div>
             )}
           </div>
@@ -118,20 +118,20 @@ export default function RankingVendas({ vendas, users }) {
 
         {/* Demais posições */}
         {demais.length > 0 && (
-          <div className="space-y-1.5 pt-2 border-t border-slate-100">
+          <div className="space-y-1 pt-2 border-t border-slate-100">
             {demais.map((vendedor, index) => (
               <motion.div
                 key={vendedor.email}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.03 }}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-[10px] flex-shrink-0">
                   {index + 4}
                 </div>
-                <p className="font-medium text-sm text-slate-900 flex-1 truncate">{vendedor.nome}</p>
-                <div className="text-lg font-bold text-slate-900">{vendedor.total}</div>
+                <p className="font-medium text-xs text-slate-900 flex-1 truncate">{vendedor.nome}</p>
+                <div className="text-base font-bold text-slate-900">{vendedor.total}</div>
               </motion.div>
             ))}
           </div>
