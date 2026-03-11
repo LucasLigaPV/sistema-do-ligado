@@ -46,14 +46,14 @@ export default function RankingVendas({ vendas, users }) {
   const demais = rankingArray.slice(3);
 
   return (
-    <Card className="border-slate-200 shadow-sm overflow-hidden">
+    <Card className="border-slate-200 shadow-sm overflow-hidden h-full flex flex-col">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Trophy className="w-4 h-4 text-slate-600" />
           <span>Ranking Geral de Vendas</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3 space-y-3">
+      <CardContent className="p-3 space-y-3 flex-1 flex flex-col">
         {/* Pódio Top 3 */}
         {top3.length > 0 && (
           <div className="flex items-end justify-center gap-1.5 px-2">
