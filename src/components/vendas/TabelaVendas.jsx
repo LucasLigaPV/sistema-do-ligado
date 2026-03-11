@@ -121,6 +121,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
   );
   const [dataInicio, setDataInicio] = useState(filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0]);
+  const [origemFilter, setOrigemFilter] = useState("todas");
+  const [planoFilter, setPlanoFilter] = useState("todos");
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
@@ -129,6 +131,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     consultorFilter: filtrosCompartilhados?.consultorFilter ?? defaultConsultor,
     dataInicio: filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0],
     dataFim: filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0],
+    origemFilter: "todas",
+    planoFilter: "todos",
   });
 
   // Sincronizar com filtros compartilhados quando mudarem externamente
@@ -185,7 +189,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
   });
 
   const handleBuscar = () => {
-    const novosFiltros = { search, consultorFilter, dataInicio, dataFim };
+    const novosFiltros = { search, consultorFilter, dataInicio, dataFim, origemFilter, planoFilter };
     setFiltrosAtivos(novosFiltros);
     setBuscaAtiva(true);
     prevFiltrosRef.current = { consultorFilter, dataInicio, dataFim };
@@ -200,7 +204,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     setConsultorFilter(dc);
     setDataInicio(defaultInicio);
     setDataFim(defaultFim);
-    setFiltrosAtivos({ search: "", consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim });
+    setOrigemFilter("todas");
+    setPlanoFilter("todos");
+    setFiltrosAtivos({ search: "", consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim, origemFilter: "todas", planoFilter: "todos" });
     setBuscaAtiva(false);
     prevFiltrosRef.current = { consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim };
     onFiltrosChange?.({ consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim });
@@ -217,6 +223,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     const matchConsultor = (userFuncao === "lider" || userFuncao === "master")
       ? filtrosAtivos.consultorFilter.length === 0 || filtrosAtivos.consultorFilter.includes(venda.email_vendedor)
       : true;
+    const matchOrigem = filtrosAtivos.origemFilter === "todas" || venda.canal_venda === filtrosAtivos.origemFilter;
+    const matchPlano = filtrosAtivos.planoFilter === "todos" || venda.plano_vendido === filtrosAtivos.planoFilter;
     
     if (filtrosAtivos.dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
@@ -230,7 +238,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
       if (dataVenda > fim) return false;
     }
     
-    return matchSearch && matchConsultor;
+    return matchSearch && matchConsultor && matchOrigem && matchPlano;
   });
 
   const exportToCSV = () => {
@@ -326,6 +334,41 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                 value={dataFim}
                 onChange={(e) => setDataFim(e.target.value)}
               />
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Origem</Label>
+              <Select value={origemFilter} onValueChange={setOrigemFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todas as origens" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todas">Todas as origens</SelectItem>
+                  <SelectItem value="lead">Lead</SelectItem>
+                  <SelectItem value="lead_pre_sistema">Lead Pré-Sistema</SelectItem>
+                  <SelectItem value="indicacao">Indicação</SelectItem>
+                  <SelectItem value="organico">Orgânico</SelectItem>
+                  <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
+                  <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+                  <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
+                  <SelectItem value="migracao">Migração</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-sm text-slate-600 mb-2 block">Plano</Label>
+              <Select value={planoFilter} onValueChange={setPlanoFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os planos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os planos</SelectItem>
+                  <SelectItem value="essencial">Essencial</SelectItem>
+                  <SelectItem value="principal">Principal</SelectItem>
+                  <SelectItem value="plano_van">Plano Van</SelectItem>
+                  <SelectItem value="plano_moto">Plano Moto</SelectItem>
+                  <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             {(userFuncao === "lider" || userFuncao === "master") && (
               <FiltroVendedor
