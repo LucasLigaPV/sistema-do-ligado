@@ -75,8 +75,14 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
   const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
 
+  // Vendas que contam para progresso (excluindo trocas de veículo e titularidade)
+  const vendasParaProgresso = vendasDoVendedor.filter(v => 
+    v.canal_venda !== "troca_veiculo" && v.canal_venda !== "troca_titularidade"
+  );
+
   // Calcular estatísticas
   const totalVendas = vendasDoVendedor.length;
+  const totalVendasProgresso = vendasParaProgresso.length;
   const totalAdesao = vendasDoVendedor.reduce((sum, v) => {
     const valor = parseFloat(v.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
     return sum + valor;
@@ -172,7 +178,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   // Calcular nível do plano de carreira
   const getNivelAtual = () => {
     for (let i = PLANO_CARREIRA.length - 1; i >= 0; i--) {
-      if (totalVendas >= PLANO_CARREIRA[i].vendas) {
+      if (totalVendasProgresso >= PLANO_CARREIRA[i].vendas) {
         return PLANO_CARREIRA[i];
       }
     }
@@ -191,7 +197,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   // Calcular progresso
   const calcularProgresso = () => {
     if (!proximoNivel) return 100;
-    const vendasNoNivel = totalVendas - nivelAtual.vendas;
+    const vendasNoNivel = totalVendasProgresso - nivelAtual.vendas;
     const vendasParaProximo = proximoNivel.vendas - nivelAtual.vendas;
     return (vendasNoNivel / vendasParaProximo) * 100;
   };
@@ -209,7 +215,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
   // Comemorar novo nível alcançado
   React.useEffect(() => {
-    if (!currentUser || totalVendas === 0) return;
+    if (!currentUser || totalVendasProgresso === 0) return;
 
     const nivelAtualIndex = PLANO_CARREIRA.findIndex(n => n.nivel === nivelAtual.nivel);
     const ultimoNivelComemorado = currentUser.ultimo_nivel_comemorado || 0;
@@ -245,7 +251,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
       // Atualizar último nível comemorado
       base44.auth.updateMe({ ultimo_nivel_comemorado: nivelAtualIndex });
     }
-  }, [currentUser, totalVendas, nivelAtual]);
+  }, [currentUser, totalVendasProgresso, nivelAtual]);
 
   // Calcular total de indicações
   const totalIndicacoes = vendasDoVendedor.reduce((sum, v) => {
@@ -259,7 +265,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
   // Calcular comissão bruta
   const calcularComissaoBruta = () => {
     if (nivelAtual.comissaoPorPlaca > 0) {
-      return totalVendas * nivelAtual.comissaoPorPlaca;
+      return totalVendasProgresso * nivelAtual.comissaoPorPlaca;
     } else {
       return (totalAdesao * nivelAtual.percentualAdesao) / 100;
     }
@@ -327,8 +333,13 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-slate-500 text-sm mb-1">Vendas Realizadas</p>
-              <p className="text-4xl font-bold text-slate-900">{totalVendas}</p>
+              <p className="text-slate-500 text-sm mb-1">Vendas para Progresso</p>
+              <p className="text-4xl font-bold text-slate-900">{totalVendasProgresso}</p>
+              {totalVendas !== totalVendasProgresso && (
+                <p className="text-xs text-slate-400 mt-1">
+                  ({totalVendas} total, excluindo trocas)
+                </p>
+              )}
             </div>
           </div>
 
@@ -342,14 +353,14 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               <div 
                 className="absolute top-6 left-0 h-2 bg-gradient-to-r from-[#EFC200] to-[#D4A900] rounded-full transition-all duration-1000"
                 style={{ 
-                  width: `${Math.min((totalVendas / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100, 100)}%` 
+                  width: `${Math.min((totalVendasProgresso / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100, 100)}%` 
                 }}
               />
 
               {/* Marcadores dos níveis */}
               <div className="relative flex justify-between">
                 {PLANO_CARREIRA.map((nivel, index) => {
-                  const isAtingido = totalVendas >= nivel.vendas;
+                  const isAtingido = totalVendasProgresso >= nivel.vendas;
                   const isAtual = nivelAtual.nivel === nivel.nivel;
 
                   return (
@@ -381,7 +392,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                   <div>
                     <p className="text-sm font-medium text-slate-900">Próximo nível: {proximoNivel.nivel}</p>
                     <p className="text-xs text-slate-500 mt-1">
-                      Faltam {proximoNivel.vendas - totalVendas} vendas
+                      Faltam {proximoNivel.vendas - totalVendasProgresso} vendas
                     </p>
                     {nivelAtual.nivel === "Nível 1" && (
                       <p className="text-xs text-amber-600 font-medium mt-2">
@@ -391,7 +402,7 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-slate-900">{Math.round(progresso)}%</p>
-                    <p className="text-xs text-slate-500">{totalVendas}/{proximoNivel.vendas}</p>
+                    <p className="text-xs text-slate-500">{totalVendasProgresso}/{proximoNivel.vendas}</p>
                   </div>
                 </div>
                 
