@@ -40,6 +40,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import FiltroVendedor from "../shared/FiltroVendedor";
+import FiltroPlano from "../shared/FiltroPlano";
+import FiltroOrigem from "../shared/FiltroOrigem";
 import { useUsuarios } from "../shared/useUsuarios";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -121,8 +123,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
   );
   const [dataInicio, setDataInicio] = useState(filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0]);
-  const [origemFilter, setOrigemFilter] = useState("todas");
-  const [planoFilter, setPlanoFilter] = useState("todos");
+  const [origemFilter, setOrigemFilter] = useState([]);
+  const [planoFilter, setPlanoFilter] = useState([]);
   const [selectedVenda, setSelectedVenda] = useState(null);
   const [showIndicacaoForm, setShowIndicacaoForm] = useState(null);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
@@ -131,8 +133,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     consultorFilter: filtrosCompartilhados?.consultorFilter ?? defaultConsultor,
     dataInicio: filtrosCompartilhados?.dataInicio ?? inicioMes.toISOString().split('T')[0],
     dataFim: filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0],
-    origemFilter: "todas",
-    planoFilter: "todos",
+    origemFilter: [],
+    planoFilter: [],
   });
 
   // Sincronizar com filtros compartilhados quando mudarem externamente
@@ -204,9 +206,9 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     setConsultorFilter(dc);
     setDataInicio(defaultInicio);
     setDataFim(defaultFim);
-    setOrigemFilter("todas");
-    setPlanoFilter("todos");
-    setFiltrosAtivos({ search: "", consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim, origemFilter: "todas", planoFilter: "todos" });
+    setOrigemFilter([]);
+    setPlanoFilter([]);
+    setFiltrosAtivos({ search: "", consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim, origemFilter: [], planoFilter: [] });
     setBuscaAtiva(false);
     prevFiltrosRef.current = { consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim };
     onFiltrosChange?.({ consultorFilter: dc, dataInicio: defaultInicio, dataFim: defaultFim });
@@ -223,8 +225,8 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
     const matchConsultor = (userFuncao === "lider" || userFuncao === "master")
       ? filtrosAtivos.consultorFilter.length === 0 || filtrosAtivos.consultorFilter.includes(venda.email_vendedor)
       : true;
-    const matchOrigem = filtrosAtivos.origemFilter === "todas" || venda.canal_venda === filtrosAtivos.origemFilter;
-    const matchPlano = filtrosAtivos.planoFilter === "todos" || venda.plano_vendido === filtrosAtivos.planoFilter;
+    const matchOrigem = filtrosAtivos.origemFilter.length === 0 || filtrosAtivos.origemFilter.includes(venda.canal_venda);
+    const matchPlano = filtrosAtivos.planoFilter.length === 0 || filtrosAtivos.planoFilter.includes(venda.plano_vendido);
     
     if (filtrosAtivos.dataInicio && venda.data_venda) {
       const dataVenda = new Date(venda.data_venda);
@@ -306,79 +308,57 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
             <Filter className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">Filtros</h3>
           </div>
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${(userFuncao === "lider" || userFuncao === "master") ? "lg:grid-cols-5" : "lg:grid-cols-4"} gap-4`}>
-            <div className="lg:col-span-2">
-              <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-1">
+                <Label className="text-sm text-slate-600 mb-2 block">Buscar</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    placeholder="Cliente, placa, telefone..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
                 <Input
-                  placeholder="Cliente, placa, telefone..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10"
+                  type="date"
+                  value={dataInicio}
+                  onChange={(e) => setDataInicio(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
+                <Input
+                  type="date"
+                  value={dataFim}
+                  onChange={(e) => setDataFim(e.target.value)}
                 />
               </div>
             </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Data Início</Label>
-              <Input
-                type="date"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
+            
+            <div className={`grid grid-cols-1 md:grid-cols-2 ${(userFuncao === "lider" || userFuncao === "master") ? "lg:grid-cols-3" : "lg:grid-cols-2"} gap-4`}>
+              <FiltroPlano
+                planosSelecionados={planoFilter}
+                onSelectionChange={setPlanoFilter}
               />
-            </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Data Fim</Label>
-              <Input
-                type="date"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
+              <FiltroOrigem
+                origensSelecionadas={origemFilter}
+                onSelectionChange={setOrigemFilter}
               />
+              {(userFuncao === "lider" || userFuncao === "master") && (
+                <FiltroVendedor
+                  vendedoresSelecionados={consultorFilter}
+                  todosVendedores={userFuncao === "master" ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email) : membrosEquipe}
+                  onSelectionChange={setConsultorFilter}
+                  userEmail={userEmail}
+                  nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]])) : (minhaEquipe?.nomes_membros || {})}
+                />
+              )}
             </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Origem</Label>
-              <Select value={origemFilter} onValueChange={setOrigemFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todas as origens" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todas">Todas as origens</SelectItem>
-                  <SelectItem value="lead">Lead</SelectItem>
-                  <SelectItem value="lead_pre_sistema">Lead Pré-Sistema</SelectItem>
-                  <SelectItem value="indicacao">Indicação</SelectItem>
-                  <SelectItem value="organico">Orgânico</SelectItem>
-                  <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
-                  <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
-                  <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
-                  <SelectItem value="migracao">Migração</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-sm text-slate-600 mb-2 block">Plano</Label>
-              <Select value={planoFilter} onValueChange={setPlanoFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos os planos" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os planos</SelectItem>
-                  <SelectItem value="essencial">Essencial</SelectItem>
-                  <SelectItem value="principal">Principal</SelectItem>
-                  <SelectItem value="plano_van">Plano Van</SelectItem>
-                  <SelectItem value="plano_moto">Plano Moto</SelectItem>
-                  <SelectItem value="plano_caminhao">Plano Caminhão</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {(userFuncao === "lider" || userFuncao === "master") && (
-              <FiltroVendedor
-                vendedoresSelecionados={consultorFilter}
-                todosVendedores={userFuncao === "master" ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email) : membrosEquipe}
-                onSelectionChange={setConsultorFilter}
-                userEmail={userEmail}
-                nomesPorEmail={userFuncao === "master" ? Object.fromEntries(users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => [u.email, u.nome_exibicao || u.full_name || u.email.split("@")[0]])) : (minhaEquipe?.nomes_membros || {})}
-              />
-            )}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={handleBuscar} className="gap-2 bg-[#EFC200] hover:bg-[#D4A900] text-black font-semibold border-0">
