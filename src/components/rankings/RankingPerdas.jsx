@@ -48,41 +48,41 @@ export default function RankingPerdas({ perdas, users }) {
   };
 
   return (
-    <Card className="border-slate-200 flex flex-col h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <XCircle className="w-5 h-5 text-slate-600" />
-          Perdas por Motivo
+    <Card className="border-slate-200 shadow-sm h-full flex flex-col">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <XCircle className="w-4 h-4 text-slate-600" />
+          <span>Perdas por Motivo</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 overflow-auto">
-        <div className="space-y-3">
+      <CardContent className="flex-1 pt-2 overflow-auto">
+        <div className="space-y-2">
           {rankingArray.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">Nenhuma perda encontrada</p>
-          ) : rankingArray.map((vendedor, index) => (
+            <p className="text-slate-500 text-center py-6 text-sm">Nenhuma perda</p>
+          ) : rankingArray.slice(0, 7).map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-lg border bg-white border-slate-200"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.03 }}
+              className="p-2.5 rounded-lg border bg-white border-slate-200 hover:border-slate-300 transition-all"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
                     {index + 1}
                   </div>
-                  <p className="font-semibold text-slate-900">{vendedor.nome}</p>
+                  <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
                 </div>
-                <div className="text-2xl font-bold text-slate-900">{vendedor.total}</div>
+                <div className="text-xl font-bold text-slate-900">{vendedor.total}</div>
               </div>
-              <div className="flex gap-2 flex-wrap ml-12">
-                {vendedor.financeiro > 0 && <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">Financeiro: {vendedor.financeiro}</Badge>}
-                {vendedor.timing > 0 && <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Timing: {vendedor.timing}</Badge>}
-                {vendedor.confianca > 0 && <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Confiança: {vendedor.confianca}</Badge>}
-                {vendedor.concorrencia > 0 && <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">Concorrência: {vendedor.concorrencia}</Badge>}
-                {vendedor.necessidade > 0 && <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Necessidade: {vendedor.necessidade}</Badge>}
-                {vendedor.situacoes_esporadicas > 0 && <Badge variant="outline" className="text-xs bg-teal-50 text-teal-700 border-teal-200">Esporádicas: {vendedor.situacoes_esporadicas}</Badge>}
+              <div className="flex gap-1.5 flex-wrap ml-8">
+                {vendedor.financeiro > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-red-50 text-red-700 border-red-200">Fin: {vendedor.financeiro}</Badge>}
+                {vendedor.timing > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-yellow-50 text-yellow-700 border-yellow-200">Tim: {vendedor.timing}</Badge>}
+                {vendedor.confianca > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-orange-50 text-orange-700 border-orange-200">Conf: {vendedor.confianca}</Badge>}
+                {vendedor.concorrencia > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-purple-50 text-purple-700 border-purple-200">Conc: {vendedor.concorrencia}</Badge>}
+                {vendedor.necessidade > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-blue-50 text-blue-700 border-blue-200">Nec: {vendedor.necessidade}</Badge>}
+                {vendedor.situacoes_esporadicas > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5 bg-teal-50 text-teal-700 border-teal-200">Esp: {vendedor.situacoes_esporadicas}</Badge>}
               </div>
             </motion.div>
           ))}
