@@ -109,7 +109,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
           await base44.entities.Venda.create({
             vendedor: getNomeVendedor(deal.vendedor_email),
             email_vendedor: deal.vendedor_email,
-            data_venda: data.data_venda_ativa || new Date().toISOString(),
+            data_venda: deal.data_venda_ativa || data.data_venda_ativa || new Date().toISOString(),
             etapa: "pagamento_ok",
             cliente: deal.nome_cliente,
             telefone: deal.telefone,
