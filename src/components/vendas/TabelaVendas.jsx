@@ -57,11 +57,13 @@ const planoLabels = {
 
 const canalLabels = {
   lead: "Lead",
+  lead_pre_sistema: "Lead Pré-Sistema",
   indicacao: "Indicação",
   organico: "Orgânico",
   troca_titularidade: "Troca de Titularidade",
   troca_veiculo: "Troca de Veículo",
   segundo_veiculo: "Segundo Veículo",
+  migracao: "Migração",
 };
 
 const formatarValorExibicao = (valor) => {
