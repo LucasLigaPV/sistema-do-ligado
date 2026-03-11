@@ -59,7 +59,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-sm">
           <TrendingUp className="w-4 h-4 text-slate-600" />
-          <span>% Conversão</span>
+          <span>% Conversão de Lead</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pt-2">
