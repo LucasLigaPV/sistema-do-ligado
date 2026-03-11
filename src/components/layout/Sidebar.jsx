@@ -145,6 +145,15 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleMobileSidebar = () => setIsMobileOpen(!isMobileOpen);
 
+  // Limpar filtro de vendedor quando sair do menu Vendas
+  const handleMenuChange = (menuId) => {
+    // Se estava no menu vendas e vai para outro menu diferente, limpar o filtro
+    if (activeMenu === 'vendas' && menuId !== 'vendas') {
+      localStorage.removeItem('vendas_vendedor_selecionado');
+    }
+    onMenuChange(menuId);
+  };
+
   return (
     <>
       {/* Mobile Header */}
@@ -281,7 +290,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
                                 className={`w-full justify-start gap-2 text-sm h-9 ${
                                   isSubmenuActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "text-slate-600"
                                 }`}
-                                onClick={() => onMenuChange(submenu.id)}
+                                onClick={() => handleMenuChange(submenu.id)}
                               >
                                 <SubmenuIcon className="w-4 h-4 flex-shrink-0" />
                                 <span>{submenu.label}</span>
@@ -303,7 +312,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
                 className={`w-full justify-start gap-3 ${
                   isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""
                 } ${!isOpen ? "justify-center" : ""}`}
-                onClick={() => onMenuChange(item.id)}
+                onClick={() => handleMenuChange(item.id)}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 {isOpen && <span>{item.label}</span>}
@@ -478,7 +487,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
                                       isSubmenuActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : "text-slate-600"
                                     }`}
                                     onClick={() => {
-                                      onMenuChange(submenu.id);
+                                      handleMenuChange(submenu.id);
                                       toggleMobileSidebar();
                                     }}
                                   >
@@ -503,7 +512,7 @@ export default function Sidebar({ user, activeMenu, onMenuChange, onOpenCheckin 
                       isActive ? "bg-[#EFC200] hover:bg-[#D4A900] text-black" : ""
                     }`}
                     onClick={() => {
-                      onMenuChange(item.id);
+                      handleMenuChange(item.id);
                       toggleMobileSidebar();
                     }}
                   >
