@@ -22,10 +22,10 @@ export default function RankingVendasLead({ vendas, users }) {
     .slice(0, 10);
 
   const getMedalIcon = (index) => {
-    if (index === 0) return <Trophy className="w-5 h-5 text-slate-700" />;
-    if (index === 1) return <Award className="w-5 h-5 text-slate-500" />;
-    if (index === 2) return <Medal className="w-5 h-5 text-slate-400" />;
-    return <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">{index + 1}</div>;
+    if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
+    if (index === 1) return <div className="w-6 h-6 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs">2</div>;
+    if (index === 2) return <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs">3</div>;
+    return <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">{index + 1}</div>;
   };
 
   return (
