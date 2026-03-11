@@ -9,14 +9,20 @@ import { motion } from "framer-motion";
 import RankingVendas from "./RankingVendas";
 import RankingVendasLead from "./RankingVendasLead";
 import RankingVendasIndicacao from "./RankingVendasIndicacao";
-import RankingCotacoes from "./RankingCotacoes";
 import RankingNegociacoesAtivas from "./RankingNegociacoesAtivas";
 import RankingPerdas from "./RankingPerdas";
 import RankingIndicacoesRecebidasNeg from "./RankingIndicacoesRecebidas";
+import RankingConversao from "./RankingConversao";
+import RankingAdesaoMedia from "./RankingAdesaoMedia";
 
 export default function DashboardRankings() {
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
+  // Definir mês vigente como padrão
+  const hoje = new Date();
+  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  const ultimoDiaMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+  
+  const [dataInicio, setDataInicio] = useState(primeiroDiaMes.toISOString().split('T')[0]);
+  const [dataFim, setDataFim] = useState(ultimoDiaMes.toISOString().split('T')[0]);
 
   const { data: vendas = [] } = useQuery({
     queryKey: ["vendas"],
@@ -136,19 +142,26 @@ export default function DashboardRankings() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <RankingCotacoes negociacoes={negociacoes} users={users} />
+            <RankingConversao vendas={vendasFiltradas} negociacoes={negociacoes} perdas={perdasFiltradas} users={users} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <RankingIndicacoesRecebidasNeg negociacoes={negociacoes} perdas={perdasFiltradas} users={users} />
+            <RankingAdesaoMedia vendas={vendasFiltradas} users={users} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.6 }}
+          >
+            <RankingIndicacoesRecebidasNeg negociacoes={negociacoes} perdas={perdasFiltradas} users={users} />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
           >
             <RankingPerdas perdas={perdasFiltradas} users={users} />
           </motion.div>

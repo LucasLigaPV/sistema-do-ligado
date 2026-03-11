@@ -5,9 +5,11 @@ import { XCircle, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function RankingPerdas({ perdas, users }) {
+  // Filtrar perdas excluindo lead_invalido
+  const perdasValidas = perdas.filter(p => p.categoria_motivo !== 'lead_invalido');
   const ranking = {};
 
-  perdas.forEach(perda => {
+  perdasValidas.forEach(perda => {
     const email = perda.vendedor_email;
     if (!ranking[email]) {
       ranking[email] = {
@@ -17,8 +19,7 @@ export default function RankingPerdas({ perdas, users }) {
         confianca: 0,
         concorrencia: 0,
         necessidade: 0,
-        situacoes_esporadicas: 0,
-        lead_invalido: 0
+        situacoes_esporadicas: 0
       };
     }
     ranking[email].total++;
@@ -77,10 +78,11 @@ export default function RankingPerdas({ perdas, users }) {
               </div>
               <div className="flex gap-2 flex-wrap ml-12">
                 {vendedor.financeiro > 0 && <Badge variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">Financeiro: {vendedor.financeiro}</Badge>}
-                {vendedor.concorrencia > 0 && <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Concorrência: {vendedor.concorrencia}</Badge>}
                 {vendedor.timing > 0 && <Badge variant="outline" className="text-xs bg-yellow-50 text-yellow-700 border-yellow-200">Timing: {vendedor.timing}</Badge>}
-                {vendedor.confianca > 0 && <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Confiança: {vendedor.confianca}</Badge>}
-                {vendedor.lead_invalido > 0 && <Badge variant="outline" className="text-xs bg-slate-50 text-slate-700 border-slate-200">Lead Inválido: {vendedor.lead_invalido}</Badge>}
+                {vendedor.confianca > 0 && <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">Confiança: {vendedor.confianca}</Badge>}
+                {vendedor.concorrencia > 0 && <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">Concorrência: {vendedor.concorrencia}</Badge>}
+                {vendedor.necessidade > 0 && <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">Necessidade: {vendedor.necessidade}</Badge>}
+                {vendedor.situacoes_esporadicas > 0 && <Badge variant="outline" className="text-xs bg-teal-50 text-teal-700 border-teal-200">Esporádicas: {vendedor.situacoes_esporadicas}</Badge>}
               </div>
             </motion.div>
           ))}

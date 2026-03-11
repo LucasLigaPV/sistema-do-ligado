@@ -14,17 +14,17 @@ export default function RankingVendas({ vendas, users }) {
         total: 0,
         essencial: 0,
         principal: 0,
-        van: 0,
-        moto: 0,
-        caminhao: 0
+        plano_van: 0,
+        plano_moto: 0,
+        plano_caminhao: 0
       };
     }
     ranking[email].total++;
     if (venda.plano_vendido === "essencial") ranking[email].essencial++;
     if (venda.plano_vendido === "principal") ranking[email].principal++;
-    if (venda.plano_vendido === "plano_van") ranking[email].van++;
-    if (venda.plano_vendido === "plano_moto") ranking[email].moto++;
-    if (venda.plano_vendido === "plano_caminhao") ranking[email].caminhao++;
+    if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
+    if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
+    if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
   });
 
   const rankingArray = Object.entries(ranking)
@@ -67,9 +67,12 @@ export default function RankingVendas({ vendas, users }) {
                 {getMedalIcon(index)}
                 <div>
                   <p className="font-semibold text-slate-900">{vendedor.nome}</p>
-                  <div className="flex gap-2 mt-1">
+                  <div className="flex gap-2 mt-1 flex-wrap">
                     {vendedor.essencial > 0 && <Badge variant="outline" className="text-xs">Essencial: {vendedor.essencial}</Badge>}
                     {vendedor.principal > 0 && <Badge variant="outline" className="text-xs">Principal: {vendedor.principal}</Badge>}
+                    {vendedor.plano_van > 0 && <Badge variant="outline" className="text-xs">Van: {vendedor.plano_van}</Badge>}
+                    {vendedor.plano_moto > 0 && <Badge variant="outline" className="text-xs">Moto: {vendedor.plano_moto}</Badge>}
+                    {vendedor.plano_caminhao > 0 && <Badge variant="outline" className="text-xs">Caminhão: {vendedor.plano_caminhao}</Badge>}
                   </div>
                 </div>
               </div>
