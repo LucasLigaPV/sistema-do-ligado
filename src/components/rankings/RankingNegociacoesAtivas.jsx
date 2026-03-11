@@ -62,17 +62,12 @@ export default function RankingNegociacoesAtivas({ negociacoes, users }) {
                 index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
                   {getMedalIcon(index)}
                   <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
                 </div>
                 <div className="text-xl font-bold text-slate-900">{vendedor.total}</div>
-              </div>
-              <div className="flex gap-1.5 flex-wrap ml-8">
-                {vendedor.novo_lead > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5">Novo: {vendedor.novo_lead}</Badge>}
-                {vendedor.cotacao > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5">Cotação: {vendedor.cotacao}</Badge>}
-                {vendedor.em_negociacao > 0 && <Badge variant="outline" className="text-[10px] h-4 px-1.5">Nego: {vendedor.em_negociacao}</Badge>}
               </div>
             </motion.div>
           ))}
