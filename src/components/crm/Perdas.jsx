@@ -28,6 +28,7 @@ const exportarCSV = (perdas, users) => {
     confianca: "Confiança",
     concorrencia: "Concorrência",
     necessidade: "Necessidade/Produto",
+    situacoes_esporadicas: "Situações Esporádicas",
     lead_invalido: "Lead Inválido"
   };
 
@@ -142,6 +143,7 @@ export default function Perdas({ userEmail, userFuncao }) {
     confianca: "Confiança",
     concorrencia: "Concorrência",
     necessidade: "Necessidade/Produto",
+    situacoes_esporadicas: "Situações Esporádicas",
     lead_invalido: "Lead Inválido"
   };
 
