@@ -439,8 +439,8 @@ export default function TabelaIndicacoes({ userEmail, userRole, userFuncao }) {
                         <TableCell className="text-slate-600">
                           {format(new Date(ind.created_date), "dd/MM/yyyy", { locale: ptBR })}
                         </TableCell>
-                        <TableCell className="font-medium max-w-[200px] truncate" title={ind.consultor_responsavel}>
-                          {ind.consultor_responsavel}
+                        <TableCell className="font-medium max-w-[200px] truncate" title={getNomeVendedor(ind.email_consultor)}>
+                          {getNomeVendedor(ind.email_consultor)}
                         </TableCell>
                         <TableCell>
                           <div>
