@@ -96,6 +96,12 @@ export default function Perdas({ userEmail, userFuncao }) {
   const [origemFilter, setOrigemFilter] = useState([]);
   const [categoriaFilter, setCategoriaFilter] = useState([]);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
+  const [filtrosAtivos, setFiltrosAtivos] = useState({
+    searchTerm: "",
+    vendedorFilter: [],
+    origemFilter: [],
+    categoriaFilter: []
+  });
 
   const queryClient = useQueryClient();
 
@@ -164,25 +170,25 @@ export default function Perdas({ userEmail, userFuncao }) {
     perdasVisiveis = perdas.filter(p => p.vendedor_email === userEmail);
   }
 
-  // Aplicar filtros
-  if (searchTerm) {
+  // Aplicar filtros ativos
+  if (filtrosAtivos.searchTerm) {
     perdasVisiveis = perdasVisiveis.filter(p =>
-      p.nome_cliente?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.telefone?.includes(searchTerm) ||
-      p.placa?.toLowerCase().includes(searchTerm.toLowerCase())
+      p.nome_cliente?.toLowerCase().includes(filtrosAtivos.searchTerm.toLowerCase()) ||
+      p.telefone?.includes(filtrosAtivos.searchTerm) ||
+      p.placa?.toLowerCase().includes(filtrosAtivos.searchTerm.toLowerCase())
     );
   }
 
-  if (vendedorFilter.length > 0) {
-    perdasVisiveis = perdasVisiveis.filter(p => vendedorFilter.includes(p.vendedor_email));
+  if (filtrosAtivos.vendedorFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => filtrosAtivos.vendedorFilter.includes(p.vendedor_email));
   }
 
-  if (origemFilter.length > 0) {
-    perdasVisiveis = perdasVisiveis.filter(p => origemFilter.includes(p.origem));
+  if (filtrosAtivos.origemFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => filtrosAtivos.origemFilter.includes(p.origem));
   }
 
-  if (categoriaFilter.length > 0) {
-    perdasVisiveis = perdasVisiveis.filter(p => categoriaFilter.includes(p.categoria_motivo));
+  if (filtrosAtivos.categoriaFilter.length > 0) {
+    perdasVisiveis = perdasVisiveis.filter(p => filtrosAtivos.categoriaFilter.includes(p.categoria_motivo));
   }
 
   const handleRestore = (perda) => {
@@ -227,6 +233,12 @@ export default function Perdas({ userEmail, userFuncao }) {
   }, {});
 
   const handleBuscar = () => {
+    setFiltrosAtivos({
+      searchTerm,
+      vendedorFilter,
+      origemFilter,
+      categoriaFilter
+    });
     setBuscaAtiva(true);
   };
 
@@ -235,6 +247,12 @@ export default function Perdas({ userEmail, userFuncao }) {
     setVendedorFilter([]);
     setOrigemFilter([]);
     setCategoriaFilter([]);
+    setFiltrosAtivos({
+      searchTerm: "",
+      vendedorFilter: [],
+      origemFilter: [],
+      categoriaFilter: []
+    });
     setBuscaAtiva(false);
   };
 
