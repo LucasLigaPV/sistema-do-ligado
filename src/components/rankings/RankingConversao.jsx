@@ -80,7 +80,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
                 {getMedalIcon(index)}
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
-                  <p className="text-[10px] text-slate-500">{vendedor.vendas}/{vendedor.leads} leads</p>
+                  <p className="text-[10px] text-slate-500">{vendedor.vendas} vendas</p>
                 </div>
               </div>
               <div className="text-xl font-bold text-[#EFC200]">{vendedor.conversao.toFixed(1)}%</div>
