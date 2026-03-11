@@ -392,6 +392,7 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                 <TableHead>Plano</TableHead>
                 <TableHead>Placa</TableHead>
                 <TableHead>Adesão</TableHead>
+                <TableHead>Aprovação</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -439,6 +440,20 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                         <TableCell className="font-mono text-sm">{venda.placa}</TableCell>
                         <TableCell className="font-semibold text-emerald-600">
                           R$ {formatarValorExibicao(venda.valor_adesao)}
+                        </TableCell>
+                        <TableCell>
+                          {venda.data_aprovacao ? (
+                            <div className="text-sm">
+                              <div className="text-slate-900">
+                                {new Date(venda.data_aprovacao).toLocaleDateString('pt-BR')}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {new Date(venda.data_aprovacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-slate-400">-</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-2">
