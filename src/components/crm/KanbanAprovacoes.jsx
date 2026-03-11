@@ -155,14 +155,18 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
       if (!n.informacoes_conferidas) return false;
       if (!(n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")) return false;
       
-      // Filtro de data baseado em data_conferencia
-      if (n.data_conferencia) {
-        const dataConferencia = new Date(n.data_conferencia);
+      // Filtro de data: usa data_conferencia para "aguardando" e data_analise para demais
+      const dataParaFiltrar = n.status_aprovacao === "aguardando" 
+        ? n.data_conferencia 
+        : n.data_analise || n.data_conferencia;
+      
+      if (dataParaFiltrar) {
+        const data = new Date(dataParaFiltrar);
         const start = new Date(startDate);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
         
-        if (dataConferencia < start || dataConferencia > end) {
+        if (data < start || data > end) {
           return false;
         }
       }
@@ -399,7 +403,15 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                         <span>{getNomeVendedor(deal.vendedor_email)}</span>
                                         <div className="flex items-center gap-1">
                                           <Clock className="w-3 h-3" />
-                                          <span>{format(new Date(deal.data_conferencia), "dd/MM HH:mm")}</span>
+                                          <span>
+                                            {deal.status_aprovacao === "aguardando" && deal.data_conferencia
+                                              ? format(new Date(deal.data_conferencia), "dd/MM HH:mm")
+                                              : deal.data_analise
+                                              ? format(new Date(deal.data_analise), "dd/MM HH:mm")
+                                              : deal.data_conferencia
+                                              ? format(new Date(deal.data_conferencia), "dd/MM HH:mm")
+                                              : "-"}
+                                          </span>
                                         </div>
                                       </div>
                                       {etapa.id === "aguardando" && (
@@ -679,7 +691,21 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               {/* Análise e Aprovação */}
               <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Análise e Aprovação</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {selectedDeal.data_conferencia && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Conferido em</p>
+                      <p className="text-xs text-slate-700">{format(new Date(selectedDeal.data_conferencia), "dd/MM/yyyy HH:mm")}</p>
+                    </div>
+                  )}
+                  {selectedDeal.data_analise && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">Analisado em</p>
+                      <p className="text-xs text-slate-700">{format(new Date(selectedDeal.data_analise), "dd/MM/yyyy HH:mm")}</p>
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-100">
                   <div>
                     <Label className="text-xs font-semibold text-slate-500 mb-1.5 block">Alterar Status</Label>
                     <Select
