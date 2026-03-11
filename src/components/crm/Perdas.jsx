@@ -270,48 +270,77 @@ export default function Perdas({ userEmail, userFuncao }) {
   return (
     <div className="space-y-4">
       {/* Stats Panel */}
-      <Card className="border shadow-sm">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total de Perdas</p>
-                <p className="text-4xl font-bold text-slate-900">{perdasVisiveis.length}</p>
-              </div>
-              <div className="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center">
-                <X className="w-7 h-7 text-red-600" />
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Financeiro</p>
-                <p className="text-4xl font-bold text-red-600">
-                  {perdasVisiveis.filter(p => p.categoria_motivo === 'financeiro').length}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Timing</p>
-                <p className="text-4xl font-bold text-yellow-600">
-                  {perdasVisiveis.filter(p => p.categoria_motivo === 'timing').length}
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Outras Categorias</p>
-                <p className="text-4xl font-bold text-slate-600">
-                  {perdasVisiveis.filter(p => !['financeiro', 'timing'].includes(p.categoria_motivo)).length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <Card className="border-l-4 border-l-slate-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Total</p>
+            <p className="text-3xl font-bold text-slate-900">{perdasVisiveis.length}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-red-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Financeiro</p>
+            <p className="text-3xl font-bold text-red-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'financeiro').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-yellow-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Timing</p>
+            <p className="text-3xl font-bold text-yellow-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'timing').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-orange-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Confiança</p>
+            <p className="text-3xl font-bold text-orange-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'confianca').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-purple-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Concorrência</p>
+            <p className="text-3xl font-bold text-purple-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'concorrencia').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-blue-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Necessidade</p>
+            <p className="text-3xl font-bold text-blue-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'necessidade').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-teal-400 bg-white hover:shadow-md transition-shadow">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Esporádicas</p>
+            <p className="text-3xl font-bold text-teal-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'situacoes_esporadicas').length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-slate-300 bg-white hover:shadow-md transition-shadow col-span-2 md:col-span-4 lg:col-span-1">
+          <CardContent className="p-4">
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Lead Inválido</p>
+            <p className="text-3xl font-bold text-slate-600">
+              {perdasVisiveis.filter(p => p.categoria_motivo === 'lead_invalido').length}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Filtros */}
       <Card className="border-0 shadow-md">
