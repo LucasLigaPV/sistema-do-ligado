@@ -392,7 +392,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                 <TableHead>Plano</TableHead>
                 <TableHead>Placa</TableHead>
                 <TableHead>Adesão</TableHead>
-                <TableHead>Aprovação</TableHead>
                 <TableHead className="text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -440,20 +439,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                         <TableCell className="font-mono text-sm">{venda.placa}</TableCell>
                         <TableCell className="font-semibold text-emerald-600">
                           R$ {formatarValorExibicao(venda.valor_adesao)}
-                        </TableCell>
-                        <TableCell>
-                          {venda.data_aprovacao ? (
-                            <div className="text-sm">
-                              <div className="text-slate-900">
-                                {new Date(venda.data_aprovacao).toLocaleDateString('pt-BR')}
-                              </div>
-                              <div className="text-xs text-slate-500">
-                                {new Date(venda.data_aprovacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-sm text-slate-400">-</span>
-                          )}
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-2">
@@ -526,21 +511,13 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
             const indicacaoRelacionada = indicacoes.find(ind => ind.venda_id === selectedVenda.id);
             return (
             <div className="space-y-6 mt-6">
-              {/* Header com Data e Etapa */}
+              {/* Header com Data */}
               <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Data da Venda</p>
-                    <p className="text-2xl font-bold text-slate-900">
-                      {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="text-sm px-4 py-2 border-slate-300">
-                    {selectedVenda.etapa === "pagamento_ok" && "Pagamento OK"}
-                    {selectedVenda.etapa === "vistoria_ok" && "Vistoria OK"}
-                    {selectedVenda.etapa === "em_ativacao" && "Em Ativação"}
-                    {selectedVenda.etapa === "ativo" && "Ativo"}
-                  </Badge>
+                <div>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Data da Venda</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {selectedVenda.data_venda ? format(new Date(selectedVenda.data_venda), "dd/MM/yyyy") : "-"}
+                  </p>
                 </div>
               </div>
 
