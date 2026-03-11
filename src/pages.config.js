@@ -49,14 +49,12 @@
  */
 import Admin from './pages/Admin';
 import Inicio from './pages/Inicio';
-import Rankings from './pages/Rankings';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
     "Inicio": Inicio,
-    "Rankings": Rankings,
 }
 
 export const pagesConfig = {
