@@ -64,14 +64,17 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
   // Obter equipe do líder
   const minhaEquipe = equipes.find(e => e.lider_email === userEmail);
-  const membrosEquipe = minhaEquipe ? [userEmail, ...(minhaEquipe.membros || [])] : [];
+  const membrosEquipe = minhaEquipe ? (minhaEquipe.membros || []) : [];
 
   const { usuarios: users } = useUsuarios();
 
-  // Para master: todos (exceto admin e master); para lider: membros da equipe
+  // Para master: todos (exceto admin e master); para lider: apenas membros (sem incluir ele mesmo)
   const vendedoresDisponiveis = userFuncao === "master"
     ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor")
-    : users.filter(u => membrosEquipe.includes(u.email));
+    : [
+        ...users.filter(u => u.email === userEmail), // Primeiro ele mesmo
+        ...users.filter(u => membrosEquipe.includes(u.email)) // Depois seus membros
+      ];
 
   const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
 
