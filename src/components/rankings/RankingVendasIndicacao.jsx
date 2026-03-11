@@ -35,24 +35,24 @@ export default function RankingVendasIndicacao({ vendas, users }) {
   };
 
   return (
-    <Card className="border-slate-200 shadow-sm h-full flex flex-col">
-      <CardHeader className="pb-2">
+    <Card className="border-slate-200 shadow-sm">
+      <CardHeader className="pb-2 px-4 pt-3">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Users className="w-4 h-4 text-slate-600" />
           <span>Vendas via Indicação</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pt-2">
-        <div className="space-y-2">
+      <CardContent className="px-4 pb-3 pt-1">
+        <div className="space-y-1.5">
           {rankingArray.length === 0 ? (
-            <p className="text-slate-500 text-center py-6 text-sm">Nenhuma venda via indicação</p>
+            <p className="text-slate-500 text-center py-4 text-sm">Nenhuma venda via indicação</p>
           ) : rankingArray.slice(0, 5).map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.03 }}
-              className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+              className={`flex items-center justify-between p-2 rounded-lg border transition-all ${
                 index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
               }`}
             >
