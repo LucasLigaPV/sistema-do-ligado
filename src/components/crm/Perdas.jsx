@@ -270,77 +270,64 @@ export default function Perdas({ userEmail, userFuncao }) {
   return (
     <div className="space-y-4">
       {/* Stats Panel */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        <Card className="border-l-4 border-l-slate-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Total</p>
-            <p className="text-3xl font-bold text-slate-900">{perdasVisiveis.length}</p>
-          </CardContent>
-        </Card>
+      <Card className="border-0 shadow-sm bg-white">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-sm font-semibold text-slate-700">Distribuição de Perdas</h3>
+            <Badge variant="secondary" className="text-base font-bold px-3 py-1">{perdasVisiveis.length}</Badge>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Financeiro</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'financeiro').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-red-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Financeiro</p>
-            <p className="text-3xl font-bold text-red-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'financeiro').length}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Timing</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'timing').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-yellow-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Timing</p>
-            <p className="text-3xl font-bold text-yellow-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'timing').length}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Confiança</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'confianca').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-orange-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Confiança</p>
-            <p className="text-3xl font-bold text-orange-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'confianca').length}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Concorrência</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'concorrencia').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-purple-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Concorrência</p>
-            <p className="text-3xl font-bold text-purple-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'concorrencia').length}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Necessidade</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'necessidade').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-blue-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Necessidade</p>
-            <p className="text-3xl font-bold text-blue-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'necessidade').length}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Esporádicas</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'situacoes_esporadicas').length}
+              </p>
+            </div>
 
-        <Card className="border-l-4 border-l-teal-400 bg-white hover:shadow-md transition-shadow">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Esporádicas</p>
-            <p className="text-3xl font-bold text-teal-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'situacoes_esporadicas').length}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-slate-300 bg-white hover:shadow-md transition-shadow col-span-2 md:col-span-4 lg:col-span-1">
-          <CardContent className="p-4">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Lead Inválido</p>
-            <p className="text-3xl font-bold text-slate-600">
-              {perdasVisiveis.filter(p => p.categoria_motivo === 'lead_invalido').length}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="group p-3 rounded-lg bg-slate-50/50 hover:bg-slate-50 border border-slate-200/50 transition-all">
+              <p className="text-xs text-slate-500 mb-1.5">Inválidos</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {perdasVisiveis.filter(p => p.categoria_motivo === 'lead_invalido').length}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Filtros */}
       <Card className="border-0 shadow-md">
