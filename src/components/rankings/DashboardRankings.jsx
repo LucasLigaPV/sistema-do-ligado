@@ -105,35 +105,34 @@ export default function DashboardRankings() {
 
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 auto-rows-auto">
-        {/* Ranking Geral - Destaque Principal (Largura completa) */}
+        {/* Ranking Geral de Vendas + Vendas Lead/Indicação */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="lg:col-span-12"
+          className="lg:col-span-8"
         >
           <RankingVendas vendas={vendasFiltradas} users={users} />
         </motion.div>
 
-        {/* Vendas Lead - Médio */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="lg:col-span-6"
-        >
-          <RankingVendasLead vendas={vendasFiltradas} users={users} />
-        </motion.div>
+        {/* Vendas Lead e Indicação Empilhados */}
+        <div className="lg:col-span-4 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <RankingVendasLead vendas={vendasFiltradas} users={users} />
+          </motion.div>
 
-        {/* Vendas Indicação - Médio */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="lg:col-span-6"
-        >
-          <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.35 }}
+          >
+            <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
+          </motion.div>
+        </div>
 
         {/* Conversão - Médio */}
         <motion.div
