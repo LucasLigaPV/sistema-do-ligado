@@ -140,31 +140,32 @@ export default function Rankings() {
 
         {/* Grid de Rankings */}
         <div className="space-y-8">
-          {/* Ranking Geral de Vendas - Destaque */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <RankingVendas vendas={vendasFiltradas} users={users} />
-          </motion.div>
-
-          {/* Rankings de Vendas */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Ranking Geral de Vendas + Vendas Lead/Indicação */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-2"
             >
-              <RankingVendasLead vendas={vendasFiltradas} users={users} />
+              <RankingVendas vendas={vendasFiltradas} users={users} />
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
-            </motion.div>
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <RankingVendasLead vendas={vendasFiltradas} users={users} />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                <RankingVendasIndicacao vendas={vendasFiltradas} users={users} />
+              </motion.div>
+            </div>
           </div>
 
           {/* Rankings de Negociações */}
