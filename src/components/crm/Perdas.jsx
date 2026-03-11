@@ -151,6 +151,7 @@ export default function Perdas({ userEmail, userFuncao }) {
     confianca: "bg-orange-100 text-orange-800 border-l-orange-400",
     concorrencia: "bg-purple-100 text-purple-800 border-l-purple-400",
     necessidade: "bg-blue-100 text-blue-800 border-l-blue-400",
+    situacoes_esporadicas: "bg-teal-100 text-teal-800 border-l-teal-400",
     lead_invalido: "bg-slate-100 text-slate-800 border-l-slate-400"
   };
 
