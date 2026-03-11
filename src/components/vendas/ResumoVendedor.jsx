@@ -43,7 +43,7 @@ const formatarValor = (valor) => {
 export default function ResumoVendedor({ userEmail, userFuncao }) {
   const [vendedorSelecionado, setVendedorSelecionado] = React.useState(userEmail);
 
-  const { data: vendas = [], isLoading } = useQuery({
+  const { data: todasVendas = [], isLoading } = useQuery({
     queryKey: ["vendas"],
     queryFn: () => base44.entities.Venda.list("-created_date"),
   });
@@ -75,6 +75,17 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
         ...users.filter(u => u.email === userEmail), // Primeiro ele mesmo
         ...users.filter(u => membrosEquipe.includes(u.email)) // Depois seus membros
       ];
+
+  // Filtrar vendas do mês atual baseado na data_venda
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth();
+  const anoAtual = hoje.getFullYear();
+
+  const vendas = todasVendas.filter(v => {
+    if (!v.data_venda) return false;
+    const dataVenda = new Date(v.data_venda);
+    return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual;
+  });
 
   const vendasDoVendedor = vendas.filter(v => (v.email_vendedor === vendedorSelecionado || v.vendedor === vendedorSelecionado));
 
@@ -290,7 +301,12 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-slate-900">Resumo</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-slate-900">Resumo</h2>
+        <Badge variant="outline" className="bg-[#FFF9E6] text-slate-700 border-[#EFC200]">
+          {hoje.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}
+        </Badge>
+      </div>
 
       {(userFuncao === "lider" || userFuncao === "master") && (
         <Card className="border-0 shadow-md">
