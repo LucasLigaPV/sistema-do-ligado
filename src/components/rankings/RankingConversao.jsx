@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 export default function RankingConversao({ vendas, negociacoes, perdas, users }) {
   const ranking = {};
 
-  // Contar negociações (leads) por vendedor
-  negociacoes.forEach(neg => {
+  // Contar negociações (leads) apenas origem lead
+  negociacoes.filter(n => n.origem === 'lead').forEach(neg => {
     const email = neg.vendedor_email;
     if (!ranking[email]) {
       ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
@@ -15,8 +15,8 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
     ranking[email].leads++;
   });
 
-  // Contar perdas (excluindo lead_invalido) por vendedor
-  perdas.filter(p => p.categoria_motivo !== 'lead_invalido').forEach(perda => {
+  // Contar perdas origem lead (excluindo lead_invalido) por vendedor
+  perdas.filter(p => p.origem === 'lead' && p.categoria_motivo !== 'lead_invalido').forEach(perda => {
     const email = perda.vendedor_email;
     if (!ranking[email]) {
       ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
@@ -24,8 +24,8 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
     ranking[email].leads++;
   });
 
-  // Contar vendas por vendedor
-  vendas.forEach(venda => {
+  // Contar vendas origem lead por vendedor
+  vendas.filter(v => v.canal_venda === 'lead').forEach(venda => {
     const email = venda.email_vendedor;
     if (!ranking[email]) {
       ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
