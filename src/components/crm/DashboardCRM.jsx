@@ -88,26 +88,26 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     { key: "venda_ativa", label: "Venda Ativa" }
   ];
 
-  // Métricas gerais
+  // Métricas gerais (vendas contabilizadas por data_venda_ativa)
   const totalNegociacoes = negociacoesFiltradas.length;
-  const vendasAtivas = negociacoesFiltradas.filter(n => n.etapa === "venda_ativa").length;
+  const vendasAtivas = vendasAtivasPorAtivacao.length;
   const totalPerdas = perdasFiltradas.length;
   const taxaConversao = totalNegociacoes > 0 ? ((vendasAtivas / totalNegociacoes) * 100).toFixed(1) : 0;
   const taxaPerda = totalNegociacoes > 0 ? ((totalPerdas / (totalNegociacoes + totalPerdas)) * 100).toFixed(1) : 0;
 
-  // Valores financeiros
-  const valorAdesaoTotal = negociacoesFiltradas
-    .filter(n => n.etapa === "venda_ativa" && n.valor_adesao)
+  // Valores financeiros (apenas vendas ativas no período por data_venda_ativa)
+  const valorAdesaoTotal = vendasAtivasPorAtivacao
+    .filter(n => n.valor_adesao)
     .reduce((acc, n) => acc + parseFloat(n.valor_adesao.replace(/[^\d,]/g, "").replace(",", ".") || 0), 0);
 
-  const valorMensalidadeTotal = negociacoesFiltradas
-    .filter(n => n.etapa === "venda_ativa" && n.valor_mensalidade)
+  const valorMensalidadeTotal = vendasAtivasPorAtivacao
+    .filter(n => n.valor_mensalidade)
     .reduce((acc, n) => acc + parseFloat(n.valor_mensalidade.replace(/[^\d,]/g, "").replace(",", ".") || 0), 0);
 
   const ticketMedioAdesao = vendasAtivas > 0 ? (valorAdesaoTotal / vendasAtivas) : 0;
   const mediaMensalVendida = vendasAtivas > 0 ? (valorMensalidadeTotal / vendasAtivas) : 0;
 
-  // Conversão por canal (usando data_venda_ativa no período)
+  // Conversão por canal (usando data_venda_ativa no período para vendas)
   const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "troca_titularidade", "troca_veiculo", "segundo_veiculo", "migracao"];
 
   const negociacoesRoleFiltered = negociacoes.filter(n => {
@@ -120,6 +120,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     return passaVendedor;
   });
 
+  // Vendas ativas filtradas por data_venda_ativa no período
   const vendasAtivasPorAtivacao = negociacoesRoleFiltered.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
     const dataAtivacao = new Date(n.data_venda_ativa);
@@ -142,7 +143,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem) && n.status_arquivamento !== "invalido").length;
   const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(1) : "0.0";
 
-  // Ranking de vendedores
+  // Ranking de vendedores (vendas contabilizadas por data_venda_ativa)
   const vendedoresStats = {};
   negociacoesFiltradas.forEach(n => {
     if (!vendedoresStats[n.vendedor_email]) {
@@ -156,7 +157,11 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
       };
     }
     vendedoresStats[n.vendedor_email].totalNegociacoes++;
-    if (n.etapa === "venda_ativa") {
+  });
+
+  // Adicionar vendas ativas por data_venda_ativa
+  vendasAtivasPorAtivacao.forEach(n => {
+    if (vendedoresStats[n.vendedor_email]) {
       vendedoresStats[n.vendedor_email].vendas++;
       if (n.valor_adesao) {
         vendedoresStats[n.vendedor_email].valorAdesao += parseFloat(n.valor_adesao.replace(/[^\d,]/g, "").replace(",", ".") || 0);
