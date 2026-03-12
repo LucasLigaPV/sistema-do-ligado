@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { ChevronDown, Search, X, MapPin } from "lucide-react";
 
-const origensDisponiveis = [
+const origensDisponiveisPadrao = [
   { value: "lead", label: "Lead" },
   { value: "lead_pre_sistema", label: "Lead Pré-Sistema" },
   { value: "indicacao", label: "Indicação" },
@@ -16,7 +16,8 @@ const origensDisponiveis = [
 export default function FiltroOrigem({ 
   origensSelecionadas, 
   onSelectionChange,
-  label = "Origem"
+  label = "Origem",
+  origensDisponiveis = origensDisponiveisPadrao
 }) {
   const [open, setOpen] = useState(false);
   const [busca, setBusca] = useState("");

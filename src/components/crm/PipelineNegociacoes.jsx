@@ -640,6 +640,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     nomesPorEmail[u.email] = u.nome_exibicao || u.full_name || u.email;
   });
 
+  const origensDisponiveisPipeline = [
+    { value: "lead", label: "Lead" },
+    { value: "indicacao", label: "Indicação" },
+    { value: "organico", label: "Orgânico" },
+    { value: "segundo_veiculo", label: "Segundo Veículo" },
+    { value: "migracao", label: "Migração" }
+  ];
+
   const aplicarFiltros = () => {
     setStartDate(tempStartDate);
     setEndDate(tempEndDate);
@@ -754,6 +762,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                   origensSelecionadas={tempOrigens}
                   onSelectionChange={setTempOrigens}
                   label="Origem"
+                  origensDisponiveis={origensDisponiveisPipeline}
                 />
 
                 {(userFuncao === "lider" || userFuncao === "master") && (
