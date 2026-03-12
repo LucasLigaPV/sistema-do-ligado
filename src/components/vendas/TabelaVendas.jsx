@@ -465,15 +465,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                             >
                               <Eye className="w-4 h-4 text-slate-500" />
                             </Button>
-                            {(userRole === "admin" || userFuncao === "master" || userFuncao === "lider" || venda.email_vendedor === userEmail) && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => deleteMutation.mutate(venda.id)}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </Button>
-                            )}
                           </div>
                         </TableCell>
                       </motion.tr>
