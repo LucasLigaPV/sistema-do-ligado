@@ -219,8 +219,50 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     return labels[categoria] || categoria;
   };
 
+  const [showDebugList, setShowDebugList] = useState(false);
+
   return (
     <div className="space-y-6">
+      {/* Botão Debug */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setShowDebugList(!showDebugList)}
+          className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+        >
+          {showDebugList ? "Ocultar Lista Debug" : "Ver Lista Debug"}
+        </button>
+      </div>
+
+      {showDebugList && (
+        <Card className="border-slate-200 bg-slate-50">
+          <CardHeader>
+            <CardTitle className="text-slate-900">Lista Debug - Negociações Filtradas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {negociacoesFiltradas.length === 0 ? (
+                <p className="text-slate-500 text-sm">Nenhuma negociação no período selecionado</p>
+              ) : (
+                negociacoesFiltradas.map((neg) => (
+                  <div key={neg.id} className="text-xs bg-white p-3 rounded border border-slate-200">
+                    <div className="font-medium text-slate-900">{neg.nome_cliente}</div>
+                    <div className="text-slate-600 mt-1 space-y-0.5">
+                      <div>Vendedor: {getNomeUsuario(neg.vendedor_email)}</div>
+                      <div>Etapa: {neg.etapa}</div>
+                      <div>Origem: {neg.origem}</div>
+                      <div>Data Entrada: {neg.data_entrada || format(new Date(neg.created_date), "dd/MM/yyyy")}</div>
+                      {neg.etapa === "venda_ativa" && neg.data_venda_ativa && (
+                        <div>Data Venda Ativa: {format(new Date(neg.data_venda_ativa), "dd/MM/yyyy HH:mm")}</div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filtros de Período */}
       <Card className="border-slate-200">
         <CardHeader>
