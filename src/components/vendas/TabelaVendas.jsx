@@ -287,13 +287,15 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
       </div>
 
       {/* Stats Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-slate-600 mb-1">Total de Vendas</p>
-                <p className="text-4xl font-bold text-slate-900">{filteredVendas.length}</p>
+                <p className="text-4xl font-bold text-slate-900">
+                  {filteredVendas.filter(v => v.canal_venda !== "troca_titularidade" && v.canal_venda !== "troca_veiculo").length}
+                </p>
               </div>
               <div className="w-14 h-14 bg-slate-100 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-7 h-7 text-slate-600" />
@@ -309,22 +311,6 @@ export default function TabelaVendas({ userEmail, userRole, userFuncao, filtrosC
                 <p className="text-sm text-slate-600 mb-1">Total de Trocas</p>
                 <p className="text-4xl font-bold text-slate-900">
                   {filteredVendas.filter(v => v.canal_venda === "troca_titularidade" || v.canal_venda === "troca_veiculo").length}
-                </p>
-              </div>
-              <div className="w-14 h-14 bg-slate-100 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-7 h-7 text-slate-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Sem Trocas</p>
-                <p className="text-4xl font-bold text-slate-900">
-                  {filteredVendas.filter(v => v.canal_venda !== "troca_titularidade" && v.canal_venda !== "troca_veiculo").length}
                 </p>
               </div>
               <div className="w-14 h-14 bg-slate-100 rounded-lg flex items-center justify-center">
