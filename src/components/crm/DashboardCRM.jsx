@@ -88,9 +88,11 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     { key: "venda_ativa", label: "Venda Ativa" }
   ];
 
-  // Vendas ativas filtradas por data_venda_ativa no período
+  // Vendas ativas filtradas por data_venda_ativa no período (excluindo trocas)
   const vendasAtivasPorAtivacao = negociacoesFiltradas.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
+    // Excluir trocas de titularidade e trocas de veículo
+    if (n.origem === "troca_titularidade" || n.origem === "troca_veiculo") return false;
     const dataAtivacao = new Date(n.data_venda_ativa);
     return (!startDate || dataAtivacao >= new Date(startDate)) &&
            (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
