@@ -642,8 +642,11 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   const origensDisponiveisPipeline = [
     { value: "lead", label: "Lead" },
+    { value: "lead_pre_sistema", label: "Lead Pré-Sistema" },
     { value: "indicacao", label: "Indicação" },
     { value: "organico", label: "Orgânico" },
+    { value: "troca_titularidade", label: "Troca de Titularidade" },
+    { value: "troca_veiculo", label: "Troca de Veículo" },
     { value: "segundo_veiculo", label: "Segundo Veículo" },
     { value: "migracao", label: "Migração" }
   ];
