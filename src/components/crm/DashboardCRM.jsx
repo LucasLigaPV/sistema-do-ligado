@@ -110,25 +110,8 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   // Conversão por canal (usando data_venda_ativa no período para vendas)
   const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "troca_titularidade", "troca_veiculo", "segundo_veiculo", "migracao"];
 
-  const negociacoesRoleFiltered = negociacoes.filter(n => {
-    const equipe = equipes.find(e => e.lider_email === userEmail);
-    const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
-    const passaVendedor = selectedVendedores.length > 0 ? selectedVendedores.includes(n.vendedor_email) : true;
-    if (userFuncao === "master") return passaVendedor;
-    if (userFuncao === "lider") return membrosFiltro.includes(n.vendedor_email) && passaVendedor;
-    if (userFuncao === "vendedor") return n.vendedor_email === userEmail;
-    return passaVendedor;
-  });
-
-  // Filtrar negociações por período usando data_entrada
-  const negociacoesFiltradas = negociacoesRoleFiltered.filter(n => {
-    const dataEntrada = new Date(n.data_entrada || n.created_date);
-    return (!startDate || dataEntrada >= new Date(startDate)) &&
-           (!endDate || dataEntrada <= new Date(endDate + "T23:59:59"));
-  });
-
   // Vendas ativas filtradas por data_venda_ativa no período
-  const vendasAtivasPorAtivacao = negociacoesRoleFiltered.filter(n => {
+  const vendasAtivasPorAtivacao = negociacoesFiltradas.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
     const dataAtivacao = new Date(n.data_venda_ativa);
     return (!startDate || dataAtivacao >= new Date(startDate)) &&
