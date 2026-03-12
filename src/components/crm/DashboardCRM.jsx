@@ -474,7 +474,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
               <Target className="w-4 h-4" />
-              Negociações Ativas
+              Negociações Ativas (Sem trocas)
             </CardTitle>
           </CardHeader>
           <CardContent>
