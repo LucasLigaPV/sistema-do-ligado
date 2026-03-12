@@ -4,7 +4,7 @@ import { Users, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function RankingVendasIndicacao({ vendas, users }) {
-  const vendasIndicacao = vendas.filter(v => v.canal_venda === "indicacao");
+  const vendasIndicacao = vendas.filter(v => v.tem_indicacao === "sim");
   const ranking = {};
 
   // Inicializar todos os vendedores com 0
