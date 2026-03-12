@@ -247,33 +247,18 @@ export default function DashboardAprovacoes() {
         </CardContent>
       </Card>
 
-      {/* Motivos de Reprova - Detalhado */}
+      {/* Motivos de Reprova */}
       {motivosChartData.length > 0 && (
         <Card className="border-0 bg-white">
           <CardHeader className="pb-3 border-b">
-            <CardTitle className="text-sm font-semibold">Análise Detalhada de Reprovas</CardTitle>
+            <CardTitle className="text-sm font-semibold">Reprovas por Categoria</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {motivosChartData.map((item) => (
                 <div key={item.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-slate-900">{item.name}</h4>
-                    <Badge className="bg-slate-100 text-slate-700 border-slate-200">{item.value} reprova{item.value > 1 ? 's' : ''}</Badge>
-                  </div>
-                  
-                  {motivosDetalhes[item.id] && Object.entries(motivosDetalhes[item.id]).length > 0 && (
-                    <div className="space-y-2">
-                      {Object.entries(motivosDetalhes[item.id])
-                        .sort((a, b) => b[1] - a[1])
-                        .map(([detalhe, count]) => (
-                          <div key={detalhe} className="flex items-center justify-between text-sm bg-slate-50 p-2 rounded">
-                            <span className="text-slate-700">{detalhe}</span>
-                            <Badge variant="outline" className="text-xs">{count}x</Badge>
-                          </div>
-                        ))}
-                    </div>
-                  )}
+                  <p className="text-xs text-slate-600 mb-2">{item.name}</p>
+                  <p className="text-2xl font-bold text-slate-900">{item.value}</p>
                 </div>
               ))}
             </div>
