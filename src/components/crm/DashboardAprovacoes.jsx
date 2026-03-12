@@ -66,10 +66,16 @@ export default function DashboardAprovacoes() {
   const corrigidos = negociacoesAnalise.filter(n => n.status_aprovacao === "corrigido").length;
   const aprovados = negociacoesAnalise.filter(n => n.status_aprovacao === "aprovado").length;
 
-  // Taxa de aprovação - considera TODAS as reprovas do histórico
+  // Taxa de aprovação - conta cada motivo de reprova como 1 reprova
   const totalReprovasHistorico = negociacoesAnalise.reduce((acc, n) => {
-    const qtdReprovas = n.historico_reprovas?.length || 0;
-    return acc + qtdReprovas;
+    if (!n.historico_reprovas || n.historico_reprovas.length === 0) return acc;
+    
+    const qtdMotivos = n.historico_reprovas.reduce((sum, reprova) => {
+      const motivosCount = reprova.motivos?.length || 0;
+      return sum + motivosCount;
+    }, 0);
+    
+    return acc + qtdMotivos;
   }, 0);
   
   const totalAvaliadas = totalReprovasHistorico + aprovados;
@@ -111,7 +117,7 @@ export default function DashboardAprovacoes() {
     id: categoria,
   })).sort((a, b) => b.value - a.value);
 
-  // Performance por consultor - baseado no histórico completo
+  // Performance por consultor - conta cada motivo como 1 reprova
   const performanceData = {};
   const consultoresReprovacoes = {};
 
@@ -126,12 +132,12 @@ export default function DashboardAprovacoes() {
       performanceData[vendedor].aprovados++;
     }
     
-    // Contar TODAS as reprovas do histórico
+    // Contar cada motivo de reprova como 1 reprova
     if (n.historico_reprovas && n.historico_reprovas.length > 0) {
-      performanceData[vendedor].reprovados += n.historico_reprovas.length;
-      
       n.historico_reprovas.forEach(reprova => {
         if (reprova.motivos && reprova.motivos.length > 0) {
+          performanceData[vendedor].reprovados += reprova.motivos.length;
+          
           reprova.motivos.forEach(({ categoria }) => {
             const cat = categoria || "não especificado";
             performanceData[vendedor].motivos[cat] = (performanceData[vendedor].motivos[cat] || 0) + 1;
