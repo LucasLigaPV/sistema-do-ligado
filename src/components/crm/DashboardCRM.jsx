@@ -89,13 +89,25 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   ];
 
   // Vendas ativas filtradas por data_venda_ativa no período (excluindo trocas)
-  const vendasAtivasPorAtivacao = negociacoesFiltradas.filter(n => {
+  // Ignora o filtro de data_entrada e aplica apenas o filtro de data_venda_ativa
+  const vendasAtivasPorAtivacao = negociacoes.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
     // Excluir trocas de titularidade e trocas de veículo
     if (n.origem === "troca_titularidade" || n.origem === "troca_veiculo") return false;
+    
     const dataAtivacao = new Date(n.data_venda_ativa);
-    return (!startDate || dataAtivacao >= new Date(startDate)) &&
+    const dentroIntervalo = (!startDate || dataAtivacao >= new Date(startDate)) &&
            (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
+    
+    // Aplicar filtros de vendedor/equipe
+    const equipe = equipes.find(e => e.lider_email === userEmail);
+    const membrosFiltro = [userEmail, ...(equipe?.membros || [])];
+    const passaVendedor = selectedVendedores.length > 0 ? selectedVendedores.includes(n.vendedor_email) : true;
+    
+    if (userFuncao === "master") return dentroIntervalo && passaVendedor;
+    if (userFuncao === "lider") return dentroIntervalo && membrosFiltro.includes(n.vendedor_email) && passaVendedor;
+    if (userFuncao === "vendedor") return dentroIntervalo && n.vendedor_email === userEmail;
+    return dentroIntervalo;
   });
 
   // Métricas gerais (vendas contabilizadas por data_venda_ativa)
