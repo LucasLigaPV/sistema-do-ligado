@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, DollarSign, Package, Trophy, Target, Award, Users, Calendar, CreditCard, Percent, AlertTriangle, Search, X } from "lucide-react";
+import { TrendingUp, DollarSign, Package, Trophy, Target, Award, Users, Calendar, CreditCard, Percent, AlertTriangle, Search, X, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import FiltroVendedor from "../shared/FiltroVendedor";
@@ -51,6 +51,7 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao, filtr
     dataFim: filtrosCompartilhados?.dataFim ?? fimMes.toISOString().split('T')[0],
     consultorFilter: filtrosCompartilhados?.consultorFilter ?? [],
   });
+  const [mostrarListaDebug, setMostrarListaDebug] = useState(false);
 
   const prevFiltrosRef = React.useRef(filtrosCompartilhados);
   React.useEffect(() => {
@@ -298,6 +299,54 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao, filtr
 
   return (
     <div className="space-y-6">
+      {/* Botão Debug */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setMostrarListaDebug(!mostrarListaDebug)}
+        className="gap-2"
+      >
+        <List className="w-4 h-4" />
+        {mostrarListaDebug ? "Ocultar Lista Debug" : "Ver Lista Debug"}
+      </Button>
+
+      {/* Lista Debug */}
+      {mostrarListaDebug && (
+        <Card className="border-slate-200">
+          <CardHeader>
+            <CardTitle className="text-sm">Vendas Puxadas ({vendasFiltradas.length} registros)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Placa</TableHead>
+                    <TableHead>Adesão</TableHead>
+                    <TableHead>Mensalidade</TableHead>
+                    <TableHead>Data Venda</TableHead>
+                    <TableHead>Canal</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {vendasFiltradas.map((venda, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="text-xs">{venda.cliente}</TableCell>
+                      <TableCell className="text-xs">{venda.placa}</TableCell>
+                      <TableCell className="text-xs">{venda.valor_adesao}</TableCell>
+                      <TableCell className="text-xs">{venda.valor_mensalidade}</TableCell>
+                      <TableCell className="text-xs">{venda.data_venda ? new Date(venda.data_venda).toLocaleDateString('pt-BR') : '-'}</TableCell>
+                      <TableCell className="text-xs">{venda.canal_venda}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filtros */}
       <Card className="border-0 shadow-md">
         <CardContent className="p-4">
