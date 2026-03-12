@@ -4,8 +4,9 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, Users, DollarSign, Target, AlertTriangle, Award, BarChart3, Info } from "lucide-react";
+import { TrendingUp, TrendingDown, Users, DollarSign, Target, AlertTriangle, Award, BarChart3, Info, List } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import FiltroVendedor from "../shared/FiltroVendedor";
@@ -219,45 +220,57 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     return labels[categoria] || categoria;
   };
 
-  const [showDebugList, setShowDebugList] = useState(false);
+  const [mostrarListaDebug, setMostrarListaDebug] = useState(false);
 
   return (
     <div className="space-y-6">
       {/* Botão Debug */}
-      <div className="flex justify-end">
-        <button
-          onClick={() => setShowDebugList(!showDebugList)}
-          className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
-        >
-          {showDebugList ? "Ocultar Lista Debug" : "Ver Lista Debug"}
-        </button>
-      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setMostrarListaDebug(!mostrarListaDebug)}
+        className="gap-2"
+      >
+        <List className="w-4 h-4" />
+        {mostrarListaDebug ? "Ocultar Lista Debug" : "Ver Lista Debug"}
+      </Button>
 
-      {showDebugList && (
-        <Card className="border-slate-200 bg-slate-50">
+      {/* Lista Debug */}
+      {mostrarListaDebug && (
+        <Card className="border-slate-200">
           <CardHeader>
-            <CardTitle className="text-slate-900">Lista Debug - Negociações Filtradas</CardTitle>
+            <CardTitle className="text-sm">Negociações Puxadas ({negociacoesFiltradas.length} registros)</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {negociacoesFiltradas.length === 0 ? (
-                <p className="text-slate-500 text-sm">Nenhuma negociação no período selecionado</p>
-              ) : (
-                negociacoesFiltradas.map((neg) => (
-                  <div key={neg.id} className="text-xs bg-white p-3 rounded border border-slate-200">
-                    <div className="font-medium text-slate-900">{neg.nome_cliente}</div>
-                    <div className="text-slate-600 mt-1 space-y-0.5">
-                      <div>Vendedor: {getNomeUsuario(neg.vendedor_email)}</div>
-                      <div>Etapa: {neg.etapa}</div>
-                      <div>Origem: {neg.origem}</div>
-                      <div>Data Entrada: {neg.data_entrada || format(new Date(neg.created_date), "dd/MM/yyyy")}</div>
-                      {neg.etapa === "venda_ativa" && neg.data_venda_ativa && (
-                        <div>Data Venda Ativa: {format(new Date(neg.data_venda_ativa), "dd/MM/yyyy HH:mm")}</div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Vendedor</TableHead>
+                    <TableHead>Etapa</TableHead>
+                    <TableHead>Origem</TableHead>
+                    <TableHead>Data Entrada</TableHead>
+                    <TableHead>Data Venda Ativa</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {negociacoesFiltradas.map((neg) => (
+                    <TableRow key={neg.id}>
+                      <TableCell className="text-xs">{neg.nome_cliente}</TableCell>
+                      <TableCell className="text-xs">{getNomeUsuario(neg.vendedor_email)}</TableCell>
+                      <TableCell className="text-xs">{neg.etapa}</TableCell>
+                      <TableCell className="text-xs">{neg.origem}</TableCell>
+                      <TableCell className="text-xs">{neg.data_entrada ? new Date(neg.data_entrada).toLocaleDateString('pt-BR') : '-'}</TableCell>
+                      <TableCell className="text-xs">
+                        {neg.etapa === "venda_ativa" && neg.data_venda_ativa 
+                          ? new Date(neg.data_venda_ativa).toLocaleDateString('pt-BR') + ' ' + new Date(neg.data_venda_ativa).toLocaleTimeString('pt-BR')
+                          : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>
