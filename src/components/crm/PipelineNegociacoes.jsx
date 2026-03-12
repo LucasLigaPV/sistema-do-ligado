@@ -355,7 +355,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   // Aplicar filtros de data
   negociacoesVisiveis = negociacoesVisiveis.filter((neg) => {
-    const negDate = neg.data_entrada ? new Date(neg.data_entrada) : new Date(neg.created_date);
+    // Para vendas ativas, usar data_venda_ativa; para outras, usar data_entrada
+    const negDate = neg.etapa === "venda_ativa" && neg.data_venda_ativa
+      ? new Date(neg.data_venda_ativa)
+      : neg.data_entrada 
+        ? new Date(neg.data_entrada) 
+        : new Date(neg.created_date);
     const matchDate = (!startDate || negDate >= new Date(startDate)) && 
                       (!endDate || negDate <= new Date(endDate + "T23:59:59"));
     return matchDate;
