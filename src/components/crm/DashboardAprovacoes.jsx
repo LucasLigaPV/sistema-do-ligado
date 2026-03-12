@@ -111,7 +111,7 @@ export default function DashboardAprovacoes() {
     id: categoria,
   })).sort((a, b) => b.value - a.value);
 
-  // Performance por consultor
+  // Performance por consultor - baseado no histórico completo
   const performanceData = {};
   const consultoresReprovacoes = {};
 
@@ -121,21 +121,23 @@ export default function DashboardAprovacoes() {
       performanceData[vendedor] = { enviados: 0, aprovados: 0, reprovados: 0, corrigidos: 0, taxa: 0, motivos: {} };
     }
     performanceData[vendedor].enviados++;
+    
     if (n.status_aprovacao === "aprovado") {
       performanceData[vendedor].aprovados++;
-    } else if (n.status_aprovacao === "reprovado") {
-      performanceData[vendedor].reprovados++;
-      const motivosList = n.motivos_reprova && n.motivos_reprova.length > 0
-        ? n.motivos_reprova
-        : n.motivo_reprova_categoria
-          ? [{ categoria: n.motivo_reprova_categoria }]
-          : [];
-      motivosList.forEach(({ categoria }) => {
-        const cat = categoria || "não especificado";
-        performanceData[vendedor].motivos[cat] = (performanceData[vendedor].motivos[cat] || 0) + 1;
+    }
+    
+    // Contar TODAS as reprovas do histórico
+    if (n.historico_reprovas && n.historico_reprovas.length > 0) {
+      performanceData[vendedor].reprovados += n.historico_reprovas.length;
+      
+      n.historico_reprovas.forEach(reprova => {
+        if (reprova.motivos && reprova.motivos.length > 0) {
+          reprova.motivos.forEach(({ categoria }) => {
+            const cat = categoria || "não especificado";
+            performanceData[vendedor].motivos[cat] = (performanceData[vendedor].motivos[cat] || 0) + 1;
+          });
+        }
       });
-    } else if (n.status_aprovacao === "corrigido") {
-      performanceData[vendedor].corrigidos++;
     }
   });
 
