@@ -646,10 +646,35 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
               {/* Badges: Origem + Desconto + Benefício */}
               <div className="flex flex-wrap gap-2">
                 {selectedDeal.origem && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                    {selectedDeal.origem.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                  </span>
+                    {selectedDeal.origem === "lead" ? (
+                      selectedDeal.origem.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+                    ) : (
+                      <Select
+                        value={selectedDeal.origem}
+                        onValueChange={(value) => {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: { origem: value }
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="h-5 border-0 bg-transparent p-0 text-xs font-semibold focus:ring-0">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="indicacao">Indicação</SelectItem>
+                          <SelectItem value="organico">Orgânico</SelectItem>
+                          <SelectItem value="troca_titularidade">Troca de Titularidade</SelectItem>
+                          <SelectItem value="troca_veiculo">Troca de Veículo</SelectItem>
+                          <SelectItem value="segundo_veiculo">Segundo Veículo</SelectItem>
+                          <SelectItem value="migracao">Migração</SelectItem>
+                          <SelectItem value="lead_pre_sistema">Lead Pré-Sistema</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
                 )}
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${selectedDeal.desconto === "sim" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${selectedDeal.desconto === "sim" ? "bg-emerald-500" : "bg-slate-300"}`} />
