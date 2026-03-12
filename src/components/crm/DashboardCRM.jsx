@@ -88,11 +88,17 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     { key: "venda_ativa", label: "Venda Ativa" }
   ];
 
-  // Vendas ativas filtradas por data_venda_ativa no período (excluindo trocas)
-  // Ignora o filtro de data_entrada e aplica apenas o filtro de data_venda_ativa
+  // === REGRAS DO DASHBOARD CRM ===
+  
+  // 1. Negociações Ativas: negociações com data_entrada no período (excluindo trocas)
+  const negociacoesAtivasPeriodo = negociacoesFiltradas.filter(n => 
+    n.origem !== "troca_titularidade" && n.origem !== "troca_veiculo"
+  );
+  
+  // 2. Vendas Ativas: negociações com data_venda_ativa no período, aplicando filtros de vendedor/equipe
   const vendasAtivasPorAtivacao = negociacoes.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
-    // Excluir trocas de titularidade e trocas de veículo
+    // Excluir trocas
     if (n.origem === "troca_titularidade" || n.origem === "troca_veiculo") return false;
     
     const dataAtivacao = new Date(n.data_venda_ativa);
@@ -110,11 +116,11 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     return dentroIntervalo;
   });
 
-  // Métricas gerais (vendas contabilizadas por data_venda_ativa)
-  const totalNegociacoes = negociacoesFiltradas.length;
+  // 3. Métricas Gerais
+  const totalNegociacoes = negociacoesAtivasPeriodo.length;
   const vendasAtivas = vendasAtivasPorAtivacao.length;
   const totalPerdas = perdasFiltradas.length;
-  const taxaConversao = totalNegociacoes > 0 ? ((vendasAtivas / totalNegociacoes) * 100).toFixed(1) : 0;
+  const taxaConversaoGeral = totalNegociacoes > 0 ? ((vendasAtivas / totalNegociacoes) * 100).toFixed(1) : 0;
   const taxaPerda = totalNegociacoes > 0 ? ((totalPerdas / (totalNegociacoes + totalPerdas)) * 100).toFixed(1) : 0;
 
   // Valores financeiros (apenas vendas ativas no período por data_venda_ativa)
@@ -129,22 +135,22 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   const ticketMedioAdesao = vendasAtivas > 0 ? (valorAdesaoTotal / vendasAtivas) : 0;
   const mediaMensalVendida = vendasAtivas > 0 ? (valorMensalidadeTotal / vendasAtivas) : 0;
 
-  // Conversão por canal (usando data_venda_ativa no período para vendas)
-  const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "troca_titularidade", "troca_veiculo", "segundo_veiculo", "migracao"];
+  // 4. Conversão por Canal (data_entrada no período / data_venda_ativa no período, sem trocas)
+  const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "segundo_veiculo", "migracao"];
 
-  // Filtrar negociações válidas (excluir leads inválidos)
-  const negociacoesValidas = negociacoesFiltradas.filter(n => n.status_arquivamento !== "invalido");
-
-  const totalLeads = negociacoesValidas.filter(n => n.origem === "lead").length;
-  const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead" && n.status_arquivamento !== "invalido").length;
+  // Leads
+  const totalLeads = negociacoesAtivasPeriodo.filter(n => n.origem === "lead").length;
+  const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead").length;
   const taxaConvLead = totalLeads > 0 ? ((vendasLead / totalLeads) * 100).toFixed(1) : "0.0";
 
-  const totalIndicacoes = negociacoesValidas.filter(n => n.origem === "indicacao").length;
-  const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao" && n.status_arquivamento !== "invalido").length;
+  // Indicações
+  const totalIndicacoes = negociacoesAtivasPeriodo.filter(n => n.origem === "indicacao").length;
+  const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao").length;
   const taxaConvIndicacao = totalIndicacoes > 0 ? ((vendasIndicacao / totalIndicacoes) * 100).toFixed(1) : "0.0";
 
-  const totalOutrosCanais = negociacoesValidas.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
-  const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem) && n.status_arquivamento !== "invalido").length;
+  // Outros Canais
+  const totalOutrosCanais = negociacoesAtivasPeriodo.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
+  const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
   const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(1) : "0.0";
 
   // Ranking de vendedores (vendas contabilizadas por data_venda_ativa)
@@ -481,11 +487,11 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-slate-600 flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
-              Taxa de Conversão
+              Taxa de Conversão Geral
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-700">{taxaConversao}%</div>
+            <div className="text-3xl font-bold text-slate-900">{taxaConversaoGeral}%</div>
             <p className="text-xs text-slate-500 mt-1">{vendasAtivas} vendas ativas</p>
           </CardContent>
         </Card>
