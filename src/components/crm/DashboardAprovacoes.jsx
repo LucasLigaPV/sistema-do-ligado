@@ -66,8 +66,13 @@ export default function DashboardAprovacoes() {
   const corrigidos = negociacoesAnalise.filter(n => n.status_aprovacao === "corrigido").length;
   const aprovados = negociacoesAnalise.filter(n => n.status_aprovacao === "aprovado").length;
 
-  // Taxa de aprovação
-  const totalAvaliadas = reprovados + corrigidos + aprovados;
+  // Taxa de aprovação - considera TODAS as reprovas do histórico
+  const totalReprovasHistorico = negociacoesAnalise.reduce((acc, n) => {
+    const qtdReprovas = n.historico_reprovas?.length || 0;
+    return acc + qtdReprovas;
+  }, 0);
+  
+  const totalAvaliadas = totalReprovasHistorico + aprovados;
   const taxaAprovacao = totalAvaliadas > 0 ? ((aprovados / totalAvaliadas) * 100).toFixed(1) : 0;
 
   // Motivos de reprova com detalhes — usando histórico_reprovas e motivos_reprova
@@ -240,7 +245,7 @@ export default function DashboardAprovacoes() {
                 <span className="text-sm text-slate-600">{aprovados} aprovadas</span>
               </div>
               <div className="flex items-center justify-end gap-2">
-                <span className="text-sm text-slate-600">{reprovados} reprovadas</span>
+                <span className="text-sm text-slate-600">{totalReprovasHistorico} reprovas totais</span>
               </div>
             </div>
           </div>
