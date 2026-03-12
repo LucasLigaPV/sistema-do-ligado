@@ -221,6 +221,37 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   };
 
   const [mostrarListaDebug, setMostrarListaDebug] = useState(false);
+  const [debugVendedor, setDebugVendedor] = useState("");
+  const [debugEtapa, setDebugEtapa] = useState("");
+  const [debugOrigem, setDebugOrigem] = useState("");
+  const [debugDataInicio, setDebugDataInicio] = useState("");
+  const [debugDataFim, setDebugDataFim] = useState("");
+  const [debugBusca, setDebugBusca] = useState("");
+
+  const negociacoesDebugFiltradas = negociacoesFiltradas.filter(neg => {
+    if (debugVendedor && neg.vendedor_email !== debugVendedor) return false;
+    if (debugEtapa && neg.etapa !== debugEtapa) return false;
+    if (debugOrigem && neg.origem !== debugOrigem) return false;
+    if (debugDataInicio) {
+      const dataEntrada = new Date(neg.data_entrada || neg.created_date);
+      if (dataEntrada < new Date(debugDataInicio)) return false;
+    }
+    if (debugDataFim) {
+      const dataEntrada = new Date(neg.data_entrada || neg.created_date);
+      if (dataEntrada > new Date(debugDataFim + "T23:59:59")) return false;
+    }
+    if (debugBusca) {
+      const busca = debugBusca.toLowerCase();
+      const cliente = (neg.nome_cliente || "").toLowerCase();
+      const vendedor = getNomeUsuario(neg.vendedor_email).toLowerCase();
+      if (!cliente.includes(busca) && !vendedor.includes(busca)) return false;
+    }
+    return true;
+  });
+
+  const vendedoresUnicos = [...new Set(negociacoesFiltradas.map(n => n.vendedor_email))].sort();
+  const etapasUnicas = [...new Set(negociacoesFiltradas.map(n => n.etapa))].sort();
+  const origensUnicas = [...new Set(negociacoesFiltradas.map(n => n.origem))].sort();
 
   return (
     <div className="space-y-6">
@@ -239,9 +270,97 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
       {mostrarListaDebug && (
         <Card className="border-slate-200">
           <CardHeader>
-            <CardTitle className="text-sm">Negociações Puxadas ({negociacoesFiltradas.length} registros)</CardTitle>
+            <CardTitle className="text-sm">Negociações Puxadas ({negociacoesDebugFiltradas.length} de {negociacoesFiltradas.length} registros)</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Filtros Debug */}
+            <div className="mb-4 p-4 bg-slate-50 rounded-lg space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Buscar (Cliente/Vendedor)</label>
+                  <input
+                    type="text"
+                    placeholder="Digite para buscar..."
+                    value={debugBusca}
+                    onChange={(e) => setDebugBusca(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Vendedor</label>
+                  <select
+                    value={debugVendedor}
+                    onChange={(e) => setDebugVendedor(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  >
+                    <option value="">Todos</option>
+                    {vendedoresUnicos.map(email => (
+                      <option key={email} value={email}>{getNomeUsuario(email)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Etapa</label>
+                  <select
+                    value={debugEtapa}
+                    onChange={(e) => setDebugEtapa(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  >
+                    <option value="">Todas</option>
+                    {etapasUnicas.map(etapa => (
+                      <option key={etapa} value={etapa}>{etapa}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Origem</label>
+                  <select
+                    value={debugOrigem}
+                    onChange={(e) => setDebugOrigem(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  >
+                    <option value="">Todas</option>
+                    {origensUnicas.map(origem => (
+                      <option key={origem} value={origem}>{origem}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Data Início</label>
+                  <input
+                    type="date"
+                    value={debugDataInicio}
+                    onChange={(e) => setDebugDataInicio(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-slate-600 mb-1 block">Data Fim</label>
+                  <input
+                    type="date"
+                    value={debugDataFim}
+                    onChange={(e) => setDebugDataFim(e.target.value)}
+                    className="w-full h-8 px-2 text-xs border border-slate-300 rounded"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setDebugBusca("");
+                  setDebugVendedor("");
+                  setDebugEtapa("");
+                  setDebugOrigem("");
+                  setDebugDataInicio("");
+                  setDebugDataFim("");
+                }}
+                className="text-xs px-3 py-1.5 bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors"
+              >
+                Limpar Filtros
+              </button>
+            </div>
+
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -255,7 +374,7 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {negociacoesFiltradas.map((neg) => (
+                  {negociacoesDebugFiltradas.map((neg) => (
                     <TableRow key={neg.id}>
                       <TableCell className="text-xs">{neg.nome_cliente}</TableCell>
                       <TableCell className="text-xs">{getNomeUsuario(neg.vendedor_email)}</TableCell>
