@@ -24,6 +24,8 @@ import NavegacaoEtapas from "./NavegacaoEtapas";
 import DealCard from "./DealCard";
 import AnexosReprova from "./AnexosReprova";
 import { useUsuarios } from "../shared/useUsuarios";
+import FiltroVendedor from "../shared/FiltroVendedor";
+import FiltroOrigem from "../shared/FiltroOrigem";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -50,7 +52,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [endDate, setEndDate] = useState(format(dataFim, "yyyy-MM-dd"));
   const [selectedVendedores, setSelectedVendedores] = useState([]);
   const [selectedOrigens, setSelectedOrigens] = useState([]);
-  const [origemLogic, setOrigemLogic] = useState("e");
+  
+  // Estados temporários para os filtros
+  const [tempStartDate, setTempStartDate] = useState(format(dataInicio, "yyyy-MM-dd"));
+  const [tempEndDate, setTempEndDate] = useState(format(dataFim, "yyyy-MM-dd"));
+  const [tempVendedores, setTempVendedores] = useState([]);
+  const [tempOrigens, setTempOrigens] = useState([]);
   const [showAccessDeniedModal, setShowAccessDeniedModal] = useState(false);
   const [accessDeniedReason, setAccessDeniedReason] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
@@ -373,10 +380,9 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
 
   // Aplicar filtro de origem
   if (selectedOrigens.length > 0) {
-    negociacoesVisiveis = negociacoesVisiveis.filter(n => {
-      const temOrigem = selectedOrigens.includes(n.origem || "lead");
-      return origemLogic === "e" ? temOrigem : !temOrigem;
-    });
+    negociacoesVisiveis = negociacoesVisiveis.filter(n => 
+      selectedOrigens.includes(n.origem || "lead")
+    );
   }
 
   // Aplicar busca
@@ -625,34 +631,44 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     return user?.nome_exibicao || user?.full_name || email;
   };
 
-  const vendedoresDisponiveis = userFuncao === "master"
-    ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => ({ email: u.email, full_name: u.nome_exibicao || u.full_name || u.email }))
-    : todosVendedoresEquipe.map(email => {
-        const user = users.find(u => u.email === email);
-        return user || { email: email, full_name: email };
-      });
+  const todosEmailsVendedores = userFuncao === "master"
+    ? users.filter(u => u.funcao === "lider" || u.funcao === "vendedor").map(u => u.email)
+    : todosVendedoresEquipe;
 
-  const toggleVendedor = (email) => {
-    setSelectedVendedores(prev => 
-      prev.includes(email) ? prev.filter(e => e !== email) : [...prev, email]
-    );
+  const nomesPorEmail = {};
+  users.forEach(u => {
+    nomesPorEmail[u.email] = u.nome_exibicao || u.full_name || u.email;
+  });
+
+  const aplicarFiltros = () => {
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+    setSelectedVendedores(tempVendedores);
+    setSelectedOrigens(tempOrigens);
+    setShowFilters(false);
   };
 
-  const toggleOrigem = (origem) => {
-    setSelectedOrigens(prev => 
-      prev.includes(origem) ? prev.filter(o => o !== origem) : [...prev, origem]
-    );
+  const limparFiltros = () => {
+    const hoje = new Date();
+    const dataInicio = new Date(hoje);
+    dataInicio.setDate(dataInicio.getDate() - 30);
+    const dataFim = new Date(hoje);
+    dataFim.setDate(dataFim.getDate() + 1);
+    
+    const novoStartDate = format(dataInicio, "yyyy-MM-dd");
+    const novoEndDate = format(dataFim, "yyyy-MM-dd");
+    
+    setTempStartDate(novoStartDate);
+    setTempEndDate(novoEndDate);
+    setTempVendedores([]);
+    setTempOrigens([]);
+    
+    setStartDate(novoStartDate);
+    setEndDate(novoEndDate);
+    setSelectedVendedores([]);
+    setSelectedOrigens([]);
+    setShowFilters(false);
   };
-
-  const origensDisponiveis = [
-    { value: "lead", label: "Lead" },
-    { value: "indicacao", label: "Indicação" },
-    { value: "organico", label: "Orgânico" },
-    { value: "troca_titularidade", label: "Troca de Titularidade" },
-    { value: "troca_veiculo", label: "Troca de Veículo" },
-    { value: "segundo_veiculo", label: "Segundo Veículo" },
-    { value: "migracao", label: "Migração" }
-  ];
 
   const isEtapaFinal = (etapa) => {
     return ["enviado_cadastro", "reprovado", "venda_ativa"].includes(etapa);
@@ -727,91 +743,47 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-xs">Período</Label>
+                  <Label className="text-sm text-slate-600 mb-2 block">Período</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="text-xs" />
-                    <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="text-xs" />
+                    <Input type="date" value={tempStartDate} onChange={(e) => setTempStartDate(e.target.value)} className="text-xs h-9" />
+                    <Input type="date" value={tempEndDate} onChange={(e) => setTempEndDate(e.target.value)} className="text-xs h-9" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs">Origem</Label>
-                  <div className="flex gap-2">
-                    <Select value={origemLogic} onValueChange={setOrigemLogic}>
-                      <SelectTrigger className="h-9 text-xs w-24">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="e">É</SelectItem>
-                        <SelectItem value="nao_e">Não é</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={selectedOrigens.length > 0 ? "selected" : ""}>
-                      <SelectTrigger className="h-9 text-xs flex-1">
-                        <SelectValue placeholder="Selecionar origens...">
-                          {selectedOrigens.length > 0 
-                            ? `${selectedOrigens.length} selecionada${selectedOrigens.length > 1 ? 's' : ''}`
-                            : "Selecionar origens..."}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {origensDisponiveis.map((origem) => (
-                          <div key={origem.value} className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-100 cursor-pointer">
-                            <Checkbox
-                              id={`origem-${origem.value}`}
-                              checked={selectedOrigens.includes(origem.value)}
-                              onCheckedChange={() => toggleOrigem(origem.value)}
-                              className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
-                            />
-                            <label htmlFor={`origem-${origem.value}`} className="text-sm cursor-pointer flex-1">
-                              {origem.label}
-                            </label>
-                          </div>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {selectedOrigens.length > 0 && (
-                    <Button variant="ghost" size="sm" onClick={() => setSelectedOrigens([])} className="w-full text-xs">
-                      Limpar Seleção
-                    </Button>
-                  )}
-                </div>
+                <FiltroOrigem
+                  origensSelecionadas={tempOrigens}
+                  onSelectionChange={setTempOrigens}
+                  label="Origem"
+                />
 
                 {(userFuncao === "lider" || userFuncao === "master") && (
-                  <div className="space-y-2">
-                    <Label className="text-xs">{userFuncao === "master" ? "Vendedores" : "Vendedores da Equipe"}</Label>
-                    <Select value={selectedVendedores.length > 0 ? "selected" : ""}>
-                      <SelectTrigger className="h-9 text-xs">
-                        <SelectValue placeholder="Selecionar vendedores...">
-                          {selectedVendedores.length > 0 
-                            ? `${selectedVendedores.length} selecionado${selectedVendedores.length > 1 ? 's' : ''}`
-                            : "Selecionar vendedores..."}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {vendedoresDisponiveis.map((vendedor) => (
-                          <div key={vendedor.email} className="flex items-center gap-2 px-2 py-1.5 hover:bg-slate-100 cursor-pointer">
-                            <Checkbox
-                              id={`vendedor-${vendedor.email}`}
-                              checked={selectedVendedores.includes(vendedor.email)}
-                              onCheckedChange={() => toggleVendedor(vendedor.email)}
-                              className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
-                            />
-                            <label htmlFor={`vendedor-${vendedor.email}`} className="text-sm cursor-pointer flex-1">
-                              {vendedor.full_name || vendedor.email}
-                            </label>
-                          </div>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedVendedores.length > 0 && (
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedVendedores([])} className="w-full text-xs">
-                        Limpar Seleção
-                      </Button>
-                    )}
-                  </div>
+                  <FiltroVendedor
+                    vendedoresSelecionados={tempVendedores}
+                    todosVendedores={todosEmailsVendedores}
+                    onSelectionChange={setTempVendedores}
+                    userEmail={userEmail}
+                    nomesPorEmail={nomesPorEmail}
+                    label={userFuncao === "master" ? "Vendedores" : "Vendedores da Equipe"}
+                  />
                 )}
+
+                <div className="flex gap-2 pt-2 border-t border-slate-200">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={limparFiltros}
+                    className="flex-1 text-xs"
+                  >
+                    Limpar Filtros
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    onClick={aplicarFiltros}
+                    className="flex-1 bg-[#EFC200] hover:bg-[#D4A900] text-black text-xs"
+                  >
+                    Buscar
+                  </Button>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
