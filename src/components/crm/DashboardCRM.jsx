@@ -88,6 +88,14 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     { key: "venda_ativa", label: "Venda Ativa" }
   ];
 
+  // Vendas ativas filtradas por data_venda_ativa no período
+  const vendasAtivasPorAtivacao = negociacoesFiltradas.filter(n => {
+    if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
+    const dataAtivacao = new Date(n.data_venda_ativa);
+    return (!startDate || dataAtivacao >= new Date(startDate)) &&
+           (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
+  });
+
   // Métricas gerais (vendas contabilizadas por data_venda_ativa)
   const totalNegociacoes = negociacoesFiltradas.length;
   const vendasAtivas = vendasAtivasPorAtivacao.length;
@@ -109,14 +117,6 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
 
   // Conversão por canal (usando data_venda_ativa no período para vendas)
   const outrosCanaisOrigens = ["lead_pre_sistema", "organico", "troca_titularidade", "troca_veiculo", "segundo_veiculo", "migracao"];
-
-  // Vendas ativas filtradas por data_venda_ativa no período
-  const vendasAtivasPorAtivacao = negociacoesFiltradas.filter(n => {
-    if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
-    const dataAtivacao = new Date(n.data_venda_ativa);
-    return (!startDate || dataAtivacao >= new Date(startDate)) &&
-           (!endDate || dataAtivacao <= new Date(endDate + "T23:59:59"));
-  });
 
   // Filtrar negociações válidas (excluir leads inválidos)
   const negociacoesValidas = negociacoesFiltradas.filter(n => n.status_arquivamento !== "invalido");
