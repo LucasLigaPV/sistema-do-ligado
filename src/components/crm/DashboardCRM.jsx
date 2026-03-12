@@ -120,6 +120,13 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     return passaVendedor;
   });
 
+  // Filtrar negociações por período usando data_entrada
+  const negociacoesFiltradas = negociacoesRoleFiltered.filter(n => {
+    const dataEntrada = new Date(n.data_entrada || n.created_date);
+    return (!startDate || dataEntrada >= new Date(startDate)) &&
+           (!endDate || dataEntrada <= new Date(endDate + "T23:59:59"));
+  });
+
   // Vendas ativas filtradas por data_venda_ativa no período
   const vendasAtivasPorAtivacao = negociacoesRoleFiltered.filter(n => {
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
