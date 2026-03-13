@@ -11,7 +11,8 @@ export default function CampoPlaca({
   disabled = false, 
   error = null,
   required = true,
-  showCheckbox = true 
+  showCheckbox = true,
+  checkboxId = "veiculo-0km-field"
 }) {
   return (
     <div>
@@ -22,16 +23,20 @@ export default function CampoPlaca({
         {showCheckbox && (
           <div className="flex items-center gap-2">
             <Checkbox
-              id="veiculo-0km-field"
-              checked={veiculo0km}
+              id={checkboxId}
+              checked={veiculo0km || false}
               onCheckedChange={(checked) => {
-                onVeiculo0kmChange?.(checked);
-                if (checked) onChange?.("");
+                if (onVeiculo0kmChange) {
+                  onVeiculo0kmChange(checked);
+                }
+                if (checked && onChange) {
+                  onChange("");
+                }
               }}
               disabled={disabled}
               className="data-[state=checked]:bg-[#EFC200] data-[state=checked]:border-[#EFC200] data-[state=checked]:text-black"
             />
-            <label htmlFor="veiculo-0km-field" className="text-xs font-medium text-slate-600 cursor-pointer">
+            <label htmlFor={checkboxId} className="text-xs font-medium text-slate-600 cursor-pointer">
               Veículo 0km
             </label>
           </div>

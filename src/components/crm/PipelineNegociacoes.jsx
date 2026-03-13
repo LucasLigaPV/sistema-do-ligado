@@ -1089,9 +1089,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 value={editedDeal.placa}
                                 onChange={(valor) => setEditedDeal({ ...editedDeal, placa: valor })}
                                 veiculo0km={editedDeal.veiculo_0km}
-                                onVeiculo0kmChange={(checked) => setEditedDeal({ ...editedDeal, veiculo_0km: checked })}
+                                onVeiculo0kmChange={(checked) => setEditedDeal({ ...editedDeal, veiculo_0km: checked, placa: checked ? "" : editedDeal.placa })}
                                 disabled={isReadOnly}
                                 required={false}
+                                checkboxId="veiculo-0km-edit"
                               />
                               <div>
                                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Modelo do Veículo</Label>
@@ -1649,9 +1650,10 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     value={conferenciaData.placa}
                     onChange={(valor) => setConferenciaData({ ...conferenciaData, placa: valor })}
                     veiculo0km={conferenciaData.veiculo_0km}
-                    onVeiculo0kmChange={(checked) => setConferenciaData({ ...conferenciaData, veiculo_0km: checked })}
+                    onVeiculo0kmChange={(checked) => setConferenciaData({ ...conferenciaData, veiculo_0km: checked, placa: checked ? "" : conferenciaData.placa })}
                     error={erros.placa}
                     required={true}
+                    checkboxId="veiculo-0km-conferencia"
                   />
                   <div>
                     <Label className={erros.modelo_veiculo ? "text-red-600" : ""}>Modelo do Veículo *</Label>
