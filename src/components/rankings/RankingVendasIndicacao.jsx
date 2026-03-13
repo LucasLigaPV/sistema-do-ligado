@@ -5,27 +5,14 @@ import { motion } from "framer-motion";
 
 export default function RankingVendasIndicacao({ vendas, users }) {
   const vendasIndicacao = vendas.filter(v => v.tem_indicacao === "sim");
-  const ranking = {};
 
-  // Inicializar todos os vendedores com 0
-  users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
-      ranking[user.email] = 0;
-    }
-  });
-
-  vendasIndicacao.forEach(venda => {
-    const email = venda.email_vendedor;
-    if (ranking[email] !== undefined) ranking[email]++;
-  });
-
-  const rankingArray = Object.entries(ranking)
-    .map(([email, total]) => {
-      const user = users.find(u => u.email === email);
-      return { email, nome: user?.full_name || email, total };
+  const rankingArray = users
+    .filter(u => u.funcao === "vendedor" || u.funcao === "lider")
+    .map(user => {
+      const total = vendasIndicacao.filter(v => v.email_vendedor === user.email).length;
+      return { email: user.email, nome: user.full_name || user.email, total };
     })
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 10);
+    .sort((a, b) => b.total - a.total);
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
