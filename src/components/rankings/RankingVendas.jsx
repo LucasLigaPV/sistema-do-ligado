@@ -4,6 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
+const getNomeVendedor = (email, users) => {
+  if (!email) return "N/A";
+  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (user) {
+    return user.nome_exibicao || user.full_name || email;
+  }
+  return email;
+};
+
 export default function RankingVendas({ vendas, users }) {
   const ranking = {};
 
@@ -35,8 +44,7 @@ export default function RankingVendas({ vendas, users }) {
 
   const rankingArray = Object.entries(ranking)
     .map(([email, dados]) => {
-      const user = users.find(u => u.email === email);
-      return { email, nome: user?.full_name || email, ...dados };
+      return { email, nome: getNomeVendedor(email, users), ...dados };
     })
     .sort((a, b) => b.total - a.total)
     .slice(0, 10);
