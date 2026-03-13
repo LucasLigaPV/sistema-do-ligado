@@ -474,7 +474,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (tel.length < 11) erros.telefone = "Número incompleto";
     const emailVal = (data.email || "").trim();
     if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) erros.email = "E-mail inválido";
-    if (!data.placa || data.placa.replace(/[^A-Z0-9]/g, '').length < 7) erros.placa = "Preencha a placa completa";
+    if (!data.zero_km && (!data.placa || data.placa.replace(/[^A-Z0-9]/g, '').length < 7)) erros.placa = "Preencha a placa completa";
     if (!data.modelo_veiculo || !data.modelo_veiculo.trim()) erros.modelo_veiculo = "Preencha o modelo";
     if (!data.plano_interesse) erros.plano_interesse = "Selecione o plano";
     const adesao = parseCurrencyValue(data.valor_adesao);
