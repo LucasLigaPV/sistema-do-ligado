@@ -65,14 +65,6 @@ export default function DashboardRankings() {
     return true;
   });
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="w-10 h-10 border-3 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {/* Filtros de Data - Compacto */}
