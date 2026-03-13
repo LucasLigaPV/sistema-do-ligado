@@ -453,7 +453,20 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           Analisar
                                         </button>
                                       )}
-                                      {(etapa.id === "analisando" || etapa.id === "corrigido" || etapa.id === "aguardando_termo") && (
+                                      {(etapa.id === "analisando" || etapa.id === "corrigido") && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDealParaAtivar(deal);
+                                            setShowConfirmAtivar(true);
+                                          }}
+                                          className="w-full mt-1 py-1.5 text-xs font-semibold rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-700 border border-green-500/30 hover:border-green-500/60 transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                          <CheckCircle2 className="w-3.5 h-3.5" />
+                                          Ativar Venda
+                                        </button>
+                                      )}
+                                      {etapa.id === "aguardando_termo" && (
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
