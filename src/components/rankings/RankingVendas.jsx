@@ -18,7 +18,7 @@ export default function RankingVendas({ vendas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
+    if (user.role === "vendedor" || user.role === "lider") {
       ranking[user.email] = {
         total: 0,
         essencial: 0,
