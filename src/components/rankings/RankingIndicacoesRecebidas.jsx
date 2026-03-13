@@ -9,20 +9,29 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
   
   const ranking = {};
 
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
+    }
+  });
+
   negociacoesIndicacao.forEach(neg => {
     const email = neg.vendedor_email;
-    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
-    ranking[email].recebidas++;
-    if (neg.etapa !== "venda_ativa") {
-      ranking[email].emNegociacao++;
+    if (ranking[email]) {
+      ranking[email].recebidas++;
+      if (neg.etapa !== "venda_ativa") {
+        ranking[email].emNegociacao++;
+      }
     }
   });
 
   perdasIndicacao.forEach(perda => {
     const email = perda.vendedor_email;
-    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
-    ranking[email].recebidas++;
-    ranking[email].perdidas++;
+    if (ranking[email]) {
+      ranking[email].recebidas++;
+      ranking[email].perdidas++;
+    }
   });
 
   const rankingArray = Object.entries(ranking)

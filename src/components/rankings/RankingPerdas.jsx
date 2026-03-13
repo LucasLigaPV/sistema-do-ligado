@@ -9,10 +9,10 @@ export default function RankingPerdas({ perdas, users }) {
   const perdasValidas = perdas.filter(p => p.categoria_motivo !== 'lead_invalido');
   const ranking = {};
 
-  perdasValidas.forEach(perda => {
-    const email = perda.vendedor_email;
-    if (!ranking[email]) {
-      ranking[email] = {
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = {
         total: 0,
         financeiro: 0,
         timing: 0,
@@ -22,8 +22,14 @@ export default function RankingPerdas({ perdas, users }) {
         situacoes_esporadicas: 0
       };
     }
-    ranking[email].total++;
-    if (perda.categoria_motivo) ranking[email][perda.categoria_motivo]++;
+  });
+
+  perdasValidas.forEach(perda => {
+    const email = perda.vendedor_email;
+    if (ranking[email]) {
+      ranking[email].total++;
+      if (perda.categoria_motivo) ranking[email][perda.categoria_motivo]++;
+    }
   });
 
   const rankingArray = Object.entries(ranking)

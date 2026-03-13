@@ -11,16 +11,22 @@ export default function RankingAdesaoMedia({ vendas, users }) {
 
   const ranking = {};
 
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = { total: 0, somaAdesao: 0, media: 0 };
+    }
+  });
+
   vendasSemTrocas.forEach(venda => {
     const email = venda.email_vendedor;
-    if (!ranking[email]) {
-      ranking[email] = { total: 0, somaAdesao: 0, media: 0 };
+    if (ranking[email]) {
+      ranking[email].total++;
+      
+      // Converter valor de adesão para número
+      const valorAdesao = parseFloat(venda.valor_adesao?.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+      ranking[email].somaAdesao += valorAdesao;
     }
-    ranking[email].total++;
-    
-    // Converter valor de adesão para número
-    const valorAdesao = parseFloat(venda.valor_adesao?.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-    ranking[email].somaAdesao += valorAdesao;
   });
 
   // Calcular média
@@ -30,7 +36,6 @@ export default function RankingAdesaoMedia({ vendas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([_, dados]) => dados.total > 0)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
       return { email, nome: user?.full_name || email, ...dados };

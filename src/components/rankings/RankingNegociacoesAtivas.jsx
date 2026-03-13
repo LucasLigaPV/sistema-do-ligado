@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 export default function RankingNegociacoesAtivas({ negociacoes, users }) {
   const ranking = {};
 
-  negociacoes.forEach(neg => {
-    const email = neg.vendedor_email;
-    if (!ranking[email]) {
-      ranking[email] = {
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = {
         total: 0,
         novo_lead: 0,
         abordagem: 0,
@@ -21,8 +21,14 @@ export default function RankingNegociacoesAtivas({ negociacoes, users }) {
         vistoria_assinatura_pix: 0
       };
     }
-    ranking[email].total++;
-    if (neg.etapa) ranking[email][neg.etapa]++;
+  });
+
+  negociacoes.forEach(neg => {
+    const email = neg.vendedor_email;
+    if (ranking[email]) {
+      ranking[email].total++;
+      if (neg.etapa) ranking[email][neg.etapa]++;
+    }
   });
 
   const rankingArray = Object.entries(ranking)

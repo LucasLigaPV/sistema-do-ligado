@@ -7,10 +7,16 @@ export default function RankingCotacoes({ negociacoes, users }) {
   const cotacoes = negociacoes.filter(n => n.etapa === "cotacao");
   const ranking = {};
 
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = 0;
+    }
+  });
+
   cotacoes.forEach(neg => {
     const email = neg.vendedor_email;
-    if (!ranking[email]) ranking[email] = 0;
-    ranking[email]++;
+    if (ranking[email] !== undefined) ranking[email]++;
   });
 
   const rankingArray = Object.entries(ranking)

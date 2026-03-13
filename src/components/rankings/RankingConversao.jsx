@@ -6,31 +6,35 @@ import { motion } from "framer-motion";
 export default function RankingConversao({ vendas, negociacoes, perdas, users }) {
   const ranking = {};
 
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = { leads: 0, vendas: 0, conversao: 0 };
+    }
+  });
+
   // Contar negociações (leads) apenas origem lead
   negociacoes.filter(n => n.origem === 'lead').forEach(neg => {
     const email = neg.vendedor_email;
-    if (!ranking[email]) {
-      ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
+    if (ranking[email]) {
+      ranking[email].leads++;
     }
-    ranking[email].leads++;
   });
 
   // Contar perdas origem lead (excluindo lead_invalido) por vendedor
   perdas.filter(p => p.origem === 'lead' && p.categoria_motivo !== 'lead_invalido').forEach(perda => {
     const email = perda.vendedor_email;
-    if (!ranking[email]) {
-      ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
+    if (ranking[email]) {
+      ranking[email].leads++;
     }
-    ranking[email].leads++;
   });
 
   // Contar vendas origem lead por vendedor
   vendas.filter(v => v.canal_venda === 'lead').forEach(venda => {
     const email = venda.email_vendedor;
-    if (!ranking[email]) {
-      ranking[email] = { leads: 0, vendas: 0, conversao: 0 };
+    if (ranking[email]) {
+      ranking[email].vendas++;
     }
-    ranking[email].vendas++;
   });
 
   // Calcular percentual de conversão

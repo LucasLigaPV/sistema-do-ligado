@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 export default function RankingVendas({ vendas, users }) {
   const ranking = {};
 
-  vendas.forEach(venda => {
-    const email = venda.email_vendedor;
-    if (!ranking[email]) {
-      ranking[email] = {
+  // Inicializar todos os vendedores com 0
+  users.forEach(user => {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
+      ranking[user.email] = {
         total: 0,
         essencial: 0,
         principal: 0,
@@ -19,12 +19,18 @@ export default function RankingVendas({ vendas, users }) {
         plano_caminhao: 0
       };
     }
-    ranking[email].total++;
-    if (venda.plano_vendido === "essencial") ranking[email].essencial++;
-    if (venda.plano_vendido === "principal") ranking[email].principal++;
-    if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
-    if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
-    if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
+  });
+
+  vendas.forEach(venda => {
+    const email = venda.email_vendedor;
+    if (ranking[email]) {
+      ranking[email].total++;
+      if (venda.plano_vendido === "essencial") ranking[email].essencial++;
+      if (venda.plano_vendido === "principal") ranking[email].principal++;
+      if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
+      if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
+      if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
+    }
   });
 
   const rankingArray = Object.entries(ranking)
