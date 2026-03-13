@@ -3,34 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
-const getNomeVendedor = (email, users) => {
-  if (!email) return "N/A";
-  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    return user.nome_exibicao || user.full_name || email;
-  }
-  return email;
-};
-
 export default function RankingVendasLead({ vendas, users }) {
   const vendasLead = vendas.filter(v => v.canal_venda === "lead");
   const ranking = {};
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
+    if (user.role === "vendedor" || user.role === "lider") {
       ranking[user.email] = 0;
     }
   });
 
   vendasLead.forEach(venda => {
     const email = venda.email_vendedor;
-    if (ranking[email] !== undefined) ranking[email]++;
+    if (!ranking[email]) ranking[email] = 0;
+    ranking[email]++;
   });
 
   const rankingArray = Object.entries(ranking)
+    .filter(([email, total]) => total > 0)
     .map(([email, total]) => {
-      return { email, nome: getNomeVendedor(email, users), total };
+      const user = users.find(u => u.email === email);
+      const nome = user?.full_name || email.split('@')[0];
+      return { email, nome, total };
     })
     .sort((a, b) => b.total - a.total);
 

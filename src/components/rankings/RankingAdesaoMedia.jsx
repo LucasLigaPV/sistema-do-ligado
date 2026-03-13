@@ -3,15 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
-const getNomeVendedor = (email, users) => {
-  if (!email) return "N/A";
-  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    return user.nome_exibicao || user.full_name || email;
-  }
-  return email;
-};
-
 export default function RankingAdesaoMedia({ vendas, users }) {
   // Filtrar vendas sem trocas (troca_titularidade, troca_veiculo, segundo_veiculo)
   const vendasSemTrocas = vendas.filter(v => 
@@ -22,7 +13,7 @@ export default function RankingAdesaoMedia({ vendas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
+    if (user.role === "vendedor" || user.role === "lider") {
       ranking[user.email] = { total: 0, somaAdesao: 0, media: 0 };
     }
   });
@@ -45,8 +36,11 @@ export default function RankingAdesaoMedia({ vendas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
+    .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
-      return { email, nome: getNomeVendedor(email, users), ...dados };
+      const user = users.find(u => u.email === email);
+      const nome = user?.full_name || email.split('@')[0];
+      return { email, nome, ...dados };
     })
     .sort((a, b) => b.media - a.media);
 

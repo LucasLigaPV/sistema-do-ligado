@@ -4,15 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { XCircle, TrendingDown } from "lucide-react";
 import { motion } from "framer-motion";
 
-const getNomeVendedor = (email, users) => {
-  if (!email) return "N/A";
-  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    return user.nome_exibicao || user.full_name || email;
-  }
-  return email;
-};
-
 export default function RankingPerdas({ perdas, users }) {
   // Filtrar perdas excluindo lead_invalido
   const perdasValidas = perdas.filter(p => p.categoria_motivo !== 'lead_invalido');
@@ -20,7 +11,7 @@ export default function RankingPerdas({ perdas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
+    if (user.role === "vendedor" || user.role === "lider") {
       ranking[user.email] = {
         total: 0,
         financeiro: 0,
@@ -42,8 +33,11 @@ export default function RankingPerdas({ perdas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
+    .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
-      return { email, nome: getNomeVendedor(email, users), ...dados };
+      const user = users.find(u => u.email === email);
+      const nome = user?.full_name || email.split('@')[0];
+      return { email, nome, ...dados };
     })
     .sort((a, b) => b.total - a.total);
 
