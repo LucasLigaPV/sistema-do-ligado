@@ -252,6 +252,10 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         analisado_por: userEmail,
         data_analise: new Date().toISOString(),
       };
+    } else if (newStatus === "aguardando_termo") {
+      updateData.data = {
+        status_aprovacao: "aguardando_termo",
+      };
     }
 
     updateMutation.mutate(updateData);
