@@ -477,6 +477,18 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           Analisar
                                         </button>
                                       )}
+                                      {(etapa.id === "corrigido" || etapa.id === "analisando") && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAtivarVenda(deal);
+                                          }}
+                                          className="w-full mt-1 py-1.5 text-xs font-semibold rounded-lg bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 hover:border-green-300 transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                          <CheckCircle2 className="w-3.5 h-3.5" />
+                                          Ativar Venda
+                                        </button>
+                                      )}
                                       {deal.status_aprovacao !== "aprovado" && (deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
                                         <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
                                           {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
