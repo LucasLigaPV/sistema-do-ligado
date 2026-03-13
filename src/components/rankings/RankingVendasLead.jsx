@@ -21,7 +21,6 @@ export default function RankingVendasLead({ vendas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([email, total]) => total > 0)
     .map(([email, total]) => {
       const user = users.find(u => u.email === email);
       const nome = user?.full_name || email.split('@')[0];
