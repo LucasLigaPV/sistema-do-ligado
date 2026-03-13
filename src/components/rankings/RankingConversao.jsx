@@ -89,7 +89,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
                   <p className="text-[10px] text-slate-500">{vendedor.vendas} vendas</p>
                 </div>
               </div>
-              <div className="text-xl font-bold text-[#EFC200] flex-shrink-0">{vendedor.conversao.toFixed(1)}%</div>
+              <div className="text-xl font-bold text-[#EFC200] flex-shrink-0">{vendedor.conversao.toFixed(2)}%</div>
             </motion.div>
           ))}
         </div>
