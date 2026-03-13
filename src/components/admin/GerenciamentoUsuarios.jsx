@@ -35,7 +35,10 @@ export default function GerenciamentoUsuarios() {
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list("full_name"),
+    queryFn: async () => {
+      const response = await base44.functions.invoke('getAllUsers');
+      return response.data.users || [];
+    },
   });
 
   const updateMutation = useMutation({
