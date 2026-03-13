@@ -37,8 +37,7 @@ export default function RankingPerdas({ perdas, users }) {
       const user = users.find(u => u.email === email);
       return { email, nome: user?.full_name || email, ...dados };
     })
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 10);
+    .sort((a, b) => b.total - a.total);
 
   const getCategoriaLabel = (cat) => {
     const labels = {
@@ -61,11 +60,11 @@ export default function RankingPerdas({ perdas, users }) {
           <span>Perdas por Motivo</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pt-2 overflow-auto">
-        <div className="space-y-2">
+      <CardContent className="flex-1 pt-2 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-auto space-y-2">
           {rankingArray.length === 0 ? (
             <p className="text-slate-500 text-center py-6 text-sm">Nenhuma perda</p>
-          ) : rankingArray.slice(0, 7).map((vendedor, index) => (
+          ) : rankingArray.map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, y: 5 }}
