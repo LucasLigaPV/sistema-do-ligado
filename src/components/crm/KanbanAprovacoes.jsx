@@ -522,6 +522,44 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         </div>
       </DragDropContext>
 
+      {/* Dialog: Confirmação Ativar Venda */}
+      <Dialog open={showConfirmAtivar} onOpenChange={setShowConfirmAtivar}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Ativar Venda</DialogTitle>
+          </DialogHeader>
+          {dealParaAtivar && (
+            <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-900 font-medium">{dealParaAtivar.nome_cliente}</p>
+                <p className="text-sm text-blue-800 mt-1">{dealParaAtivar.placa}</p>
+              </div>
+              <p className="text-sm text-slate-700">
+                Tem certeza que deseja ativar essa placa?
+              </p>
+              <div className="flex gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowConfirmAtivar(false);
+                    setDealParaAtivar(null);
+                  }}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleConfirmAtivar}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Ativar Venda
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Modal: Reprova */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
