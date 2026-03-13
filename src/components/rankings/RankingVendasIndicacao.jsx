@@ -8,10 +8,10 @@ export default function RankingVendasIndicacao({ vendas, users }) {
 
   const rankingArray = users && users.length > 0
     ? users
-        .filter(u => u.role === "vendedor" || u.role === "lider")
+        .filter(u => u.funcao === "vendedor" || u.funcao === "lider")
         .map(user => {
           const total = vendasIndicacao.filter(v => v.email_vendedor === user.email).length;
-          return { email: user.email, nome: user.full_name || user.email, total };
+          return { email: user.email, nome: user.nome_exibicao || user.full_name || user.email, total };
         })
         .sort((a, b) => b.total - a.total)
     : [];
