@@ -200,6 +200,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     { id: "analisando", label: "Analisando", icon: Eye },
     { id: "reprovado", label: "Reprovado", icon: XCircle },
     { id: "corrigido", label: "Corrigidos", icon: CheckCircle2 },
+    { id: "aguardando_termo", label: "Aguardando Termo de Danos", icon: FileText },
     { id: "aprovado", label: "Aprovados", icon: ThumbsUp },
   ], []);
 
@@ -790,11 +791,12 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="aguardando">Aguardando Análise</SelectItem>
-                        <SelectItem value="analisando">Analisando</SelectItem>
-                        <SelectItem value="reprovado">Reprovado</SelectItem>
-                        <SelectItem value="corrigido">Corrigidos</SelectItem>
-                        <SelectItem value="aprovado">Aprovados</SelectItem>
+                      <SelectItem value="aguardando">Aguardando Análise</SelectItem>
+                      <SelectItem value="analisando">Analisando</SelectItem>
+                      <SelectItem value="reprovado">Reprovado</SelectItem>
+                      <SelectItem value="corrigido">Corrigidos</SelectItem>
+                      <SelectItem value="aguardando_termo">Aguardando Termo de Danos</SelectItem>
+                      <SelectItem value="aprovado">Aprovados</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
