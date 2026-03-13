@@ -32,14 +32,23 @@ export default function RankingVendas({ vendas, users }) {
 
   vendas.forEach(venda => {
     const email = venda.email_vendedor;
-    if (ranking[email]) {
-      ranking[email].total++;
-      if (venda.plano_vendido === "essencial") ranking[email].essencial++;
-      if (venda.plano_vendido === "principal") ranking[email].principal++;
-      if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
-      if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
-      if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
+    // Inicializar se não existir
+    if (!ranking[email]) {
+      ranking[email] = {
+        total: 0,
+        essencial: 0,
+        principal: 0,
+        plano_van: 0,
+        plano_moto: 0,
+        plano_caminhao: 0
+      };
     }
+    ranking[email].total++;
+    if (venda.plano_vendido === "essencial") ranking[email].essencial++;
+    if (venda.plano_vendido === "principal") ranking[email].principal++;
+    if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
+    if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
+    if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
   });
 
   const rankingArray = Object.entries(ranking)
