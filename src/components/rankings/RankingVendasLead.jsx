@@ -7,9 +7,9 @@ export default function RankingVendasLead({ vendas, users }) {
   const vendasLead = vendas.filter(v => v.canal_venda === "lead");
   const ranking = {};
 
-  // Inicializar todos os vendedores com 0
+  // Inicializar todos os vendedores/líderes com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.email) {
       ranking[user.email] = 0;
     }
   });
