@@ -3,6 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
+const getNomeVendedor = (email, users) => {
+  if (!email) return "N/A";
+  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (user) {
+    return user.nome_exibicao || user.full_name || email;
+  }
+  return email;
+};
+
 export default function RankingConversao({ vendas, negociacoes, perdas, users }) {
   const ranking = {};
 
@@ -45,8 +54,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
 
   const rankingArray = Object.entries(ranking)
     .map(([email, dados]) => {
-      const user = users.find(u => u.email === email);
-      return { email, nome: user?.full_name || email, ...dados };
+      return { email, nome: getNomeVendedor(email, users), ...dados };
     })
     .sort((a, b) => b.conversao - a.conversao);
 

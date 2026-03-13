@@ -3,6 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
+const getNomeVendedor = (email, users) => {
+  if (!email) return "N/A";
+  const user = users.find(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+  if (user) {
+    return user.nome_exibicao || user.full_name || email;
+  }
+  return email;
+};
+
 export default function RankingVendasIndicacao({ vendas, users }) {
   const vendasIndicacao = vendas.filter(v => v.tem_indicacao === "sim");
   const ranking = {};
@@ -21,8 +30,7 @@ export default function RankingVendasIndicacao({ vendas, users }) {
 
   const rankingArray = Object.entries(ranking)
     .map(([email, total]) => {
-      const user = users.find(u => u.email === email);
-      return { email, nome: user?.full_name || email, total };
+      return { email, nome: getNomeVendedor(email, users), total };
     })
     .sort((a, b) => b.total - a.total);
 
