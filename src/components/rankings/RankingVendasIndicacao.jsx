@@ -26,7 +26,7 @@ export default function RankingVendasIndicacao({ vendas, users }) {
       const nome = user?.full_name || email.split('@')[0];
       return { email, nome, total };
     })
-    .sort((a, b) => b.total - a.total);
+    .sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome));
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
