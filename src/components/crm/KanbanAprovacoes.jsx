@@ -254,6 +254,15 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         analisado_por: userEmail,
         data_analise: new Date().toISOString(),
       };
+    } else if (newStatus === "aguardando_termo") {
+      updateData.data = {
+        status_aprovacao: "aguardando_termo",
+        etapa: "enviado_cadastro",
+      };
+    } else if (newStatus === "aguardando") {
+      updateData.data = {
+        status_aprovacao: "aguardando",
+      };
     }
 
     updateMutation.mutate(updateData);
@@ -444,7 +453,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           Analisar
                                         </button>
                                       )}
-                                      {(etapa.id === "analisando" || etapa.id === "corrigido") && (
+                                      {(etapa.id === "analisando" || etapa.id === "corrigido" || etapa.id === "aguardando_termo") && (
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -865,6 +874,14 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                               status_aprovacao: "analisando",
                               analisado_por: userEmail,
                               data_analise: new Date().toISOString(),
+                            }
+                          });
+                        } else if (newStatus === "aguardando_termo") {
+                          updateMutation.mutate({
+                            id: selectedDeal.id,
+                            data: {
+                              status_aprovacao: "aguardando_termo",
+                              etapa: "enviado_cadastro",
                             }
                           });
                         } else {
