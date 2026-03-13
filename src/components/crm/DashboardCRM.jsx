@@ -680,22 +680,6 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
         </CardContent>
       </Card>
 
-      {/* Taxa de Perda */}
-      <Card className="border-slate-200">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-slate-900">
-            <AlertTriangle className="w-5 h-5" />
-            Taxa de Perda
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-baseline gap-3">
-            <div className="text-4xl font-bold text-slate-700">{taxaPerda}%</div>
-            <p className="text-sm text-slate-500">{totalPerdas} leads perdidos no período</p>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Funil de Vendas */}
       <Card className="border-slate-200">
         <CardHeader>
@@ -733,6 +717,22 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
                 </div>
               );
             })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Taxa de Perda */}
+      <Card className="border-slate-200">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-slate-900">
+            <AlertTriangle className="w-5 h-5" />
+            Taxa de Perda
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-baseline gap-3">
+            <div className="text-4xl font-bold text-slate-700">{taxaPerda}%</div>
+            <p className="text-sm text-slate-500">{totalPerdas} leads perdidos no período</p>
           </div>
         </CardContent>
       </Card>
