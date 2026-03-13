@@ -34,7 +34,7 @@ export default function RankingVendasIndicacao({ negociacoes, users }) {
       <CardContent className="px-4 pb-3 pt-1">
         {rankingArray.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-sm text-slate-500">Nenhuma venda via indicação neste período</p>
+            <p className="text-sm text-slate-500">Painel em manutenção</p>
           </div>
         ) : (
           <div className="space-y-1.5">
