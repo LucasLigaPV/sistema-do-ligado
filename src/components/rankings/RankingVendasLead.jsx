@@ -9,7 +9,7 @@ export default function RankingVendasLead({ vendas, users }) {
 
   // Inicializar todos os vendedores/líderes com 0
   users.forEach(user => {
-    if (user.email) {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = 0;
     }
   });
