@@ -31,9 +31,7 @@ export default function RankingVendasIndicacao({ vendas, users }) {
       </CardHeader>
       <CardContent className="px-4 pb-3 pt-1">
         <div className="space-y-1.5">
-          {rankingArray.length === 0 ? (
-            <p className="text-slate-500 text-center py-4 text-sm">Nenhuma venda via indicação</p>
-          ) : rankingArray.slice(0, 5).map((vendedor, index) => (
+          {rankingArray.map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, x: -10 }}
