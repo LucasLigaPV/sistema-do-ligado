@@ -9,7 +9,7 @@ export default function RankingNegociacoesAtivas({ negociacoes, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = {
         total: 0,
         novo_lead: 0,
@@ -32,7 +32,6 @@ export default function RankingNegociacoesAtivas({ negociacoes, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
       const nome = user?.full_name || email.split('@')[0];
