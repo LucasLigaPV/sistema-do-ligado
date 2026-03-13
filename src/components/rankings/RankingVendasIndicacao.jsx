@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Trophy, Award, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function RankingVendasIndicacao({ vendas, users }) {
-  const vendasIndicacao = vendas.filter(v => v.tem_indicacao === "sim");
+export default function RankingVendasIndicacao({ negociacoes, users }) {
+  const vendasIndicacao = negociacoes.filter(n => n.tem_indicacao === "sim" && n.etapa === "venda_ativa");
 
   const rankingArray = users && users.length > 0
     ? users
