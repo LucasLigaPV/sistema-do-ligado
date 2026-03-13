@@ -9,7 +9,7 @@ export default function RankingVendasIndicacao({ vendas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = 0;
     }
   });
@@ -21,7 +21,6 @@ export default function RankingVendasIndicacao({ vendas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([email, total]) => total > 0)
     .map(([email, total]) => {
       const user = users.find(u => u.email === email);
       const nome = user?.full_name || email.split('@')[0];
