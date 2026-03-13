@@ -150,7 +150,7 @@ export default function DashboardRankings() {
             transition={{ delay: 0.35 }}
             className="flex-1"
           >
-            <RankingVendasIndicacao negociacoes={negociacoes} users={users} />
+            <RankingVendasIndicacao negociacoes={negociacoesFiltradas} users={users} />
           </motion.div>
         </div>
 
