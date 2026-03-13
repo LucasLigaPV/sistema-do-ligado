@@ -745,6 +745,14 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
               </div>
 
+              {/* 0km Badge */}
+              {selectedDeal.zero_km && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold border border-amber-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  Veículo 0km
+                </div>
+              )}
+
               {/* Badges: Origem + Desconto + Benefício */}
               <div className="flex flex-wrap gap-2">
                 {selectedDeal.origem && (
