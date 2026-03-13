@@ -33,8 +33,11 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
     queryFn: () => base44.entities.Equipe.list(),
   });
 
-  // Filtrar por vendedor selecionado (master/lider)
+  // Filtrar por vendedor selecionado (master/lider) e excluir negociações excluídas
   const negociacoesFiltradas = negociacoes.filter(n => {
+    // Excluir negociações excluídas
+    if (n.excluida) return false;
+    
     const dataEntrada = new Date(n.data_entrada || n.created_date);
     const dentroIntervalo = (!startDate || dataEntrada >= new Date(startDate)) &&
                            (!endDate || dataEntrada <= new Date(endDate + "T23:59:59"));
@@ -97,6 +100,9 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   
   // 2. Vendas Ativas: negociações com data_venda_ativa no período, aplicando filtros de vendedor/equipe
   const vendasAtivasPorAtivacao = negociacoes.filter(n => {
+    // Excluir negociações excluídas
+    if (n.excluida) return false;
+    
     if (n.etapa !== "venda_ativa" || !n.data_venda_ativa) return false;
     // Excluir trocas
     if (n.origem === "troca_titularidade" || n.origem === "troca_veiculo") return false;
