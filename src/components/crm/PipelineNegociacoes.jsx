@@ -880,16 +880,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                               >
                                 {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                  <div className="relative group">
-                                    <DealCard
-                                      deal={deal}
-                                      onClick={() => handleCardClick(deal)}
-                                      origensConfig={origensConfig}
-                                      formatarTelefone={formatarTelefone}
-                                      userFuncao={userFuncao}
-                                      getNomeVendedor={getNomeVendedor}
-                                    />
-                                    {mostrarExcluidas ? (
+                                  {mostrarExcluidas ? (
+                                    <div className="relative group">
+                                      <DealCard
+                                        deal={deal}
+                                        onClick={() => handleCardClick(deal)}
+                                        origensConfig={origensConfig}
+                                        formatarTelefone={formatarTelefone}
+                                        userFuncao={userFuncao}
+                                        getNomeVendedor={getNomeVendedor}
+                                      />
                                       <Button
                                         onClick={(e) => {
                                           e.stopPropagation();
@@ -903,27 +903,17 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                       >
                                         Restaurar
                                       </Button>
-                                    ) : (
-                                      deal.origem !== "lead" && (
-                                        <Button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (confirm(`Tem certeza que deseja excluir a negociação de ${deal.nome_cliente}?`)) {
-                                              updateMutation.mutate({
-                                                id: deal.id,
-                                                data: { excluida: true, data_exclusao: new Date().toISOString() }
-                                              });
-                                            }
-                                          }}
-                                          size="sm"
-                                          variant="destructive"
-                                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-7 px-2 text-xs"
-                                        >
-                                          Excluir
-                                        </Button>
-                                      )
-                                    )}
-                                  </div>
+                                    </div>
+                                  ) : (
+                                    <DealCard
+                                      deal={deal}
+                                      onClick={() => handleCardClick(deal)}
+                                      origensConfig={origensConfig}
+                                      formatarTelefone={formatarTelefone}
+                                      userFuncao={userFuncao}
+                                      getNomeVendedor={getNomeVendedor}
+                                    />
+                                  )}
                                  </div>
                                 )}
                               </Draggable>
@@ -1516,10 +1506,33 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                       )}
 
                       {!isEtapaFinal(selectedDeal.etapa) && (
-                        <Button onClick={() => setShowLossModal(true)} variant="destructive" className="w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all">
-                          <TrendingDown className="w-4 h-4 mr-2" />
-                          Marcar como Perda
-                        </Button>
+                        <div className="space-y-3">
+                          <Button onClick={() => setShowLossModal(true)} variant="destructive" className="w-full h-12 font-semibold shadow-md hover:shadow-lg transition-all">
+                            <TrendingDown className="w-4 h-4 mr-2" />
+                            Marcar como Perda
+                          </Button>
+                          
+                          {selectedDeal.origem !== "lead" && ["novo_lead", "abordagem", "sondagem", "apresentacao", "cotacao", "em_negociacao", "vistoria_assinatura_pix"].includes(selectedDeal.etapa) && (
+                            <Button
+                              onClick={() => {
+                                if (confirm(`Tem certeza que deseja excluir a negociação de ${selectedDeal.nome_cliente}?`)) {
+                                  updateMutation.mutate({
+                                    id: selectedDeal.id,
+                                    data: { excluida: true, data_exclusao: new Date().toISOString() }
+                                  });
+                                  setShowDetails(false);
+                                  setSelectedDeal(null);
+                                  setEditedDeal(null);
+                                }
+                              }}
+                              variant="outline"
+                              className="w-full h-10 font-medium border-slate-300 text-slate-600 hover:bg-slate-50"
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Excluir Negociação
+                            </Button>
+                          )}
+                        </div>
                       )}
                     </motion.div>
                   </div>
