@@ -876,7 +876,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 key={deal.id}
                                 draggableId={deal.id}
                                 index={index}
-                                isDragDisabled={deal.status_aprovacao === "reprovado" || deal.etapa === "enviado_cadastro"}
+                                isDragDisabled={deal.status_aprovacao === "reprovado" || deal.etapa === "enviado_cadastro" || deal.etapa === "venda_ativa"}
                               >
                                 {(provided, snapshot) => (
                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
