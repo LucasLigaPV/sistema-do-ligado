@@ -23,6 +23,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [motivosReprova, setMotivosReprova] = useState([{ categoria: "", detalhe: "" }]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
+  const [showConfirmAtivar, setShowConfirmAtivar] = useState(false);
+  const [dealParaAtivar, setDealParaAtivar] = useState(null);
   
   // Filtro de data - padrão: 7 dias atrás até 1 dia à frente
   const [startDate, setStartDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() - 7); return format(d, "yyyy-MM-dd"); });
