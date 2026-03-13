@@ -11,7 +11,7 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
     }
   });
@@ -35,7 +35,6 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([email, dados]) => dados.recebidas > 0)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
       const nome = user?.full_name || email.split('@')[0];
