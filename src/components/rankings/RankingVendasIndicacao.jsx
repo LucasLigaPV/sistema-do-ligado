@@ -6,13 +6,15 @@ import { motion } from "framer-motion";
 export default function RankingVendasIndicacao({ vendas, users }) {
   const vendasIndicacao = vendas.filter(v => v.tem_indicacao === "sim");
 
-  const rankingArray = users
-    .filter(u => u.funcao === "vendedor" || u.funcao === "lider")
-    .map(user => {
-      const total = vendasIndicacao.filter(v => v.email_vendedor === user.email).length;
-      return { email: user.email, nome: user.full_name || user.email, total };
-    })
-    .sort((a, b) => b.total - a.total);
+  const rankingArray = users && users.length > 0
+    ? users
+        .filter(u => u.role === "vendedor" || u.role === "lider")
+        .map(user => {
+          const total = vendasIndicacao.filter(v => v.email_vendedor === user.email).length;
+          return { email: user.email, nome: user.full_name || user.email, total };
+        })
+        .sort((a, b) => b.total - a.total)
+    : [];
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
