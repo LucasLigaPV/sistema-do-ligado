@@ -478,7 +478,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (!data.modelo_veiculo || !data.modelo_veiculo.trim()) erros.modelo_veiculo = "Preencha o modelo";
     if (!data.plano_interesse) erros.plano_interesse = "Selecione o plano";
     const adesao = parseCurrencyValue(data.valor_adesao);
-    if (adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
+    const isTrocaTitularidadeOuVeiculo = data.origem === "troca_titularidade" || data.origem === "troca_veiculo";
+    if (!isTrocaTitularidadeOuVeiculo && adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
     const mensalidade = parseCurrencyValue(data.valor_mensalidade);
     if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
     if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
@@ -1696,7 +1697,12 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <FieldError campo="plano_interesse" />
                   </div>
                   <div>
-                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>Valor da Adesão * <span className="text-xs font-normal text-slate-400">(mín. R$ 99,99)</span></Label>
+                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>
+                      Valor da Adesão * 
+                      {conferenciaData.origem !== "troca_titularidade" && conferenciaData.origem !== "troca_veiculo" && (
+                        <span className="text-xs font-normal text-slate-400"> (mín. R$ 99,99)</span>
+                      )}
+                    </Label>
                     <Input
                       value={conferenciaData.valor_adesao || ""}
                       onChange={(e) => {
