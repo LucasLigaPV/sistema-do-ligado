@@ -1697,7 +1697,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <FieldError campo="plano_interesse" />
                   </div>
                   <div>
-                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>Valor da Adesão * <span className="text-xs font-normal text-slate-400">(mín. R$ 99,99)</span></Label>
+                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>Valor da Adesão * <span className="text-xs font-normal text-slate-400">(mín. R$ 99,99{conferenciaData.origem === "troca_titularidade" || conferenciaData.origem === "troca_veiculo" ? " ou R$ 0,00 para Trocas" : ""})</span></Label>
                     <Input
                       value={conferenciaData.valor_adesao || ""}
                       onChange={(e) => {
