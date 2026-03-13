@@ -221,6 +221,12 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
 
     if (!deal) return;
 
+    // Bloquear movimento se está em reprovado (apenas corrigido na pipeline de negociações é permitido)
+    if (deal.status_aprovacao === "reprovado") {
+      alert("Este card está reprovado. Corrija-o na Pipeline de Negociações antes de movê-lo aqui.");
+      return;
+    }
+
     if (newStatus === "reprovado") {
       setSelectedDeal(deal);
       setShowModal(true);
