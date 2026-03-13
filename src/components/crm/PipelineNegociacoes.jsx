@@ -478,7 +478,8 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (!data.modelo_veiculo || !data.modelo_veiculo.trim()) erros.modelo_veiculo = "Preencha o modelo";
     if (!data.plano_interesse) erros.plano_interesse = "Selecione o plano";
     const adesao = parseCurrencyValue(data.valor_adesao);
-    if (adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
+    const ehTrocaTitularidadeOuVeiculo = data.origem === "troca_titularidade" || data.origem === "troca_veiculo";
+    if (!ehTrocaTitularidadeOuVeiculo && adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
     const mensalidade = parseCurrencyValue(data.valor_mensalidade);
     if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
     if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
