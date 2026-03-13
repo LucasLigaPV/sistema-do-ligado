@@ -46,8 +46,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
   const rankingArray = Object.entries(ranking)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
-      const nome = user?.full_name || email.split('@')[0];
-      return { email, nome, ...dados };
+      return { email, nome: user?.full_name || email, ...dados };
     })
     .sort((a, b) => b.conversao - a.conversao);
 
@@ -89,7 +88,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
                   <p className="text-[10px] text-slate-500">{vendedor.vendas} vendas</p>
                 </div>
               </div>
-              <div className="text-xl font-bold text-[#EFC200] flex-shrink-0">{vendedor.conversao.toFixed(2)}%</div>
+              <div className="text-xl font-bold text-[#EFC200] flex-shrink-0">{vendedor.conversao.toFixed(1)}%</div>
             </motion.div>
           ))}
         </div>

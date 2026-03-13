@@ -147,17 +147,17 @@ export default function DashboardCRM({ userEmail, userFuncao }) {
   // Leads
   const totalLeads = negociacoesAtivasPeriodo.filter(n => n.origem === "lead").length;
   const vendasLead = vendasAtivasPorAtivacao.filter(n => n.origem === "lead").length;
-  const taxaConvLead = totalLeads > 0 ? ((vendasLead / totalLeads) * 100).toFixed(2) : "0.00";
+  const taxaConvLead = totalLeads > 0 ? ((vendasLead / totalLeads) * 100).toFixed(1) : "0.0";
 
   // Indicações
   const totalIndicacoes = negociacoesAtivasPeriodo.filter(n => n.origem === "indicacao").length;
   const vendasIndicacao = vendasAtivasPorAtivacao.filter(n => n.origem === "indicacao").length;
-  const taxaConvIndicacao = totalIndicacoes > 0 ? ((vendasIndicacao / totalIndicacoes) * 100).toFixed(2) : "0.00";
+  const taxaConvIndicacao = totalIndicacoes > 0 ? ((vendasIndicacao / totalIndicacoes) * 100).toFixed(1) : "0.0";
 
   // Outros Canais
   const totalOutrosCanais = negociacoesAtivasPeriodo.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
   const vendasOutrosCanais = vendasAtivasPorAtivacao.filter(n => outrosCanaisOrigens.includes(n.origem)).length;
-  const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(2) : "0.00";
+  const taxaConvOutros = totalOutrosCanais > 0 ? ((vendasOutrosCanais / totalOutrosCanais) * 100).toFixed(1) : "0.0";
 
   // Ranking de vendedores (vendas contabilizadas por data_venda_ativa)
   const vendedoresStats = {};

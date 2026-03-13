@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,21 +50,14 @@ export default function Distribuicao({ userFuncao }) {
   const { data: leads = [] } = useQuery({
     queryKey: ["leads"],
     queryFn: () => base44.entities.Lead.list(),
+    refetchInterval: 15000,
   });
 
   useEffect(() => {
-    const unsubscribeLead = base44.entities.Lead.subscribe((event) => {
+    const unsubscribe = base44.entities.Lead.subscribe((event) => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
     });
-    
-    const unsubscribeNegociacao = base44.entities.Negociacao.subscribe((event) => {
-      queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
-    });
-
-    return () => {
-      unsubscribeLead();
-      unsubscribeNegociacao();
-    };
+    return unsubscribe;
   }, [queryClient]);
 
   const { data: negociacoes = [] } = useQuery({

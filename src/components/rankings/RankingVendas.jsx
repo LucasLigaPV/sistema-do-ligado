@@ -9,7 +9,7 @@ export default function RankingVendas({ vendas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = {
         total: 0,
         essencial: 0,
@@ -23,31 +23,20 @@ export default function RankingVendas({ vendas, users }) {
 
   vendas.forEach(venda => {
     const email = venda.email_vendedor;
-    // Inicializar se não existir
-    if (!ranking[email]) {
-      ranking[email] = {
-        total: 0,
-        essencial: 0,
-        principal: 0,
-        plano_van: 0,
-        plano_moto: 0,
-        plano_caminhao: 0
-      };
+    if (ranking[email]) {
+      ranking[email].total++;
+      if (venda.plano_vendido === "essencial") ranking[email].essencial++;
+      if (venda.plano_vendido === "principal") ranking[email].principal++;
+      if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
+      if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
+      if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
     }
-    ranking[email].total++;
-    if (venda.plano_vendido === "essencial") ranking[email].essencial++;
-    if (venda.plano_vendido === "principal") ranking[email].principal++;
-    if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
-    if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
-    if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
   });
 
   const rankingArray = Object.entries(ranking)
-    .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
-      const nome = user?.full_name || email.split('@')[0];
-      return { email, nome, ...dados };
+      return { email, nome: user?.full_name || email, ...dados };
     })
     .sort((a, b) => b.total - a.total)
     .slice(0, 10);

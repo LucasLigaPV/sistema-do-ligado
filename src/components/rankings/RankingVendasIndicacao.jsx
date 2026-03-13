@@ -9,24 +9,22 @@ export default function RankingVendasIndicacao({ vendas, users }) {
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider" || user.funcao === "master") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = 0;
     }
   });
 
   vendasIndicacao.forEach(venda => {
     const email = venda.email_vendedor;
-    if (!ranking[email]) ranking[email] = 0;
-    ranking[email]++;
+    if (ranking[email] !== undefined) ranking[email]++;
   });
 
   const rankingArray = Object.entries(ranking)
     .map(([email, total]) => {
       const user = users.find(u => u.email === email);
-      const nome = user?.full_name || email.split('@')[0];
-      return { email, nome, total };
+      return { email, nome: user?.full_name || email, total };
     })
-    .sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome));
+    .sort((a, b) => b.total - a.total);
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;

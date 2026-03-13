@@ -37,8 +37,7 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
   const rankingArray = Object.entries(ranking)
     .map(([email, dados]) => {
       const user = users.find(u => u.email === email);
-      const nome = user?.full_name || email.split('@')[0];
-      return { email, nome, ...dados };
+      return { email, nome: user?.full_name || email, ...dados };
     })
     .sort((a, b) => b.recebidas - a.recebidas);
 

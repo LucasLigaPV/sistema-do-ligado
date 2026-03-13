@@ -254,15 +254,6 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
         analisado_por: userEmail,
         data_analise: new Date().toISOString(),
       };
-    } else if (newStatus === "aguardando_termo") {
-      updateData.data = {
-        status_aprovacao: "aguardando_termo",
-        etapa: "enviado_cadastro",
-      };
-    } else if (newStatus === "aguardando") {
-      updateData.data = {
-        status_aprovacao: "aguardando",
-      };
     }
 
     updateMutation.mutate(updateData);
@@ -454,19 +445,6 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                         </button>
                                       )}
                                       {(etapa.id === "analisando" || etapa.id === "corrigido") && (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDealParaAtivar(deal);
-                                            setShowConfirmAtivar(true);
-                                          }}
-                                          className="w-full mt-1 py-1.5 text-xs font-semibold rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-700 border border-green-500/30 hover:border-green-500/60 transition-all flex items-center justify-center gap-1.5"
-                                        >
-                                          <CheckCircle2 className="w-3.5 h-3.5" />
-                                          Ativar Venda
-                                        </button>
-                                      )}
-                                      {etapa.id === "aguardando_termo" && (
                                         <button
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -887,14 +865,6 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                               status_aprovacao: "analisando",
                               analisado_por: userEmail,
                               data_analise: new Date().toISOString(),
-                            }
-                          });
-                        } else if (newStatus === "aguardando_termo") {
-                          updateMutation.mutate({
-                            id: selectedDeal.id,
-                            data: {
-                              status_aprovacao: "aguardando_termo",
-                              etapa: "enviado_cadastro",
                             }
                           });
                         } else {
