@@ -376,11 +376,29 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               {/* Linha de fundo */}
               <div className="absolute top-6 left-0 right-0 h-2 bg-slate-200 rounded-full" />
 
-              {/* Barra de progresso preenchida - só até o nível atual */}
+              {/* Barra de progresso preenchida - cresce proporcionalmente */}
               <div 
                 className="absolute top-6 left-0 h-2 bg-gradient-to-r from-[#EFC200] to-[#D4A900] rounded-full transition-all duration-1000"
                 style={{ 
-                  width: `${(nivelAtual.vendas / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100}%` 
+                  width: (() => {
+                    const maxVendas = PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas;
+                    const indexAtual = PLANO_CARREIRA.findIndex(n => n.vendas === nivelAtual.vendas);
+                    const proximoIndex = indexAtual + 1;
+                    
+                    if (proximoIndex >= PLANO_CARREIRA.length) {
+                      return '100%';
+                    }
+                    
+                    const vendasNoNivel = totalVendasProgresso - nivelAtual.vendas;
+                    const vendasParaProximo = PLANO_CARREIRA[proximoIndex].vendas - nivelAtual.vendas;
+                    const progressoNoNivel = vendasNoNivel / vendasParaProximo;
+                    
+                    const posicaoAtual = (nivelAtual.vendas / maxVendas) * 100;
+                    const posicaoProxima = (PLANO_CARREIRA[proximoIndex].vendas / maxVendas) * 100;
+                    const incremento = (posicaoProxima - posicaoAtual) * progressoNoNivel;
+                    
+                    return `${posicaoAtual + incremento}%`;
+                  })()
                 }}
               />
 
