@@ -41,7 +41,14 @@ export default function DashboardRankings() {
 
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: async () => {
+      try {
+        return await base44.functions.invoke('getAllUsers', {});
+      } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+        return [];
+      }
+    },
   });
 
   // Filtrar por data
