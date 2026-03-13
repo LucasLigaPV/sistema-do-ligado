@@ -1085,7 +1085,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 />
                               </div>
                               <div>
-                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Placa</Label>
+                                <div className="flex items-center justify-between gap-2 mb-2">
+                                  <Label className="text-sm font-medium text-slate-700">Placa {editedDeal.zero_km ? "(opcional)" : ""}</Label>
+                                  <div className="flex items-center gap-2">
+                                    <input type="checkbox" id="zero_km_pl" checked={editedDeal.zero_km || false} onChange={(e) => setEditedDeal({ ...editedDeal, zero_km: e.target.checked })} disabled={isReadOnly} className="w-4 h-4 cursor-pointer rounded" />
+                                    <label htmlFor="zero_km_pl" className="text-xs font-medium text-slate-600 cursor-pointer">0km</label>
+                                  </div>
+                                </div>
                                 <Input
                                   value={editedDeal.placa || ""}
                                   onChange={(e) => {
