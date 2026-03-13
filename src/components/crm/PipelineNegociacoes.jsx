@@ -41,6 +41,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showConferenciaModal, setShowConferenciaModal] = useState(false);
   const [conferenciaData, setConferenciaData] = useState(null);
   const [tentouEnviarConferencia, setTentouEnviarConferencia] = useState(false);
+  const [mostrarExcluidas, setMostrarExcluidas] = useState(false);
   // Filtro de data padrão: 30 dias para trás e 1 dia para frente
   const hoje = new Date();
   const dataInicio = new Date(hoje);
@@ -350,7 +351,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const membrosEquipe = minhaEquipe ? minhaEquipe.membros : [];
   const todosVendedoresEquipe = minhaEquipe ? [minhaEquipe.lider_email, ...membrosEquipe] : [userEmail];
 
-  // Filtrar negociações por acesso
+  // Filtrar negociações por acesso e status de exclusão
   let negociacoesVisiveis = negociacoes;
   if (userFuncao === "master") {
     negociacoesVisiveis = negociacoes;
@@ -358,6 +359,13 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     negociacoesVisiveis = negociacoes.filter(n => todosVendedoresEquipe.includes(n.vendedor_email));
   } else {
     negociacoesVisiveis = negociacoes.filter(n => n.vendedor_email === userEmail);
+  }
+
+  // Filtrar por status de exclusão
+  if (mostrarExcluidas) {
+    negociacoesVisiveis = negociacoesVisiveis.filter(n => n.excluida === true);
+  } else {
+    negociacoesVisiveis = negociacoesVisiveis.filter(n => !n.excluida);
   }
 
   // Aplicar filtros de data
@@ -808,6 +816,16 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
           <Plus className="w-5 h-5" />
           <span className="text-[10px] leading-tight text-center">Nova</span>
         </Button>
+
+        <Button 
+          onClick={() => setMostrarExcluidas(!mostrarExcluidas)} 
+          variant={mostrarExcluidas ? "default" : "outline"}
+          className={`h-16 w-16 flex-col gap-1 p-2 ${mostrarExcluidas ? "bg-slate-600 hover:bg-slate-700 text-white" : ""}`}
+          size="sm"
+        >
+          <History className="w-5 h-5" />
+          <span className="text-[10px] leading-tight text-center">Excluídos</span>
+        </Button>
       </div>
 
       {/* Kanban Board */}
@@ -861,16 +879,52 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                 isDragDisabled={deal.status_aprovacao === "reprovado" || deal.etapa === "enviado_cadastro"}
                               >
                                 {(provided, snapshot) => (
-                                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                   <DealCard
-                                     deal={deal}
-                                     onClick={() => handleCardClick(deal)}
-                                     origensConfig={origensConfig}
-                                     formatarTelefone={formatarTelefone}
-                                     userFuncao={userFuncao}
-                                     getNomeVendedor={getNomeVendedor}
-                                   />
+                                <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                  <div className="relative group">
+                                    <DealCard
+                                      deal={deal}
+                                      onClick={() => handleCardClick(deal)}
+                                      origensConfig={origensConfig}
+                                      formatarTelefone={formatarTelefone}
+                                      userFuncao={userFuncao}
+                                      getNomeVendedor={getNomeVendedor}
+                                    />
+                                    {mostrarExcluidas ? (
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          updateMutation.mutate({
+                                            id: deal.id,
+                                            data: { excluida: false, data_exclusao: null }
+                                          });
+                                        }}
+                                        size="sm"
+                                        className="absolute top-2 right-2 bg-green-600 hover:bg-green-700 text-white opacity-0 group-hover:opacity-100 transition-opacity h-7 px-2 text-xs"
+                                      >
+                                        Restaurar
+                                      </Button>
+                                    ) : (
+                                      deal.origem !== "lead" && (
+                                        <Button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (confirm(`Tem certeza que deseja excluir a negociação de ${deal.nome_cliente}?`)) {
+                                              updateMutation.mutate({
+                                                id: deal.id,
+                                                data: { excluida: true, data_exclusao: new Date().toISOString() }
+                                              });
+                                            }
+                                          }}
+                                          size="sm"
+                                          variant="destructive"
+                                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-7 px-2 text-xs"
+                                        >
+                                          Excluir
+                                        </Button>
+                                      )
+                                    )}
                                   </div>
+                                 </div>
                                 )}
                               </Draggable>
                             ))}
