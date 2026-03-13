@@ -52,6 +52,7 @@ export default function RankingVendas({ vendas, users }) {
   });
 
   const rankingArray = Object.entries(ranking)
+    .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
       return { email, nome: getNomeVendedor(email, users), ...dados };
     })
