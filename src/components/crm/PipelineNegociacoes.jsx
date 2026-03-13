@@ -23,6 +23,7 @@ import DialogAlteracoesNaoSalvas from "./DialogAlteracoesNaoSalvas";
 import NavegacaoEtapas from "./NavegacaoEtapas";
 import DealCard from "./DealCard";
 import AnexosReprova from "./AnexosReprova";
+import ModalConferirInformacoesPipeline from "./ModalConferirInformacoesPipeline";
 import { useUsuarios } from "../shared/useUsuarios";
 import FiltroVendedor from "../shared/FiltroVendedor";
 import FiltroOrigem from "../shared/FiltroOrigem";
