@@ -73,6 +73,16 @@ export default function DashboardRankings() {
     return true;
   });
 
+  const negociacoesFiltradas = negociacoes.filter(n => {
+    if (dataInicio && new Date(n.updated_date) < new Date(dataInicio)) return false;
+    if (dataFim) {
+      const fim = new Date(dataFim);
+      fim.setHours(23, 59, 59, 999);
+      if (new Date(n.updated_date) > fim) return false;
+    }
+    return true;
+  });
+
   return (
     <div className="space-y-4">
       {/* Filtros de Data - Compacto */}
