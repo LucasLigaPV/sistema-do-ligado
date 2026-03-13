@@ -612,10 +612,26 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {selectedDeal.placa && (
-                    <div className="bg-[#EFC200]/10 border border-[#EFC200]/40 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const placaSemHifen = selectedDeal.placa.replace(/-/g, '');
+                        navigator.clipboard.writeText(placaSemHifen);
+                        // Visual feedback
+                        const btn = e.currentTarget;
+                        const originalText = btn.querySelector('span').textContent;
+                        btn.querySelector('span').textContent = 'Copiado!';
+                        setTimeout(() => {
+                          if (btn.querySelector('span')) {
+                            btn.querySelector('span').textContent = originalText;
+                          }
+                        }, 1500);
+                      }}
+                      className="bg-[#EFC200]/10 border border-[#EFC200]/40 rounded-lg px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#EFC200]/20 transition-colors cursor-pointer"
+                    >
                       <Car className="w-3.5 h-3.5 text-[#EFC200]" />
                       <span className="text-sm font-bold text-slate-800 tracking-wider">{selectedDeal.placa}</span>
-                    </div>
+                    </button>
                   )}
                   <button onClick={() => setShowDetails(false)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                     <X className="w-4 h-4" />
