@@ -50,14 +50,21 @@ export default function Distribuicao({ userFuncao }) {
   const { data: leads = [] } = useQuery({
     queryKey: ["leads"],
     queryFn: () => base44.entities.Lead.list(),
-    refetchInterval: 15000,
   });
 
   useEffect(() => {
-    const unsubscribe = base44.entities.Lead.subscribe((event) => {
+    const unsubscribeLead = base44.entities.Lead.subscribe((event) => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
     });
-    return unsubscribe;
+    
+    const unsubscribeNegociacao = base44.entities.Negociacao.subscribe((event) => {
+      queryClient.invalidateQueries({ queryKey: ["negociacoes"] });
+    });
+
+    return () => {
+      unsubscribeLead();
+      unsubscribeNegociacao();
+    };
   }, [queryClient]);
 
   const { data: negociacoes = [] } = useQuery({
