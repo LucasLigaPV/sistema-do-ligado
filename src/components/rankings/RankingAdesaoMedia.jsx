@@ -40,8 +40,7 @@ export default function RankingAdesaoMedia({ vendas, users }) {
       const user = users.find(u => u.email === email);
       return { email, nome: user?.full_name || email, ...dados };
     })
-    .sort((a, b) => b.media - a.media)
-    .slice(0, 10);
+    .sort((a, b) => b.media - a.media);
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
@@ -58,11 +57,11 @@ export default function RankingAdesaoMedia({ vendas, users }) {
           <span>Adesão Média</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pt-2">
-        <div className="space-y-2">
+      <CardContent className="flex-1 pt-2 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-auto space-y-2">
           {rankingArray.length === 0 ? (
             <p className="text-slate-500 text-center py-6 text-sm">Nenhuma venda</p>
-          ) : rankingArray.slice(0, 5).map((vendedor, index) => (
+          ) : rankingArray.map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, y: 5 }}
@@ -73,13 +72,15 @@ export default function RankingAdesaoMedia({ vendas, users }) {
               }`}
             >
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                {getMedalIcon(index)}
+                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {index + 1}
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
                   <p className="text-[10px] text-slate-500">{vendedor.total} {vendedor.total === 1 ? 'venda' : 'vendas'}</p>
                 </div>
               </div>
-              <div className="text-lg font-bold text-slate-900">
+              <div className="text-lg font-bold text-slate-900 flex-shrink-0">
                 R$ {vendedor.media.toFixed(0)}
               </div>
             </motion.div>
