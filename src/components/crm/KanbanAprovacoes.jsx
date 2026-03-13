@@ -153,7 +153,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const negociacoesAnalise = useMemo(() => 
     negociacoes.filter(n => {
       if (!n.informacoes_conferidas) return false;
-      if (!(n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado")) return false;
+      if (!(n.etapa === "enviado_cadastro" || n.status_aprovacao === "reprovado" || n.status_aprovacao === "corrigido" || n.status_aprovacao === "aprovado" || n.status_aprovacao === "aguardando_termo")) return false;
       
       // Filtro de data: aguardando usa data_conferencia, analisando+ usa data_analise, aprovado usa data_aprovacao
       let dataParaFiltrar;
