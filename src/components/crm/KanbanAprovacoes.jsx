@@ -312,6 +312,29 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
     setShowDetails(true);
   }, []);
 
+  const handleAtivarVenda = useCallback((deal) => {
+    setDealParaAtivar(deal);
+    setShowConfirmAtivar(true);
+  }, []);
+
+  const handleConfirmAtivar = useCallback(() => {
+    if (!dealParaAtivar) return;
+
+    updateMutation.mutate({
+      id: dealParaAtivar.id,
+      data: {
+        status_aprovacao: "aprovado",
+        etapa: "venda_ativa",
+        aprovado_por: userEmail,
+        data_aprovacao: new Date().toISOString(),
+        data_venda_ativa: new Date().toISOString(),
+      }
+    });
+
+    setShowConfirmAtivar(false);
+    setDealParaAtivar(null);
+  }, [dealParaAtivar, userEmail, updateMutation]);
+
   const historicoReprov = useMemo(() => 
     selectedDeal?.historico_reprovas || [],
     [selectedDeal?.historico_reprovas]
