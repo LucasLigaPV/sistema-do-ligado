@@ -26,6 +26,7 @@ import AnexosReprova from "./AnexosReprova";
 import { useUsuarios } from "../shared/useUsuarios";
 import FiltroVendedor from "../shared/FiltroVendedor";
 import FiltroOrigem from "../shared/FiltroOrigem";
+import CampoPlaca from "./CampoPlaca";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -1084,24 +1085,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   className="h-11 border-slate-300 focus:border-slate-400 transition-all"
                                 />
                               </div>
-                              <div>
-                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Placa</Label>
-                                <Input
-                                  value={editedDeal.placa || ""}
-                                  onChange={(e) => {
-                                    const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                                    let formatado = valor;
-                                    if (valor.length > 3) {
-                                      formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
-                                    }
-                                    setEditedDeal({ ...editedDeal, placa: formatado });
-                                  }}
-                                  placeholder="ABC-1D23"
-                                  maxLength={8}
-                                  disabled={isReadOnly}
-                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
-                                />
-                              </div>
+                              <CampoPlaca
+                                value={editedDeal.placa}
+                                onChange={(valor) => setEditedDeal({ ...editedDeal, placa: valor })}
+                                veiculo0km={editedDeal.veiculo_0km}
+                                onVeiculo0kmChange={(checked) => setEditedDeal({ ...editedDeal, veiculo_0km: checked })}
+                                disabled={isReadOnly}
+                                required={false}
+                              />
                               <div>
                                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Modelo do Veículo</Label>
                                 <Input
@@ -1654,22 +1645,14 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     />
                     <FieldError campo="email" />
                   </div>
-                  <div>
-                    <Label className={erros.placa ? "text-red-600" : ""}>Placa *</Label>
-                    <Input
-                      value={conferenciaData.placa || ""}
-                      onChange={(e) => {
-                        const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                        let formatado = valor;
-                        if (valor.length > 3) formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
-                        setConferenciaData({ ...conferenciaData, placa: formatado });
-                      }}
-                      placeholder="ABC-1D23"
-                      maxLength={8}
-                      className={erros.placa ? "border-red-400 focus:border-red-500" : ""}
-                    />
-                    <FieldError campo="placa" />
-                  </div>
+                  <CampoPlaca
+                    value={conferenciaData.placa}
+                    onChange={(valor) => setConferenciaData({ ...conferenciaData, placa: valor })}
+                    veiculo0km={conferenciaData.veiculo_0km}
+                    onVeiculo0kmChange={(checked) => setConferenciaData({ ...conferenciaData, veiculo_0km: checked })}
+                    error={erros.placa}
+                    required={true}
+                  />
                   <div>
                     <Label className={erros.modelo_veiculo ? "text-red-600" : ""}>Modelo do Veículo *</Label>
                     <Input
