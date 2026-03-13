@@ -23,6 +23,8 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
   const [motivosReprova, setMotivosReprova] = useState([{ categoria: "", detalhe: "" }]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistorico, setShowHistorico] = useState(false);
+  const [showConfirmAtivar, setShowConfirmAtivar] = useState(false);
+  const [dealParaAtivar, setDealParaAtivar] = useState(null);
   
   // Filtro de data - padrão: 7 dias atrás até 1 dia à frente
   const [startDate, setStartDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() - 7); return format(d, "yyyy-MM-dd"); });
@@ -442,6 +444,19 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                                           Analisar
                                         </button>
                                       )}
+                                      {(etapa.id === "analisando" || etapa.id === "corrigido") && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDealParaAtivar(deal);
+                                            setShowConfirmAtivar(true);
+                                          }}
+                                          className="w-full mt-1 py-1.5 text-xs font-semibold rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-700 border border-green-500/30 hover:border-green-500/60 transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                          <CheckCircle2 className="w-3.5 h-3.5" />
+                                          Ativar Venda
+                                        </button>
+                                      )}
                                       {deal.status_aprovacao !== "aprovado" && (deal.motivos_reprova?.length > 0 || deal.motivo_reprova_categoria) && (
                                         <div className="text-xs text-red-600 pt-2 border-t border-red-200 bg-red-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b space-y-1">
                                           {deal.motivos_reprova && deal.motivos_reprova.length > 0 ? (
@@ -587,6 +602,64 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                   disabled={motivosReprova.filter(m => m.categoria && m.detalhe).length === 0}
                 >
                   Reprovar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Confirmação Ativar Venda */}
+      <Dialog open={showConfirmAtivar} onOpenChange={setShowConfirmAtivar}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+              Ativar Venda
+            </DialogTitle>
+          </DialogHeader>
+          {dealParaAtivar && (
+            <div className="space-y-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <p className="text-sm text-amber-900">
+                  Tem certeza que deseja ativar essa placa?
+                </p>
+                <div className="mt-3 space-y-1">
+                  <p className="text-sm font-semibold text-slate-900">{dealParaAtivar.nome_cliente}</p>
+                  <p className="text-sm text-slate-700 font-medium">{dealParaAtivar.placa}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowConfirmAtivar(false);
+                    setDealParaAtivar(null);
+                  }}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => {
+                    updateMutation.mutate({
+                      id: dealParaAtivar.id,
+                      data: {
+                        status_aprovacao: "aprovado",
+                        etapa: "venda_ativa",
+                        aprovado_por: userEmail,
+                        data_aprovacao: new Date().toISOString(),
+                        data_venda_ativa: new Date().toISOString(),
+                      }
+                    });
+                    setShowConfirmAtivar(false);
+                    setDealParaAtivar(null);
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Confirmar Ativação
                 </Button>
               </div>
             </div>
