@@ -383,7 +383,7 @@ export default function KanbanAprovacoes({ userEmail, userFuncao }) {
                         </CardHeader>
                         <CardContent className="space-y-2 flex-1 overflow-y-auto">
                           {dealsNaEtapa.map((deal, index) => (
-                            <Draggable key={`deal-${deal.id}`} draggableId={deal.id} index={index} type="DEAL">
+                            <Draggable key={`deal-${deal.id}`} draggableId={deal.id} index={index} type="DEAL" isDragDisabled={deal.status_aprovacao === "reprovado"}>
                               {(provided, snapshot) => (
                                 <div
                                   ref={provided.innerRef}
