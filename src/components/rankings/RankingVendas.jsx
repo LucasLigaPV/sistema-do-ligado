@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 export default function RankingVendas({ vendas, users }) {
   const ranking = {};
 
-  // Inicializar todos os vendedores com 0
-  users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
-      ranking[user.email] = {
+  vendas.forEach(venda => {
+    const email = venda.email_vendedor;
+    if (!ranking[email]) {
+      ranking[email] = {
         total: 0,
         essencial: 0,
         principal: 0,
@@ -19,18 +19,12 @@ export default function RankingVendas({ vendas, users }) {
         plano_caminhao: 0
       };
     }
-  });
-
-  vendas.forEach(venda => {
-    const email = venda.email_vendedor;
-    if (ranking[email]) {
-      ranking[email].total++;
-      if (venda.plano_vendido === "essencial") ranking[email].essencial++;
-      if (venda.plano_vendido === "principal") ranking[email].principal++;
-      if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
-      if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
-      if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
-    }
+    ranking[email].total++;
+    if (venda.plano_vendido === "essencial") ranking[email].essencial++;
+    if (venda.plano_vendido === "principal") ranking[email].principal++;
+    if (venda.plano_vendido === "plano_van") ranking[email].plano_van++;
+    if (venda.plano_vendido === "plano_moto") ranking[email].plano_moto++;
+    if (venda.plano_vendido === "plano_caminhao") ranking[email].plano_caminhao++;
   });
 
   const rankingArray = Object.entries(ranking)
@@ -124,20 +118,20 @@ export default function RankingVendas({ vendas, users }) {
 
         {/* Demais posições */}
         {demais.length > 0 && (
-          <div className="flex-1 flex flex-col gap-1.5 pt-2 border-t border-slate-100 overflow-auto">
+          <div className="space-y-1 pt-2 border-t border-slate-100">
             {demais.map((vendedor, index) => (
               <motion.div
                 key={vendedor.email}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.03 }}
-                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-slate-50 transition-colors border border-slate-100"
+                className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                <div className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-[10px] flex-shrink-0">
                   {index + 4}
                 </div>
-                <p className="font-medium text-sm text-slate-900 flex-1 min-w-0 truncate">{vendedor.nome}</p>
-                <div className="text-lg font-bold text-slate-900 flex-shrink-0">{vendedor.total}</div>
+                <p className="font-medium text-xs text-slate-900 flex-1 truncate">{vendedor.nome}</p>
+                <div className="text-base font-bold text-slate-900">{vendedor.total}</div>
               </motion.div>
             ))}
           </div>

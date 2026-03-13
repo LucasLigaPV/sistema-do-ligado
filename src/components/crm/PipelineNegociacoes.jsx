@@ -26,7 +26,6 @@ import AnexosReprova from "./AnexosReprova";
 import { useUsuarios } from "../shared/useUsuarios";
 import FiltroVendedor from "../shared/FiltroVendedor";
 import FiltroOrigem from "../shared/FiltroOrigem";
-import CampoPlaca from "./CampoPlaca";
 
 export default function PipelineNegociacoes({ userEmail, userFuncao }) {
   const [showNewDeal, setShowNewDeal] = useState(false);
@@ -479,8 +478,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
     if (!data.modelo_veiculo || !data.modelo_veiculo.trim()) erros.modelo_veiculo = "Preencha o modelo";
     if (!data.plano_interesse) erros.plano_interesse = "Selecione o plano";
     const adesao = parseCurrencyValue(data.valor_adesao);
-    const isTrocaTitularidadeOuVeiculo = data.origem === "troca_titularidade" || data.origem === "troca_veiculo";
-    if (!isTrocaTitularidadeOuVeiculo && adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
+    if (adesao < 99.99) erros.valor_adesao = "Valor mínimo R$ 99,99";
     const mensalidade = parseCurrencyValue(data.valor_mensalidade);
     if (mensalidade < 50) erros.valor_mensalidade = "Valor mínimo R$ 50,00";
     if (!data.data_vencimento) erros.data_vencimento = "Selecione o dia";
@@ -1085,15 +1083,24 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                                   className="h-11 border-slate-300 focus:border-slate-400 transition-all"
                                 />
                               </div>
-                              <CampoPlaca
-                                value={editedDeal.placa}
-                                onChange={(valor) => setEditedDeal({ ...editedDeal, placa: valor })}
-                                veiculo0km={editedDeal.veiculo_0km}
-                                onVeiculo0kmChange={(checked) => setEditedDeal({ ...editedDeal, veiculo_0km: checked, placa: checked ? "" : editedDeal.placa })}
-                                disabled={isReadOnly}
-                                required={false}
-                                checkboxId="veiculo-0km-edit"
-                              />
+                              <div>
+                                <Label className="text-sm font-medium text-slate-700 mb-2 block">Placa</Label>
+                                <Input
+                                  value={editedDeal.placa || ""}
+                                  onChange={(e) => {
+                                    const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                                    let formatado = valor;
+                                    if (valor.length > 3) {
+                                      formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                                    }
+                                    setEditedDeal({ ...editedDeal, placa: formatado });
+                                  }}
+                                  placeholder="ABC-1D23"
+                                  maxLength={8}
+                                  disabled={isReadOnly}
+                                  className="h-11 border-slate-300 focus:border-slate-400 transition-all"
+                                />
+                              </div>
                               <div>
                                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Modelo do Veículo</Label>
                                 <Input
@@ -1646,15 +1653,22 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     />
                     <FieldError campo="email" />
                   </div>
-                  <CampoPlaca
-                    value={conferenciaData.placa}
-                    onChange={(valor) => setConferenciaData({ ...conferenciaData, placa: valor })}
-                    veiculo0km={conferenciaData.veiculo_0km}
-                    onVeiculo0kmChange={(checked) => setConferenciaData({ ...conferenciaData, veiculo_0km: checked, placa: checked ? "" : conferenciaData.placa })}
-                    error={erros.placa}
-                    required={true}
-                    checkboxId="veiculo-0km-conferencia"
-                  />
+                  <div>
+                    <Label className={erros.placa ? "text-red-600" : ""}>Placa *</Label>
+                    <Input
+                      value={conferenciaData.placa || ""}
+                      onChange={(e) => {
+                        const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                        let formatado = valor;
+                        if (valor.length > 3) formatado = `${valor.slice(0, 3)}-${valor.slice(3, 7)}`;
+                        setConferenciaData({ ...conferenciaData, placa: formatado });
+                      }}
+                      placeholder="ABC-1D23"
+                      maxLength={8}
+                      className={erros.placa ? "border-red-400 focus:border-red-500" : ""}
+                    />
+                    <FieldError campo="placa" />
+                  </div>
                   <div>
                     <Label className={erros.modelo_veiculo ? "text-red-600" : ""}>Modelo do Veículo *</Label>
                     <Input
@@ -1682,12 +1696,7 @@ export default function PipelineNegociacoes({ userEmail, userFuncao }) {
                     <FieldError campo="plano_interesse" />
                   </div>
                   <div>
-                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>
-                      Valor da Adesão * 
-                      {conferenciaData.origem !== "troca_titularidade" && conferenciaData.origem !== "troca_veiculo" && (
-                        <span className="text-xs font-normal text-slate-400"> (mín. R$ 99,99)</span>
-                      )}
-                    </Label>
+                    <Label className={erros.valor_adesao ? "text-red-600" : ""}>Valor da Adesão * <span className="text-xs font-normal text-slate-400">(mín. R$ 99,99)</span></Label>
                     <Input
                       value={conferenciaData.valor_adesao || ""}
                       onChange={(e) => {

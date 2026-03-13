@@ -9,10 +9,10 @@ export default function RankingPerdas({ perdas, users }) {
   const perdasValidas = perdas.filter(p => p.categoria_motivo !== 'lead_invalido');
   const ranking = {};
 
-  // Inicializar todos os vendedores com 0
-  users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
-      ranking[user.email] = {
+  perdasValidas.forEach(perda => {
+    const email = perda.vendedor_email;
+    if (!ranking[email]) {
+      ranking[email] = {
         total: 0,
         financeiro: 0,
         timing: 0,
@@ -22,14 +22,8 @@ export default function RankingPerdas({ perdas, users }) {
         situacoes_esporadicas: 0
       };
     }
-  });
-
-  perdasValidas.forEach(perda => {
-    const email = perda.vendedor_email;
-    if (ranking[email]) {
-      ranking[email].total++;
-      if (perda.categoria_motivo) ranking[email][perda.categoria_motivo]++;
-    }
+    ranking[email].total++;
+    if (perda.categoria_motivo) ranking[email][perda.categoria_motivo]++;
   });
 
   const rankingArray = Object.entries(ranking)
@@ -37,7 +31,8 @@ export default function RankingPerdas({ perdas, users }) {
       const user = users.find(u => u.email === email);
       return { email, nome: user?.full_name || email, ...dados };
     })
-    .sort((a, b) => b.total - a.total);
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 10);
 
   const getCategoriaLabel = (cat) => {
     const labels = {
@@ -60,11 +55,11 @@ export default function RankingPerdas({ perdas, users }) {
           <span>Perdas por Motivo</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pt-2 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto space-y-2">
+      <CardContent className="flex-1 pt-2 overflow-auto">
+        <div className="space-y-2">
           {rankingArray.length === 0 ? (
             <p className="text-slate-500 text-center py-6 text-sm">Nenhuma perda</p>
-          ) : rankingArray.map((vendedor, index) => (
+          ) : rankingArray.slice(0, 7).map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, y: 5 }}

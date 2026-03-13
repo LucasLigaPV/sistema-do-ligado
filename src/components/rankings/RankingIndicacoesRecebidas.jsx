@@ -9,29 +9,20 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
   
   const ranking = {};
 
-  // Inicializar todos os vendedores com 0
-  users.forEach(user => {
-    if (user.funcao === "vendedor" || user.funcao === "lider") {
-      ranking[user.email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
-    }
-  });
-
   negociacoesIndicacao.forEach(neg => {
     const email = neg.vendedor_email;
-    if (ranking[email]) {
-      ranking[email].recebidas++;
-      if (neg.etapa !== "venda_ativa") {
-        ranking[email].emNegociacao++;
-      }
+    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
+    ranking[email].recebidas++;
+    if (neg.etapa !== "venda_ativa") {
+      ranking[email].emNegociacao++;
     }
   });
 
   perdasIndicacao.forEach(perda => {
     const email = perda.vendedor_email;
-    if (ranking[email]) {
-      ranking[email].recebidas++;
-      ranking[email].perdidas++;
-    }
+    if (!ranking[email]) ranking[email] = { recebidas: 0, emNegociacao: 0, perdidas: 0 };
+    ranking[email].recebidas++;
+    ranking[email].perdidas++;
   });
 
   const rankingArray = Object.entries(ranking)
@@ -39,7 +30,8 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
       const user = users.find(u => u.email === email);
       return { email, nome: user?.full_name || email, ...dados };
     })
-    .sort((a, b) => b.recebidas - a.recebidas);
+    .sort((a, b) => b.recebidas - a.recebidas)
+    .slice(0, 10);
 
   const getMedalIcon = (index) => {
     if (index === 0) return <div className="w-6 h-6 rounded-full bg-[#EFC200] text-slate-900 flex items-center justify-center font-bold text-xs shadow-sm">1</div>;
@@ -56,11 +48,11 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
           <span>Indicações Recebidas</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 pt-2 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto space-y-2">
+      <CardContent className="flex-1 pt-2">
+        <div className="space-y-2">
           {rankingArray.length === 0 ? (
             <p className="text-slate-500 text-center py-6 text-sm">Nenhuma indicação</p>
-          ) : rankingArray.map((vendedor, index) => (
+          ) : rankingArray.slice(0, 7).map((vendedor, index) => (
             <motion.div
               key={vendedor.email}
               initial={{ opacity: 0, y: 5 }}
@@ -71,9 +63,7 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
               }`}
             >
               <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  {index + 1}
-                </div>
+                {getMedalIcon(index)}
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
                   <p className="text-[10px] text-slate-500">
@@ -81,7 +71,7 @@ export default function RankingIndicacoesRecebidasNeg({ negociacoes, perdas, use
                   </p>
                 </div>
               </div>
-              <div className="text-xl font-bold text-slate-900 flex-shrink-0">{vendedor.recebidas}</div>
+              <div className="text-xl font-bold text-slate-900">{vendedor.recebidas}</div>
             </motion.div>
           ))}
         </div>
