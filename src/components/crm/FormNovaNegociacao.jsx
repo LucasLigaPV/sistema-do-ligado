@@ -60,10 +60,22 @@ export default function FormNovaNegociacao({
                 onChange={(e) => setNewDeal({ ...newDeal, email: e.target.value })}
               />
             </div>
+            <div className="col-span-2">
+              <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  id="zero_km"
+                  checked={newDeal.zero_km || false}
+                  onChange={(e) => setNewDeal({ ...newDeal, zero_km: e.target.checked, placa: e.target.checked ? '' : newDeal.placa })}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <Label htmlFor="zero_km" className="cursor-pointer font-medium">0km (placa não obrigatória)</Label>
+              </div>
+            </div>
             <div>
-              <Label>Placa</Label>
+              <Label>{newDeal.zero_km ? "Placa (opcional)" : "Placa"}</Label>
               <Input
-                value={newDeal.placa}
+                value={newDeal.placa || ''}
                 onChange={(e) => {
                   const valor = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
                   let formatado = valor;
