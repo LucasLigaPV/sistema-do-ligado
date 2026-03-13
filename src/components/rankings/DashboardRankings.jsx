@@ -43,7 +43,8 @@ export default function DashboardRankings() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        return await base44.functions.invoke('getAllUsers', {});
+        const response = await base44.functions.invoke('getAllUsers', {});
+        return response.data?.users || [];
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);
         return [];
