@@ -376,11 +376,11 @@ export default function ResumoVendedor({ userEmail, userFuncao }) {
               {/* Linha de fundo */}
               <div className="absolute top-6 left-0 right-0 h-2 bg-slate-200 rounded-full" />
 
-              {/* Barra de progresso preenchida */}
+              {/* Barra de progresso preenchida - só até o nível atual */}
               <div 
                 className="absolute top-6 left-0 h-2 bg-gradient-to-r from-[#EFC200] to-[#D4A900] rounded-full transition-all duration-1000"
                 style={{ 
-                  width: `${Math.min((totalVendasProgresso / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100, 100)}%` 
+                  width: `${(nivelAtual.vendas / PLANO_CARREIRA[PLANO_CARREIRA.length - 1].vendas) * 100}%` 
                 }}
               />
 
