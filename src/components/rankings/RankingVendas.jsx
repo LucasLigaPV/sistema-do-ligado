@@ -54,7 +54,9 @@ export default function RankingVendas({ vendas, users }) {
   const rankingArray = Object.entries(ranking)
     .filter(([email, dados]) => dados.total > 0)
     .map(([email, dados]) => {
-      return { email, nome: getNomeVendedor(email, users), ...dados };
+      const user = users.find(u => u.email === email);
+      const nome = user?.full_name || email.split('@')[0];
+      return { email, nome, ...dados };
     })
     .sort((a, b) => b.total - a.total)
     .slice(0, 10);
