@@ -16,21 +16,6 @@ import RankingConversao from "./RankingConversao";
 import RankingAdesaoMedia from "./RankingAdesaoMedia";
 
 export default function DashboardRankings() {
-  const [user, setUser] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const checkAuth = async () => {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      }
-      setLoading(false);
-    };
-    checkAuth();
-  }, []);
-
   // Definir mês vigente como padrão
   const hoje = new Date();
   const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
@@ -39,7 +24,7 @@ export default function DashboardRankings() {
   const [dataInicio, setDataInicio] = useState(primeiroDiaMes.toISOString().split('T')[0]);
   const [dataFim, setDataFim] = useState(ultimoDiaMes.toISOString().split('T')[0]);
 
-  const { data: allVendas = [] } = useQuery({
+  const { data: vendas = [] } = useQuery({
     queryKey: ["vendas"],
     queryFn: () => base44.entities.Venda.list("-data_venda"),
   });
@@ -58,21 +43,6 @@ export default function DashboardRankings() {
     queryKey: ["users"],
     queryFn: () => base44.entities.User.list(),
   });
-
-  const { data: equipes = [] } = useQuery({
-    queryKey: ["equipes"],
-    queryFn: () => base44.entities.Equipe.filter({ ativa: true }),
-  });
-
-  // Filtrar dados baseado no perfil do usuário
-  const minhaEquipe = equipes.find(e => e.lider_email === user?.email);
-  const membrosEquipe = minhaEquipe ? [user?.email, ...(minhaEquipe.membros || [])] : [];
-
-  const vendas = user?.role === "admin" || user?.funcao === "master"
-    ? allVendas
-    : user?.funcao === "lider"
-    ? allVendas.filter(v => membrosEquipe.includes(v.email_vendedor))
-    : allVendas.filter(v => v.email_vendedor === user?.email);
 
   // Filtrar por data
   const vendasFiltradas = vendas.filter(v => {
