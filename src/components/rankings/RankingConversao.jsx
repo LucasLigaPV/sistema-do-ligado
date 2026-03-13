@@ -8,7 +8,7 @@ export default function RankingConversao({ vendas, negociacoes, perdas, users })
 
   // Inicializar todos os vendedores com 0
   users.forEach(user => {
-    if (user.role === "vendedor" || user.role === "lider") {
+    if (user.funcao === "vendedor" || user.funcao === "lider") {
       ranking[user.email] = { leads: 0, vendas: 0, conversao: 0 };
     }
   });
