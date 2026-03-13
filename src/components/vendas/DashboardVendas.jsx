@@ -160,7 +160,15 @@ export default function DashboardVendas({ userEmail, userRole, userFuncao, filtr
     const vendasVistoriaOk = vendasFiltradas.filter(v => v.etapa === "vistoria_ok").length;
     const vendasEmAtivacao = vendasFiltradas.filter(v => v.etapa === "em_ativacao").length;
 
-    const ticketMedio = totalVendas > 0 ? totalFaturamento / totalVendas : 0;
+    // Calcular ticket médio excluindo trocas
+    const vendasSemTrocas = vendasFiltradas.filter(v => 
+      v.canal_venda !== 'troca_veiculo' && v.canal_venda !== 'troca_titularidade'
+    );
+    const totalFaturamentoSemTrocas = vendasSemTrocas.reduce((sum, v) => {
+      const valor = parseFloat(v.valor_adesao?.replace(/[^0-9,]/g, "").replace(",", ".")) || 0;
+      return sum + valor;
+    }, 0);
+    const ticketMedio = vendasSemTrocas.length > 0 ? totalFaturamentoSemTrocas / vendasSemTrocas.length : 0;
 
     const vendasComIndicacao = vendasFiltradas.filter(v => v.tem_indicacao === "sim").length;
     const percentualIndicacao = totalVendas > 0 ? (vendasComIndicacao / totalVendas) * 100 : 0;
