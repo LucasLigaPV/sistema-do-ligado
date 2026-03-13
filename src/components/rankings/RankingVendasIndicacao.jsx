@@ -32,25 +32,31 @@ export default function RankingVendasIndicacao({ vendas, users }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-3 pt-1">
-        <div className="space-y-1.5">
-          {rankingArray.map((vendedor, index) => (
-            <motion.div
-              key={vendedor.email}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.03 }}
-              className={`flex items-center justify-between p-2 rounded-lg border transition-all ${
-                index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                {getMedalIcon(index)}
-                <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
-              </div>
-              <div className="text-xl font-bold text-slate-900">{vendedor.total}</div>
-            </motion.div>
-          ))}
-        </div>
+        {rankingArray.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-sm text-slate-500">Nenhuma venda via indicação neste período</p>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {rankingArray.map((vendedor, index) => (
+              <motion.div
+                key={vendedor.email}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.03 }}
+                className={`flex items-center justify-between p-2 rounded-lg border transition-all ${
+                  index === 0 ? 'bg-slate-50 border-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  {getMedalIcon(index)}
+                  <p className="font-semibold text-sm text-slate-900 truncate">{vendedor.nome}</p>
+                </div>
+                <div className="text-xl font-bold text-slate-900">{vendedor.total}</div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
