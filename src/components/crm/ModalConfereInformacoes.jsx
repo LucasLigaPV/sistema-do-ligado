@@ -130,16 +130,16 @@ export default function ModalConferirInformacoes({
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
                 <Label className={erros.placa ? "text-red-600" : ""}>Placa {conferenciaData.zero_km ? "(opcional)" : "*"}</Label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="zero_km_conf"
-                    checked={conferenciaData.zero_km || false}
-                    onChange={(e) => setConferenciaData({ ...conferenciaData, zero_km: e.target.checked })}
-                    className="w-4 h-4 cursor-pointer rounded"
-                  />
-                  <label htmlFor="zero_km_conf" className="text-xs font-medium text-slate-600 cursor-pointer">0km</label>
-                </div>
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  id="zero_km_conf"
+                  checked={conferenciaData.zero_km || false}
+                  onChange={(e) => setConferenciaData({ ...conferenciaData, zero_km: e.target.checked })}
+                  className="w-4 h-4 cursor-pointer rounded"
+                />
+                <label htmlFor="zero_km_conf" className="text-sm font-medium text-slate-600 cursor-pointer">0km (placa não obrigatória)</label>
               </div>
               <Input
                 value={conferenciaData.placa || ""}
